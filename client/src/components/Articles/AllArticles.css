@@ -64,9 +64,9 @@
 
 .items-quantity {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 50px;
+  width: 100%;
 }
 
 .items-quantity button {

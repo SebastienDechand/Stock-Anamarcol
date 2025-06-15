@@ -13,7 +13,6 @@ export const AuthProvider = ({ children }) => {
         withCredentials: true,
       })
       .then((res) => {
-        console.log("✅ UID récupéré dans AuthProvider :", res.data);
         setUid(res.data);
       })
       .catch(() => setUid(null))
