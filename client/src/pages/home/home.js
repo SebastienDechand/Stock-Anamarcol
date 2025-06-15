@@ -17,7 +17,6 @@ export default function Home() {
   if (!authContext) return null;
 
   const { uid, isAuthLoading } = authContext;
-  console.log("🏠 HOME → uid:", uid, "| loading:", isAuthLoading);
 
   if (isAuthLoading) {
     return <SpinnerOverlay text="Chargement de la session..." />;
