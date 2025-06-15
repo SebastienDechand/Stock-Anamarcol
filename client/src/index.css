@@ -1,0 +1,113 @@
+body {
+  margin: 0;
+  font-family: "Montserrat";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  max-width: 100%;
+  max-height: 100vh;
+  background-color: #f5f1e3;
+}
+@media screen and (max-width: 900px) {
+  body {
+    overflow-y: auto;
+  }
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+ul {
+  margin: 0;
+}
+li {
+  list-style: none;
+}
+button {
+  cursor: pointer;
+  font-family: "Montserrat";
+}
+p {
+  font-size: 14px;
+}
+a {
+  text-decoration: none;
+  color: white;
+}
+i {
+  color: black;
+  cursor: pointer;
+}
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: auto;
+  height: 100vh;
+  background-color: rgb(245, 241, 227, 0.2);
+  position: absolute;
+  width: 100vw;
+}
+.login-false {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 10vh;
+}
+.login-false h1,
+h2 a {
+  color: black;
+}
+.flex-row {
+  display: flex;
+}
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+.red {
+  color: red;
+  font-weight: bold;
+}
+.closed ~ .main-content {
+  transform: translateX(calc(-50vw + 50%));
+  transition: transform 0.3s ease-in-out;
+}
+.visible ~ .main-content {
+  transform: translateX(0);
+  transition: transform 0.3s ease-in-out;
+}
+.menu-all ~ .main-content.closed {
+  transform: translateX(calc(-50vw + 50%));
+  transition: transform 0.3s ease-in-out;
+}
+.menu-all ~ .main-content.visible {
+  transform: translateX(0);
+  transition: transform 0.3s ease-in-out;
+}
+.toggle-menu-button.sticky {
+  transform: translateX(-15vw);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Responsive */
+@media screen and (max-width: 1000px) {
+  h1 {
+    font-size: 28px;
+  }
+}
+@media screen and (max-width: 750px) {
+  h1 {
+    font-size: 24px;
+  }
+  a {
+    font-size: 13px;
+  }
+  .toggle-menu-button.sticky {
+    transform: translateX(-90vw);
+    transition: transform 0.3s ease-in-out;
+  }
+}

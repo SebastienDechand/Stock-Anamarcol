@@ -1,0 +1,61 @@
+.upload-pic{
+    width: 100%;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+}
+.upload-pic label{
+    cursor: pointer;
+    border: 2px solid #EEEEEE;
+    border-radius: 20px;
+    padding: 5px 10px;
+    background-color: #EEEEEE;
+    transition: all 0.3s;
+    width: 25%;
+}
+.upload-pic label:hover{
+    background-color: #2D373C;
+    color: white;
+    transform: scale(1.1);
+    transition: all 0.3s;
+}
+.upload-pic-btn{
+    display: none;
+}
+.upload-pic-send{
+    cursor: pointer;
+    border: 2px solid #EEEEEE;
+    border-radius: 20px;
+    padding: 5px 10px;
+    background: none;
+    background-color: #EEEEEE;
+    transition: all 0.3s;
+    width: 25%;
+}
+.upload-pic-send:hover{
+    background-color: #2D373C;
+    color: white;
+    transform: scale(1.1);
+    transition: all 0.3s;
+}
+.error-message-profil {
+    color: red;
+    font-weight: bold;
+}
+
+/* Responsive */
+@media screen and (max-width: 1500px){
+
+}
+@media screen and (max-width: 1250px){
+
+}
+@media screen and (max-width: 1000px){
+
+}
+@media screen and (max-width: 750px){
+
+}

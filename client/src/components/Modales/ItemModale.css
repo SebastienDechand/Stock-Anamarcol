@@ -1,0 +1,163 @@
+/* === Conteneur principal === */
+.modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 700px;
+  padding: 30px 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fadeInModal 0.3s ease;
+}
+
+/* === Bouton de fermeture === */
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+/* === Structure principale === */
+.modal-ctn {
+  display: flex;
+  gap: 40px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.modal-left,
+.modal-right {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* === Image === */
+img.modal-left-img {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  border-radius: 12px;
+  object-fit: contain;
+  border: 1px solid #e5e7eb;
+}
+
+/* === Upload image (optionnel) === */
+.upload-image {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+.upload-image label {
+  cursor: pointer;
+  font-size: 14px;
+}
+.upload-image-btn {
+  display: none;
+}
+
+/* === Boutons === */
+.modal-btn {
+  background-color: #8ca76a;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.modal-btn:hover {
+  background-color: #6b8752;
+}
+
+/* === Infos texte === */
+.modal-infos {
+  width: 100%;
+  text-align: center;
+}
+.modal-infos h4 {
+  margin-bottom: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
+.modal-infos p {
+  font-size: 14px;
+  color: #374151;
+}
+
+/* === Zone de modification === */
+.modal-quantity-input {
+  width: 100%;
+  max-width: 120px;
+  padding: 10px 12px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  color: #1f2937;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  appearance: textfield;
+}
+
+.modal-quantity-input:focus {
+  border-color: #8ca76a;
+  box-shadow: 0 0 0 3px rgba(140, 167, 106, 0.3);
+  outline: none;
+  background-color: white;
+}
+
+/* Supprime les flèches dans les navigateurs */
+.modal-quantity-input::-webkit-outer-spin-button,
+.modal-quantity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.modal-quantity-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* === Erreurs === */
+.error-message {
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* === Animation === */
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Responsive === */
+@media screen and (max-width: 900px) {
+  .modal-ctn {
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+  }
+}

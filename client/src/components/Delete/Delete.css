@@ -1,0 +1,19 @@
+.item-del {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Responsive */
+@media screen and (max-width: 1500px){
+
+}
+@media screen and (max-width: 1250px){
+
+}
+@media screen and (max-width: 1000px){
+
+}
+@media screen and (max-width: 750px){
+
+}

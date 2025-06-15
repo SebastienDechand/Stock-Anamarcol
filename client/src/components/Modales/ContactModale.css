@@ -1,0 +1,66 @@
+.modal-close {
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: black;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  z-index: 100;
+  border-top-right-radius: 12px;
+}
+
+.modal-close:hover {
+  background: red;
+}
+.modal-ctn {
+  display: flex;
+}
+.modal-left,
+.modal-right {
+  width: 100%;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.modal-left img {
+  border-radius: 20px;
+  max-width: 300px;
+  max-height: 300px;
+}
+.upload-image {
+  text-align: center;
+}
+.upload-image label {
+  cursor: pointer;
+  font-family: "Montserrat";
+}
+.upload-image-btn {
+  display: none;
+}
+.error-message-contact {
+  color: red;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media screen and (max-width: 1500px) {
+}
+@media screen and (max-width: 1250px) {
+}
+@media screen and (max-width: 1000px) {
+  .modal-left img {
+    border-radius: 20px;
+    max-width: 200px;
+    max-height: 200px;
+  }
+}
+@media screen and (max-width: 500px) {
+  .modal-left img {
+    border-radius: 20px;
+    max-width: 150px;
+    max-height: 150px;
+  }
+}

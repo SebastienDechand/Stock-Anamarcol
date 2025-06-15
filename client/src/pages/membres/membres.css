@@ -1,0 +1,127 @@
+.membres-ctn {
+    display: flex;
+}
+.membres-flex {
+    height: 85vh;
+    width: 85vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 25px;
+    margin: auto;
+}
+.membres-flex h2{
+    margin: 0;
+}
+.all-membres {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0;
+    margin: auto;
+    gap: 30px;
+}
+.all-membres li {  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #ced7c1;
+    border-radius: 25px;
+    padding: 5px;
+    width: 22.5vw;
+    height: 100%;
+    margin: 0 auto;
+}
+.all-membres li.first-membres {
+    grid-column: span 3; 
+    width: 31%;
+    margin: 0 auto;
+}
+
+.all-membres li img{  
+    border-radius: 20px;
+}
+.all-membres li h2,h3,p {  
+    text-align: center;
+    margin: 0;
+}
+.all-membres li h2{  
+    margin: 5px;
+}
+.user-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}   
+
+/* Responsive */
+@media screen and (max-width: 1500px){
+    .all-membres li h2{  
+        font-size: 20px;
+    }
+    .all-membres li h3{  
+        font-size: 17px;
+    }
+}
+@media screen and (max-width: 1250px){
+    .all-membres li h2{  
+        font-size: 18px;
+    }
+    .all-membres li h3{  
+        font-size: 16px;
+    }
+}
+@media screen and (max-width: 1000px){
+    .membres-flex {
+        height: 100%;
+        width: 100vw;
+        margin: 20px auto;
+    }
+    .all-membres {
+        grid-template-columns: 1fr 1fr;
+    }
+    .all-membres li { 
+        width: 35vw;
+    }
+    .all-membres li.first-membres {
+        grid-column: span 1; 
+        width: 35vw;
+    }
+    .all-membres li h2{  
+        font-size: 16px;
+    }
+    .all-membres li h3{  
+        font-size: 14px;
+    }
+    .all-membres li p{  
+        font-size: 12px;
+    }
+}
+@media screen and (max-width: 750px){
+    .membres-ctn {
+        flex-direction: column;
+        height: 100%;
+    }
+    .all-membres li.first-membres {
+        width: 40vw;
+    }
+    .all-membres li { 
+        width: 40vw;
+    }
+}
+@media screen and (max-width: 500px){
+    .all-membres {
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+    .all-membres li.first-membres {
+        width: 80vw;
+    }
+    .all-membres li { 
+        width: 80vw;
+    }
+}

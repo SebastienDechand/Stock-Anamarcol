@@ -1,0 +1,133 @@
+.tri-ctn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto 0;
+  padding: 10px;
+  color: black;
+  z-index: 0;
+}
+.tri-ctn.mob {
+  display: none;
+}
+.tri-ctn h4 {
+  margin: 0;
+  text-align: start;
+}
+.tri-recherche {
+  width: 100%;
+  text-align: center;
+}
+.tri-recherche input {
+  width: 90%;
+}
+.tri-fournisseur,
+.tri-prepa {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+/* .tri-etat {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+} */
+
+/* Style général pour toutes les cases à cocher */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  border: 2px solid #333;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.3s;
+}
+
+/* Style de la case cochée */
+input[type="checkbox"]:checked {
+  background-color: #5d6d46;
+  border: 2px solid #5d6d46;
+}
+
+/* Style de l'étiquette du texte à côté de la case à cocher */
+.tri-ctn label {
+  width: 100%;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+.tri-ctn label:hover {
+  color: white;
+  font-weight: 500;
+  transition: all 0.1s;
+}
+
+/* Masquer la boîte à cocher par défaut */
+input[type="checkbox"]::-webkit-check-box {
+  display: none;
+}
+
+/* Style lorsque la case à cocher est cochée */
+input[type="checkbox"]:checked::before {
+  content: "\2713";
+  font-size: 16px;
+  color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Responsive */
+@media screen and (max-width: 750px) {
+  .tri-ctn {
+    flex-direction: row;
+    justify-content: center;
+    bottom: 0vh;
+    left: 5vw;
+    margin: 0;
+    padding: 10px;
+    font-size: 14px;
+  }
+  .tri-ctn.mob {
+    display: flex;
+    left: 0;
+  }
+  .tri-ctn.desk {
+    display: none;
+  }
+  .tri-ctn label {
+    width: 70%;
+  }
+  .tri-recherche {
+    text-align: left;
+  }
+  .tri-fournisseur select,
+  .tri-etat select {
+    width: 94%;
+  }
+  .tri-fournisseur,
+  .tri-etat {
+    flex-direction: column;
+  }
+}
+@media screen and (max-width: 500px) {
+  .tri-ctn.mob h4 {
+    font-size: 13px;
+  }
+  .tri-fournisseur select,
+  .tri-etat select {
+    width: 100%;
+  }
+}

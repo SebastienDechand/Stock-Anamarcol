@@ -1,0 +1,186 @@
+/* === Conteneur général === */
+.login-ctn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: url("../../assets/login.jpg") no-repeat center center / cover;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* === Bloc titre === */
+.login-welcome {
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  text-align: center;
+  padding: 20px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  animation: fadeInDown 0.6s ease-out;
+}
+
+.login-welcome h1,
+.login-welcome h2 {
+  margin: 0;
+  padding: 5px 0;
+  font-weight: 600;
+  color: white;
+}
+
+/* === Bloc formulaire === */
+.login-logs {
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 20px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  gap: 15px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* === Champs input généraux === */
+.login-logs input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  font-size: 16px;
+  color: #1f2937;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  box-sizing: border-box;
+}
+
+.login-logs input:focus {
+  border-color: #8ca76a;
+  box-shadow: 0 0 0 3px rgba(140, 167, 106, 0.3);
+  background-color: white;
+}
+
+/* === Mot de passe avec œil === */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+  line-height: 0;
+}
+
+.toggle-password:hover {
+  color: #374151;
+}
+
+/* === Bouton === */
+input.form-btn {
+  background-color: #8ca76a;
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  max-width: 300px;
+}
+
+input.form-btn:hover {
+  background-color: #7a956b;
+}
+
+/* === Erreur === */
+.error {
+  color: #f87171;
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* === Animations === */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Responsive === */
+@media screen and (max-width: 768px) {
+  .login-welcome,
+  .login-logs {
+    max-width: 80%;
+  }
+
+  .login-welcome h1,
+  .login-welcome h2 {
+    font-size: 20px;
+  }
+
+  input.form-btn {
+    font-size: 15px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .login-welcome h1,
+  .login-welcome h2 {
+    font-size: 18px;
+  }
+
+  .login-logs input {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  input.form-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+.login-logs input[type="email"],
+.password-wrapper {
+  width: 100%;
+  max-width: 300px;
+}
