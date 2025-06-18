@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import {
   deleteItem,
   setSelectedItemId,
@@ -20,7 +19,6 @@ const AllArticles = ({
   setCurrentPage,
   currentFilters,
 }) => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const itemsData = useSelector((state) => state.itemsReducer.items || []);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -78,9 +76,9 @@ const AllArticles = ({
     });
   }, [itemsData]);
 
-  useEffect(() => {
-    setFilteredItems(itemsData);
-  }, [itemsData, setFilteredItems, setCurrentPage]);
+  // useEffect(() => {
+  //   setFilteredItems(itemsData);
+  // }, [itemsData, setFilteredItems, setCurrentPage]);
 
   const currentItems = filteredItems.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
