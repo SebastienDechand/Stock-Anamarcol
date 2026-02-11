@@ -49,5 +49,5 @@ module.exports.signIn = async (req, res) => {
 // Déconnexion
 module.exports.logout = async (req, res) => {
   res.cookie("jwt", "", { maxAge: 1 });
-  res.redirect("/");
+  res.status(200).json({ message: "Déconnexion réussie" });
 };

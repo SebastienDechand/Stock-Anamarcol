@@ -12,7 +12,7 @@ export default function Layout() {
   const { isAdmin } = useContext(UidContext);
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-200">
+    <div className="flex min-h-screen md:h-screen md:overflow-hidden bg-gray-200">
       <Toaster
         position="top-right"
         toastOptions={{
@@ -27,9 +27,9 @@ export default function Layout() {
       <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} isAdmin={isAdmin} />
 
       {/* Main content */}
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col flex-1 min-w-0 md:overflow-hidden">
         <Topbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-        <main className="flex-1 overflow-y-auto scroll-smooth px-2 pb-2 pt-0 md:p-3 lg:p-4">
+        <main className="flex-1 md:overflow-y-auto px-2 pb-2 pt-3 md:p-3 lg:p-4">
           <Outlet />
         </main>
       </div>

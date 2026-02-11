@@ -35,16 +35,29 @@ const FOURNISSEURS = [
   "Tigra",
 ];
 
-// Nombre d'articles par page adapté à la taille d'écran
+// Nombre d'articles par page adapté à l'écran
+// Mobile : nombre fixe (scroll autorisé) — Desktop/tablette : adapté à la hauteur (pas de scroll)
 function useResponsiveItemsPerPage() {
   const getCount = () => {
     const w = window.innerWidth;
-    if (w < 640) return 6; // mobile : 2 cols × 3 rows
-    if (w < 768) return 9; // sm : 3 cols × 3 rows
-    if (w < 1024) return 12; // md : 4 cols × 3 rows
-    if (w < 1280) return 15; // lg : 5 cols × 3 rows
-    if (w < 1536) return 18; // xl : 6 cols × 3 rows
-    return 21; // 2xl : 7 cols × 3 rows
+
+    // Mobile (< 768px) : nombre fixe, pas de calcul basé sur la hauteur
+    if (w < 640) return 8; // 2 cols × 4 rows
+    if (w < 768) return 12; // 3 cols × 4 rows
+
+    // Desktop / tablette : adapté à la hauteur
+    const h = window.innerHeight;
+    let cols;
+    if (w < 1024) cols = 3;
+    else if (w < 1280) cols = 4;
+    else if (w < 1536) cols = 5;
+    else cols = 6;
+
+    const availableHeight = h - 274;
+    const cardHeight = 212;
+    const rows = Math.max(1, Math.floor(availableHeight / cardHeight));
+
+    return cols * rows;
   };
   const [count, setCount] = useState(getCount);
   useEffect(() => {
@@ -153,8 +166,8 @@ export default function Articles() {
 
   return (
     <div>
-      {/* Toolbar + Filters — sticky */}
-      <div className="sticky top-0 z-30 bg-gray-200/95 backdrop-blur-sm pb-1 space-y-1 -mx-2 px-2 pt-0 mb-1 sm:pb-2 sm:space-y-2 sm:pt-2 sm:mb-2 md:-mx-3 md:px-3 md:pt-3 md:mb-3 lg:-mx-4 lg:px-4 lg:pt-4">
+      {/* Toolbar + Filters */}
+      <div className="shrink-0 bg-gray-200/95 backdrop-blur-sm pb-1 space-y-1 -mx-2 px-2 pt-0 mb-1 sm:pb-2 sm:space-y-2 sm:pt-2 sm:mb-2 md:-mx-3 md:px-3 md:pt-3 md:mb-3 lg:-mx-4 lg:px-4 lg:pt-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-2">
           <h1 className="text-lg font-bold text-gray-900">Articles</h1>
           <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -213,7 +226,7 @@ export default function Articles() {
 
       {/* Items grid */}
       {pageItems.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3">
           {pageItems.map((item) => (
             <div
               key={item._id}
