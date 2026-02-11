@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon server"
+    "start": "nodemon server",
+    "server": "node index.js",
+    "test": "jest --forceExit --detectOpenHandles",
+    "test:ci": "jest --ci --forceExit --detectOpenHandles --coverage"
   },
   "keywords": [],
   "author": "",
@@ -25,5 +28,9 @@
     "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.3",
     "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4"
   }
 }
