@@ -37,14 +37,20 @@ const userSchema = new mongoose.Schema(
     numero: {
       type: String,
     },
+    role: {
+      type: String,
+      enum: ["admin", "user"],
+      default: "user",
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-// Cryptage du mot de passe
+// Cryptage du mot de passe (seulement si modifié)
 userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(this.password, salt);

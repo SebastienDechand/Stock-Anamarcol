@@ -1,182 +1,225 @@
 const ItemModel = require("../models/item.model");
 
-// Global Statistics
+// Cache simple en mémoire (invalidé à chaque mutation)
+let statsCache = null;
+let statsCacheTime = 0;
+const CACHE_TTL = 30000; // 30 secondes
+
+const invalidateCache = () => {
+  statsCache = null;
+  statsCacheTime = 0;
+};
+
+// Endpoint unifié : toutes les stats en 1 seule requête (4 agrégations parallèles au lieu de 6+ séquentielles)
+exports.getDashboardStats = async (req, res) => {
+  try {
+    const now = Date.now();
+    if (statsCache && now - statsCacheTime < CACHE_TTL) {
+      return res.status(200).json(statsCache);
+    }
+
+    const [globalStats, fournisseursStats, etatsStats, lowStockItems] =
+      await Promise.all([
+        ItemModel.aggregate([
+          {
+            $group: {
+              _id: null,
+              numberOfArticles: { $sum: 1 },
+              totalStock: { $sum: "$quantite" },
+              numberOfLowStockArticles: {
+                $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
+              },
+              fournisseurs: { $addToSet: "$fournisseur" },
+            },
+          },
+        ]),
+        ItemModel.aggregate([
+          {
+            $group: {
+              _id: "$fournisseur",
+              numberOfArticles: { $sum: 1 },
+              totalStock: { $sum: "$quantite" },
+              numberOfLowStockArticles: {
+                $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
+              },
+            },
+          },
+          { $sort: { _id: 1 } },
+        ]),
+        ItemModel.aggregate([
+          {
+            $group: {
+              _id: "$etat",
+              numberOfArticles: { $sum: 1 },
+              totalStock: { $sum: "$quantite" },
+              numberOfLowStockArticles: {
+                $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
+              },
+            },
+          },
+          { $sort: { _id: 1 } },
+        ]),
+        ItemModel.find({ quantite: { $lt: 5 } })
+          .sort({ quantite: 1, denomination: 1 })
+          .lean(),
+      ]);
+
+    const global = globalStats[0] || {
+      numberOfArticles: 0,
+      totalStock: 0,
+      numberOfLowStockArticles: 0,
+      fournisseurs: [],
+    };
+
+    const result = {
+      global: {
+        numberOfArticles: global.numberOfArticles,
+        totalStock: global.totalStock,
+        numberOfSuppliers: global.fournisseurs.length,
+        numberOfLowStockArticles: global.numberOfLowStockArticles,
+      },
+      fournisseurs: fournisseursStats.map((f) => ({
+        nom: f._id,
+        numberOfArticles: f.numberOfArticles,
+        totalStock: f.totalStock,
+        numberOfLowStockArticles: f.numberOfLowStockArticles,
+      })),
+      etats: etatsStats.map((e) => ({
+        nom: e._id,
+        numberOfArticles: e.numberOfArticles,
+        totalStock: e.totalStock,
+        numberOfLowStockArticles: e.numberOfLowStockArticles,
+      })),
+      lowStockItems,
+    };
+
+    statsCache = result;
+    statsCacheTime = now;
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Erreur stats dashboard:", error);
+    res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+};
+
+exports.invalidateStatsCache = invalidateCache;
+
+// === Anciens endpoints conservés pour rétrocompatibilité ===
+
 exports.getNumberOfArticles = async (req, res) => {
   try {
     const numberOfArticles = await ItemModel.countDocuments();
-    res.status(200).json({ numberOfArticles: `${numberOfArticles}` });
+    res.status(200).json({ numberOfArticles });
   } catch (error) {
-    console.error("Erreur lors du calcul du nombre d'articles :", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
+
 exports.getTotalStock = async (req, res) => {
   try {
-    const totalStock = await ItemModel.aggregate([
-      {
-        $match: { quantite: { $exists: true } },
-      },
-      {
-        $group: {
-          _id: null,
-          totalStock: {
-            $sum: { $toInt: "$quantite" },
-          },
-        },
-      },
+    const result = await ItemModel.aggregate([
+      { $group: { _id: null, totalStock: { $sum: "$quantite" } } },
     ]);
-    res.status(200).json({ totalStock: `${totalStock[0].totalStock}` || 0 });
+    res.status(200).json({ totalStock: result[0]?.totalStock || 0 });
   } catch (error) {
-    console.error("Erreur lors du calcul du stock total :", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
+
 exports.getNumberOfSuppliers = async (req, res) => {
   try {
-    const distinctSuppliers = await ItemModel.distinct("fournisseur");
-    const numberOfSuppliers = distinctSuppliers.length;
-    res.status(200).json({ numberOfSuppliers: `${numberOfSuppliers}` || 0 });
+    const list = await ItemModel.distinct("fournisseur");
+    res.status(200).json({ numberOfSuppliers: list.length });
   } catch (error) {
-    console.error("Erreur lors du calcul du nombre de fournisseurs :", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
+
 exports.getNumberOfArticlesWithStockBelow5 = async (req, res) => {
   try {
-    const numberOfLowStockArticles = await ItemModel.countDocuments({
-      $expr: {
-        $lt: [{ $toInt: "$quantite" }, 5],
-      },
-    });
-    res
-      .status(200)
-      .json({ numberOfLowStockArticles: `${numberOfLowStockArticles}` || 0 });
+    const count = await ItemModel.countDocuments({ quantite: { $lt: 5 } });
+    res.status(200).json({ numberOfLowStockArticles: count });
   } catch (error) {
-    console.error(
-      "Erreur lors du calcul du nombre d'articles avec un stock inférieur à 5 :",
-      error
-    );
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
 
 exports.getArticlesWithLowStock = async (req, res) => {
   try {
-    const articlesWithLowStock = await ItemModel.find({
-      $expr: {
-        $lt: [{ $toInt: "$quantite" }, 5],
-      },
-    }).sort({ denomination: 1 });
-    res.json(articlesWithLowStock);
+    const articles = await ItemModel.find({ quantite: { $lt: 5 } })
+      .sort({ quantite: 1, denomination: 1 })
+      .lean();
+    res.json(articles);
   } catch (error) {
-    console.error("Error fetching articles with low stock:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
 
-// Fournisseurs
 exports.getFournisseursList = async (req, res) => {
   try {
     const fournisseursList = await ItemModel.distinct("fournisseur");
     res.status(200).json({ fournisseursList });
   } catch (error) {
-    console.error(
-      "Erreur lors de la récupération de la liste des fournisseurs :",
-      error
-    );
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
+
 exports.getStatisticsForFournisseur = async (req, res) => {
   try {
     const fournisseur = req.params.fournisseur;
-    const numberOfArticles = await ItemModel.countDocuments({ fournisseur });
-    const stockStatistics = await ItemModel.aggregate([
-      {
-        $match: { fournisseur, quantite: { $exists: true } },
-      },
-      {
-        $group: {
-          _id: null,
-          totalStock: {
-            $sum: { $toInt: "$quantite" },
-          },
-          numberOfLowStockArticles: {
-            $sum: {
-              $cond: [{ $lt: [{ $toInt: "$quantite" }, 5] }, 1, 0],
+    const [count, stats] = await Promise.all([
+      ItemModel.countDocuments({ fournisseur }),
+      ItemModel.aggregate([
+        { $match: { fournisseur } },
+        {
+          $group: {
+            _id: null,
+            totalStock: { $sum: "$quantite" },
+            numberOfLowStockArticles: {
+              $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
             },
           },
         },
-      },
+      ]),
     ]);
-    const fournisseurStats =
-      stockStatistics.length > 0
-        ? stockStatistics[0]
-        : { totalStock: 0, numberOfLowStockArticles: 0 };
-    // console.log(`Data for ${fournisseur}:`, { numberOfArticles, ...fournisseurStats });
-
-    res.status(200).json({
-      numberOfArticles: `${numberOfArticles}`,
-      ...fournisseurStats,
-    });
+    const s = stats[0] || { totalStock: 0, numberOfLowStockArticles: 0 };
+    res.status(200).json({ numberOfArticles: count, ...s });
   } catch (error) {
-    console.error(
-      `Erreur lors du calcul des statistiques pour le fournisseur ${req.params.fournisseur} :`,
-      error
-    );
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
 
-// État
 exports.getEtatsList = async (req, res) => {
   try {
     const etatsList = await ItemModel.distinct("etat");
     res.status(200).json({ etatsList });
   } catch (error) {
-    console.error(
-      "Erreur lors de la récupération de la liste des états :",
-      error
-    );
     res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
+
 exports.getStatisticsForEtat = async (req, res) => {
   try {
     const etat = req.params.etat;
-    const numberOfArticles = await ItemModel.countDocuments({ etat });
-    const stockStatistics = await ItemModel.aggregate([
-      {
-        $match: { etat, quantite: { $exists: true } },
-      },
-      {
-        $group: {
-          _id: null,
-          totalStock: {
-            $sum: { $toInt: "$quantite" },
-          },
-          numberOfLowStockArticles: {
-            $sum: {
-              $cond: [{ $lt: [{ $toInt: "$quantite" }, 5] }, 1, 0],
+    const [count, stats] = await Promise.all([
+      ItemModel.countDocuments({ etat }),
+      ItemModel.aggregate([
+        { $match: { etat } },
+        {
+          $group: {
+            _id: null,
+            totalStock: { $sum: "$quantite" },
+            numberOfLowStockArticles: {
+              $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
             },
           },
         },
-      },
+      ]),
     ]);
-    const etatStats =
-      stockStatistics.length > 0
-        ? stockStatistics[0]
-        : { totalStock: 0, numberOfLowStockArticles: 0 };
-
-    res.status(200).json({
-      numberOfArticles: `${numberOfArticles}`,
-      ...etatStats,
-    });
+    const s = stats[0] || { totalStock: 0, numberOfLowStockArticles: 0 };
+    res.status(200).json({ numberOfArticles: count, ...s });
   } catch (error) {
-    console.error(
-      `Erreur lors du calcul des statistiques pour l'état ${req.params.etat} :`,
-      error
-    );
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };

@@ -1,108 +1,95 @@
 import { useSelector } from "react-redux";
 import { dateParser } from "../../Utils";
-import "./ContactModale.css";
+import { X, Mail, Phone, Globe, Briefcase } from "lucide-react";
 
-const ContactModale = ({ onClose, contactId }) => {
-  // const [file, setFile] = useState();
-  // const dispatch = useDispatch();
+const ContactModale = ({ onClose }) => {
   const { selectedContactInfo } = useSelector((state) => state.contactsReducer);
-  // const currentUser = useSelector((state) => state.userReducer);
-
-  // const handlePicture = async (event) => {
-  //     event.preventDefault();
-
-  //     if (selectedContactInfo && selectedContactInfo._id && file && currentUser && currentUser._id) {
-  //         const modifierId = typeof currentUser._id === 'string' ? currentUser._id : currentUser._id[0];
-
-  //         const data = new FormData();
-  //         data.append("nom", selectedContactInfo.nom);
-  //         data.append("contactId", selectedContactInfo._id);
-  //         data.append("file", file);
-  //         data.append("modifierId", modifierId);
-
-  //         try {
-  //             await dispatch(uploadContactPicture(data, selectedContactInfo._id, modifierId));
-  //             dispatch(getAllContacts())
-  //         } catch (error) {
-  //             console.error("Erreur lors de l'envoi de l'image :", error);
-  //         }
-  //     } else {
-  //         console.error("Les informations nécessaires ne sont pas disponibles.");
-  //     }
-  // };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <button className="modal-close" onClick={onClose} aria-label="Fermer">
-          X
-        </button>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <h2 className="text-base font-semibold text-gray-800">
+            Détail du contact
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+          >
+            <X size={18} />
+          </button>
+        </div>
 
-        <div className="modal-ctn">
-          <div className="modal-left">
-            <h4>Photo du contact</h4>
-            {selectedContactInfo && selectedContactInfo.picture ? (
-              <>
-                <img src={selectedContactInfo.picture} alt="Contact" />
-                {/* <form  onSubmit={handlePicture} className="upload-image">
-                                    <label htmlFor="file">Parcourir...</label>
-                                    <input 
-                                        type="file" 
-                                        id="file" 
-                                        name="file" 
-                                        accept=".jpg, .jpeg, .png" 
-                                        onChange={(e) => setFile(e.target.files[0])}
-                                        className="upload-image-btn"
-                                    />
-                                    <br/>
-                                    <input type="submit" value="Envoyer" className="modal-btn" />
-                                </form> */}
-                <p className="error-message-contact"></p>
-              </>
+        <div className="flex flex-col sm:flex-row">
+          {/* Left — Image */}
+          <div className="sm:w-2/5 bg-gray-50 flex items-center justify-center p-6">
+            {selectedContactInfo?.picture ? (
+              <img
+                src={selectedContactInfo.picture}
+                alt="Contact"
+                className="max-h-48 max-w-full object-contain rounded-lg"
+              />
             ) : (
-              <p>Aucune image disponible</p>
+              <p className="text-sm text-gray-400">Aucune image</p>
             )}
           </div>
 
-          <div className="modal-right">
-            <div className="modal-infos">
-              <h4>Nom</h4>
-              <p>{selectedContactInfo ? selectedContactInfo.nom : ""}</p>
-            </div>
-            {selectedContactInfo && selectedContactInfo.poste ? (
-              <div className="modal-infos">
-                <h4>Poste</h4>
-                <p>{selectedContactInfo ? selectedContactInfo.poste : ""}</p>
+          {/* Right — Info */}
+          <div className="sm:w-3/5 px-6 py-5 space-y-4">
+            {selectedContactInfo?.nom && (
+              <div>
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-0.5">
+                  Nom
+                </p>
+                <p className="text-sm font-semibold text-gray-800">
+                  {selectedContactInfo.nom}
+                </p>
               </div>
-            ) : (
-              ""
-            )}
-            {selectedContactInfo && selectedContactInfo.lien ? (
-              <div className="modal-infos">
-                <h4>Lien du site</h4>
-                <p>{selectedContactInfo ? selectedContactInfo.lien : ""}</p>
-              </div>
-            ) : (
-              ""
             )}
 
-            <div className="modal-infos">
-              <h4>Email</h4>
-              <p>{selectedContactInfo ? selectedContactInfo.email : ""}</p>
-            </div>
-            <div className="modal-infos">
-              <h4>Téléphone</h4>
-              <p>{selectedContactInfo ? selectedContactInfo.tel : ""}</p>
-            </div>
-            {/* <button className='valider-btn' onClick={handleUpdate}>Valider modifications</button> */}
-            <div className="modal-infos">
-              <h4>Modifié le : </h4>
-              <p>
-                {dateParser(
-                  selectedContactInfo ? selectedContactInfo.updatedAt : ""
-                )}
-              </p>
-            </div>
+            {selectedContactInfo?.poste && (
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Briefcase size={14} className="text-gray-400 shrink-0" />
+                {selectedContactInfo.poste}
+              </div>
+            )}
+
+            {selectedContactInfo?.email && (
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Mail size={14} className="text-gray-400 shrink-0" />
+                {selectedContactInfo.email}
+              </div>
+            )}
+
+            {selectedContactInfo?.tel && (
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Phone size={14} className="text-gray-400 shrink-0" />
+                {selectedContactInfo.tel}
+              </div>
+            )}
+
+            {selectedContactInfo?.lien && (
+              <a
+                href={selectedContactInfo.lien}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-brand-600 hover:text-brand-700"
+              >
+                <Globe size={14} className="shrink-0" />
+                Voir le site
+              </a>
+            )}
+
+            <p className="text-[11px] text-gray-400 pt-3 border-t border-gray-100">
+              Modifié le {dateParser(selectedContactInfo?.updatedAt || "")}
+            </p>
           </div>
         </div>
       </div>

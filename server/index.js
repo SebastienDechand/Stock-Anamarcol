@@ -1,19 +1,19 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+const compression = require("compression");
 const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
 const userRoutes = require("./routes/user.routes");
 const itemRoutes = require("./routes/item.routes");
 const statisticsRoutes = require("./routes/statistics.routes");
 const contactsRoutes = require("./routes/contacts.routes");
 require("dotenv").config({ path: "./config/.env" });
 require("./config/db");
-const { checkUser, requireAuth } = require("./middleware/auth.middleware");
+const { requireAuth } = require("./middleware/auth.middleware");
 const cors = require("cors");
 const app = express();
 
 const corsOptions = {
   origin: process.env.CLIENT_URL,
-  // origin: "https://anamarcol.vercel.app",
   credentials: true,
   allowedHeaders: ["Content-Type", "sessionID"],
   exposedHeaders: ["sessionID"],
@@ -21,16 +21,13 @@ const corsOptions = {
   preflightContinue: false,
 };
 
+// Middlewares de performance et sécurité
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use(compression());
 app.use(cors(corsOptions));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(
-  cookieParser({
-    sameSite: "None",
-    secure: true,
-  })
-);
-app.get("*", checkUser);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Routes
 app.use("/api/user", userRoutes);
@@ -38,9 +35,12 @@ app.use("/api/item", itemRoutes);
 app.use("/api/contacts", contactsRoutes);
 app.use("/api/statistics", statisticsRoutes);
 
-// JWT
+// JWT - retourne l'ID et le rôle de l'utilisateur
 app.get("/jwtid", requireAuth, (req, res) => {
-  res.status(200).send(res.locals.user._id);
+  res.status(200).json({
+    _id: res.locals.user._id.toString(),
+    role: res.locals.user.role || "user",
+  });
 });
 
 // Server

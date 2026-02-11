@@ -1,37 +1,72 @@
 const ItemModel = require("../models/item.model");
 const { createItemErrors } = require("../errors.utils");
-const { uploadErrors } = require("../errors.utils");
 const ObjectID = require("mongoose").Types.ObjectId;
 
-module.exports.itemInfo = (req, res) => {
+module.exports.itemInfo = async (req, res) => {
   if (!ObjectID.isValid(req.params.id))
-    return res.status(400).send("ID Unknown : " + req.params.id);
+    return res.status(400).json({ message: "ID invalide" });
 
-  ItemModel.findById(req.params.id)
-    .select("-password")
-    .then((docs) => {
-      if (!docs) {
-        res.status(404).send("Item not found");
-      } else {
-        res.send(docs);
-      }
-    })
-    .catch((err) => {
-      console.error("ID Unknown : " + err);
-      res.status(500).send("Internal Server Error");
-    });
+  try {
+    const item = await ItemModel.findById(req.params.id).lean();
+    if (!item) return res.status(404).json({ message: "Article introuvable" });
+    res.status(200).json(item);
+  } catch (err) {
+    console.error("Error fetching item:", err);
+    res.status(500).json({ message: "Erreur interne du serveur" });
+  }
 };
 
-module.exports.readItem = (req, res) => {
-  ItemModel.find()
-    .sort({ denomination: 1 })
-    .then((docs) => {
-      res.send(docs);
-    })
-    .catch((err) => {
-      console.log("Error to get data: " + err);
-      res.status(500).send("Internal Server Error");
+// Lecture paginée avec filtres côté serveur
+module.exports.readItem = async (req, res) => {
+  try {
+    const {
+      page = 1,
+      limit = 20,
+      search = "",
+      fournisseur = "",
+      etat = "",
+      lowStock,
+      sortBy = "denomination",
+      sortOrder = "asc",
+    } = req.query;
+
+    const filter = {};
+
+    if (search) {
+      filter.denomination = { $regex: search, $options: "i" };
+    }
+    if (fournisseur) {
+      filter.fournisseur = { $in: fournisseur.split(",") };
+    }
+    if (etat) {
+      filter.etat = { $in: etat.split(",") };
+    }
+    if (lowStock === "true") {
+      filter.quantite = { $lt: 5 };
+    }
+
+    const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const [items, total] = await Promise.all([
+      ItemModel.find(filter)
+        .sort(sort)
+        .skip(skip)
+        .limit(parseInt(limit))
+        .lean(),
+      ItemModel.countDocuments(filter),
+    ]);
+
+    res.status(200).json({
+      items,
+      total,
+      page: parseInt(page),
+      totalPages: Math.ceil(total / parseInt(limit)),
     });
+  } catch (err) {
+    console.error("Error fetching items:", err);
+    res.status(500).json({ message: "Erreur interne du serveur" });
+  }
 };
 
 module.exports.createItem = async (req, res) => {
@@ -42,15 +77,12 @@ module.exports.createItem = async (req, res) => {
       denomination,
       fournisseur,
       etat,
-      quantite,
+      quantite: parseInt(quantite, 10) || 0,
       posterId,
       modifierName,
     });
 
-    // Récupération de tous les articles après la création de l'article
-    const sortedItems = await ItemModel.find().sort({ denomination: 1 });
-
-    return res.status(200).json({ item: item._id, sortedItems });
+    return res.status(201).json({ item });
   } catch (err) {
     const errors = createItemErrors(err);
     return res.status(400).json({ errors });

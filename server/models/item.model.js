@@ -13,15 +13,18 @@ const ItemSchema = new mongoose.Schema(
       type: String,
       trim: true,
       required: true,
-      unique: false,
+      index: true,
     },
     quantite: {
-      type: String,
+      type: Number,
       required: true,
+      default: 0,
+      min: 0,
     },
     fournisseur: {
       type: String,
       required: true,
+      index: true,
     },
     image: {
       type: String,
@@ -30,11 +33,17 @@ const ItemSchema = new mongoose.Schema(
     etat: {
       type: String,
       required: true,
+      index: true,
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
+
+// Index composé pour les filtres fréquents
+ItemSchema.index({ fournisseur: 1, etat: 1, denomination: 1 });
+// Index pour les requêtes de stock bas
+ItemSchema.index({ quantite: 1 });
 
 module.exports = mongoose.model("item", ItemSchema);

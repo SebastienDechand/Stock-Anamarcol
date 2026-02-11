@@ -1,8 +1,7 @@
 const jwt = require("jsonwebtoken");
 const UserModel = require("../models/user.model");
 
-// Test si l'utilisateur est connecté
-// Check du token
+// Vérifie si l'utilisateur est connecté (non bloquant)
 module.exports.checkUser = (req, res, next) => {
   const token = req.cookies.jwt;
   if (token) {
@@ -11,7 +10,9 @@ module.exports.checkUser = (req, res, next) => {
         res.locals.user = null;
         next();
       } else {
-        let user = await UserModel.findById(decodedToken.id);
+        let user = await UserModel.findById(decodedToken.id)
+          .select("-password")
+          .lean();
         res.locals.user = user;
         next();
       }
@@ -22,19 +23,53 @@ module.exports.checkUser = (req, res, next) => {
   }
 };
 
-// Check si l'utilisateur est connecté
+// Authentification requise (bloquant - renvoie 401)
 module.exports.requireAuth = (req, res, next) => {
   const token = req.cookies.jwt;
-  if (token) {
-    jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(decodedToken.id);
-        next();
-      }
-    });
-  } else {
-    console.log("No token");
+  if (!token) {
+    return res.status(401).json({ message: "Authentification requise" });
   }
+
+  jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) => {
+    if (err) {
+      return res.status(401).json({ message: "Token invalide ou expiré" });
+    }
+
+    const user = await UserModel.findById(decodedToken.id)
+      .select("-password")
+      .lean();
+    if (!user) {
+      return res.status(401).json({ message: "Utilisateur introuvable" });
+    }
+
+    res.locals.user = user;
+    next();
+  });
+};
+
+// Vérifie que l'utilisateur est admin
+module.exports.requireAdmin = (req, res, next) => {
+  const token = req.cookies.jwt;
+  if (!token) {
+    return res.status(401).json({ message: "Authentification requise" });
+  }
+
+  jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) => {
+    if (err) {
+      return res.status(401).json({ message: "Token invalide ou expiré" });
+    }
+
+    const user = await UserModel.findById(decodedToken.id)
+      .select("-password")
+      .lean();
+    if (!user) {
+      return res.status(401).json({ message: "Utilisateur introuvable" });
+    }
+    if (user.role !== "admin") {
+      return res.status(403).json({ message: "Accès refusé - admin requis" });
+    }
+
+    res.locals.user = user;
+    next();
+  });
 };

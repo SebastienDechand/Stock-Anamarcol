@@ -39,7 +39,7 @@ module.exports.signIn = async (req, res) => {
       secure: true,
       sameSite: "None",
     });
-    res.status(200).json({ user: user._id });
+    res.status(200).json({ user: user._id, role: user.role });
   } catch (err) {
     const errors = signInErrors(err);
     res.status(400).json({ errors });

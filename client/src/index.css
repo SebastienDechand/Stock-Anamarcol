@@ -1,113 +1,52 @@
-body {
-  margin: 0;
-  font-family: "Montserrat";
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
-  max-width: 100%;
-  max-height: 100vh;
-  background-color: #f5f1e3;
-}
-@media screen and (max-width: 1100px) {
-  body {
-    overflow-y: auto;
-  }
-}
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-}
-ul {
-  margin: 0;
-}
-li {
-  list-style: none;
-}
-button {
-  cursor: pointer;
-  font-family: "Montserrat";
-}
-p {
-  font-size: 14px;
-}
-a {
-  text-decoration: none;
-  color: white;
-}
-i {
-  color: black;
-  cursor: pointer;
-}
-.spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin: auto;
-  height: 100vh;
-  background-color: rgb(245, 241, 227, 0.2);
-  position: absolute;
-  width: 100vw;
-}
-.login-false {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  gap: 10vh;
-}
-.login-false h1,
-h2 a {
-  color: black;
-}
-.flex-row {
-  display: flex;
-}
-.flex-col {
-  display: flex;
-  flex-direction: column;
-}
-.red {
-  color: red;
-  font-weight: bold;
-}
-.closed ~ .main-content {
-  transform: translateX(calc(-50vw + 50%));
-  transition: transform 0.3s ease-in-out;
-}
-.visible ~ .main-content {
-  transform: translateX(0);
-  transition: transform 0.3s ease-in-out;
-}
-.menu-all ~ .main-content.closed {
-  transform: translateX(calc(-50vw + 50%));
-  transition: transform 0.3s ease-in-out;
-}
-.menu-all ~ .main-content.visible {
-  transform: translateX(0);
-  transition: transform 0.3s ease-in-out;
-}
-.toggle-menu-button.sticky {
-  transform: translateX(-15vw);
-  transition: transform 0.3s ease-in-out;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Responsive */
-@media screen and (max-width: 1000px) {
-  h1 {
-    font-size: 28px;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+
+@layer base {
+  * {
+    @apply box-border;
   }
-}
-@media screen and (max-width: 750px) {
-  h1 {
-    font-size: 24px;
+  body {
+    @apply m-0 font-sans antialiased bg-black text-gray-900;
+  }
+  ul {
+    @apply m-0 p-0;
+  }
+  li {
+    @apply list-none;
+  }
+  button {
+    @apply cursor-pointer font-sans;
   }
   a {
-    font-size: 13px;
+    @apply no-underline text-inherit;
   }
-  .toggle-menu-button.sticky {
-    transform: translateX(-90vw);
-    transition: transform 0.3s ease-in-out;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer components {
+  /* Scrollbar stylée */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400;
   }
 }

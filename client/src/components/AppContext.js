@@ -5,6 +5,7 @@ export const UidContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [uid, setUid] = useState(null);
+  const [role, setRole] = useState(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   useEffect(() => {
@@ -13,14 +14,20 @@ export const AuthProvider = ({ children }) => {
         withCredentials: true,
       })
       .then((res) => {
-        setUid(res.data);
+        setUid(res.data._id || res.data);
+        setRole(res.data.role || "user");
       })
-      .catch(() => setUid(null))
+      .catch(() => {
+        setUid(null);
+        setRole(null);
+      })
       .finally(() => setIsAuthLoading(false));
   }, []);
 
+  const isAdmin = role === "admin";
+
   return (
-    <UidContext.Provider value={{ uid, isAuthLoading }}>
+    <UidContext.Provider value={{ uid, role, isAdmin, isAuthLoading }}>
       {children}
     </UidContext.Provider>
   );
