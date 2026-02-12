@@ -7,7 +7,7 @@ export const UPDATE_NUMERO = "UPDATE_NUMERO";
 export const getUser = (uid) => {
   return (dispatch) => {
     return axios
-      .get(`${process.env.REACT_APP_API_URL}api/user/${uid}`)
+      .get(`${import.meta.env.VITE_API_URL}api/user/${uid}`)
       .then((res) => {
         dispatch({ type: GET_USER, payload: res.data });
       })
@@ -18,10 +18,10 @@ export const getUser = (uid) => {
 export const uploadPicture = (data, id) => {
   return (dispatch) => {
     return axios
-      .post(`${process.env.REACT_APP_API_URL}api/user/upload`, data)
+      .post(`${import.meta.env.VITE_API_URL}api/user/upload`, data)
       .then(() => {
         return axios
-          .get(`${process.env.REACT_APP_API_URL}api/user/${id}`)
+          .get(`${import.meta.env.VITE_API_URL}api/user/${id}`)
           .then((res) => {
             dispatch({ type: UPLOAD_PICTURE, payload: res.data.picture });
           });
@@ -37,7 +37,7 @@ export const updateNumero = (userId, numero) => {
   return (dispatch) => {
     return axios({
       method: "put",
-      url: `${process.env.REACT_APP_API_URL}api/user/` + userId,
+      url: `${import.meta.env.VITE_API_URL}api/user/` + userId,
       data: { numero },
       withCredentials: true,
     })

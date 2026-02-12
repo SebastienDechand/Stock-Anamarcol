@@ -11,7 +11,7 @@ export default function Logout() {
     const logout = async () => {
         await axios({
             method: 'get',
-            url: `${process.env.REACT_APP_API_URL}api/user/logout`,
+            url: `${import.meta.env.VITE_API_URL}api/user/logout`,
             withCredentials: true
         })
         .then(() => removeCookie('jwt'))

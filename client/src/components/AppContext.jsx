@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}jwtid`, {
+      .get(`${import.meta.env.VITE_API_URL}jwtid`, {
         withCredentials: true,
       })
       .then((res) => {

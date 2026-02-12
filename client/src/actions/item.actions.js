@@ -22,7 +22,7 @@ export const addItem = (newItem) => {
   return async (dispatch) => {
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}api/item/`,
+        `${import.meta.env.VITE_API_URL}api/item/`,
         newItem,
       );
 
@@ -62,7 +62,7 @@ export const updateQuantite = (
 
     return axios({
       method: "put",
-      url: `${process.env.REACT_APP_API_URL}api/item/${itemId}`,
+      url: `${import.meta.env.VITE_API_URL}api/item/${itemId}`,
       data: { quantite: numericQuantite, modifierName, operation },
       withCredentials: true,
     })
@@ -105,7 +105,7 @@ export const setSelectedItemId = (itemId) => {
         dispatch({ type: SET_SELECTED_ITEM_ID, payload: null });
       } else {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/item/${itemId}`,
+          `${import.meta.env.VITE_API_URL}api/item/${itemId}`,
         );
         dispatch({ type: SET_SELECTED_ITEM_ID, payload: response.data });
       }
@@ -123,10 +123,10 @@ export const uploadItemPicture = (data, id, modifierId) => {
     data.append("modifierId", modifierId);
 
     return axios
-      .post(`${process.env.REACT_APP_API_URL}api/item/upload`, data)
+      .post(`${import.meta.env.VITE_API_URL}api/item/upload`, data)
       .then(() => {
         return axios
-          .get(`${process.env.REACT_APP_API_URL}api/item/${id}`)
+          .get(`${import.meta.env.VITE_API_URL}api/item/${id}`)
           .then((res) => {
             dispatch({ type: UPLOAD_ITEM_PICTURE, payload: res.data.image });
             dispatch(getAllItems());
@@ -142,7 +142,7 @@ export const uploadItemPicture = (data, id, modifierId) => {
 export const deleteItem = (itemId, fournisseur, etat) => {
   return async (dispatch) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}api/item/${itemId}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}api/item/${itemId}`);
 
       dispatch({
         type: DELETE_ITEM_SUCCESS,

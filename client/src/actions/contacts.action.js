@@ -10,7 +10,7 @@ export const UPDATE_CONTACT = "UPDATE_CONTACT";
 export const getContact = (id) => {
   return (dispatch) => {
     return axios
-      .get(`${process.env.REACT_APP_API_URL}api/contacts/${id}`)
+      .get(`${import.meta.env.VITE_API_URL}api/contacts/${id}`)
       .then((res) => {
         dispatch({ type: GET_CONTACT, payload: res.data });
       })
@@ -21,7 +21,7 @@ export const getContact = (id) => {
 export const getAllContacts = () => {
   return (dispatch) => {
     return axios
-      .get(`${process.env.REACT_APP_API_URL}api/contacts/`)
+      .get(`${import.meta.env.VITE_API_URL}api/contacts/`)
       .then((res) => {
         dispatch({ type: GET_ALL_CONTACTS, payload: res.data });
       })
@@ -36,7 +36,7 @@ export const setSelectedContactId = (contactId) => {
         dispatch({ type: SET_SELECTED_CONTACT_ID, payload: null });
       } else {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}api/contacts/${contactId}`,
+          `${import.meta.env.VITE_API_URL}api/contacts/${contactId}`,
         );
         dispatch({ type: SET_SELECTED_CONTACT_ID, payload: response.data });
       }
@@ -52,10 +52,10 @@ export const setSelectedContactId = (contactId) => {
 export const uploadContactPicture = (data, id) => {
   return (dispatch) => {
     return axios
-      .post(`${process.env.REACT_APP_API_URL}api/contacts/upload`, data)
+      .post(`${import.meta.env.VITE_API_URL}api/contacts/upload`, data)
       .then(() => {
         return axios
-          .get(`${process.env.REACT_APP_API_URL}api/contact/${id}`)
+          .get(`${import.meta.env.VITE_API_URL}api/contact/${id}`)
           .then((res) => {
             dispatch({
               type: UPLOAD_CONTACT_PICTURE,
@@ -80,7 +80,7 @@ export const updateContact = (contactId, updatedInfo) => {
   return (dispatch) => {
     return axios({
       method: "put",
-      url: `${process.env.REACT_APP_API_URL}api/contacts/` + contactId,
+      url: `${import.meta.env.VITE_API_URL}api/contacts/` + contactId,
       data: updatedInfo,
       withCredentials: true,
     })

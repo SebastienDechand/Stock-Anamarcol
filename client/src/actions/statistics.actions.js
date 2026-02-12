@@ -17,7 +17,7 @@ export const fetchStatistics = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/statistics/articles`,
+        `${import.meta.env.VITE_API_URL}api/statistics/articles`,
       );
       const data = response.data;
 
@@ -32,7 +32,7 @@ export const fetchTotalStock = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/statistics/stock`,
+        `${import.meta.env.VITE_API_URL}api/statistics/stock`,
       );
       const data = response.data;
 
@@ -46,7 +46,7 @@ export const fetchNumberOfSuppliers = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/statistics/fournisseurs`,
+        `${import.meta.env.VITE_API_URL}api/statistics/fournisseurs`,
       );
       const data = response.data;
 
@@ -64,7 +64,7 @@ export const fetchNumberOfArticlesWithStockBelow5 = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/statistics/articles/stockinf5`,
+        `${import.meta.env.VITE_API_URL}api/statistics/articles/stockinf5`,
       );
       const data = response.data;
 
@@ -82,7 +82,7 @@ export const fetchArticlesWithLowStock = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/statistics/articles/low-stock`,
+        `${import.meta.env.VITE_API_URL}api/statistics/articles/low-stock`,
       );
 
       dispatch({
@@ -104,7 +104,7 @@ export const fetchFournisseursList = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/statistics/fournisseurs/list`,
+        `${import.meta.env.VITE_API_URL}api/statistics/fournisseurs/list`,
       );
       const data = response.data;
 
@@ -125,7 +125,7 @@ export const fetchStatisticsForFournisseur = (fournisseur) => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/statistics/fournisseurs/${fournisseur}`,
+        `${import.meta.env.VITE_API_URL}api/statistics/fournisseurs/${fournisseur}`,
       );
       const data = response.data;
 
@@ -148,7 +148,7 @@ export const fetchEtatsList = () => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/statistics/etats/list`,
+        `${import.meta.env.VITE_API_URL}api/statistics/etats/list`,
       );
       const data = response.data;
 
@@ -169,7 +169,7 @@ export const fetchStatisticsForEtat = (etat) => {
   return async (dispatch) => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/statistics/etats/${etat}`,
+        `${import.meta.env.VITE_API_URL}api/statistics/etats/${etat}`,
       );
       const data = response.data;
 

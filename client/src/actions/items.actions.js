@@ -5,7 +5,7 @@ export const GET_ALL_ITEMS = "GET_ALL_ITEMS";
 export const getAllItems = () => {
   return (dispatch) => {
     return axios
-      .get(`${process.env.REACT_APP_API_URL}api/item/?limit=9999`)
+      .get(`${import.meta.env.VITE_API_URL}api/item/?limit=9999`)
       .then((res) => {
         const data = res.data;
         // Support both paginated { items } and flat array responses

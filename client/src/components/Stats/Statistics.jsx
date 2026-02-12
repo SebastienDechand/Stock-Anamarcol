@@ -31,7 +31,7 @@ const Statistiques = () => {
       for (const fournisseur of fournisseursList) {
         try {
           const responseFournisseur = await axios.get(
-            `${process.env.REACT_APP_API_URL}api/statistics/fournisseurs/${fournisseur}`
+            `${import.meta.env.VITE_API_URL}api/statistics/fournisseurs/${fournisseur}`
           );
           const dataFournisseur = responseFournisseur.data;
           dispatch(setFournisseurStatistics(dataFournisseur, fournisseur));

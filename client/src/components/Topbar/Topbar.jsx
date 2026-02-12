@@ -12,7 +12,7 @@ export default function Topbar({ onToggleSidebar }) {
 
   const handleLogout = async () => {
     try {
-      await axios.get(`${process.env.REACT_APP_API_URL}api/user/logout`, {
+      await axios.get(`${import.meta.env.VITE_API_URL}api/user/logout`, {
         withCredentials: true,
       });
       cookie.remove("jwt", { expires: 1 });
