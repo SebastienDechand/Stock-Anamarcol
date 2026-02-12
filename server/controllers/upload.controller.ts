@@ -1,0 +1,31 @@
+import { Request, Response } from "express";
+import UserModel from "../models/user.model";
+import { validateUploadedFile, writeUploadedFile } from "../utils/upload.utils";
+
+export const uploadProfil = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  if (!validateUploadedFile(req, res)) return;
+
+  const fileName = req.body.name + ".jpg";
+
+  try {
+    const picturePath = await writeUploadedFile(
+      req.file!.buffer,
+      fileName,
+      "profil",
+    );
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      req.body.userId,
+      { $set: { picture: picturePath } },
+      { new: true, upsert: true, setDefaultsOnInsert: true },
+    );
+
+    res.json(updatedUser);
+  } catch (err) {
+    console.error("File upload or database update error:", err);
+    res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+};

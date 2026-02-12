@@ -59,7 +59,7 @@ jobs:
 
       - name: Run tests
         working-directory: ./client
-        run: npm test -- --ci --coverage --watchAll=false
+        run: npm test
 
       - name: Upload coverage
         if: always()
