@@ -89,7 +89,12 @@ export interface ItemState {
 }
 
 export interface ItemsState {
+  allItems: Item[];
   items: Item[];
+  total: number;
+  page: number;
+  totalPages: number;
+  isLoading: boolean;
 }
 
 export interface MenuState {

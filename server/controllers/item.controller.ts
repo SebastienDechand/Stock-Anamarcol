@@ -29,6 +29,9 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
       fournisseur = "",
       etat = "",
       lowStock,
+      prepaCG,
+      prepaCaisse,
+      prepaTPV,
       sortBy = "denomination",
       sortOrder = "asc",
     } = req.query;
@@ -46,6 +49,15 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
     }
     if (lowStock === "true") {
       filter.quantite = { $lt: 5 };
+    }
+    if (prepaCG === "true") {
+      filter.prepaCG = true;
+    }
+    if (prepaCaisse === "true") {
+      filter.prepaCaisse = true;
+    }
+    if (prepaTPV === "true") {
+      filter.prepaTPV = true;
     }
 
     const sort: Record<string, 1 | -1> = {
@@ -78,7 +90,7 @@ export const createItem = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const { denomination, quantite, fournisseur, etat, posterId, modifierName } =
+  const { denomination, quantite, fournisseur, etat, posterId, modifierName, prepaCG, prepaCaisse, prepaTPV } =
     req.body;
   try {
     const item = await ItemModel.create({
@@ -88,6 +100,9 @@ export const createItem = async (
       quantite: parseInt(quantite, 10) || 0,
       posterId,
       modifierName,
+      prepaCG: prepaCG || false,
+      prepaCaisse: prepaCaisse || false,
+      prepaTPV: prepaTPV || false,
     });
 
     res.status(201).json({ item });
@@ -121,6 +136,16 @@ export const updateItem = async (
 
     if (req.body.image) item.image = req.body.image;
     if (req.body.modifierName) item.modifierName = req.body.modifierName;
+
+    if (Object.prototype.hasOwnProperty.call(req.body, "prepaCG")) {
+      item.prepaCG = req.body.prepaCG;
+    }
+    if (Object.prototype.hasOwnProperty.call(req.body, "prepaCaisse")) {
+      item.prepaCaisse = req.body.prepaCaisse;
+    }
+    if (Object.prototype.hasOwnProperty.call(req.body, "prepaTPV")) {
+      item.prepaTPV = req.body.prepaTPV;
+    }
 
     const updatedItem = await item.save();
     res.status(200).json({ item: updatedItem });

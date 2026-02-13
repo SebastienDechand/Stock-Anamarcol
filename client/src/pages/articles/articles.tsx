@@ -1,7 +1,8 @@
-import { useEffect, useState, useCallback, useContext } from "react";
+import { useEffect, useState, useCallback, useContext, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks/redux";
-import { getAllItems } from "../../actions/items.actions";
+import { fetchItems } from "../../actions/items.actions";
+import type { FetchItemsParams } from "../../actions/items.actions";
 import {
   deleteItem,
   setSelectedItemId,
@@ -20,6 +21,7 @@ import {
   PlusCircle,
   Trash2,
   X,
+  Loader2,
 } from "lucide-react";
 import type { Item, ItemsState, User } from "../../types";
 import { FOURNISSEURS, ETATS } from "../../constants";
@@ -59,12 +61,14 @@ export default function Articles() {
   const userId = useSelector(
     (state: { userReducer: Partial<User> }) => state.userReducer._id,
   );
-  const itemsData = useSelector(
-    (state: { itemsReducer: ItemsState }) => state.itemsReducer.items || [],
+
+  const { items: pageItems, totalPages, isLoading } = useSelector(
+    (state: { itemsReducer: ItemsState }) => state.itemsReducer,
   );
   const itemsPerPage = useResponsiveItemsPerPage();
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [fournisseurFilter, setFournisseurFilter] = useState<string[]>([]);
   const [etatFilter, setEtatFilter] = useState<string[]>([]);
   const [prepaFilter, setPrepaFilter] = useState<string[]>([]);
@@ -73,40 +77,40 @@ export default function Articles() {
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
+  // Debounce search input (300ms)
   useEffect(() => {
-    if (!itemsData.length) dispatch(getAllItems());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
-  const filteredItems = itemsData.filter((item: Item) => {
-    const matchSearch =
-      !search ||
-      item.denomination?.toLowerCase().includes(search.toLowerCase());
-    const matchFournisseur =
-      fournisseurFilter.length === 0 ||
-      fournisseurFilter.includes(item.fournisseur);
-    const matchEtat =
-      etatFilter.length === 0 || etatFilter.includes(item.etat);
-    const matchPrepa =
-      prepaFilter.length === 0 ||
-      prepaFilter.some((p) => {
-        if (p === "CashGuard") return item.prepaCG;
-        if (p === "Caisse OHXHOO") return item.prepaCaisse;
-        if (p === "Caisse TPV") return item.prepaTPV;
-        return false;
-      });
-    return matchSearch && matchFournisseur && matchEtat && matchPrepa;
-  });
-
-  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-  const pageItems = filteredItems.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
-
+  // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, fournisseurFilter, etatFilter, prepaFilter, itemsPerPage]);
+  }, [debouncedSearch, fournisseurFilter, etatFilter, prepaFilter, itemsPerPage]);
+
+  // Build fetch params
+  const fetchParams = useMemo<FetchItemsParams>(() => {
+    const params: FetchItemsParams = {
+      page: currentPage,
+      limit: itemsPerPage,
+    };
+    if (debouncedSearch) params.search = debouncedSearch;
+    if (fournisseurFilter.length) params.fournisseur = fournisseurFilter;
+    if (etatFilter.length) params.etat = etatFilter;
+    if (prepaFilter.includes("CashGuard")) params.prepaCG = true;
+    if (prepaFilter.includes("Caisse OHXHOO")) params.prepaCaisse = true;
+    if (prepaFilter.includes("Caisse TPV")) params.prepaTPV = true;
+    return params;
+  }, [currentPage, itemsPerPage, debouncedSearch, fournisseurFilter, etatFilter, prepaFilter]);
+
+  // Fetch items from server whenever params change
+  useEffect(() => {
+    dispatch(fetchItems(fetchParams));
+  }, [dispatch, fetchParams]);
+
+  const refetchItems = useCallback(() => {
+    dispatch(fetchItems(fetchParams));
+  }, [dispatch, fetchParams]);
 
   const toggleFournisseur = useCallback((f: string) => {
     setFournisseurFilter((prev) =>
@@ -134,7 +138,7 @@ export default function Articles() {
     operation: string,
   ) => {
     e.stopPropagation();
-    const item = itemsData.find((i: Item) => i._id === itemId);
+    const item = pageItems.find((i: Item) => i._id === itemId);
     if (!item) return;
     const qty = Number(item.quantite);
     const newQty = operation === "increment" ? qty + 1 : qty - 1;
@@ -156,6 +160,7 @@ export default function Articles() {
     dispatch(setSelectedItemId(null));
     dispatch(setSelectedItemQuantite(null));
     setIsItemModalOpen(false);
+    refetchItems();
   };
 
   const getBadge = (qty: number | string) => {
@@ -276,8 +281,15 @@ export default function Articles() {
         </div>
       </div>
 
+      {/* Loading overlay */}
+      {isLoading && (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 size={32} className="animate-spin text-brand-600" />
+        </div>
+      )}
+
       {/* Items grid */}
-      {pageItems.length > 0 ? (
+      {!isLoading && pageItems.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3">
           {pageItems.map((item: Item) => (
             <div
@@ -374,7 +386,10 @@ export default function Articles() {
             </div>
           ))}
         </div>
-      ) : (
+      )}
+
+      {/* Empty state */}
+      {!isLoading && pageItems.length === 0 && (
         <div className="text-center py-16 text-gray-400 text-sm">
           Aucun article ne correspond à vos critères.
         </div>
@@ -432,7 +447,10 @@ export default function Articles() {
       {/* Modals */}
       {isAddModalOpen && userId && (
         <AddModal
-          onClose={() => setIsAddModalOpen(false)}
+          onClose={() => {
+            setIsAddModalOpen(false);
+            refetchItems();
+          }}
           posterId={userId}
           modifierId={userId}
         />
