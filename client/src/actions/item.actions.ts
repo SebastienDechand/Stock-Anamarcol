@@ -15,6 +15,7 @@ export const SET_SELECTED_ITEM_QUANTITE = "SET_SELECTED_ITEM_QUANTITE";
 export const SET_SELECTED_ITEM_INFO = "SET_SELECTED_ITEM_INFO";
 export const UPDATE_QUANTITE = "UPDATE_QUANTITE";
 export const UPDATE_QUANTITE_SUCCESS = "UPDATE_QUANTITE_SUCCESS";
+export const UPDATE_ITEM_SUCCESS = "UPDATE_ITEM_SUCCESS";
 export const SET_MODIFIER_NAME = "SET_MODIFIER_NAME";
 export const SET_SELECTED_ITEM_ID = "SET_SELECTED_ITEM_ID";
 export const UPLOAD_ITEM_PICTURE = "UPLOAD_ITEM_PICTURE";
@@ -99,6 +100,35 @@ export const updateQuantite = (
         dispatch(getAllItems());
       })
       .catch((err) => console.error(err));
+  };
+};
+
+export const updateItem = (
+  itemId: string,
+  fields: {
+    denomination?: string;
+    fournisseur?: string;
+    etat?: string;
+    quantite?: number;
+    modifierName?: string;
+  },
+) => {
+  return async (dispatch: AppDispatch) => {
+    try {
+      await axios({
+        method: "put",
+        url: `${import.meta.env.VITE_API_URL}api/item/${itemId}`,
+        data: fields,
+        withCredentials: true,
+      });
+
+      dispatch({ type: UPDATE_ITEM_SUCCESS, payload: { itemId, ...fields } });
+      dispatch(fetchArticlesWithLowStock());
+      dispatch(getAllItems());
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour de l'article :", err);
+      throw err;
+    }
   };
 };
 
