@@ -22,7 +22,7 @@ import {
   X,
 } from "lucide-react";
 import type { Item, ItemsState, User } from "../../types";
-import { FOURNISSEURS } from "../../constants";
+import { FOURNISSEURS, ETATS } from "../../constants";
 
 function useResponsiveItemsPerPage() {
   const getCount = () => {
@@ -66,6 +66,8 @@ export default function Articles() {
 
   const [search, setSearch] = useState("");
   const [fournisseurFilter, setFournisseurFilter] = useState<string[]>([]);
+  const [etatFilter, setEtatFilter] = useState<string[]>([]);
+  const [prepaFilter, setPrepaFilter] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
@@ -83,7 +85,17 @@ export default function Articles() {
     const matchFournisseur =
       fournisseurFilter.length === 0 ||
       fournisseurFilter.includes(item.fournisseur);
-    return matchSearch && matchFournisseur;
+    const matchEtat =
+      etatFilter.length === 0 || etatFilter.includes(item.etat);
+    const matchPrepa =
+      prepaFilter.length === 0 ||
+      prepaFilter.some((p) => {
+        if (p === "CashGuard") return item.prepaCG;
+        if (p === "Caisse OHXHOO") return item.prepaCaisse;
+        if (p === "Caisse TPV") return item.prepaTPV;
+        return false;
+      });
+    return matchSearch && matchFournisseur && matchEtat && matchPrepa;
   });
 
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
@@ -94,11 +106,25 @@ export default function Articles() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, fournisseurFilter, itemsPerPage]);
+  }, [search, fournisseurFilter, etatFilter, prepaFilter, itemsPerPage]);
 
   const toggleFournisseur = useCallback((f: string) => {
     setFournisseurFilter((prev) =>
       prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f],
+    );
+  }, []);
+
+  const toggleEtat = useCallback((e: string) => {
+    setEtatFilter((prev) =>
+      prev.includes(e) ? prev.filter((x) => x !== e) : [...prev, e],
+    );
+  }, []);
+
+  const PREPARATIONS = ["CashGuard", "Caisse OHXHOO", "Caisse TPV"] as const;
+
+  const togglePrepa = useCallback((p: string) => {
+    setPrepaFilter((prev) =>
+      prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p],
     );
   }, []);
 
@@ -185,7 +211,8 @@ export default function Articles() {
           </div>
         </div>
 
-        <div className="flex gap-1.5 overflow-x-auto no-scrollbar sm:flex-wrap sm:overflow-visible">
+        <div className="flex gap-1.5 overflow-x-auto no-scrollbar sm:flex-wrap sm:overflow-visible items-center">
+          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide shrink-0">Fournisseurs</span>
           {FOURNISSEURS.map((f) => (
             <button
               key={f}
@@ -199,10 +226,48 @@ export default function Articles() {
               {f}
             </button>
           ))}
-          {fournisseurFilter.length > 0 && (
+        </div>
+
+        <div className="flex gap-1.5 overflow-x-auto no-scrollbar sm:flex-wrap sm:overflow-visible items-center">
+          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide shrink-0">État</span>
+          {ETATS.map((e) => (
             <button
-              onClick={() => setFournisseurFilter([])}
-              className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors"
+              key={e}
+              onClick={() => toggleEtat(e)}
+              className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors shrink-0 ${
+                etatFilter.includes(e)
+                  ? "bg-emerald-600 text-white border-emerald-600"
+                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              {e}
+            </button>
+          ))}
+          <span className="w-px bg-gray-300 mx-1 self-stretch shrink-0" />
+          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide shrink-0">Prépa</span>
+          {PREPARATIONS.map((p) => (
+            <button
+              key={p}
+              onClick={() => togglePrepa(p)}
+              className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors shrink-0 ${
+                prepaFilter.includes(p)
+                  ? "bg-violet-600 text-white border-violet-600"
+                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+          {(fournisseurFilter.length > 0 ||
+            etatFilter.length > 0 ||
+            prepaFilter.length > 0) && (
+            <button
+              onClick={() => {
+                setFournisseurFilter([]);
+                setEtatFilter([]);
+                setPrepaFilter([]);
+              }}
+              className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors shrink-0 ml-auto"
             >
               <X size={12} />
               Tout effacer
