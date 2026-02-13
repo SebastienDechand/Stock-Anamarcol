@@ -1,7 +1,6 @@
 // ─── Fournisseurs ────────────────────────────────────
 export const FOURNISSEURS = [
   "Amazon",
-  "Aures",
   "CashGuard",
   "LDLC",
   "MD Ouest",

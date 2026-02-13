@@ -56,7 +56,7 @@ export const uploadContactPicture = (data: FormData, id: string) => {
       .post(`${import.meta.env.VITE_API_URL}api/contacts/upload`, data)
       .then(() => {
         return axios
-          .get(`${import.meta.env.VITE_API_URL}api/contact/${id}`)
+          .get(`${import.meta.env.VITE_API_URL}api/contacts/${id}`)
           .then((res) => {
             dispatch({
               type: UPLOAD_CONTACT_PICTURE,

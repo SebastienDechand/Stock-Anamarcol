@@ -39,6 +39,7 @@ export const addItem = (newItem: NewItem) => {
 
       dispatch({ type: ADD_ITEM_SUCCESS, payload: res.data.item });
       dispatch(getAllItems());
+      return res.data.item;
     } catch (err: unknown) {
       const error = err as {
         response?: { data?: { errors?: Record<string, string> } };

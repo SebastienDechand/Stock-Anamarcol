@@ -1,8 +1,4 @@
 import { Request, Response } from "express";
-import fs from "fs";
-import stream from "stream";
-import { pipeline } from "stream/promises";
-import path from "path";
 import { uploadErrors } from "../errors.utils";
 import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "../constants";
 
@@ -37,22 +33,34 @@ export function validateUploadedFile(req: Request, res: Response): boolean {
 }
 
 /**
- * Écrit le buffer du fichier uploadé sur le disque.
+ * Upload un buffer d'image vers ImgBB et retourne l'URL publique.
  */
-export async function writeUploadedFile(
+export async function uploadToImgBB(
   fileBuffer: Buffer,
   fileName: string,
-  uploadDir: string,
 ): Promise<string> {
-  const filePath = path.join(
-    __dirname,
-    `/../../client/public/uploads/${uploadDir}/${fileName}`,
-  );
+  const apiKey = process.env.IMGBB_API_KEY;
+  if (!apiKey) {
+    throw new Error("IMGBB_API_KEY is not defined in environment variables");
+  }
 
-  const bufferStream = new stream.PassThrough();
-  bufferStream.end(fileBuffer);
+  const base64Image = fileBuffer.toString("base64");
 
-  await pipeline(bufferStream, fs.createWriteStream(filePath));
+  const formData = new FormData();
+  formData.append("key", apiKey);
+  formData.append("image", base64Image);
+  formData.append("name", fileName);
 
-  return `/uploads/${uploadDir}/${fileName}`;
+  const response = await fetch("https://api.imgbb.com/1/upload", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(`ImgBB upload failed (${response.status}): ${errorBody}`);
+  }
+
+  const result = (await response.json()) as { data: { url: string } };
+  return result.data.url;
 }

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks/redux";
-import { updateNumero } from "../../actions/user.actions";
+import { updateNumero, uploadPicture } from "../../actions/user.actions";
 import { dateParser } from "../../Utils";
+import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "../../constants";
 import {
   User,
   Mail,
@@ -12,6 +13,7 @@ import {
   Pencil,
   Check,
   X,
+  Camera,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { User as UserType } from "../../types";
@@ -23,6 +25,32 @@ export default function Profil() {
   );
   const [numero, setNumero] = useState("");
   const [editingNumero, setEditingNumero] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePictureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadError("");
+
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type as (typeof ACCEPTED_IMAGE_TYPES)[number])) {
+      setUploadError("Format non supporté. Utilisez JPG ou PNG.");
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      setUploadError("Fichier trop volumineux (max 2.5 Mo).");
+      return;
+    }
+
+    const data = new FormData();
+    data.append("name", userData.pseudo || "profil");
+    data.append("userId", userData._id || "");
+    data.append("file", file);
+
+    dispatch(uploadPicture(data, userData._id || "")).catch(() =>
+      setUploadError("Erreur lors de l'upload."),
+    );
+  };
 
   const handleUpdate = () => {
     if (userData._id) {
@@ -38,11 +66,29 @@ export default function Profil() {
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
         {/* Header with avatar */}
         <div className="bg-gradient-to-br from-brand-50 to-brand-100/40 px-6 py-8 flex flex-col items-center">
-          <img
-            src={userData.picture}
-            alt={userData.pseudo}
-            className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
-          />
+          <div
+            className="relative group cursor-pointer"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <img
+              src={userData.picture}
+              alt={userData.pseudo}
+              className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+              <Camera size={24} className="text-white" />
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpg,image/jpeg,image/png"
+              className="hidden"
+              onChange={handlePictureUpload}
+            />
+          </div>
+          {uploadError && (
+            <p className="text-xs text-red-500 mt-2">{uploadError}</p>
+          )}
           <h2 className="text-lg font-bold text-gray-800 mt-3">
             {userData.pseudo}
           </h2>

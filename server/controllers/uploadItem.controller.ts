@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import ItemModel from "../models/item.model";
-import { validateUploadedFile, writeUploadedFile } from "../utils/upload.utils";
+import { validateUploadedFile, uploadToImgBB } from "../utils/upload.utils";
 
 export const uploadItem = async (
   req: Request,
@@ -12,15 +12,11 @@ export const uploadItem = async (
     req.body.denomination + req.body.fournisseur + req.body.etat + ".jpg";
 
   try {
-    const imagePath = await writeUploadedFile(
-      req.file!.buffer,
-      fileName,
-      "items",
-    );
+    const imageUrl = await uploadToImgBB(req.file!.buffer, fileName);
 
     const updatedItem = await ItemModel.findByIdAndUpdate(
       req.body.itemId,
-      { $set: { image: imagePath } },
+      { $set: { image: imageUrl } },
       { new: true, upsert: true, setDefaultsOnInsert: true },
     );
 

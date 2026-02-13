@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import ContactModel from "../models/contact.model";
-import { validateUploadedFile, writeUploadedFile } from "../utils/upload.utils";
+import { validateUploadedFile, uploadToImgBB } from "../utils/upload.utils";
 
 export const uploadContact = async (
   req: Request,
@@ -11,15 +11,11 @@ export const uploadContact = async (
   const fileName = req.body.nom + ".jpg";
 
   try {
-    const picturePath = await writeUploadedFile(
-      req.file!.buffer,
-      fileName,
-      "contacts",
-    );
+    const pictureUrl = await uploadToImgBB(req.file!.buffer, fileName);
 
     const updatedContact = await ContactModel.findByIdAndUpdate(
       req.body.contactId,
-      { $set: { picture: picturePath } },
+      { $set: { picture: pictureUrl } },
       { new: true, upsert: true, setDefaultsOnInsert: true },
     );
 

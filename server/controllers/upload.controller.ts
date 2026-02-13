@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import UserModel from "../models/user.model";
-import { validateUploadedFile, writeUploadedFile } from "../utils/upload.utils";
+import { validateUploadedFile, uploadToImgBB } from "../utils/upload.utils";
 
 export const uploadProfil = async (
   req: Request,
@@ -11,15 +11,11 @@ export const uploadProfil = async (
   const fileName = req.body.name + ".jpg";
 
   try {
-    const picturePath = await writeUploadedFile(
-      req.file!.buffer,
-      fileName,
-      "profil",
-    );
+    const pictureUrl = await uploadToImgBB(req.file!.buffer, fileName);
 
     const updatedUser = await UserModel.findByIdAndUpdate(
       req.body.userId,
-      { $set: { picture: picturePath } },
+      { $set: { picture: pictureUrl } },
       { new: true, upsert: true, setDefaultsOnInsert: true },
     );
 

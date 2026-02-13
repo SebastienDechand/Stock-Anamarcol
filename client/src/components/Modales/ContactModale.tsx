@@ -1,6 +1,10 @@
+import { useState, useRef } from "react";
 import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../hooks/redux";
+import { uploadContactPicture } from "../../actions/contacts.action";
 import { dateParser } from "../../Utils";
-import { X, Mail, Phone, Globe, Briefcase } from "lucide-react";
+import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "../../constants";
+import { X, Mail, Phone, Globe, Briefcase, Camera } from "lucide-react";
 import type { ContactsState } from "../../types";
 
 interface ContactModaleProps {

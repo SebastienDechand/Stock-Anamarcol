@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useAppDispatch } from "../../hooks/redux";
-import { addItem } from "../../actions/item.actions";
-import { FOURNISSEURS, ETATS } from "../../constants";
-import { X } from "lucide-react";
+import { addItem, uploadItemPicture } from "../../actions/item.actions";
+import { FOURNISSEURS, ETATS, MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "../../constants";
+import { X, ImagePlus } from "lucide-react";
 
 interface AddModalProps {
   onClose: () => void;
@@ -16,9 +16,37 @@ const AddModal = ({ onClose, posterId, modifierId }: AddModalProps) => {
   const [quantite, setQuantite] = useState("");
   const [etat, setEtat] = useState("");
   const [error, setError] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [fileError, setFileError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useAppDispatch();
   const isFormValid = denomination && fournisseur && quantite && etat;
+
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+    setFileError("");
+
+    if (!ACCEPTED_IMAGE_TYPES.includes(selectedFile.type as (typeof ACCEPTED_IMAGE_TYPES)[number])) {
+      setFileError("Format non supporté. Utilisez JPG ou PNG.");
+      return;
+    }
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      setFileError("Fichier trop volumineux (max 2.5 Mo).");
+      return;
+    }
+
+    setFile(selectedFile);
+    setPreview(URL.createObjectURL(selectedFile));
+  };
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +54,7 @@ const AddModal = ({ onClose, posterId, modifierId }: AddModalProps) => {
     setError("");
 
     try {
-      await dispatch(
+      const newItem = await dispatch(
         addItem({
           denomination,
           fournisseur,
@@ -36,6 +64,17 @@ const AddModal = ({ onClose, posterId, modifierId }: AddModalProps) => {
           modifierId,
         }),
       );
+
+      if (file && newItem?._id) {
+        const data = new FormData();
+        data.append("denomination", denomination);
+        data.append("fournisseur", fournisseur);
+        data.append("etat", etat);
+        data.append("itemId", newItem._id);
+        data.append("file", file);
+        await dispatch(uploadItemPicture(data, newItem._id, modifierId));
+      }
+
       onClose();
     } catch {
       setError("Erreur lors de l'ajout de l'article.");
@@ -135,6 +174,39 @@ const AddModal = ({ onClose, posterId, modifierId }: AddModalProps) => {
               className={selectClass}
               placeholder="0"
             />
+          </div>
+
+          <div>
+            <label className={labelClass}>Image (optionnel)</label>
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full flex flex-col items-center justify-center gap-2 px-3 py-4 bg-gray-50 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-brand-400 hover:bg-brand-50/30 transition-colors"
+            >
+              {preview ? (
+                <img
+                  src={preview}
+                  alt="Aperçu"
+                  className="max-h-32 max-w-full object-contain rounded-lg"
+                />
+              ) : (
+                <>
+                  <ImagePlus size={24} className="text-gray-400" />
+                  <span className="text-xs text-gray-500">
+                    Cliquez pour sélectionner une image
+                  </span>
+                </>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpg,image/jpeg,image/png"
+                className="hidden"
+                onChange={handleFileSelect}
+              />
+            </div>
+            {fileError && (
+              <p className="text-xs text-red-500 mt-1">{fileError}</p>
+            )}
           </div>
 
           {error && (
