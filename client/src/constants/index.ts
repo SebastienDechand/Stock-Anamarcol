@@ -1,15 +1,16 @@
 // ─── Fournisseurs ────────────────────────────────────
 export const FOURNISSEURS = [
-  "CashGuard",
+  "Amazon",
   "Aures",
+  "CashGuard",
   "LDLC",
+  "MD Ouest",
   "Monétique et Services",
   "Oxhoo",
-  "VNE",
-  "TPV Line",
-  "MD Ouest",
   "Solumag",
   "Tigra",
+  "TPV Line",
+  "VNE",
 ] as const;
 
 export type Fournisseur = (typeof FOURNISSEURS)[number];
