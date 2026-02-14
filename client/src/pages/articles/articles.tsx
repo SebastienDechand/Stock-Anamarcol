@@ -22,9 +22,12 @@ import {
   Trash2,
   X,
   Loader2,
+  Download,
 } from "lucide-react";
+import axios from "axios";
 import type { Item, ItemsState, User } from "../../types";
 import { FOURNISSEURS, ETATS } from "../../constants";
+import { exportItemsToCSV } from "../../utils/csv.utils";
 
 function useResponsiveItemsPerPage() {
   const getCount = () => {
@@ -156,6 +159,15 @@ export default function Articles() {
     setIsItemModalOpen(true);
   };
 
+  const handleExportCSV = async () => {
+    const res = await axios.get(
+      `${import.meta.env.VITE_API_URL}api/item/?limit=9999`,
+    );
+    const data = res.data;
+    const all: Item[] = Array.isArray(data) ? data : data.items || [];
+    exportItemsToCSV(all);
+  };
+
   const closeItemModal = () => {
     dispatch(setSelectedItemId(null));
     dispatch(setSelectedItemQuantite(null));
@@ -205,13 +217,22 @@ export default function Articles() {
               />
             </div>
             {isAdmin && (
-              <button
-                onClick={() => setIsAddModalOpen(true)}
-                className="flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-lg transition-colors shrink-0"
-              >
-                <PlusCircle size={16} />
-                Ajouter
-              </button>
+              <>
+                <button
+                  onClick={handleExportCSV}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-gray-50 text-gray-600 text-sm font-medium rounded-lg border border-gray-200 transition-colors shrink-0"
+                >
+                  <Download size={16} />
+                  Export
+                </button>
+                <button
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-lg transition-colors shrink-0"
+                >
+                  <PlusCircle size={16} />
+                  Ajouter
+                </button>
+              </>
             )}
           </div>
         </div>
