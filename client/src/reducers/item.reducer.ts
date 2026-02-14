@@ -8,14 +8,19 @@ import {
   SET_MODIFIER_NAME,
   SET_SELECTED_ITEM_ID,
   UPLOAD_ITEM_PICTURE,
+  FETCH_HISTORY_REQUEST,
+  FETCH_HISTORY_SUCCESS,
+  FETCH_HISTORY_FAILURE,
 } from "../actions/item.actions";
-import type { Item, ItemState, ReduxAction } from "../types";
+import type { History, Item, ItemState, ReduxAction } from "../types";
 
 const initialState: ItemState = {
   selectedItemId: null,
   items: [],
   selectedItemQuantite: null,
   selectedItemInfo: null,
+  history: [],
+  isLoadingHistory: false,
 };
 
 export default function itemReducer(
@@ -43,6 +48,8 @@ export default function itemReducer(
         ...state,
         selectedItemId: payload ? payload._id : null,
         selectedItemInfo: payload || null,
+        history: [],
+        isLoadingHistory: false,
       };
     }
 
@@ -142,6 +149,25 @@ export default function itemReducer(
           : null,
       };
     }
+
+    case FETCH_HISTORY_REQUEST:
+      return {
+        ...state,
+        isLoadingHistory: true,
+      };
+
+    case FETCH_HISTORY_SUCCESS:
+      return {
+        ...state,
+        history: action.payload as History[],
+        isLoadingHistory: false,
+      };
+
+    case FETCH_HISTORY_FAILURE:
+      return {
+        ...state,
+        isLoadingHistory: false,
+      };
 
     default:
       return state;

@@ -19,6 +19,9 @@ export const UPDATE_ITEM_SUCCESS = "UPDATE_ITEM_SUCCESS";
 export const SET_MODIFIER_NAME = "SET_MODIFIER_NAME";
 export const SET_SELECTED_ITEM_ID = "SET_SELECTED_ITEM_ID";
 export const UPLOAD_ITEM_PICTURE = "UPLOAD_ITEM_PICTURE";
+export const FETCH_HISTORY_REQUEST = "FETCH_HISTORY_REQUEST";
+export const FETCH_HISTORY_SUCCESS = "FETCH_HISTORY_SUCCESS";
+export const FETCH_HISTORY_FAILURE = "FETCH_HISTORY_FAILURE";
 
 interface NewItem {
   denomination: string;
@@ -189,6 +192,21 @@ export const uploadItemPicture = (
         console.error("Upload error:", err);
         throw err;
       });
+  };
+};
+
+export const fetchItemHistory = (itemId: string) => {
+  return async (dispatch: AppDispatch) => {
+    dispatch({ type: FETCH_HISTORY_REQUEST });
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}api/item/history/${itemId}`,
+      );
+      dispatch({ type: FETCH_HISTORY_SUCCESS, payload: res.data });
+    } catch (err) {
+      console.error("Erreur lors de la récupération de l'historique :", err);
+      dispatch({ type: FETCH_HISTORY_FAILURE });
+    }
   };
 };
 

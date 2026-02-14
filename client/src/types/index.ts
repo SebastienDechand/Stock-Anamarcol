@@ -44,6 +44,18 @@ export interface Item {
   updatedAt?: string;
 }
 
+// ─── History ────────────────────────────────────────
+export interface History {
+  _id: string;
+  itemId: string;
+  action: "create" | "update" | "delete" | "quantity_change";
+  field?: string;
+  oldValue?: string;
+  newValue?: string;
+  userName: string;
+  createdAt: string;
+}
+
 // ─── Contact ─────────────────────────────────────────
 export interface Contact {
   _id: string;
@@ -86,6 +98,8 @@ export interface ItemState {
   items: Item[];
   selectedItemQuantite: number | null;
   selectedItemInfo: Item | null;
+  history: History[];
+  isLoadingHistory: boolean;
 }
 
 export interface ItemsState {

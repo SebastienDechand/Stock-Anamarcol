@@ -2,6 +2,11 @@ import { Request, Response } from "express";
 import ItemModel from "../models/item.model";
 import { createItemErrors } from "../errors.utils";
 import { validateObjectId } from "../utils/validate.utils";
+import {
+  logItemCreate,
+  logItemChanges,
+  logItemDelete,
+} from "../utils/history.utils";
 
 export const itemInfo = async (req: Request, res: Response): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
@@ -105,6 +110,8 @@ export const createItem = async (
       prepaTPV: prepaTPV || false,
     });
 
+    logItemCreate(String(item._id), modifierName || "Inconnu");
+
     res.status(201).json({ item });
   } catch (err) {
     const errors = createItemErrors(err as Error);
@@ -125,6 +132,9 @@ export const updateItem = async (
       res.status(404).json({ message: "Article introuvable" });
       return;
     }
+
+    // Snapshot old values before mutation
+    const oldItem = item.toObject();
 
     if (req.body.denomination) item.denomination = req.body.denomination;
     if (req.body.fournisseur) item.fournisseur = req.body.fournisseur;
@@ -148,6 +158,14 @@ export const updateItem = async (
     }
 
     const updatedItem = await item.save();
+
+    logItemChanges(
+      req.params.id as string,
+      oldItem,
+      req.body,
+      req.body.modifierName || oldItem.modifierName || "Inconnu",
+    );
+
     res.status(200).json({ item: updatedItem });
   } catch (err) {
     console.error("Error updating item:", err);
@@ -164,7 +182,17 @@ export const deleteItem = async (
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
+    const item = await ItemModel.findById(req.params.id).lean();
     await ItemModel.deleteOne({ _id: req.params.id }).exec();
+
+    if (item) {
+      logItemDelete(
+        req.params.id as string,
+        item.denomination,
+        req.body.modifierName || "Admin",
+      );
+    }
+
     res.status(200).json({ message: "Sucessfully deleted." });
   } catch (err) {
     console.error("Error deleting item:", err);

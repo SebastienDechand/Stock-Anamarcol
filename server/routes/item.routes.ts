@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import * as itemController from "../controllers/item.controller";
+import * as historyController from "../controllers/history.controller";
 import * as uploadItemController from "../controllers/uploadItem.controller";
 import { requireAuth, requireAdmin } from "../middleware/auth.middleware";
 import multer from "multer";
@@ -8,6 +9,7 @@ const router = Router();
 const upload = multer();
 
 router.get("/", requireAuth, itemController.readItem);
+router.get("/history/:id", requireAuth, historyController.getItemHistory);
 router.get("/:id", requireAuth, itemController.itemInfo);
 router.post("/", requireAuth, itemController.createItem);
 router.put("/:id", requireAuth, itemController.updateItem);
