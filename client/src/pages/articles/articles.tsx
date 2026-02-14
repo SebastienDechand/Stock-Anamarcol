@@ -23,7 +23,10 @@ import {
   X,
   Loader2,
   Download,
+  Sliders,
 } from "lucide-react";
+import ExportOptionsModal from "../../components/Modales/ExportOptionsModal";
+import FiltersModal from "../../components/Modales/FiltersModal";
 import axios from "axios";
 import type { Item, ItemsState, User } from "../../types";
 import { FOURNISSEURS, ETATS } from "../../constants";
@@ -65,9 +68,11 @@ export default function Articles() {
     (state: { userReducer: Partial<User> }) => state.userReducer._id,
   );
 
-  const { items: pageItems, totalPages, isLoading } = useSelector(
-    (state: { itemsReducer: ItemsState }) => state.itemsReducer,
-  );
+  const {
+    items: pageItems,
+    totalPages,
+    isLoading,
+  } = useSelector((state: { itemsReducer: ItemsState }) => state.itemsReducer);
   const itemsPerPage = useResponsiveItemsPerPage();
 
   const [search, setSearch] = useState("");
@@ -78,6 +83,8 @@ export default function Articles() {
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   // Debounce search input (300ms)
@@ -89,7 +96,13 @@ export default function Articles() {
   // Reset to page 1 when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearch, fournisseurFilter, etatFilter, prepaFilter, itemsPerPage]);
+  }, [
+    debouncedSearch,
+    fournisseurFilter,
+    etatFilter,
+    prepaFilter,
+    itemsPerPage,
+  ]);
 
   // Build fetch params
   const fetchParams = useMemo<FetchItemsParams>(() => {
@@ -104,7 +117,14 @@ export default function Articles() {
     if (prepaFilter.includes("Caisse OHXHOO")) params.prepaCaisse = true;
     if (prepaFilter.includes("Caisse TPV")) params.prepaTPV = true;
     return params;
-  }, [currentPage, itemsPerPage, debouncedSearch, fournisseurFilter, etatFilter, prepaFilter]);
+  }, [
+    currentPage,
+    itemsPerPage,
+    debouncedSearch,
+    fournisseurFilter,
+    etatFilter,
+    prepaFilter,
+  ]);
 
   // Fetch items from server whenever params change
   useEffect(() => {
@@ -216,29 +236,48 @@ export default function Articles() {
                 className="w-full pl-9 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 focus:border-transparent"
               />
             </div>
-            {isAdmin && (
-              <>
-                <button
-                  onClick={handleExportCSV}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-white hover:bg-gray-50 text-gray-600 text-sm font-medium rounded-lg border border-gray-200 transition-colors shrink-0"
-                >
-                  <Download size={16} />
-                  Export
-                </button>
-                <button
-                  onClick={() => setIsAddModalOpen(true)}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-lg transition-colors shrink-0"
-                >
-                  <PlusCircle size={16} />
-                  Ajouter
-                </button>
-              </>
-            )}
+            <div className="flex items-center gap-2">
+              <button
+                title="Filtres"
+                onClick={() => setIsFiltersModalOpen(true)}
+                className="sm:hidden relative flex items-center justify-center p-2 bg-white hover:bg-gray-50 text-gray-600 text-sm font-medium rounded-lg border border-gray-200 transition-colors shrink-0"
+              >
+                <Sliders size={18} />
+                <span className="sr-only">Filtres</span>
+                {(debouncedSearch ||
+                  fournisseurFilter.length > 0 ||
+                  etatFilter.length > 0 ||
+                  prepaFilter.length > 0) && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
+                )}
+              </button>
+              {isAdmin && (
+                <>
+                  <button
+                    title="Exporter"
+                    onClick={() => setIsExportModalOpen(true)}
+                    className="flex items-center justify-center p-2 bg-white hover:bg-gray-50 text-gray-600 rounded-lg border border-gray-200 transition-colors shrink-0"
+                  >
+                    <Download size={16} />
+                  </button>
+                  <button
+                    title="Ajouter"
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-lg transition-colors shrink-0"
+                  >
+                    <PlusCircle size={16} />
+                    Ajouter
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="flex gap-1.5 overflow-x-auto no-scrollbar sm:flex-wrap sm:overflow-visible items-center">
-          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide shrink-0">Fournisseurs</span>
+        <div className="hidden sm:flex gap-1.5 overflow-x-auto no-scrollbar sm:flex-wrap sm:overflow-visible items-center">
+          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide shrink-0">
+            Fournisseurs
+          </span>
           {FOURNISSEURS.map((f) => (
             <button
               key={f}
@@ -248,14 +287,17 @@ export default function Articles() {
                   ? "bg-brand-600 text-white border-brand-600"
                   : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
               }`}
+              title={`Filtrer par ${f}`}
             >
               {f}
             </button>
           ))}
         </div>
 
-        <div className="flex gap-1.5 overflow-x-auto no-scrollbar sm:flex-wrap sm:overflow-visible items-center">
-          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide shrink-0">État</span>
+        <div className="hidden sm:flex gap-1.5 overflow-x-auto no-scrollbar sm:flex-wrap sm:overflow-visible items-center">
+          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide shrink-0">
+            État
+          </span>
           {ETATS.map((e) => (
             <button
               key={e}
@@ -265,12 +307,15 @@ export default function Articles() {
                   ? "bg-emerald-600 text-white border-emerald-600"
                   : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
               }`}
+              title={`Filtrer état ${e}`}
             >
               {e}
             </button>
           ))}
           <span className="w-px bg-gray-300 mx-1 self-stretch shrink-0" />
-          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide shrink-0">Prépa</span>
+          <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide shrink-0">
+            Prépa
+          </span>
           {PREPARATIONS.map((p) => (
             <button
               key={p}
@@ -280,6 +325,7 @@ export default function Articles() {
                   ? "bg-violet-600 text-white border-violet-600"
                   : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
               }`}
+              title={`Filtrer préparation ${p}`}
             >
               {p}
             </button>
@@ -294,6 +340,7 @@ export default function Articles() {
                 setPrepaFilter([]);
               }}
               className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors shrink-0 ml-auto"
+              title="Effacer les filtres"
             >
               <X size={12} />
               Tout effacer
@@ -329,6 +376,7 @@ export default function Articles() {
                       );
                     }}
                     className="absolute top-1.5 right-1.5 p-1 bg-red-50 backdrop-blur rounded-full text-red-400 hover:text-white hover:bg-red-500 transition-all z-10"
+                    title="Supprimer l'article"
                   >
                     <Trash2 size={12} />
                   </button>
@@ -382,6 +430,7 @@ export default function Articles() {
                       handleQuantityChange(e, item._id, "decrement")
                     }
                     className="w-8 h-8 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-gray-200/80 text-gray-500 hover:bg-red-500 hover:text-white active:bg-red-600 transition-colors"
+                    title="Diminuer la quantité"
                   >
                     <Minus size={14} className="sm:w-3 sm:h-3 w-4 h-4" />
                   </button>
@@ -399,6 +448,7 @@ export default function Articles() {
                       handleQuantityChange(e, item._id, "increment")
                     }
                     className="w-8 h-8 sm:w-6 sm:h-6 flex items-center justify-center rounded-full bg-gray-200/80 text-gray-500 hover:bg-brand-600 hover:text-white active:bg-brand-700 transition-colors"
+                    title="Augmenter la quantité"
                   >
                     <Plus size={14} className="sm:w-3 sm:h-3 w-4 h-4" />
                   </button>
@@ -423,6 +473,7 @@ export default function Articles() {
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
             className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+            title="Page précédente"
           >
             <ChevronLeft size={16} />
           </button>
@@ -450,6 +501,7 @@ export default function Articles() {
                       ? "bg-brand-600 text-white"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
+                  title={`Aller à la page ${p}`}
                 >
                   {p}
                 </button>
@@ -459,6 +511,7 @@ export default function Articles() {
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
             className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed"
+            title="Page suivante"
           >
             <ChevronRight size={16} />
           </button>
@@ -477,6 +530,24 @@ export default function Articles() {
         />
       )}
       {isItemModalOpen && <ItemModale onClose={closeItemModal} />}
+      {isExportModalOpen && (
+        <ExportOptionsModal onClose={() => setIsExportModalOpen(false)} />
+      )}
+      {isFiltersModalOpen && (
+        <FiltersModal
+          onClose={() => setIsFiltersModalOpen(false)}
+          search={search}
+          fournisseurFilter={fournisseurFilter}
+          etatFilter={etatFilter}
+          prepaFilter={prepaFilter}
+          onApply={(s, f, e, p) => {
+            setSearch(s);
+            setFournisseurFilter(f);
+            setEtatFilter(e);
+            setPrepaFilter(p);
+          }}
+        />
+      )}
     </div>
   );
 }
