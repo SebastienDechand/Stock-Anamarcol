@@ -49,7 +49,8 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 │
 ├── ⚙️ config/
 │   ├── .env                              Variables d'environnement
-│   └── db.ts                             Connexion MongoDB Atlas
+│   ├── db.ts                             Connexion MongoDB Atlas
+│   └── swagger.ts                        Configuration Swagger (dev only)
 │
 ├── 📋 constants/index.ts                 Constantes partagées
 │
@@ -119,6 +120,7 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 | `POST` | `/` | 🔒 | Création d'un article |
 | `PUT` | `/:id` | 🔒 | Mise à jour (denomination, fournisseur, etat, quantite, modifierName) |
 | `DELETE` | `/:id` | 🛡️ | Suppression d'un article (**admin**) |
+| `GET` | `/history/:id` | 🔒 | Historique des modifications d'un article |
 | `POST` | `/upload` | 🔒📁 | Upload d'image article (multer) |
 
 ### 📇 Contacts — `/api/contacts`

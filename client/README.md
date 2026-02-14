@@ -46,12 +46,10 @@ Interface moderne, responsive et performante.
 │   └── 🤖 robots.txt
 │
 ├── 📁 src/
-│   ├── 🧪 __tests__/                   Tests unitaires globaux
-│   │
 │   ├── 🔌 actions/                     Actions Redux (thunks Axios)
 │   │   ├── contacts.action.ts
-│   │   ├── item.actions.ts              CRUD article, upload image
-│   │   ├── items.actions.ts             Liste de tous les articles
+│   │   ├── item.actions.ts              CRUD article, upload image, historique
+│   │   ├── items.actions.ts             Liste paginée + liste complète
 │   │   ├── menu.action.ts              Toggle sidebar
 │   │   ├── statistics.actions.ts
 │   │   ├── user.actions.ts              Profil utilisateur courant
@@ -60,12 +58,9 @@ Interface moderne, responsive et performante.
 │   ├── 🖼️ assets/                       Images statiques
 │   │
 │   ├── 🧩 components/
-│   │   ├── Articles/                   Grille articles, articles stock bas
 │   │   ├── Delete/                     Suppression avec confirmation
-│   │   ├── Filtre/                     Composant filtres
 │   │   ├── Logout/                     Déconnexion
-│   │   ├── Modales/                    AddModale, ItemModale, ContactModale
-│   │   ├── Pagination/                 Pagination
+│   │   ├── Modales/                    AddModale, ItemModale (onglets Détail/Historique), ContactModale
 │   │   ├── Sidebar/                    Navigation latérale repliable
 │   │   ├── SpinnerOverlay/             Overlay de chargement
 │   │   ├── Stats/                      Dashboard statistiques
@@ -75,12 +70,16 @@ Interface moderne, responsive et performante.
 │   │   ├── ProtectedRoute.tsx          🛡️ Guard d'authentification
 │   │   └── Routes.tsx                  🧭 Configuration des routes
 │   │
-│   ├── 📋 constants/index.ts           Fournisseurs, états, limites, seuils
+│   ├── 📋 constants/                    Constantes scindées par thème
+│   │   ├── item.constants.ts            Fournisseurs, états, seuil stock bas
+│   │   ├── upload.constants.ts          Taille max, types MIME acceptés
+│   │   └── index.ts                     Barrel re-export
+│   │
 │   ├── 🪝 hooks/redux.ts               useAppDispatch & useAppSelector
 │   ├── 🛠️ lib/utils.ts                 cn() (clsx + tailwind-merge)
 │   │
 │   ├── 📄 pages/
-│   │   ├── articles/                   Page articles (grille, filtres, pagination)
+│   │   ├── articles/                   Page articles (grille, filtres serveur, pagination serveur, export CSV)
 │   │   ├── contacts/                   Page contacts
 │   │   ├── home/                       Dashboard / accueil
 │   │   ├── login/                      Page de connexion
@@ -91,18 +90,30 @@ Interface moderne, responsive et performante.
 │   │   ├── __tests__/                  Tests des reducers
 │   │   ├── index.ts                    combineReducers (root)
 │   │   ├── contacts.reducer.ts
-│   │   ├── item.reducer.ts             Article sélectionné
-│   │   ├── items.reducer.ts            Liste articles
+│   │   ├── item.reducer.ts             Article sélectionné + historique
+│   │   ├── items.reducer.ts            Liste paginée (items) + liste complète (allItems)
 │   │   ├── menu.reducer.ts             État sidebar
 │   │   ├── statistics.reducer.ts
 │   │   ├── user.reducer.ts             Utilisateur courant
 │   │   └── users.reducer.ts            Liste utilisateurs
 │   │
-│   ├── 🟦 types/index.ts               Tous les types TS
+│   ├── 🟦 types/                        Types TS scindés par domaine
+│   │   ├── redux.ts                     RootState, AppDispatch, AppThunk, ReduxAction
+│   │   ├── user.ts                      User
+│   │   ├── item.ts                      Item, History
+│   │   ├── contact.ts                   Contact
+│   │   ├── statistics.ts               GlobalStatistics, FournisseurStats, StatisticsState
+│   │   ├── state.ts                     ContactsState, ItemState, ItemsState, MenuState
+│   │   ├── auth.ts                      AuthContextType
+│   │   └── index.ts                     Barrel re-export
+│   │
+│   ├── 🛠️ utils/                        Utilitaires scindés par thème
+│   │   ├── date.utils.ts                dateParser
+│   │   └── csv.utils.ts                 Export CSV des articles
+│   │
 │   ├── ⚛️ App.tsx                       AuthProvider + Router
 │   ├── 🚀 index.tsx                     Bootstrap (Store, Axios, render)
-│   ├── 🎨 index.css                     Styles globaux + Tailwind
-│   └── 🛠️ Utils.ts                      dateParser, isEmpty
+│   └── 🎨 index.css                     Styles globaux + Tailwind
 │
 ├── 📄 index.html
 ├── ⚙️ vite.config.ts
