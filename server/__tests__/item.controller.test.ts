@@ -13,6 +13,12 @@ jest.mock("../models/item.model", () => ({
   default: mockItemModel,
 }));
 
+jest.mock("../utils/history.utils", () => ({
+  logItemCreate: jest.fn(),
+  logItemChanges: jest.fn(),
+  logItemDelete: jest.fn(),
+}));
+
 import {
   itemInfo,
   readItem,
@@ -210,6 +216,11 @@ describe("Item Controller", () => {
         _id: "507f1f77bcf86cd799439011",
         denomination: "Original",
         quantite: 10,
+        toObject: jest.fn().mockReturnValue({
+          _id: "507f1f77bcf86cd799439011",
+          denomination: "Original",
+          quantite: 10,
+        }),
         save: jest.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           denomination: "Updated",
@@ -229,6 +240,10 @@ describe("Item Controller", () => {
       const mockItem = {
         _id: "507f1f77bcf86cd799439011",
         quantite: 10,
+        toObject: jest.fn().mockReturnValue({
+          _id: "507f1f77bcf86cd799439011",
+          quantite: 10,
+        }),
         save: jest.fn().mockImplementation(function (this: {
           quantite: number;
         }) {
@@ -252,6 +267,12 @@ describe("Item Controller", () => {
 
     it("should delete an item successfully", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
+      mockItemModel.findById.mockReturnValue({
+        lean: jest.fn().mockResolvedValue({
+          _id: "507f1f77bcf86cd799439011",
+          denomination: "Test",
+        }),
+      });
       mockItemModel.deleteOne.mockReturnValue({
         exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
       });
