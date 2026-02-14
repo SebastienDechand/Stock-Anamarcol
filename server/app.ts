@@ -28,6 +28,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Swagger (dev only)
+if (process.env.NODE_ENV !== "production") {
+  import("./config/swagger").then(({ swaggerSpec }) => {
+    import("swagger-ui-express").then((swaggerUi) => {
+      app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+      console.log("Swagger UI: http://localhost:4000/api-docs");
+    });
+  });
+}
+
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/item", itemRoutes);
