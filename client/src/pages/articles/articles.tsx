@@ -389,13 +389,19 @@ export default function Articles() {
                   : "bg-white text-violet-700 border-violet-300 hover:bg-violet-100"
               }`}
               style={{ minWidth: 80 }}
-              {...(typeof window !== "undefined" && window.innerWidth >= 640
-                ? { title: `Filtrer préparation ${p}` }
-                : {})}
             >
               {p}
             </button>
           ))}
+          {prepaFilter.length > 0 && (
+            <button
+              onClick={() => setPrepaFilter([])}
+              className="p-1 rounded-full text-violet-500 hover:text-violet-700 hover:bg-violet-200 transition-colors shrink-0"
+              title="Effacer la sélection"
+            >
+              <X size={14} />
+            </button>
+          )}
         </div>
       </div>
 

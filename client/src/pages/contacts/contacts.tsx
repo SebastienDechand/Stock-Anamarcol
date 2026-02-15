@@ -36,8 +36,8 @@ const Contacts = () => {
 
   const ContactCard = ({ contact }: { contact: Contact }) => (
     <div
-      onClick={() => handleContactClick(contact._id)}
-      className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer hover:shadow-md transition-shadow group"
+      onClick={() => isAdmin && handleContactClick(contact._id)}
+      className={`bg-white rounded-xl border border-gray-100 shadow-sm p-5 transition-shadow group ${isAdmin ? "cursor-pointer hover:shadow-md" : ""}`}
     >
       <div className="flex items-center gap-4">
         {contact.picture ? (

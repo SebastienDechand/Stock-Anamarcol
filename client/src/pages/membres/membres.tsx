@@ -14,7 +14,7 @@ import type { User } from "../../types";
 const LEGACY_NAMES: Record<string, string[]> = {
   Direction: ["edith"],
   Hotline: ["franck", "etienne", "étienne"],
-  "Entrepôt": ["coline"],
+  Entrepôt: ["coline"],
   Monteur: ["thierry", "alain"],
   "Gestion du site": ["sebastien", "sébastien"],
 };
@@ -41,7 +41,9 @@ interface MemberCardProps {
 function MemberCard({ user, large }: MemberCardProps) {
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden ring-1 ring-black/[0.04]">
-      <div className={`flex items-center gap-4 ${large ? "px-5 py-5" : "px-4 py-4"}`}>
+      <div
+        className={`flex items-center gap-4 ${large ? "px-5 py-5" : "px-4 py-4"}`}
+      >
         {user.picture ? (
           <img
             src={user.picture}
@@ -49,28 +51,38 @@ function MemberCard({ user, large }: MemberCardProps) {
             className={`${large ? "w-20 h-20" : "w-14 h-14"} rounded-full object-cover border-2 border-gray-100 shrink-0`}
           />
         ) : (
-          <div className={`${large ? "w-20 h-20 text-2xl" : "w-14 h-14 text-lg"} rounded-full bg-gray-100 border-2 border-gray-100 shrink-0 flex items-center justify-center text-gray-400 font-semibold`}>
+          <div
+            className={`${large ? "w-20 h-20 text-2xl" : "w-14 h-14 text-lg"} rounded-full bg-gray-100 border-2 border-gray-100 shrink-0 flex items-center justify-center text-gray-400 font-semibold`}
+          >
             {(user.pseudo || "?")[0].toUpperCase()}
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <h3 className={`${large ? "text-lg" : "text-[15px]"} font-semibold text-gray-900 truncate`}>
+          <h3
+            className={`${large ? "text-lg" : "text-[15px]"} font-semibold text-gray-900 truncate`}
+          >
             {user.pseudo}
           </h3>
           {user.poste && (
-            <p className={`${large ? "text-sm" : "text-xs"} text-brand-600 font-medium truncate mt-0.5`}>
+            <p
+              className={`${large ? "text-sm" : "text-xs"} text-brand-600 font-medium truncate mt-0.5`}
+            >
               {user.poste}
             </p>
           )}
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
             {user.email && (
-              <span className={`flex items-center gap-1.5 ${large ? "text-sm" : "text-xs"} text-gray-400 truncate`}>
+              <span
+                className={`flex items-center gap-1.5 ${large ? "text-sm" : "text-xs"} text-gray-400 truncate`}
+              >
                 <Mail size={large ? 14 : 12} className="shrink-0" />
                 {user.email}
               </span>
             )}
             {user.numero && (
-              <span className={`flex items-center gap-1.5 ${large ? "text-sm" : "text-xs"} text-gray-400`}>
+              <span
+                className={`flex items-center gap-1.5 ${large ? "text-sm" : "text-xs"} text-gray-400`}
+              >
                 <Phone size={large ? 14 : 12} className="shrink-0" />
                 {user.numero}
               </span>
@@ -90,7 +102,9 @@ function PoleHeader({ pole }: PoleHeaderProps) {
   const Icon = pole.icon;
   return (
     <div className="flex items-center gap-2 mb-2">
-      <div className={`w-6 h-6 rounded-md ${pole.color} flex items-center justify-center`}>
+      <div
+        className={`w-6 h-6 rounded-md ${pole.color} flex items-center justify-center`}
+      >
         <Icon size={13} className="text-white" />
       </div>
       <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -107,16 +121,27 @@ interface MemberListProps {
   deleteConfirmId: string | null;
   setDeleteConfirmId: (id: string | null) => void;
   canDelete: boolean;
+  /*  */ canSelect: boolean;
 }
 
-function MemberList({ members, onSelect, deleteConfirmId, setDeleteConfirmId, canDelete }: MemberListProps) {
+function MemberList({
+  members,
+  onSelect,
+  deleteConfirmId,
+  setDeleteConfirmId,
+  canDelete,
+  canSelect,
+}: MemberListProps) {
   const dispatch = useAppDispatch();
 
   return (
     <div className="space-y-2">
       {members.map((user) => (
         <div key={user._id} className="relative">
-          <div onClick={() => onSelect(user)} className="cursor-pointer">
+          <div
+            onClick={() => canSelect && onSelect(user)}
+            className={canSelect ? "cursor-pointer" : ""}
+          >
             <MemberCard user={user} />
           </div>
           {canDelete && (
@@ -124,7 +149,9 @@ function MemberList({ members, onSelect, deleteConfirmId, setDeleteConfirmId, ca
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setDeleteConfirmId(deleteConfirmId === user._id ? null : user._id);
+                  setDeleteConfirmId(
+                    deleteConfirmId === user._id ? null : user._id,
+                  );
                 }}
                 className="absolute top-1.5 right-1.5 p-1 bg-red-50 rounded-full text-red-400 hover:text-white hover:bg-red-500 transition-all z-10"
                 title="Supprimer"
@@ -136,7 +163,9 @@ function MemberList({ members, onSelect, deleteConfirmId, setDeleteConfirmId, ca
                   className="absolute inset-0 bg-white/95 backdrop-blur-sm z-20 flex flex-col items-center justify-center gap-2 rounded-xl"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <p className="text-xs font-medium text-gray-700">Supprimer ?</p>
+                  <p className="text-xs font-medium text-gray-700">
+                    Supprimer ?
+                  </p>
                   <div className="flex gap-2">
                     <button
                       onClick={async () => {
@@ -182,8 +211,14 @@ export default function Membres() {
   const direction = getUsersByPole(usersData, "Direction");
   const gestion = getUsersByPole(usersData, "Gestion du site");
 
-  const allKnownPoles = ["Direction", ...POLES.map((p) => p.label), "Gestion du site"];
-  const others = usersData.filter((u) => !allKnownPoles.includes(getUserPole(u)));
+  const allKnownPoles = [
+    "Direction",
+    ...POLES.map((p) => p.label),
+    "Gestion du site",
+  ];
+  const others = usersData.filter(
+    (u) => !allKnownPoles.includes(getUserPole(u)),
+  );
 
   // Sync selectedUser avec le store
   useEffect(() => {
@@ -192,6 +227,7 @@ export default function Membres() {
     if (updated) setSelectedUser(updated);
   }, [usersData]);
 
+  const isAdmin = !!auth?.isAdmin;
   const isSuperadmin = !!auth?.isSuperadmin;
 
   return (
@@ -208,14 +244,17 @@ export default function Membres() {
         )}
       </div>
 
-      {/* Direction (centre) + Gestion du site (droite) */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="hidden sm:block" />
-        <div>
+      {/* Direction (centrée) */}
+      <div className="flex justify-center">
+        <div className="w-full max-w-md">
           <PoleHeader pole={POLE_DIRECTION} />
           <div className="space-y-2">
             {direction.map((user) => (
-              <div key={user._id} className="cursor-pointer" onClick={() => setSelectedUser(user)}>
+              <div
+                key={user._id}
+                className={isAdmin ? "cursor-pointer" : ""}
+                onClick={() => isAdmin && setSelectedUser(user)}
+              >
                 <MemberCard user={user} large />
               </div>
             ))}
@@ -224,19 +263,9 @@ export default function Membres() {
             )}
           </div>
         </div>
-        <div>
-          <PoleHeader pole={POLE_GESTION} />
-          <MemberList
-            members={gestion}
-            onSelect={setSelectedUser}
-            deleteConfirmId={deleteConfirmId}
-            setDeleteConfirmId={setDeleteConfirmId}
-            canDelete={isSuperadmin}
-          />
-        </div>
       </div>
 
-      {/* Pôles opérationnels */}
+      {/* Pôles opérationnels + Gestion du site en bas à droite */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {POLES.map((pole) => {
           const members = getUsersByPole(usersData, pole.label);
@@ -249,10 +278,22 @@ export default function Membres() {
                 deleteConfirmId={deleteConfirmId}
                 setDeleteConfirmId={setDeleteConfirmId}
                 canDelete={isSuperadmin}
+                canSelect={isAdmin}
               />
             </div>
           );
         })}
+        <div className="lg:col-start-3">
+          <PoleHeader pole={POLE_GESTION} />
+          <MemberList
+            members={gestion}
+            onSelect={setSelectedUser}
+            deleteConfirmId={deleteConfirmId}
+            setDeleteConfirmId={setDeleteConfirmId}
+            canDelete={isSuperadmin}
+            canSelect={isAdmin}
+          />
+        </div>
       </div>
 
       {/* Membres sans pôle */}
@@ -266,7 +307,11 @@ export default function Membres() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {others.map((user) => (
-              <div key={user._id} className="cursor-pointer" onClick={() => setSelectedUser(user)}>
+              <div
+                key={user._id}
+                className={isAdmin ? "cursor-pointer" : ""}
+                onClick={() => isAdmin && setSelectedUser(user)}
+              >
                 <MemberCard user={user} />
               </div>
             ))}
