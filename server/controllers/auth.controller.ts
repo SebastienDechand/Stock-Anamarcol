@@ -3,6 +3,7 @@ import UserModel from "../models/user.model";
 import jwt from "jsonwebtoken";
 import { signUpErrors, signInErrors } from "../errors.utils";
 import { TOKEN_MAX_AGE } from "../constants";
+import { logEvent } from "../utils/audit.utils";
 
 // Création d'un token
 const createToken = (id: string): string => {
@@ -13,10 +14,17 @@ const createToken = (id: string): string => {
 
 // S'enregistrer
 export const signUp = async (req: Request, res: Response): Promise<void> => {
-  const { pseudo, email, password } = req.body;
+  const { pseudo, email, password, poste, numero, pole } = req.body;
 
   try {
-    const user = await UserModel.create({ pseudo, email, password });
+    const user = await UserModel.create({
+      pseudo,
+      email,
+      password,
+      poste,
+      numero,
+      pole,
+    });
     res.status(200).json({ user: user._id });
   } catch (err) {
     const errors = signUpErrors(
@@ -39,6 +47,12 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
       secure: true,
       sameSite: "none",
     });
+    // Audit: login
+    try {
+      await logEvent("login", "user", user._id.toString(), user.pseudo);
+    } catch (err) {
+      console.error("Audit login error:", err);
+    }
     res.status(200).json({ user: user._id, role: user.role });
   } catch (err) {
     const errors = signInErrors(err as Error);
@@ -49,5 +63,11 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
 // Déconnexion
 export const logout = async (_req: Request, res: Response): Promise<void> => {
   res.cookie("jwt", "", { maxAge: 1 });
+  try {
+    // Optionally log logout — res.locals.user not available here, skip userName
+    await logEvent("logout", "user", undefined, undefined);
+  } catch (err) {
+    console.error("Audit logout error:", err);
+  }
   res.status(200).json({ message: "Déconnexion réussie" });
 };

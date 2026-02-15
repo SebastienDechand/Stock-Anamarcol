@@ -34,10 +34,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       .finally(() => setIsAuthLoading(false));
   }, []);
 
-  const isAdmin = role === "admin";
+  const isAdmin = role === "admin" || role === "superadmin";
+  const isSuperadmin = role === "superadmin";
 
   return (
-    <UidContext.Provider value={{ uid, role, isAdmin, isAuthLoading }}>
+    <UidContext.Provider
+      value={{ uid, role, isAdmin, isSuperadmin, isAuthLoading }}
+    >
       {children}
     </UidContext.Provider>
   );

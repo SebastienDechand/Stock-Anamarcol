@@ -5,6 +5,7 @@ export interface User {
   picture?: string;
   poste?: string;
   numero?: string;
+  pole?: string;
   role?: string;
   createdAt?: string;
   updatedAt?: string;
