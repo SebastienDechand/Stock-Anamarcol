@@ -42,10 +42,11 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 ```
 📁 server/
 ├── 🧪 __tests__/                        Tests unitaires
-│   ├── auth.middleware.test.ts
+│   ├── audit.controller.test.ts         Historique & purge
+│   ├── auth.middleware.test.ts          Auth + requireSuperAdmin
 │   ├── errors.utils.test.ts
-│   ├── item.controller.test.ts
-│   └── user.controller.test.ts
+│   ├── item.controller.test.ts          CRUD + prepaBatch
+│   └── user.controller.test.ts          CRUD + setRole
 │
 ├── ⚙️ config/
 │   ├── .env                              Variables d'environnement
@@ -55,29 +56,36 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 ├── 📋 constants/index.ts                 Constantes partagées
 │
 ├── 🎯 controllers/
+│   ├── audit.controller.ts               Historique global & purge
 │   ├── auth.controller.ts                Register, login, logout
 │   ├── contacts.controller.ts            CRUD contacts
-│   ├── item.controller.ts                CRUD articles
+│   ├── item.controller.ts                CRUD articles + prepaBatch
 │   ├── stats.controller.ts               Statistiques & dashboard
 │   ├── upload.controller.ts              Upload avatar profil
 │   ├── uploadContact.controller.ts       Upload photo contact
-│   └── uploadItem.controller.ts          Upload image article
+│   ├── uploadItem.controller.ts          Upload image article
+│   └── user.controller.ts                CRUD users + setRole
 │
 ├── 🛡️ middleware/
-│   └── auth.middleware.ts                checkUser, requireAuth, requireAdmin
+│   └── auth.middleware.ts                checkUser, requireAuth, requireAdmin, requireSuperAdmin
 │
 ├── 📐 models/
+│   ├── audit.model.ts                    Schéma Audit (TTL 30 jours)
 │   ├── contact.model.ts                  Schéma Contact
+│   ├── history.model.ts                  Schéma History (TTL 30 jours)
 │   ├── item.model.ts                     Schéma Item
 │   └── user.model.ts                     Schéma User
 │
 ├── 🧭 routes/
 │   ├── contacts.routes.ts
+│   ├── history.routes.ts                 Historique global + purge
 │   ├── item.routes.ts
 │   ├── statistics.routes.ts
 │   └── user.routes.ts
 │
 ├── 🛠️ utils/
+│   ├── audit.utils.ts                    Journal d'audit (logEvent, getRecentEvents)
+│   ├── history.utils.ts                  Historique articles (logItemCreate, logItemChanges, logItemDelete)
 │   ├── upload.utils.ts                   Validation fichier + upload ImgBB
 │   └── validate.utils.ts                 Validation ObjectId MongoDB
 │
@@ -107,7 +115,9 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 |---|---|:---:|---|
 | `GET` | `/` | 🌐 | Liste de tous les utilisateurs |
 | `GET` | `/:id` | 🌐 | Détail d'un utilisateur |
+| `POST` | `/` | 👑 | Création d'un utilisateur (**superadmin**) |
 | `PUT` | `/:id` | 🌐 | Mise à jour d'un utilisateur |
+| `PUT` | `/:id/role` | 👑 | Changer le rôle d'un utilisateur (**superadmin**) |
 | `DELETE` | `/:id` | 🌐 | Suppression d'un utilisateur |
 | `POST` | `/upload` | 📁 | Upload d'avatar (multer) |
 
@@ -121,7 +131,15 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 | `PUT` | `/:id` | 🔒 | Mise à jour (denomination, fournisseur, etat, quantite, modifierName) |
 | `DELETE` | `/:id` | 🛡️ | Suppression d'un article (**admin**) |
 | `GET` | `/history/:id` | 🔒 | Historique des modifications d'un article |
+| `POST` | `/prepa-batch` | 🔒 | Décrémentation/incrémentation groupée par préparation |
 | `POST` | `/upload` | 🔒📁 | Upload d'image article (multer) |
+
+### 📜 Historique — `/api/history`
+
+| Méthode | Route | Auth | Description |
+|---|---|:---:|---|
+| `GET` | `/` | 🔒 | Journal des modifications et audit (limité 30 jours) |
+| `POST` | `/purge` | 👑 | Purge complète historique + audit (**superadmin**) |
 
 ### 📇 Contacts — `/api/contacts`
 
@@ -155,7 +173,7 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 |---|---|:---:|---|
 | `GET` | `/jwtid` | 🔒 | Retourne `{ _id, role }` depuis le cookie JWT |
 
-> **Légende :** 🌐 Public • 🔒 `requireAuth` • 🛡️ `requireAdmin` • 📁 Multer
+> **Légende :** 🌐 Public • 🔒 `requireAuth` • 🛡️ `requireAdmin` • 👑 `requireSuperAdmin` • 📁 Multer
 
 ---
 
@@ -172,6 +190,7 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
   picture:   string   // 📷 défaut: "./uploads/profil/random-user.png"
   poste:     string   // max 1024 caractères
   numero:    string
+  pole:      string   // Pôle de l'équipe (Direction, Hotline, Entrepôt, Monteur, Gestion du site)
   role:      string   // "admin" | "user" (défaut: "user")
   timestamps: true    // createdAt, updatedAt
 }
@@ -194,6 +213,9 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
   fournisseur:   string   // ✅ requis, indexé
   image:         string   // 📷 défaut: "./logo_small.jpg"
   etat:          string   // ✅ requis, indexé
+  prepaCG:       boolean  // Fait partie de la prépa CashGuard
+  prepaCaisse:   boolean  // Fait partie de la prépa Caisse
+  prepaTPV:      boolean  // Fait partie de la prépa TPV
   timestamps: true
 }
 
@@ -228,9 +250,11 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 |---|---|---|
 | `checkUser` | ✅ Non-bloquant | Vérifie le JWT, peuple `res.locals.user`, continue même sans token |
 | `requireAuth` | 🔒 Bloquant | Exige un JWT valide → `401` sinon |
-| `requireAdmin` | 🛡️ Bloquant | Exige JWT + `role === "admin"` → `401`/`403` sinon |
+| `requireAdmin` | 🛡️ Bloquant | Exige JWT + `role === "admin"` ou superadmin → `401`/`403` sinon |
+| `requireSuperAdmin` | 👑 Bloquant | Exige JWT + email === `SUPERADMIN_EMAIL` → `401`/`403` sinon |
 
 > 🍪 Tous les middlewares lisent le token depuis le cookie `jwt` et vérifient avec `TOKEN_SECRET`.
+> 👑 Le superadmin est déterminé par la variable d'environnement `SUPERADMIN_EMAIL`.
 
 ---
 
@@ -321,6 +345,7 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 | `CLIENT_URL` | URL du frontend (CORS) | `http://localhost:3000` |
 | `TOKEN_SECRET` | Secret pour signer les JWT | `mon_secret_jwt` |
 | `IMGBB_API_KEY` | Clé API ImgBB | `abc123...` |
+| `SUPERADMIN_EMAIL` | Email du superadmin | `admin@anamarcol.com` |
 
 > 💡 En production (o2switch), les variables sont définies directement sur l'hébergeur. Le `.env` n'est chargé que si `CLIENT_URL` n'est pas déjà définie.
 
@@ -362,7 +387,8 @@ npm run test:ci     # 📊 Tests + couverture (CI)
 
 | Fichier | Couverture |
 |---|---|
-| `auth.middleware.test.ts` | `checkUser`, `requireAuth`, `requireAdmin` |
+| `audit.controller.test.ts` | `getHistory`, `purgeAllHistoryAndAudit` |
+| `auth.middleware.test.ts` | `checkUser`, `requireAuth`, `requireAdmin`, `requireSuperAdmin` |
 | `errors.utils.test.ts` | Fonctions de formatage d'erreurs |
-| `item.controller.test.ts` | CRUD articles |
-| `user.controller.test.ts` | CRUD utilisateurs + auth |
+| `item.controller.test.ts` | CRUD articles + `prepaBatch` |
+| `user.controller.test.ts` | CRUD utilisateurs + `setRole` |

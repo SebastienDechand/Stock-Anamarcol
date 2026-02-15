@@ -27,10 +27,13 @@ Suivi en temps réel des articles, quantités, fournisseurs et contacts.
 | 📋 | **Gestion des articles** | CRUD complet, suivi des quantités, alertes stock bas |
 | 🏭 | **Fournisseurs & états** | Filtres avancés par fournisseur, état (Neuf / SAV) et préparation |
 | 📊 | **Tableau de bord** | Statistiques globales, par fournisseur et par état avec graphiques |
-| 👥 | **Contacts** | Annuaire interne avec fiches détaillées |
-| 👤 | **Membres** | Listing des utilisateurs de la plateforme |
+| 🔄 | **Préparations batch** | Décrémentation/incrémentation groupée (CashGuard, Caisse TPV) |
+| 📜 | **Historique & audit** | Suivi des modifications articles, journal d'audit, purge superadmin |
+| 📤 | **Export multi-format** | Export des articles filtrés en CSV, XLSX et PDF |
+| 👥 | **Contacts** | Annuaire interne avec fiches détaillées et upload photo |
+| 👤 | **Membres** | Gestion de l'équipe par pôles (Direction, Hotline, Entrepôt, Monteur, Gestion du site) |
 | 🖼️ | **Upload d'images** | Photos d'articles, avatars profils et contacts via ImgBB |
-| 🔐 | **Authentification** | JWT avec rôles (admin / user) et sessions sécurisées |
+| 🔐 | **Authentification** | JWT avec 3 rôles (superadmin / admin / user) et sessions sécurisées |
 
 ---
 
@@ -89,17 +92,18 @@ Suivi en temps réel des articles, quantités, fournisseurs et contacts.
 │       ├── components/         Composants réutilisables
 │       ├── constants/          Constantes applicatives
 │       ├── hooks/              Hooks personnalisés
-│       ├── pages/              Pages / vues
+│       ├── pages/              Pages / vues (articles, contacts, membres, historique, profil, home)
 │       ├── reducers/           Reducers Redux
 │       └── types/              Types TypeScript
 │
 ├── ⚙️ server/                  API REST Express
-│   ├── config/                 Configuration (DB, env)
+│   ├── __tests__/              Tests unitaires (Jest)
+│   ├── config/                 Configuration (DB, env, Swagger)
 │   ├── controllers/            Logique métier
-│   ├── middleware/             Auth, validation
-│   ├── models/                 Schémas Mongoose
+│   ├── middleware/             Auth, validation, rôles
+│   ├── models/                 Schémas Mongoose (User, Item, Contact, History, Audit)
 │   ├── routes/                 Définition des routes
-│   └── utils/                  Upload, validation
+│   └── utils/                  Upload, validation, historique, audit
 │
 └── 🔄 .github/workflows/      CI/CD (tests, deploy)
 ```
@@ -225,15 +229,20 @@ Gate (CI) → Build + FTP client → Build TS + FTP server
 
 ## 🔐 Rôles & Permissions
 
-| Action | 👤 User | 🛡️ Admin |
-|---|:---:|:---:|
-| Voir les articles | ✅ | ✅ |
-| Modifier les quantités | ✅ | ✅ |
-| Ajouter un article | ❌ | ✅ |
-| Modifier un article (tous les champs) | ❌ | ✅ |
-| Supprimer un article | ❌ | ✅ |
-| Gérer les contacts | ❌ | ✅ |
-| Changer l'image d'un article | ❌ | ✅ |
+| Action | 👤 User | 🛡️ Admin | 👑 Superadmin |
+|---|:---:|:---:|:---:|
+| Voir les articles | ✅ | ✅ | ✅ |
+| Modifier les quantités | ✅ | ✅ | ✅ |
+| Exécuter les préparations batch | ✅ | ✅ | ✅ |
+| Export CSV | ✅ | ✅ | ✅ |
+| Ajouter / modifier un article | ❌ | ✅ | ✅ |
+| Supprimer un article | ❌ | ✅ | ✅ |
+| Gérer les contacts | ❌ | ✅ | ✅ |
+| Éditer les fiches membres | ❌ | ✅ | ✅ |
+| Changer l'image d'un article | ❌ | ✅ | ✅ |
+| Ajouter / supprimer un membre | ❌ | ❌ | ✅ |
+| Changer les rôles des utilisateurs | ❌ | ❌ | ✅ |
+| Purger l'historique et l'audit | ❌ | ❌ | ✅ |
 
 ---
 

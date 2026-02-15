@@ -60,11 +60,12 @@ Interface moderne, responsive et performante.
 │   ├── 🧩 components/
 │   │   ├── Delete/                     Suppression avec confirmation
 │   │   ├── Logout/                     Déconnexion
-│   │   ├── Modales/                    AddModale, ItemModale (onglets Détail/Historique), ContactModale
+│   │   ├── Modales/                    AddModale, ItemModale, ContactModale, UserModale, AddMemberModale, FiltersModal, ExportOptionsModal
 │   │   ├── Sidebar/                    Navigation latérale repliable
 │   │   ├── SpinnerOverlay/             Overlay de chargement
 │   │   ├── Stats/                      Dashboard statistiques
 │   │   ├── Topbar/                     Barre supérieure
+│   │   ├── Portal.tsx                  🌀 Portail React (createPortal)
 │   │   ├── AppContext.tsx              🔐 Contexte d'authentification
 │   │   ├── Layout.tsx                  📐 Layout (Sidebar + Topbar + Outlet)
 │   │   ├── ProtectedRoute.tsx          🛡️ Guard d'authentification
@@ -79,12 +80,13 @@ Interface moderne, responsive et performante.
 │   ├── 🛠️ lib/utils.ts                 cn() (clsx + tailwind-merge)
 │   │
 │   ├── 📄 pages/
-│   │   ├── articles/                   Page articles (grille, filtres serveur, pagination serveur, export CSV)
-│   │   ├── contacts/                   Page contacts
+│   │   ├── articles/                   Page articles (grille, filtres, pagination, export CSV/XLSX/PDF, prépa batch)
+│   │   ├── contacts/                   Page contacts (annuaire par catégorie)
+│   │   ├── history/                    Page historique & audit (journal, filtres, purge superadmin)
 │   │   ├── home/                       Dashboard / accueil
 │   │   ├── login/                      Page de connexion
-│   │   ├── membres/                    Page membres
-│   │   └── profil/                     Page profil utilisateur
+│   │   ├── membres/                    Page membres (organisation par pôles)
+│   │   └── profil/                     Page profil utilisateur (édition, avatar)
 │   │
 │   ├── 🗃️ reducers/
 │   │   ├── __tests__/                  Tests des reducers
@@ -108,8 +110,9 @@ Interface moderne, responsive et performante.
 │   │   └── index.ts                     Barrel re-export
 │   │
 │   ├── 🛠️ utils/                        Utilitaires scindés par thème
+│   │   ├── csv.utils.ts                 Export CSV des articles
 │   │   ├── date.utils.ts                dateParser
-│   │   └── csv.utils.ts                 Export CSV des articles
+│   │   └── export.utils.ts              Export XLSX et PDF des articles
 │   │
 │   ├── ⚛️ App.tsx                       AuthProvider + Router
 │   ├── 🚀 index.tsx                     Bootstrap (Store, Axios, render)
@@ -130,10 +133,11 @@ Interface moderne, responsive et performante.
 |---|---|:---:|---|
 | `/` | Login | 🌐 Public | Connexion email + mot de passe |
 | `/home` | Dashboard | 🔒 Auth | Statistiques et vue d'ensemble |
-| `/articles` | Articles | 🔒 Auth | Grille articles, filtres, +/- quantité |
-| `/profil` | Profil | 🔒 Auth | Profil utilisateur, avatar |
-| `/membres` | Membres | 🔒 Auth | Liste des utilisateurs |
-| `/contacts` | Contacts | 🔒 Auth | Annuaire contacts |
+| `/articles` | Articles | 🔒 Auth | Grille articles, filtres, prépa batch, export CSV/XLSX/PDF |
+| `/profil` | Profil | 🔒 Auth | Profil utilisateur, avatar, édition |
+| `/membres` | Membres | 🔒 Auth | Équipe organisée par pôles |
+| `/contacts` | Contacts | 🔒 Auth | Annuaire contacts par catégorie |
+| `/historique` | Historique | 🔒 Auth | Journal des modifications et audit |
 
 > 🛡️ Toutes les routes sauf `/` sont protégées par `<ProtectedRoute>` qui vérifie le JWT via `/jwtid`.
 
@@ -194,6 +198,7 @@ interface AuthContextType {
   uid: string | null;
   role: string | null;
   isAdmin: boolean;
+  isSuperadmin: boolean;
   isAuthLoading: boolean;
 }
 ```
@@ -213,7 +218,8 @@ interface User {
   picture?: string;
   poste?: string;
   numero?: string;
-  role?: string;
+  pole?: string;
+  role?: string;   // "user" | "admin" | "superadmin"
 }
 ```
 
