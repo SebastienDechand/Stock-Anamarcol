@@ -40,7 +40,10 @@ export default function contactsReducer(
     case UPLOAD_CONTACT_PICTURE:
       return {
         ...state,
-        picture: action.payload as string,
+        // update selectedContactInfo picture so modal preview refreshes
+        selectedContactInfo: state.selectedContactInfo
+          ? { ...state.selectedContactInfo, picture: action.payload as string }
+          : state.selectedContactInfo,
       };
     case SET_SELECTED_CONTACT_INFO:
       return {
@@ -51,7 +54,12 @@ export default function contactsReducer(
     case UPDATE_CONTACT:
       return {
         ...state,
-        numero: action.payload as string,
+        selectedContactInfo: state.selectedContactInfo
+          ? {
+              ...state.selectedContactInfo,
+              ...(action.payload as Partial<typeof state.selectedContactInfo>),
+            }
+          : state.selectedContactInfo,
       };
     default:
       return state;

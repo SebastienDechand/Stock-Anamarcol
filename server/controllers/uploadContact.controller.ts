@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import ContactModel from "../models/contact.model";
 import { validateUploadedFile, uploadToImgBB } from "../utils/upload.utils";
+import { logEvent } from "../utils/audit.utils";
 
 export const uploadContact = async (
   req: Request,
@@ -18,6 +19,19 @@ export const uploadContact = async (
       { $set: { picture: pictureUrl } },
       { new: true, upsert: true, setDefaultsOnInsert: true },
     );
+
+    // Audit
+    try {
+      await logEvent(
+        "upload",
+        "contact",
+        req.body.contactId,
+        res.locals.user?.pseudo,
+        { pictureUrl },
+      );
+    } catch (err) {
+      console.error("Audit upload contact error:", err);
+    }
 
     res.json(updatedContact);
   } catch (err) {

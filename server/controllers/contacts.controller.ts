@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import ContactModel from "../models/contact.model";
+import ContactModel, { IContact } from "../models/contact.model";
 import { validateObjectId } from "../utils/validate.utils";
+import { logEvent } from "../utils/audit.utils";
 
 export const getContacts = async (
   _req: Request,
@@ -37,6 +38,14 @@ export const createContact = async (
 
   try {
     const contact = await ContactModel.create({ nom, email, lien, poste, tel });
+    // Audit
+    await logEvent(
+      "create",
+      "contact",
+      contact._id.toString(),
+      res.locals.user?.pseudo,
+      { entityName: nom },
+    );
     res.status(200).json({ contact: contact._id });
   } catch (err) {
     res.status(400).json({ message: "Erreur lors de la création du contact" });
@@ -57,6 +66,7 @@ export const updateContact = async (
       return;
     }
 
+    const old = contact.toObject();
     if (req.body.nom) contact.nom = req.body.nom;
     if (req.body.email) contact.email = req.body.email;
     if (req.body.lien) contact.lien = req.body.lien;
@@ -65,6 +75,39 @@ export const updateContact = async (
     if (req.body.picture) contact.picture = req.body.picture;
 
     const updatedContact = await contact.save();
+    // Audit: record updated fields
+    try {
+      const changes: Record<string, { old?: unknown; new?: unknown }> = {};
+      const fields: Array<keyof IContact> = [
+        "nom",
+        "email",
+        "lien",
+        "poste",
+        "tel",
+        "picture",
+      ];
+      const oldObj = old as Partial<Record<keyof IContact, unknown>>;
+      const newObj = updatedContact as Partial<Record<keyof IContact, unknown>>;
+      for (const key of fields) {
+        const oldVal = oldObj[key];
+        const newVal = newObj[key];
+        if (String(oldVal ?? "") !== String(newVal ?? "")) {
+          changes[key as string] = { old: oldVal, new: newVal };
+        }
+      }
+      if (Object.keys(changes).length > 0) {
+        await logEvent(
+          "update",
+          "contact",
+          updatedContact._id.toString(),
+          res.locals.user?.pseudo,
+          { changes, entityName: updatedContact.nom },
+        );
+      }
+    } catch (err) {
+      console.error("Audit contact update error:", err);
+    }
+
     res.send(updatedContact);
   } catch (err) {
     console.error("Error updating contact:", err);
@@ -81,7 +124,28 @@ export const deleteContact = async (
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
+    const maybeQuery = ContactModel.findById(req.params.id as string);
+    let toDelete: unknown = undefined;
+    if (maybeQuery) {
+      if (typeof (maybeQuery as any).lean === "function") {
+        toDelete = await (maybeQuery as any).lean();
+      } else if (typeof (maybeQuery as any).then === "function") {
+        toDelete = await maybeQuery;
+      }
+    }
     await ContactModel.deleteOne({ _id: req.params.id }).exec();
+    // Audit
+    try {
+      await logEvent(
+        "delete",
+        "contact",
+        String(req.params.id),
+        res.locals.user?.pseudo,
+        { deleted: toDelete },
+      );
+    } catch (err) {
+      console.error("logEvent delete contact error:", err);
+    }
     res.status(200).json({ message: "Sucessfully deleted." });
   } catch (err) {
     console.error("Error deleting contact:", err);

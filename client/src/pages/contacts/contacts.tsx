@@ -40,11 +40,17 @@ const Contacts = () => {
       className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 cursor-pointer hover:shadow-md transition-shadow group"
     >
       <div className="flex items-center gap-4">
-        <img
-          src={contact.picture}
-          alt={contact.nom || "Contact"}
-          className="w-14 h-14 rounded-full object-cover bg-gray-100 border-2 border-gray-50"
-        />
+        {contact.picture ? (
+          <img
+            src={contact.picture}
+            alt={contact.nom || "Contact"}
+            className="w-14 h-14 rounded-full object-cover bg-gray-100 border-2 border-gray-50"
+          />
+        ) : (
+          <div className="w-14 h-14 rounded-full bg-gray-100 border-2 border-gray-50 flex items-center justify-center text-gray-400 text-lg font-semibold shrink-0">
+            {(contact.nom || "?")[0].toUpperCase()}
+          </div>
+        )}
         <div className="min-w-0 flex-1">
           {contact.poste && (
             <p className="text-[11px] font-medium text-brand-600 uppercase tracking-wide mb-0.5">
@@ -109,7 +115,7 @@ const Contacts = () => {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 mt-0">
       <h1 className="text-xl font-bold text-gray-900">Contacts</h1>
 
       {exterieurs.length > 0 && (
