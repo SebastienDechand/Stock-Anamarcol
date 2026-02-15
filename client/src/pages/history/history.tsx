@@ -166,30 +166,32 @@ export default function HistoryPage() {
 
   return (
     <div className="space-y-4 h-full">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Clock size={20} className="text-gray-400" />
         <h1 className="text-xl font-bold text-gray-900">Historique</h1>
         <span className="text-xs text-gray-400 ml-2">
           {filtered.length} événements
         </span>
-        <span className="text-xs text-gray-400 ml-auto">
-          Historique depuis le{" "}
-          {new Date(Date.now() - 30 * 24 * 3600 * 1000).toLocaleDateString(
-            "fr-FR",
-            { day: "numeric", month: "long", year: "numeric" },
+        <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
+          <span className="text-xs text-gray-400">
+            Historique depuis le{" "}
+            {new Date(Date.now() - 30 * 24 * 3600 * 1000).toLocaleDateString(
+              "fr-FR",
+              { day: "numeric", month: "long", year: "numeric" },
+            )}
+          </span>
+          {auth?.isSuperadmin && (
+            <button
+              onClick={() => setShowPurgeModal(true)}
+              disabled={isPurging}
+              className="ml-auto sm:ml-3 inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-full bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+              title="Purger audit + history"
+            >
+              <Trash2 size={14} />
+              Purger
+            </button>
           )}
-        </span>
-        {auth?.isSuperadmin && (
-          <button
-            onClick={() => setShowPurgeModal(true)}
-            disabled={isPurging}
-            className="ml-3 inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-full bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
-            title="Purger audit + history"
-          >
-            <Trash2 size={14} />
-            Purger
-          </button>
-        )}
+        </div>
       </div>
 
       {/* Filtres */}
