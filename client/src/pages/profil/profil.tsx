@@ -70,11 +70,17 @@ export default function Profil() {
             className="relative group cursor-pointer"
             onClick={() => fileInputRef.current?.click()}
           >
-            <img
-              src={userData.picture}
-              alt={userData.pseudo}
-              className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
-            />
+            {userData.picture ? (
+              <img
+                src={userData.picture}
+                alt={userData.pseudo}
+                className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"
+              />
+            ) : (
+              <div className="w-24 h-24 rounded-full bg-gray-100 border-4 border-white shadow-md flex items-center justify-center text-gray-400 text-3xl font-semibold">
+                {(userData.pseudo || "?")[0].toUpperCase()}
+              </div>
+            )}
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
               <Camera size={24} className="text-white" />
             </div>
