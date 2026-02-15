@@ -159,9 +159,7 @@ export default function Articles() {
   const [prepaCount, setPrepaCount] = useState<number>(1);
 
   const togglePrepa = useCallback((p: string) => {
-    setPrepaFilter((prev) =>
-      prev.includes(p) ? [] : [p],
-    );
+    setPrepaFilter((prev) => (prev.includes(p) ? [] : [p]));
   }, []);
 
   const handlePrepaBatch = async (
@@ -375,63 +373,115 @@ export default function Articles() {
             </button>
           )}
         </div>
+
+        {/* Prépa filters always visible on mobile, plus visible & stylé */}
+        <div className="flex sm:hidden gap-2 overflow-x-auto no-scrollbar items-center mt-2 mb-3 px-2 py-2 bg-violet-50 border border-violet-200 rounded-lg shadow-sm justify-center w-full">
+          <span className="text-[10px] font-bold text-violet-700 uppercase tracking-wide shrink-0">
+            Prépa
+          </span>
+          {PREPARATIONS.map((p) => (
+            <button
+              key={p}
+              onClick={() => togglePrepa(p)}
+              className={`px-4 py-1 rounded-full text-xs font-semibold border-2 transition-colors shrink-0 shadow-sm ${
+                prepaFilter.includes(p)
+                  ? "bg-violet-600 text-white border-violet-600"
+                  : "bg-white text-violet-700 border-violet-300 hover:bg-violet-100"
+              }`}
+              style={{ minWidth: 80 }}
+              {...(typeof window !== "undefined" && window.innerWidth >= 640
+                ? { title: `Filtrer préparation ${p}` }
+                : {})}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Barre d'action prépa */}
       {prepaFilter.length > 0 && (
-        <div className="bg-violet-50 border border-violet-200 rounded-lg px-4 py-2.5 flex items-center justify-between gap-3 mb-3">
-          <span className="text-sm text-violet-800">
+        <div className="bg-violet-50 border border-violet-200 rounded-lg px-2 py-2.5 flex flex-col gap-2 mb-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
+          <span className="hidden sm:inline text-sm text-violet-800">
             Prépa{" "}
             <span className="font-semibold">{prepaFilter.join(", ")}</span>
           </span>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                for (const p of prepaFilter) handlePrepaBatch(p, "decrement");
-              }}
-              disabled={
-                prepaBatchLoading !== null ||
-                prepaFilter.some((p) => {
-                  const field = PREPA_FIELD_MAP[p];
-                  return field ? canDecrement?.[field] === false : false;
-                })
-              }
-              title={
-                prepaFilter.some((p) => {
-                  const field = PREPA_FIELD_MAP[p];
-                  return field ? canDecrement?.[field] === false : false;
-                })
-                  ? "Stock insuffisant pour certains articles de la prépa"
-                  : undefined
-              }
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 text-white text-xs font-medium rounded-lg hover:bg-violet-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Minus size={12} />
-              {prepaBatchLoading?.endsWith("-decrement")
-                ? "En cours…"
-                : "Retirer du stock"}
-            </button>
-            <div className="flex items-center gap-1.5">
-              <input
-                type="number"
-                min={1}
-                value={prepaCount}
-                onChange={(e) => setPrepaCount(Math.max(1, parseInt(e.target.value) || 1))}
-                className="w-12 px-1.5 py-1.5 text-xs text-center border border-violet-300 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-violet-400"
-                title="Nombre de prépas à remettre"
-              />
-              <button
-                onClick={() => {
-                  for (const p of prepaFilter) handlePrepaBatch(p, "increment", prepaCount);
-                }}
-                disabled={prepaBatchLoading !== null}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-violet-700 text-xs font-medium rounded-lg border border-violet-300 hover:bg-violet-100 transition-colors disabled:opacity-50"
-              >
-                <Plus size={12} />
-                {prepaBatchLoading?.endsWith("-increment")
-                  ? "En cours…"
-                  : "Remettre en stock"}
-              </button>
+          <div className="flex flex-row items-start gap-4 w-full sm:w-auto sm:flex-row sm:items-stretch sm:gap-0 sm:divide-x sm:divide-violet-200">
+            {/* Retirer du stock */}
+            <div className="flex flex-col items-center w-full sm:w-64 md:w-72 px-0 sm:px-4 mt-0">
+              <div className="flex flex-col items-center sm:flex-row sm:items-center w-full">
+                <input
+                  type="number"
+                  value={1}
+                  disabled
+                  className="w-20 px-1.5 py-1.5 text-xs text-center border border-violet-200 rounded-lg bg-gray-100 text-gray-400 mb-1 sm:mb-0 sm:mr-2 cursor-not-allowed"
+                  style={{ minWidth: "56px" }}
+                  aria-label="Quantité à retirer"
+                />
+                <span className="text-[10px] text-gray-400 font-normal mb-2 text-center sm:hidden">
+                  (1 à la fois)
+                </span>
+                <button
+                  onClick={() => {
+                    for (const p of prepaFilter)
+                      handlePrepaBatch(p, "decrement");
+                  }}
+                  disabled={
+                    prepaBatchLoading !== null ||
+                    prepaFilter.some((p) => {
+                      const field = PREPA_FIELD_MAP[p];
+                      return field ? canDecrement?.[field] === false : false;
+                    })
+                  }
+                  title={
+                    prepaFilter.some((p) => {
+                      const field = PREPA_FIELD_MAP[p];
+                      return field ? canDecrement?.[field] === false : false;
+                    })
+                      ? "Stock insuffisant pour certains articles de la prépa"
+                      : undefined
+                  }
+                  className="flex items-center gap-1.5 px-3 py-2 bg-violet-600 text-white text-xs font-semibold rounded-lg hover:bg-violet-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-auto sm:flex-1 justify-center shadow-sm whitespace-nowrap"
+                >
+                  <Minus size={14} />
+                  {prepaBatchLoading?.endsWith("-decrement")
+                    ? "En cours…"
+                    : "Retirer du stock"}
+                </button>
+              </div>
+            </div>
+            {/* Ajouter en stock */}
+            <div className="flex flex-col items-center w-full sm:w-64 md:w-72 px-0 sm:px-4 mt-0">
+              <div className="flex flex-col items-center sm:flex-row sm:items-center w-full">
+                <input
+                  id="prepaCountInput"
+                  type="number"
+                  min={1}
+                  value={prepaCount}
+                  onChange={(e) =>
+                    setPrepaCount(Math.max(1, parseInt(e.target.value) || 1))
+                  }
+                  className="w-20 px-1.5 py-1.5 text-xs text-center border border-violet-300 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-violet-400 mb-1 sm:mb-0 sm:mr-2"
+                  title="Nombre à ajouter en stock"
+                  style={{ minWidth: "56px" }}
+                />
+                <span className="text-[10px] text-gray-400 font-normal mb-2 text-center sm:hidden">
+                  (Entrer la quantité)
+                </span>
+                <button
+                  onClick={() => {
+                    for (const p of prepaFilter)
+                      handlePrepaBatch(p, "increment", prepaCount);
+                  }}
+                  disabled={prepaBatchLoading !== null}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-white text-violet-700 text-xs font-semibold rounded-lg border border-violet-300 hover:bg-violet-100 transition-colors disabled:opacity-50 w-auto sm:flex-1 justify-center shadow-sm whitespace-nowrap"
+                >
+                  <Plus size={14} />
+                  {prepaBatchLoading?.endsWith("-increment")
+                    ? "En cours…"
+                    : "Remettre en stock"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
