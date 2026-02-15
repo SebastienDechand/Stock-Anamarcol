@@ -11,11 +11,16 @@ jest.mock("../models/user.model", () => ({
   default: mockUserModel,
 }));
 
+jest.mock("../utils/audit.utils", () => ({
+  logEvent: jest.fn().mockResolvedValue(undefined),
+}));
+
 import {
   getAllUsers,
   userInfo,
   updateUser,
   deleteUser,
+  setRole,
 } from "../controllers/user.controller";
 
 describe("User Controller", () => {
@@ -25,6 +30,7 @@ describe("User Controller", () => {
   beforeEach(() => {
     req = { params: {}, body: {} };
     res = {
+      locals: { user: { pseudo: "admin" } },
       status: jest.fn().mockReturnThis() as unknown as Response["status"],
       json: jest.fn() as unknown as Response["json"],
       send: jest.fn() as unknown as Response["send"],
@@ -137,6 +143,52 @@ describe("User Controller", () => {
       expect(mockUser.email).toBe("new@test.com");
       expect(mockUser.poste).toBe("Dev");
       expect(mockUser.save).toHaveBeenCalled();
+    });
+  });
+
+  // ─── setRole ─────────────────────────────────────────
+  describe("setRole", () => {
+    it("should return 400 when ID is invalid", async () => {
+      req.params = { id: "invalid" };
+      req.body = { role: "admin" };
+      await setRole(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+    });
+
+    it("should return 400 when role is invalid", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { role: "hacker" };
+      await setRole(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ message: "Role invalide" });
+    });
+
+    it("should return 404 when user not found", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { role: "admin" };
+      mockUserModel.findById.mockResolvedValue(null);
+
+      await setRole(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(404);
+    });
+
+    it("should update the role successfully", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { role: "admin" };
+      const mockUser = {
+        _id: "507f1f77bcf86cd799439011",
+        role: "user",
+        save: jest.fn().mockResolvedValue({
+          _id: "507f1f77bcf86cd799439011",
+          role: "admin",
+        }),
+      };
+      mockUserModel.findById.mockResolvedValue(mockUser);
+
+      await setRole(req as Request, res as Response);
+      expect(mockUser.role).toBe("admin");
+      expect(mockUser.save).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
     });
   });
 });

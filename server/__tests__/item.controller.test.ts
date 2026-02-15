@@ -19,12 +19,21 @@ jest.mock("../utils/history.utils", () => ({
   logItemDelete: jest.fn(),
 }));
 
+jest.mock("../utils/audit.utils", () => ({
+  logEvent: jest.fn().mockResolvedValue(undefined),
+}));
+
+jest.mock("../controllers/stats.controller", () => ({
+  invalidateStatsCache: jest.fn(),
+}));
+
 import {
   itemInfo,
   readItem,
   createItem,
   updateItem,
   deleteItem,
+  prepaBatch,
 } from "../controllers/item.controller";
 
 describe("Item Controller", () => {
@@ -38,6 +47,7 @@ describe("Item Controller", () => {
       body: {},
     };
     res = {
+      locals: { user: { pseudo: "admin" } },
       status: jest.fn().mockReturnThis() as unknown as Response["status"],
       json: jest.fn() as unknown as Response["json"],
       send: jest.fn() as unknown as Response["send"],
@@ -282,6 +292,86 @@ describe("Item Controller", () => {
       expect(res.json).toHaveBeenCalledWith({
         message: "Sucessfully deleted.",
       });
+    });
+  });
+
+  // ─── prepaBatch ──────────────────────────────────────
+  describe("prepaBatch", () => {
+    it("should return 400 when prepa is invalid", async () => {
+      req.body = { prepa: "invalid", operation: "decrement" };
+      await prepaBatch(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ message: "Prépa invalide" });
+    });
+
+    it("should return 400 when operation is invalid", async () => {
+      req.body = { prepa: "prepaCG", operation: "multiply" };
+      await prepaBatch(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ message: "Opération invalide" });
+    });
+
+    it("should decrement quantities for matching items", async () => {
+      req.body = { prepa: "prepaCG", operation: "decrement" };
+
+      const mockItems = [
+        {
+          _id: "item1",
+          denomination: "Pièce A",
+          quantite: 10,
+          toObject: jest.fn().mockReturnValue({ denomination: "Pièce A", quantite: 10 }),
+          save: jest.fn().mockResolvedValue(true),
+        },
+      ];
+      mockItemModel.find.mockResolvedValue(mockItems);
+
+      await prepaBatch(req as Request, res as Response);
+
+      expect(mockItems[0].quantite).toBe(9);
+      expect(mockItems[0].save).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ updated: 1 }),
+      );
+    });
+
+    it("should apply delta of 4 for cassette items in prepaCG", async () => {
+      req.body = { prepa: "prepaCG", operation: "decrement" };
+
+      const mockItems = [
+        {
+          _id: "item1",
+          denomination: "Cassette HV",
+          quantite: 10,
+          toObject: jest.fn().mockReturnValue({ denomination: "Cassette HV", quantite: 10 }),
+          save: jest.fn().mockResolvedValue(true),
+        },
+      ];
+      mockItemModel.find.mockResolvedValue(mockItems);
+
+      await prepaBatch(req as Request, res as Response);
+
+      expect(mockItems[0].quantite).toBe(6);
+    });
+
+    it("should not go below 0 on decrement", async () => {
+      req.body = { prepa: "prepaTPV", operation: "decrement" };
+
+      const mockItems = [
+        {
+          _id: "item1",
+          denomination: "Pièce A",
+          quantite: 0,
+          toObject: jest.fn().mockReturnValue({ denomination: "Pièce A", quantite: 0 }),
+          save: jest.fn().mockResolvedValue(true),
+        },
+      ];
+      mockItemModel.find.mockResolvedValue(mockItems);
+
+      await prepaBatch(req as Request, res as Response);
+
+      expect(mockItems[0].quantite).toBe(0);
+      expect(mockItems[0].save).not.toHaveBeenCalled();
     });
   });
 });
