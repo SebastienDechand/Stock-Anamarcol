@@ -9,3 +9,4 @@ export type {
 } from "./statistics";
 export type { ContactsState, ItemState, ItemsState, MenuState } from "./state";
 export type { AuthContextType } from "./auth";
+export type { AuditEvent } from "./audit";

@@ -9,6 +9,8 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { useContext } from "react";
+import { UidContext } from "../AppContext";
 import type { LucideIcon } from "lucide-react";
 
 interface NavItem {
@@ -17,7 +19,7 @@ interface NavItem {
   icon: LucideIcon;
 }
 
-const navItems: NavItem[] = [
+const baseNav: NavItem[] = [
   { to: "/home", label: "Accueil", icon: Home },
   { to: "/articles", label: "Articles", icon: Package },
   { to: "/membres", label: "Membres", icon: Users },
@@ -32,6 +34,12 @@ interface SidebarProps {
 
 export default function Sidebar({ open, setOpen }: SidebarProps) {
   const location = useLocation();
+  const auth = useContext(UidContext);
+  // Show history link to admins and superadmins
+  const navItems: NavItem[] =
+    auth?.isAdmin || auth?.isSuperadmin
+      ? [...baseNav, { to: "/history", label: "Historique", icon: Package }]
+      : baseNav;
 
   return (
     <>
