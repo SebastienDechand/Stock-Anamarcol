@@ -4,6 +4,7 @@ import { useAppDispatch } from "../../hooks/redux";
 import {
   setSelectedItemId,
   updateItem,
+  updateQuantite,
   uploadItemPicture,
   fetchItemHistory,
 } from "../../actions/item.actions";
@@ -74,6 +75,7 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
 
   // Edit mode state
   const [editing, setEditing] = useState(false);
+  const [editingQty, setEditingQty] = useState(false);
   const [denomination, setDenomination] = useState("");
   const [fournisseur, setFournisseur] = useState("");
   const [etat, setEtat] = useState("");
@@ -125,6 +127,7 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
       setQuantite(selectedItemInfo.quantite ?? "");
     }
     setEditing(false);
+    setEditingQty(false);
     setError("");
   };
 
@@ -150,6 +153,25 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
       );
       await dispatch(setSelectedItemId(selectedItemInfo._id));
       setEditing(false);
+      setHistoryFetched(false);
+    } catch {
+      setError("Erreur lors de la mise à jour.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveQty = async () => {
+    if (!selectedItemInfo?._id || !modifierName) return;
+    const newQty = Math.max(0, parseInt(String(quantite), 10) || 0);
+    setIsSaving(true);
+    setError("");
+    try {
+      await dispatch(
+        updateQuantite(selectedItemInfo._id, newQty, modifierName),
+      );
+      await dispatch(setSelectedItemId(selectedItemInfo._id));
+      setEditingQty(false);
       setHistoryFetched(false);
     } catch {
       setError("Erreur lors de la mise à jour.");
@@ -372,7 +394,7 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
               {/* Quantité */}
               <div>
                 <p className={labelClass}>Quantité</p>
-                {editing ? (
+                {editing || editingQty ? (
                   <input
                     type="number"
                     min="0"
@@ -429,6 +451,38 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
                     >
                       <Pencil size={12} />
                       Modifier
+                    </button>
+                  )}
+                </div>
+              )}
+              {!isAdmin && (
+                <div className="flex items-center gap-2 pt-1">
+                  {editingQty ? (
+                    <>
+                      <button
+                        onClick={handleSaveQty}
+                        disabled={isSaving}
+                        className="flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-700 disabled:bg-brand-400 text-white text-sm font-medium rounded-lg transition-colors"
+                      >
+                        <Check size={14} />
+                        {isSaving ? "Enregistrement..." : "Enregistrer"}
+                      </button>
+                      <button
+                        onClick={cancelEditing}
+                        disabled={isSaving}
+                        className="flex items-center gap-1.5 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium rounded-lg transition-colors"
+                      >
+                        <X size={14} />
+                        Annuler
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => setEditingQty(true)}
+                      className="flex items-center gap-1.5 text-xs text-brand-600 hover:text-brand-700 font-medium"
+                    >
+                      <Pencil size={12} />
+                      Modifier la quantité
                     </button>
                   )}
                 </div>
