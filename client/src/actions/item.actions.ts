@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 import type { AppDispatch, Item, ReduxAction } from "../types";
 import { getAllItems } from "./items.actions";
 import {
@@ -43,6 +44,7 @@ export const addItem = (newItem: NewItem) => {
 
       dispatch({ type: ADD_ITEM_SUCCESS, payload: res.data.item });
       dispatch(getAllItems());
+      toast.success("Article ajouté");
       return res.data.item;
     } catch (err: unknown) {
       const error = err as {
@@ -101,8 +103,12 @@ export const updateQuantite = (
 
         dispatch(fetchArticlesWithLowStock());
         dispatch(getAllItems());
+        toast.success(`Quantité mise à jour (${numericQuantite})`);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        toast.error("Erreur lors de la mise à jour de la quantité");
+      });
   };
 };
 
@@ -128,8 +134,10 @@ export const updateItem = (
       dispatch({ type: UPDATE_ITEM_SUCCESS, payload: { itemId, ...fields } });
       dispatch(fetchArticlesWithLowStock());
       dispatch(getAllItems());
+      toast.success("Article mis à jour");
     } catch (err) {
       console.error("Erreur lors de la mise à jour de l'article :", err);
+      toast.error("Erreur lors de la mise à jour");
       throw err;
     }
   };
@@ -217,7 +225,9 @@ export const deleteItem = (
 ) => {
   return async (dispatch: AppDispatch) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}api/item/${itemId}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}api/item/${itemId}`, {
+        withCredentials: true,
+      });
 
       dispatch({
         type: DELETE_ITEM_SUCCESS,
@@ -227,15 +237,42 @@ export const deleteItem = (
       dispatch(fetchStatisticsForEtat(etat));
       dispatch(fetchArticlesWithLowStock());
       dispatch(getAllItems());
+      toast.success("Article supprimé");
     } catch (error: unknown) {
       const err = error as Error;
       console.error("Erreur lors de la suppression de l'article", error);
+      toast.error("Erreur lors de la suppression");
       dispatch({
         type: DELETE_ITEM_FAILURE,
         payload:
           err.message ||
           "Une erreur s'est produite lors de la suppression de l'article.",
       });
+    }
+  };
+};
+
+export const prepaBatch = (
+  prepa: string,
+  operation: "increment" | "decrement",
+  count: number = 1,
+) => {
+  return async (dispatch: AppDispatch) => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}api/item/prepa-batch`,
+        { prepa, operation, count },
+        { withCredentials: true },
+      );
+      dispatch(getAllItems());
+      const label = prepa === "prepaCG" ? "CashGuard" : "Caisse TPV";
+      const op = operation === "increment" ? "remis en stock" : "retiré du stock";
+      toast.success(`${label} : ${res.data.updated} articles ${op}`);
+      return res.data;
+    } catch (err) {
+      console.error("Erreur batch prépa:", err);
+      toast.error("Erreur lors de l'opération batch prépa");
+      throw err;
     }
   };
 };

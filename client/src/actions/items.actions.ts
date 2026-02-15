@@ -27,7 +27,6 @@ export interface FetchItemsParams {
   fournisseur?: string[];
   etat?: string[];
   prepaCG?: boolean;
-  prepaCaisse?: boolean;
   prepaTPV?: boolean;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
@@ -47,7 +46,6 @@ export const fetchItems = (params: FetchItemsParams = {}) => {
         q.append("fournisseur", params.fournisseur.join(","));
       if (params.etat?.length) q.append("etat", params.etat.join(","));
       if (params.prepaCG) q.append("prepaCG", "true");
-      if (params.prepaCaisse) q.append("prepaCaisse", "true");
       if (params.prepaTPV) q.append("prepaTPV", "true");
       if (params.sortBy) q.append("sortBy", params.sortBy);
       if (params.sortOrder) q.append("sortOrder", params.sortOrder);

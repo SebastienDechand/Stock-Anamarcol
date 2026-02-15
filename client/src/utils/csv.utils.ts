@@ -7,7 +7,6 @@ export function exportItemsToCSV(items: Item[]) {
     "État",
     "Quantité",
     "Prépa CG",
-    "Prépa Caisse",
     "Prépa TPV",
   ];
 
@@ -17,7 +16,6 @@ export function exportItemsToCSV(items: Item[]) {
     item.etat,
     String(item.quantite),
     item.prepaCG ? "Oui" : "Non",
-    item.prepaCaisse ? "Oui" : "Non",
     item.prepaTPV ? "Oui" : "Non",
   ]);
 

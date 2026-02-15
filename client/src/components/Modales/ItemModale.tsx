@@ -29,7 +29,6 @@ const FIELD_LABELS: Record<string, string> = {
   etat: "État",
   quantite: "Quantité",
   prepaCG: "Prépa CG",
-  prepaCaisse: "Prépa Caisse",
   prepaTPV: "Prépa TPV",
   image: "Image",
 };

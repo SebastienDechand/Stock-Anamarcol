@@ -8,6 +8,7 @@ import {
   setSelectedItemId,
   setSelectedItemQuantite,
   updateQuantite,
+  prepaBatch,
 } from "../../actions/item.actions";
 import AddModal from "../../components/Modales/AddModale";
 import ItemModale from "../../components/Modales/ItemModale";
@@ -72,6 +73,7 @@ export default function Articles() {
     items: pageItems,
     totalPages,
     isLoading,
+    canDecrement,
   } = useSelector((state: { itemsReducer: ItemsState }) => state.itemsReducer);
   const itemsPerPage = useResponsiveItemsPerPage();
 
@@ -114,7 +116,6 @@ export default function Articles() {
     if (fournisseurFilter.length) params.fournisseur = fournisseurFilter;
     if (etatFilter.length) params.etat = etatFilter;
     if (prepaFilter.includes("CashGuard")) params.prepaCG = true;
-    if (prepaFilter.includes("Caisse OHXHOO")) params.prepaCaisse = true;
     if (prepaFilter.includes("Caisse TPV")) params.prepaTPV = true;
     return params;
   }, [
@@ -147,13 +148,40 @@ export default function Articles() {
     );
   }, []);
 
-  const PREPARATIONS = ["CashGuard", "Caisse OHXHOO", "Caisse TPV"] as const;
+  const PREPARATIONS = ["CashGuard", "Caisse TPV"] as const;
+  const PREPA_FIELD_MAP: Record<string, string> = {
+    CashGuard: "prepaCG",
+    "Caisse TPV": "prepaTPV",
+  };
+  const [prepaBatchLoading, setPrepaBatchLoading] = useState<string | null>(
+    null,
+  );
+  const [prepaCount, setPrepaCount] = useState<number>(1);
 
   const togglePrepa = useCallback((p: string) => {
     setPrepaFilter((prev) =>
-      prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p],
+      prev.includes(p) ? [] : [p],
     );
   }, []);
+
+  const handlePrepaBatch = async (
+    prepaLabel: string,
+    operation: "increment" | "decrement",
+    count: number = 1,
+  ) => {
+    const field = PREPA_FIELD_MAP[prepaLabel];
+    if (!field) return;
+    setPrepaBatchLoading(`${field}-${operation}`);
+    try {
+      await dispatch(prepaBatch(field, operation, count));
+      dispatch(fetchItems(fetchParams));
+      if (operation === "increment") setPrepaCount(1);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setPrepaBatchLoading(null);
+    }
+  };
 
   const handleQuantityChange = (
     e: React.MouseEvent,
@@ -348,6 +376,66 @@ export default function Articles() {
           )}
         </div>
       </div>
+
+      {/* Barre d'action prépa */}
+      {prepaFilter.length > 0 && (
+        <div className="bg-violet-50 border border-violet-200 rounded-lg px-4 py-2.5 flex items-center justify-between gap-3 mb-3">
+          <span className="text-sm text-violet-800">
+            Prépa{" "}
+            <span className="font-semibold">{prepaFilter.join(", ")}</span>
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                for (const p of prepaFilter) handlePrepaBatch(p, "decrement");
+              }}
+              disabled={
+                prepaBatchLoading !== null ||
+                prepaFilter.some((p) => {
+                  const field = PREPA_FIELD_MAP[p];
+                  return field ? canDecrement?.[field] === false : false;
+                })
+              }
+              title={
+                prepaFilter.some((p) => {
+                  const field = PREPA_FIELD_MAP[p];
+                  return field ? canDecrement?.[field] === false : false;
+                })
+                  ? "Stock insuffisant pour certains articles de la prépa"
+                  : undefined
+              }
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-600 text-white text-xs font-medium rounded-lg hover:bg-violet-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Minus size={12} />
+              {prepaBatchLoading?.endsWith("-decrement")
+                ? "En cours…"
+                : "Retirer du stock"}
+            </button>
+            <div className="flex items-center gap-1.5">
+              <input
+                type="number"
+                min={1}
+                value={prepaCount}
+                onChange={(e) => setPrepaCount(Math.max(1, parseInt(e.target.value) || 1))}
+                className="w-12 px-1.5 py-1.5 text-xs text-center border border-violet-300 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-violet-400"
+                title="Nombre de prépas à remettre"
+              />
+              <button
+                onClick={() => {
+                  for (const p of prepaFilter) handlePrepaBatch(p, "increment", prepaCount);
+                }}
+                disabled={prepaBatchLoading !== null}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-violet-700 text-xs font-medium rounded-lg border border-violet-300 hover:bg-violet-100 transition-colors disabled:opacity-50"
+              >
+                <Plus size={12} />
+                {prepaBatchLoading?.endsWith("-increment")
+                  ? "En cours…"
+                  : "Remettre en stock"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Loading overlay */}
       {isLoading && (

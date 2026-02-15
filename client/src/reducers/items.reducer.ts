@@ -37,11 +37,12 @@ export default function itemsReducer(
       };
 
     case FETCH_ITEMS_SUCCESS: {
-      const { items, total, page, totalPages } = action.payload as {
+      const { items, total, page, totalPages, canDecrement } = action.payload as {
         items: Item[];
         total: number;
         page: number;
         totalPages: number;
+        canDecrement?: Record<string, boolean>;
       };
       return {
         ...state,
@@ -50,6 +51,7 @@ export default function itemsReducer(
         page,
         totalPages,
         isLoading: false,
+        canDecrement,
       };
     }
 

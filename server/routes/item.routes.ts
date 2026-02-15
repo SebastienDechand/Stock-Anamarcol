@@ -12,6 +12,7 @@ router.get("/", requireAuth, itemController.readItem);
 router.get("/history/:id", requireAuth, historyController.getItemHistory);
 router.get("/:id", requireAuth, itemController.itemInfo);
 router.post("/", requireAuth, itemController.createItem);
+router.post("/prepa-batch", requireAuth, itemController.prepaBatch);
 router.put("/:id", requireAuth, itemController.updateItem);
 router.delete("/:id", requireAdmin, itemController.deleteItem);
 

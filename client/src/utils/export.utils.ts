@@ -8,7 +8,7 @@ export async function exportToXLSX(items: Item[], filename?: string) {
     "État",
     "Quantité",
     "Prépa CG",
-    "Prépa Caisse",
+    
     "Prépa TPV",
   ];
 
@@ -18,7 +18,7 @@ export async function exportToXLSX(items: Item[], filename?: string) {
     État: item.etat,
     Quantité: Number(item.quantite),
     "Prépa CG": item.prepaCG ? "Oui" : "Non",
-    "Prépa Caisse": item.prepaCaisse ? "Oui" : "Non",
+
     "Prépa TPV": item.prepaTPV ? "Oui" : "Non",
   }));
 
@@ -44,7 +44,7 @@ export async function exportToPDF(items: Item[], filename?: string) {
     "État",
     "Quantité",
     "Prépa CG",
-    "Prépa Caisse",
+    
     "Prépa TPV",
   ];
 
@@ -54,7 +54,7 @@ export async function exportToPDF(items: Item[], filename?: string) {
     item.etat,
     String(item.quantite),
     item.prepaCG ? "Oui" : "Non",
-    item.prepaCaisse ? "Oui" : "Non",
+
     item.prepaTPV ? "Oui" : "Non",
   ]);
 

@@ -8,7 +8,6 @@ export interface Item {
   image?: string;
   etat: string;
   prepaCG?: boolean;
-  prepaCaisse?: boolean;
   prepaTPV?: boolean;
   preparation?: string;
   createdAt?: string;

@@ -25,6 +25,7 @@ export interface ItemsState {
   page: number;
   totalPages: number;
   isLoading: boolean;
+  canDecrement?: Record<string, boolean>;
 }
 
 export interface MenuState {

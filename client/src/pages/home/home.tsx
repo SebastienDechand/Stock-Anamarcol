@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import {
   Package,
@@ -8,6 +8,8 @@ import {
   TrendingDown,
   PieChartIcon,
   BarChart3,
+  Monitor,
+  CreditCard,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -40,7 +42,7 @@ interface KpiCardProps {
   icon: LucideIcon;
   label: string;
   value?: number | string;
-  accent?: "brand" | "blue" | "amber" | "red";
+  accent?: "brand" | "blue" | "amber" | "red" | "violet";
 }
 
 function KpiCard({ icon: Icon, label, value, accent = "brand" }: KpiCardProps) {
@@ -49,19 +51,20 @@ function KpiCard({ icon: Icon, label, value, accent = "brand" }: KpiCardProps) {
     blue: "bg-blue-50 text-blue-600",
     amber: "bg-amber-50 text-amber-600",
     red: "bg-red-50 text-red-600",
+    violet: "bg-violet-50 text-violet-600",
   };
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-3 sm:p-5 flex items-center gap-3 sm:gap-4">
+    <div className="bg-white rounded-lg border border-gray-100 shadow-sm px-3 py-2.5 flex items-center gap-2.5">
       <div
-        className={`flex items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-lg shrink-0 ${accents[accent]}`}
+        className={`flex items-center justify-center w-8 h-8 rounded-md shrink-0 ${accents[accent]}`}
       >
-        <Icon className="w-4 h-4 sm:w-[22px] sm:h-[22px]" />
+        <Icon className="w-4 h-4" />
       </div>
       <div className="min-w-0">
-        <p className="text-xs sm:text-sm text-gray-500 font-medium truncate">
+        <p className="text-[11px] text-gray-500 font-medium truncate leading-tight">
           {label}
         </p>
-        <p className="text-lg sm:text-2xl font-bold text-gray-900">
+        <p className="text-lg font-bold text-gray-900 leading-snug">
           {value ?? "–"}
         </p>
       </div>
@@ -89,6 +92,8 @@ interface GlobalStats {
   totalStock?: number;
   numberOfSuppliers?: number;
   numberOfLowStockArticles?: number;
+  prepaCG?: number;
+  prepaTPV?: number;
 }
 
 interface DashboardStats {
@@ -103,7 +108,7 @@ export default function Home() {
   const [stockTab, setStockTab] = useState("all");
   const [chartType, setChartType] = useState<"pie" | "bar">("pie");
 
-  useEffect(() => {
+  const fetchStats = useCallback(() => {
     axios
       .get(`${import.meta.env.VITE_API_URL}api/statistics/dashboard`, {
         withCredentials: true,
@@ -112,6 +117,14 @@ export default function Home() {
       .catch((err) => console.error("Dashboard stats error:", err))
       .finally(() => setLoading(false));
   }, []);
+
+  // Fetch on mount + re-fetch when tab regains focus
+  useEffect(() => {
+    fetchStats();
+    const onFocus = () => fetchStats();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [fetchStats]);
 
   if (loading) {
     return (
@@ -183,7 +196,7 @@ export default function Home() {
   return (
     <div className="space-y-6">
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-1.5 sm:gap-2">
         <KpiCard
           icon={Package}
           label="Nombre d'articles"
@@ -207,6 +220,18 @@ export default function Home() {
           label="Stock < 5"
           value={g.numberOfLowStockArticles}
           accent="red"
+        />
+        <KpiCard
+          icon={Monitor}
+          label="Prépa CashGuard"
+          value={g.prepaCG}
+          accent="violet"
+        />
+        <KpiCard
+          icon={CreditCard}
+          label="Prépa Caisse TPV"
+          value={g.prepaTPV}
+          accent="violet"
         />
       </div>
 

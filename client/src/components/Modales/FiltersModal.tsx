@@ -98,10 +98,10 @@ const FiltersModal = ({
               Préparations
             </label>
             <div className="flex flex-wrap gap-2">
-              {["CashGuard", "Caisse OHXHOO", "Caisse TPV"].map((p) => (
+              {["CashGuard", "Caisse TPV"].map((p) => (
                 <button
                   key={p}
-                  onClick={() => toggle(localP, setLocalP, p)}
+                  onClick={() => setLocalP(localP.includes(p) ? [] : [p])}
                   className={`px-3 py-1 rounded-full text-xs font-medium border ${localP.includes(p) ? "bg-violet-600 text-white border-violet-600" : "bg-white text-gray-600 border-gray-200"}`}
                 >
                   {p}

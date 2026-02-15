@@ -9,7 +9,6 @@ export interface IItem extends Document {
   image?: string;
   etat: string;
   prepaCG?: boolean;
-  prepaCaisse?: boolean;
   prepaTPV?: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -51,10 +50,6 @@ const ItemSchema = new Schema<IItem>(
       index: true,
     },
     prepaCG: {
-      type: Boolean,
-      default: false,
-    },
-    prepaCaisse: {
       type: Boolean,
       default: false,
     },

@@ -6,7 +6,6 @@ const TRACKED_FIELDS = [
   "fournisseur",
   "etat",
   "prepaCG",
-  "prepaCaisse",
   "prepaTPV",
   "image",
 ] as const;

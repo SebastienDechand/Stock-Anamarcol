@@ -46,7 +46,7 @@ export const getDashboardStats = async (
       return;
     }
 
-    const [globalStats, fournisseursStats, etatsStats, lowStockItems] =
+    const [globalStats, fournisseursStats, etatsStats, lowStockItems, cgItems, tpvItems] =
       await Promise.all([
         ItemModel.aggregate([
           {
@@ -90,6 +90,8 @@ export const getDashboardStats = async (
         ItemModel.find({ quantite: { $lt: 5 } })
           .sort({ quantite: 1, denomination: 1 })
           .lean(),
+        ItemModel.find({ prepaCG: true }).select("denomination quantite").lean(),
+        ItemModel.find({ prepaTPV: true }).select("quantite").lean(),
       ]);
 
     const global = globalStats[0] || {
@@ -99,12 +101,29 @@ export const getDashboardStats = async (
       fournisseurs: [],
     };
 
+    // Prépa complète CG = min(qty) de chaque article, cassettes comptent qty/4
+    const typedCgItems = cgItems as { denomination: string; quantite: number }[];
+    const completeCG = typedCgItems.length > 0
+      ? Math.min(...typedCgItems.map((item) => {
+          const isCassette = item.denomination.toLowerCase().includes("cassette");
+          return isCassette ? Math.floor(item.quantite / 4) : item.quantite;
+        }))
+      : 0;
+
+    // Prépa complète TPV = min(qty) de chaque article (1 de chaque)
+    const typedTpvItems = tpvItems as { quantite: number }[];
+    const completeTPV = typedTpvItems.length > 0
+      ? Math.min(...typedTpvItems.map((item) => item.quantite))
+      : 0;
+
     const result = {
       global: {
         numberOfArticles: global.numberOfArticles,
         totalStock: global.totalStock,
         numberOfSuppliers: global.fournisseurs.length,
         numberOfLowStockArticles: global.numberOfLowStockArticles,
+        prepaCG: completeCG,
+        prepaTPV: completeTPV,
       },
       fournisseurs: fournisseursStats.map((f: Record<string, unknown>) => ({
         nom: f._id,

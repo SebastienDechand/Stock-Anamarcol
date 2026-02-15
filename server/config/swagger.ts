@@ -30,7 +30,7 @@ const options: swaggerJsdoc.Options = {
             etat: { type: "string" },
             image: { type: "string" },
             prepaCG: { type: "boolean" },
-            prepaCaisse: { type: "boolean" },
+
             prepaTPV: { type: "boolean" },
             createdAt: { type: "string", format: "date-time" },
             updatedAt: { type: "string", format: "date-time" },
@@ -128,7 +128,6 @@ const options: swaggerJsdoc.Options = {
             { name: "fournisseur", in: "query", schema: { type: "string" }, description: "Virgule-séparé" },
             { name: "etat", in: "query", schema: { type: "string" }, description: "Virgule-séparé" },
             { name: "prepaCG", in: "query", schema: { type: "boolean" } },
-            { name: "prepaCaisse", in: "query", schema: { type: "boolean" } },
             { name: "prepaTPV", in: "query", schema: { type: "boolean" } },
             { name: "sortBy", in: "query", schema: { type: "string" } },
             { name: "sortOrder", in: "query", schema: { type: "string", enum: ["asc", "desc"] } },
