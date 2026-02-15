@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks/redux";
 import { updateNumero, uploadPicture } from "../../actions/user.actions";
@@ -33,7 +34,11 @@ export default function Profil() {
     if (!file) return;
     setUploadError("");
 
-    if (!ACCEPTED_IMAGE_TYPES.includes(file.type as (typeof ACCEPTED_IMAGE_TYPES)[number])) {
+    if (
+      !ACCEPTED_IMAGE_TYPES.includes(
+        file.type as (typeof ACCEPTED_IMAGE_TYPES)[number],
+      )
+    ) {
       setUploadError("Format non supporté. Utilisez JPG ou PNG.");
       return;
     }
@@ -47,14 +52,19 @@ export default function Profil() {
     data.append("userId", userData._id || "");
     data.append("file", file);
 
-    dispatch(uploadPicture(data, userData._id || "")).catch(() =>
-      setUploadError("Erreur lors de l'upload."),
-    );
+    dispatch(uploadPicture(data, userData._id || ""))
+      .then(() => toast.success("Photo de profil mise à jour"))
+      .catch(() => {
+        setUploadError("Erreur lors de l'upload.");
+        toast.error("Erreur lors de l'upload de la photo");
+      });
   };
 
   const handleUpdate = () => {
     if (userData._id) {
-      dispatch(updateNumero(userData._id, numero));
+      dispatch(updateNumero(userData._id, numero))
+        .then(() => toast.success("Numéro mis à jour"))
+        .catch(() => toast.error("Impossible de mettre à jour le numéro"));
     }
     setEditingNumero(false);
   };
@@ -130,12 +140,14 @@ export default function Profil() {
                 <button
                   onClick={handleUpdate}
                   className="p-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
+                  title="Enregistrer"
                 >
                   <Check size={16} />
                 </button>
                 <button
                   onClick={() => setEditingNumero(false)}
                   className="p-2 bg-gray-100 text-gray-500 rounded-lg hover:bg-gray-200 transition-colors"
+                  title="Annuler"
                 >
                   <X size={16} />
                 </button>

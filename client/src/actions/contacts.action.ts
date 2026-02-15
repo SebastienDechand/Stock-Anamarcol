@@ -93,6 +93,9 @@ export const updateContact = (
       .then(() => {
         dispatch({ type: UPDATE_CONTACT, payload: updatedInfo });
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        throw err;
+      });
   };
 };

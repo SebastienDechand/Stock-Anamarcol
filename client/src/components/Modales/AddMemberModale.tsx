@@ -88,7 +88,7 @@ export default function AddMemberModale({ onClose }: Props) {
       >
         <div className="flex items-center justify-between px-5 py-3 border-b">
           <h3 className="font-semibold">Ajouter un membre</h3>
-          <button onClick={onClose} className="p-1 text-gray-500">
+          <button onClick={onClose} className="p-1 text-gray-500" title="Fermer">
             <X size={16} />
           </button>
         </div>

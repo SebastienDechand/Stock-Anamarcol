@@ -1,8 +1,10 @@
 import { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
 import { UidContext } from "../../components/AppContext";
-import { Clock, ChevronDown, X } from "lucide-react";
+import { Clock, ChevronDown, X, Trash2, AlertTriangle } from "lucide-react";
+import toast from "react-hot-toast";
 import { ACTION_MAP, DEFAULT_ACTION, ENTITY_MAP } from "../../constants";
+import Portal from "../../components/Portal";
 import type { AuditEvent, User } from "../../types";
 
 function formatDate(date: string): string {
@@ -61,6 +63,8 @@ export default function HistoryPage() {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [users, setUsers] = useState<{ _id: string; pseudo: string }[]>([]);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [isPurging, setIsPurging] = useState(false);
+  const [showPurgeModal, setShowPurgeModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -141,6 +145,25 @@ export default function HistoryPage() {
     );
   };
 
+  const handlePurge = async () => {
+    setIsPurging(true);
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}api/history/purge`,
+        {},
+        { withCredentials: true },
+      );
+      setEvents([]);
+      toast.success("Historique et audit purgés");
+    } catch (err) {
+      console.error(err);
+      toast.error("Impossible de purger l'historique");
+    } finally {
+      setIsPurging(false);
+      setShowPurgeModal(false);
+    }
+  };
+
   return (
     <div className="space-y-4 h-full">
       <div className="flex items-center gap-2">
@@ -149,6 +172,24 @@ export default function HistoryPage() {
         <span className="text-xs text-gray-400 ml-2">
           {filtered.length} événements
         </span>
+        <span className="text-xs text-gray-400 ml-auto">
+          Historique depuis le{" "}
+          {new Date(Date.now() - 30 * 24 * 3600 * 1000).toLocaleDateString(
+            "fr-FR",
+            { day: "numeric", month: "long", year: "numeric" },
+          )}
+        </span>
+        {auth?.isSuperadmin && (
+          <button
+            onClick={() => setShowPurgeModal(true)}
+            disabled={isPurging}
+            className="ml-3 inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-full bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+            title="Purger audit + history"
+          >
+            <Trash2 size={14} />
+            Purger
+          </button>
+        )}
       </div>
 
       {/* Filtres */}
@@ -202,6 +243,7 @@ export default function HistoryPage() {
                 <button
                   onClick={() => setSelectedUsers([])}
                   className="p-0.5 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-200 transition-colors"
+                  title="Effacer le filtre"
                 >
                   <X size={12} />
                 </button>
@@ -282,6 +324,57 @@ export default function HistoryPage() {
           </p>
         )}
       </div>
+
+      {/* Modale de confirmation purge */}
+      {showPurgeModal && (
+        <Portal>
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+            onClick={() => !isPurging && setShowPurgeModal(false)}
+          >
+            <div
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="px-6 pt-6 pb-4 text-center">
+                <div className="mx-auto w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-4">
+                  <AlertTriangle size={24} className="text-red-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Purger l'historique
+                </h3>
+                <p className="mt-2 text-sm text-gray-500">
+                  Cette action supprimera{" "}
+                  <span className="font-medium text-gray-700">
+                    définitivement
+                  </span>{" "}
+                  tous les logs d'audit et l'historique des modifications.
+                </p>
+                <p className="mt-1 text-xs text-red-500 font-medium">
+                  Cette action est irréversible.
+                </p>
+              </div>
+              <div className="px-6 pb-6 flex gap-3">
+                <button
+                  onClick={() => setShowPurgeModal(false)}
+                  disabled={isPurging}
+                  className="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handlePurge}
+                  disabled={isPurging}
+                  className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                >
+                  <Trash2 size={14} />
+                  {isPurging ? "Purge en cours…" : "Confirmer"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </Portal>
+      )}
     </div>
   );
 }

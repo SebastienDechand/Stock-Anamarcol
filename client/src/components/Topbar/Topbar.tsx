@@ -38,6 +38,7 @@ export default function Topbar({ onToggleSidebar }: TopbarProps) {
         onClick={onToggleSidebar}
         className="p-2 rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
         aria-label="Menu"
+        title="Menu"
       >
         <Menu size={20} className="text-gray-600" />
       </button>

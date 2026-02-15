@@ -45,6 +45,9 @@ export const updateNumero = (userId: string, numero: string) => {
       .then(() => {
         dispatch({ type: UPDATE_NUMERO, payload: numero });
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        throw err;
+      });
   };
 };

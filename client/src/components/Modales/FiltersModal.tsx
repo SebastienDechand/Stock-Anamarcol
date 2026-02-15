@@ -42,6 +42,7 @@ const FiltersModal = ({
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+            title="Fermer"
           >
             <X size={18} />
           </button>

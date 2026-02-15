@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useContext } from "react";
+import toast from "react-hot-toast";
 import { useAppDispatch } from "../../hooks/redux";
 import { UidContext } from "../../components/AppContext";
 import {
@@ -51,7 +52,7 @@ export default function UserModale({ onClose, user }: UserModaleProps) {
         >
           <div className="flex items-center justify-between px-5 py-3 border-b">
             <h3 className="font-semibold">Profil</h3>
-            <button onClick={onClose} className="p-1 text-gray-500">
+            <button onClick={onClose} className="p-1 text-gray-500" title="Fermer">
               <X size={16} />
             </button>
           </div>
@@ -83,8 +84,10 @@ export default function UserModale({ onClose, user }: UserModaleProps) {
                       fd.append("name", user.pseudo || "user");
                       try {
                         await dispatch(uploadProfilePicture(fd));
+                        toast.success("Photo de profil mise à jour");
                       } catch (err) {
                         console.error(err);
+                        toast.error("Échec de l'upload de la photo");
                       }
                     }}
                   />
@@ -173,9 +176,11 @@ export default function UserModale({ onClose, user }: UserModaleProps) {
                   onClick={async () => {
                     try {
                       await dispatch(updateUser(user._id, form));
+                      toast.success("Membre mis à jour");
                       onClose();
                     } catch (err) {
                       console.error(err);
+                      toast.error("Impossible de mettre à jour le membre");
                     }
                   }}
                   className="px-3 py-2 bg-brand-600 text-white rounded"

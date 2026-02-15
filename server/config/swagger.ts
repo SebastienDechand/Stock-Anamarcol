@@ -107,6 +107,7 @@ const options: swaggerJsdoc.Options = {
       // ─── Users ───
       "/api/user": {
         get: { tags: ["Users"], summary: "Liste des utilisateurs", responses: { 200: { description: "OK", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/User" } } } } } } },
+        post: { tags: ["Users"], summary: "Créer un utilisateur (admin)", requestBody: { content: { "application/json": { schema: { type: "object", properties: { pseudo: { type: "string" }, email: { type: "string" }, password: { type: "string" } }, required: ["pseudo", "email", "password"] } } } }, responses: { 201: { description: "Utilisateur créé" }, 403: { description: "Accès refusé - admin requis" } } },
       },
       "/api/user/{id}": {
         get: { tags: ["Users"], summary: "Info utilisateur", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { 200: { description: "OK" } } },
@@ -115,6 +116,9 @@ const options: swaggerJsdoc.Options = {
       },
       "/api/user/upload": {
         post: { tags: ["Users"], summary: "Upload photo de profil", requestBody: { content: { "multipart/form-data": { schema: { type: "object", properties: { file: { type: "string", format: "binary" } } } } } }, responses: { 200: { description: "OK" } } },
+      },
+      "/api/user/{id}/role": {
+        put: { tags: ["Users"], summary: "Modifier le rôle d'un utilisateur (admin)", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], requestBody: { content: { "application/json": { schema: { type: "object", properties: { role: { type: "string", enum: ["user", "admin"] } }, required: ["role"] } } } }, responses: { 200: { description: "OK" }, 403: { description: "Accès refusé" } } },
       },
       // ─── Items ───
       "/api/item": {
@@ -147,15 +151,28 @@ const options: swaggerJsdoc.Options = {
       "/api/item/upload": {
         post: { tags: ["Items"], summary: "Upload image article", requestBody: { content: { "multipart/form-data": { schema: { type: "object", properties: { file: { type: "string", format: "binary" }, itemId: { type: "string" } } } } } }, responses: { 200: { description: "OK" } } },
       },
+      "/api/item/prepa-batch": {
+        post: { tags: ["Items"], summary: "Opérations prepa en lot (prepaCG / prepaTPV)", requestBody: { content: { "application/json": { schema: { type: "object", properties: { ids: { type: "array", items: { type: "string" } }, field: { type: "string", enum: ["prepaCG", "prepaTPV"] }, value: { type: "boolean" } }, required: ["ids", "field", "value"] } } } }, responses: { 200: { description: "OK" }, 401: { description: "Non authentifié" } } },
+      },
       // ─── Contacts ───
       "/api/contacts": {
         get: { tags: ["Contacts"], summary: "Liste des contacts", responses: { 200: { description: "OK", content: { "application/json": { schema: { type: "array", items: { $ref: "#/components/schemas/Contact" } } } } } } },
         post: { tags: ["Contacts"], summary: "Créer un contact (admin)", responses: { 201: { description: "Créé" } } },
       },
+      "/api/contacts/upload": {
+        post: { tags: ["Contacts"], summary: "Upload photo de contact (admin)", requestBody: { content: { "multipart/form-data": { schema: { type: "object", properties: { file: { type: "string", format: "binary" }, contactId: { type: "string" } } } } } }, responses: { 200: { description: "OK" }, 403: { description: "Accès refusé" } } },
+      },
       "/api/contacts/{id}": {
         get: { tags: ["Contacts"], summary: "Détail d'un contact", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { 200: { description: "OK" } } },
         put: { tags: ["Contacts"], summary: "Modifier un contact (admin)", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { 200: { description: "OK" } } },
         delete: { tags: ["Contacts"], summary: "Supprimer un contact (admin)", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { 200: { description: "OK" } } },
+      },
+      // ─── History / Audit ───
+      "/api/history": {
+        get: { tags: ["History"], summary: "Historique complet (audit + items, admin)", parameters: [{ name: "limit", in: "query", schema: { type: "integer", default: 200 } }], responses: { 200: { description: "OK" }, 401: { description: "Non authentifié" }, 403: { description: "Accès refusé - admin requis" } } },
+      },
+      "/api/history/purge": {
+        post: { tags: ["History"], summary: "Purger tout l'historique et l'audit (superadmin)", responses: { 200: { description: "OK", content: { "application/json": { schema: { type: "object", properties: { deletedAudit: { type: "number" }, deletedHistory: { type: "number" } } } } } }, 403: { description: "Accès refusé - superadmin requis" } } },
       },
       // ─── Statistics ───
       "/api/statistics/dashboard": {
