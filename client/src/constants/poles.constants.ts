@@ -9,9 +9,14 @@ export interface PoleInfo {
 
 export const POLES: PoleInfo[] = [
   { label: "Hotline",         icon: Headset,   color: "bg-red-600" },
-  { label: "Entrepôt",        icon: Warehouse, color: "bg-amber-600" },
   { label: "Monteur",         icon: Wrench,    color: "bg-gray-600" },
 ];
+
+export const POLE_ENTREPOT: PoleInfo = {
+  label: "Entrepôt",
+  icon: Warehouse,
+  color: "bg-amber-600",
+};
 
 export const POLE_DIRECTION: PoleInfo = {
   label: "Direction",
@@ -28,6 +33,7 @@ export const POLE_GESTION: PoleInfo = {
 export const ALL_POLE_LABELS = [
   "Direction",
   ...POLES.map((p) => p.label),
+  "Entrepôt",
   "Gestion du site",
 ] as const;
 

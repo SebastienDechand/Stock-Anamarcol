@@ -6,7 +6,7 @@ import { UidContext } from "../../components/AppContext";
 import { useAppDispatch } from "../../hooks/redux";
 import { deleteUser, getAllUsers } from "../../actions/users.actions";
 import { Mail, Phone, Trash2 } from "lucide-react";
-import { POLES, POLE_DIRECTION, POLE_GESTION } from "../../constants";
+import { POLES, POLE_DIRECTION, POLE_ENTREPOT, POLE_GESTION } from "../../constants";
 import type { PoleInfo } from "../../constants";
 import type { User } from "../../types";
 
@@ -14,7 +14,7 @@ import type { User } from "../../types";
 const LEGACY_NAMES: Record<string, string[]> = {
   Direction: ["edith"],
   Hotline: ["franck", "etienne", "étienne"],
-  Entrepôt: ["coline"],
+  Entrepôt: [],
   Monteur: ["thierry", "alain"],
   "Gestion du site": ["sebastien", "sébastien"],
 };
@@ -265,25 +265,47 @@ export default function Membres() {
         </div>
       </div>
 
-      {/* Pôles opérationnels + Gestion du site en bas à droite */}
+      {/* Pôles opérationnels : Hotline (+ Entrepôt), Monteur, Gestion du site */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {POLES.map((pole) => {
-          const members = getUsersByPole(usersData, pole.label);
-          return (
-            <div key={pole.label}>
-              <PoleHeader pole={pole} />
-              <MemberList
-                members={members}
-                onSelect={setSelectedUser}
-                deleteConfirmId={deleteConfirmId}
-                setDeleteConfirmId={setDeleteConfirmId}
-                canDelete={isSuperadmin}
-                canSelect={isAdmin}
-              />
-            </div>
-          );
-        })}
-        <div className="lg:col-start-3">
+        {/* Hotline + sous-section Entrepôt */}
+        <div>
+          <PoleHeader pole={POLES[0]} />
+          <MemberList
+            members={getUsersByPole(usersData, "Hotline")}
+            onSelect={setSelectedUser}
+            deleteConfirmId={deleteConfirmId}
+            setDeleteConfirmId={setDeleteConfirmId}
+            canDelete={isSuperadmin}
+            canSelect={isAdmin}
+          />
+          <div className="mt-4">
+            <PoleHeader pole={POLE_ENTREPOT} />
+            <MemberList
+              members={getUsersByPole(usersData, "Entrepôt")}
+              onSelect={setSelectedUser}
+              deleteConfirmId={deleteConfirmId}
+              setDeleteConfirmId={setDeleteConfirmId}
+              canDelete={isSuperadmin}
+              canSelect={isAdmin}
+            />
+          </div>
+        </div>
+
+        {/* Monteur */}
+        <div>
+          <PoleHeader pole={POLES[1]} />
+          <MemberList
+            members={getUsersByPole(usersData, "Monteur")}
+            onSelect={setSelectedUser}
+            deleteConfirmId={deleteConfirmId}
+            setDeleteConfirmId={setDeleteConfirmId}
+            canDelete={isSuperadmin}
+            canSelect={isAdmin}
+          />
+        </div>
+
+        {/* Gestion du site */}
+        <div>
           <PoleHeader pole={POLE_GESTION} />
           <MemberList
             members={gestion}

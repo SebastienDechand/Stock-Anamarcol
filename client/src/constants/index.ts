@@ -16,6 +16,7 @@ export {
 export {
   POLES,
   POLE_DIRECTION,
+  POLE_ENTREPOT,
   POLE_GESTION,
   ALL_POLE_LABELS,
   type PoleInfo,
