@@ -105,6 +105,44 @@ export const requireAdmin = (
     });
 };
 
+// Vérifie que l'utilisateur est hotline OR admin/superadmin
+export const requireHotline = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  const token = req.cookies.jwt;
+  if (!token) {
+    res.status(401).json({ message: "Authentification requise" });
+    return;
+  }
+
+  resolveUser(token)
+    .then((user) => {
+      if (!user) {
+        res.status(401).json({ message: "Utilisateur introuvable" });
+        return;
+      }
+      if (
+        !(
+          user.role === "hotline" ||
+          user.role === "admin" ||
+          user.role === "superadmin"
+        )
+      ) {
+        res
+          .status(403)
+          .json({ message: "Accès refusé - hotline ou admin requis" });
+        return;
+      }
+      res.locals.user = user;
+      next();
+    })
+    .catch(() => {
+      res.status(401).json({ message: "Token invalide ou expiré" });
+    });
+};
+
 // Vérifie que l'utilisateur est superadmin uniquement
 export const requireSuperAdmin = (
   req: Request,

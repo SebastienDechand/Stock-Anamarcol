@@ -10,7 +10,7 @@ export interface IUser extends Document {
   poste?: string;
   numero?: string;
   pole?: string;
-  role: "superadmin" | "admin" | "user";
+  role: "superadmin" | "admin" | "user" | "hotline";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -68,7 +68,7 @@ const userSchema = new Schema<IUser, IUserModel>(
     },
     role: {
       type: String,
-      enum: ["superadmin", "admin", "user"],
+      enum: ["superadmin", "admin", "user", "hotline"],
       default: "user",
     },
   },

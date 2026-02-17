@@ -6,7 +6,7 @@ export interface User {
   poste?: string;
   numero?: string;
   pole?: string;
-  role?: string;
+  role?: "superadmin" | "admin" | "user" | "hotline";
   createdAt?: string;
   updatedAt?: string;
 }

@@ -17,14 +17,9 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
   const { pseudo, email, password, poste, numero, pole } = req.body;
 
   try {
-    const user = await UserModel.create({
-      pseudo,
-      email,
-      password,
-      poste,
-      numero,
-      pole,
-    });
+    const payload: any = { pseudo, email, password, poste, numero, pole };
+    if (pole === "Hotline") payload.role = "hotline";
+    const user = await UserModel.create(payload);
     res.status(200).json({ user: user._id });
   } catch (err) {
     const errors = signUpErrors(

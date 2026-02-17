@@ -8,6 +8,7 @@ import {
   UserCircle,
   ChevronLeft,
   ChevronRight,
+  Truck,
 } from "lucide-react";
 import { useContext } from "react";
 import { UidContext } from "../AppContext";
@@ -35,11 +36,15 @@ interface SidebarProps {
 export default function Sidebar({ open, setOpen }: SidebarProps) {
   const location = useLocation();
   const auth = useContext(UidContext);
-  // Show history link to admins and superadmins
-  const navItems: NavItem[] =
-    auth?.isAdmin || auth?.isSuperadmin
-      ? [...baseNav, { to: "/history", label: "Historique", icon: Package }]
-      : baseNav;
+  // Sidebar: envois visible to all; history only for admins/superadmins
+  const isAdminOrSuper = auth?.isAdmin || auth?.isSuperadmin;
+  const navItems: NavItem[] = [
+    ...baseNav,
+    { to: "/envois", label: "Envois", icon: Truck },
+    ...(isAdminOrSuper
+      ? [{ to: "/history", label: "Historique", icon: Package }]
+      : []),
+  ];
 
   return (
     <>

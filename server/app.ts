@@ -7,6 +7,7 @@ import itemRoutes from "./routes/item.routes";
 import statisticsRoutes from "./routes/statistics.routes";
 import contactsRoutes from "./routes/contacts.routes";
 import historyRoutes from "./routes/history.routes";
+import shipmentsRoutes from "./routes/shipments.routes";
 import { requireAuth } from "./middleware/auth.middleware";
 import cors from "cors";
 
@@ -45,6 +46,7 @@ app.use("/api/item", itemRoutes);
 app.use("/api/contacts", contactsRoutes);
 app.use("/api/statistics", statisticsRoutes);
 app.use("/api/history", historyRoutes);
+app.use("/api/shipments", shipmentsRoutes);
 
 // JWT - retourne l'ID et le rôle de l'utilisateur
 app.get("/jwtid", requireAuth, (req: Request, res: Response) => {

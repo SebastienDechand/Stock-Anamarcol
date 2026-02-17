@@ -144,6 +144,52 @@ describe("User Controller", () => {
       expect(mockUser.poste).toBe("Dev");
       expect(mockUser.save).toHaveBeenCalled();
     });
+
+    it("should auto-assign hotline role when pole set to Hotline", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { pole: "Hotline" };
+
+      const mockUser = {
+        _id: "507f1f77bcf86cd799439011",
+        email: "old@test.com",
+        poste: "",
+        pole: "",
+        role: "user",
+        save: jest.fn().mockResolvedValue({
+          _id: "507f1f77bcf86cd799439011",
+          pole: "Hotline",
+          role: "hotline",
+        }),
+      };
+      mockUserModel.findById.mockResolvedValue(mockUser);
+
+      await updateUser(req as Request, res as Response);
+      expect(mockUser.role).toBe("hotline");
+      expect(mockUser.save).toHaveBeenCalled();
+    });
+
+    it("should downgrade hotline role when pole removed", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { pole: "Direction" };
+
+      const mockUser = {
+        _id: "507f1f77bcf86cd799439011",
+        email: "old@test.com",
+        poste: "",
+        pole: "Hotline",
+        role: "hotline",
+        save: jest.fn().mockResolvedValue({
+          _id: "507f1f77bcf86cd799439011",
+          pole: "Direction",
+          role: "user",
+        }),
+      };
+      mockUserModel.findById.mockResolvedValue(mockUser);
+
+      await updateUser(req as Request, res as Response);
+      expect(mockUser.role).toBe("user");
+      expect(mockUser.save).toHaveBeenCalled();
+    });
   });
 
   // ─── setRole ─────────────────────────────────────────
@@ -187,6 +233,25 @@ describe("User Controller", () => {
 
       await setRole(req as Request, res as Response);
       expect(mockUser.role).toBe("admin");
+      expect(mockUser.save).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
+    });
+
+    it("should update the role to hotline successfully", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { role: "hotline" };
+      const mockUser = {
+        _id: "507f1f77bcf86cd799439011",
+        role: "user",
+        save: jest.fn().mockResolvedValue({
+          _id: "507f1f77bcf86cd799439011",
+          role: "hotline",
+        }),
+      };
+      mockUserModel.findById.mockResolvedValue(mockUser);
+
+      await setRole(req as Request, res as Response);
+      expect(mockUser.role).toBe("hotline");
       expect(mockUser.save).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
     });

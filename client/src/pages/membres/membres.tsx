@@ -6,7 +6,12 @@ import { UidContext } from "../../components/AppContext";
 import { useAppDispatch } from "../../hooks/redux";
 import { deleteUser, getAllUsers } from "../../actions/users.actions";
 import { Mail, Phone, Trash2 } from "lucide-react";
-import { POLES, POLE_DIRECTION, POLE_ENTREPOT, POLE_GESTION } from "../../constants";
+import {
+  POLES,
+  POLE_DIRECTION,
+  POLE_ENTREPOT,
+  POLE_GESTION,
+} from "../../constants";
 import type { PoleInfo } from "../../constants";
 import type { User } from "../../types";
 
@@ -317,29 +322,6 @@ export default function Membres() {
           />
         </div>
       </div>
-
-      {/* Membres sans pôle */}
-      {others.length > 0 && (
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              Autres
-            </span>
-            <div className="flex-1 h-px bg-gray-200" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {others.map((user) => (
-              <div
-                key={user._id}
-                className={isAdmin ? "cursor-pointer" : ""}
-                onClick={() => isAdmin && setSelectedUser(user)}
-              >
-                <MemberCard user={user} />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {selectedUser && (
         <UserModale user={selectedUser} onClose={() => setSelectedUser(null)} />

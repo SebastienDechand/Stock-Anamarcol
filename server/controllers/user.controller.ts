@@ -8,7 +8,7 @@ export const setRole = async (req: Request, res: Response): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
 
   const { role } = req.body as { role?: string };
-  const allowed = ["user", "admin", "superadmin"];
+  const allowed = ["user", "hotline", "admin", "superadmin"];
   if (!role || !allowed.includes(role)) {
     res.status(400).json({ message: "Role invalide" });
     return;
@@ -90,7 +90,22 @@ export const updateUser = async (
     if (req.body.password) user.password = req.body.password;
     if (req.body.poste) user.poste = req.body.poste;
     if (req.body.numero) user.numero = req.body.numero;
-    if (req.body.pole !== undefined) user.pole = req.body.pole;
+    if (req.body.pole !== undefined) {
+      user.pole = req.body.pole;
+      // Auto-assign/downgrade role based on pole (do not override admins)
+      if (String(req.body.pole) === "Hotline") {
+        if (user.role !== "admin" && user.role !== "superadmin") {
+          // @ts-ignore - dynamic assignment for existing IUser
+          user.role = "hotline";
+        }
+      } else {
+        if (user.role === "hotline") {
+          // revert to plain user when leaving Hotline pole
+          // @ts-ignore
+          user.role = "user";
+        }
+      }
+    }
     if (req.body.picture) user.picture = req.body.picture;
 
     const updatedUser = await user.save();
@@ -102,6 +117,7 @@ export const updateUser = async (
         "numero",
         "pole",
         "picture",
+        "role",
       ];
       const oldObj = old as Partial<Record<keyof IUser, unknown>>;
       const newObj = updatedUser as Partial<Record<keyof IUser, unknown>>;

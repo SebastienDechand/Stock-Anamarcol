@@ -6,6 +6,7 @@ import Articles from "../pages/articles/articles";
 import Membres from "../pages/membres/membres";
 import Contacts from "../pages/contacts/contacts";
 import HistoryPage from "../pages/history/history";
+import Envois from "../pages/envois/envois";
 import Layout from "./Layout";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -25,6 +26,7 @@ export default function Router() {
         <Route path="/articles" element={<Articles />} />
         <Route path="/membres" element={<Membres />} />
         <Route path="/contacts" element={<Contacts />} />
+        <Route path="/envois" element={<Envois />} />
         <Route path="/history" element={<HistoryPage />} />
       </Route>
     </Routes>

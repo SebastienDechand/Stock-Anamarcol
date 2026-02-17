@@ -6,6 +6,7 @@ export const UidContext = createContext<AuthContextType>({
   uid: null,
   role: null,
   isAdmin: false,
+  isHotline: false,
   isAuthLoading: true,
 });
 
@@ -36,10 +37,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const isAdmin = role === "admin" || role === "superadmin";
   const isSuperadmin = role === "superadmin";
+  const isHotline = role === "hotline";
 
   return (
     <UidContext.Provider
-      value={{ uid, role, isAdmin, isSuperadmin, isAuthLoading }}
+      value={{ uid, role, isAdmin, isSuperadmin, isHotline, isAuthLoading }}
     >
       {children}
     </UidContext.Provider>

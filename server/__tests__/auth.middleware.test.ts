@@ -28,6 +28,7 @@ import {
   requireAuth,
   requireAdmin,
   requireSuperAdmin,
+  requireHotline,
 } from "../middleware/auth.middleware";
 
 describe("Auth Middleware", () => {
@@ -161,6 +162,33 @@ describe("Auth Middleware", () => {
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
         message: "Accès refusé - superadmin requis",
+      });
+    });
+  });
+
+  // ─── requireHotline ───────────────────────────────
+  describe("requireHotline", () => {
+    it("should return 401 when no token is provided", () => {
+      requireHotline(req as Request, res as Response, next);
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Authentification requise",
+      });
+    });
+
+    it("should return 403 when user is not hotline/admin/superadmin", async () => {
+      const token = jwt.sign(
+        { id: "507f1f77bcf86cd799439011" },
+        process.env.TOKEN_SECRET!,
+      );
+      req.cookies = { jwt: token };
+
+      await requireHotline(req as Request, res as Response, next);
+      await new Promise((r) => setTimeout(r, 50));
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Accès refusé - hotline ou admin requis",
       });
     });
   });
