@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import axios from "axios";
 import { UidContext } from "../../components/AppContext";
 import {
@@ -140,6 +141,10 @@ export default function EnvoisPage() {
       .then((res) => setShipments(res.data))
       .catch((err) => console.error(err));
   }, [auth]);
+
+  if (!auth?.isAdmin && !auth?.isSuperadmin) {
+    return <Navigate to="/home" replace />;
+  }
 
   const pending = shipments.filter((s) => !s.sent);
   const sent = shipments.filter((s) => s.sent);

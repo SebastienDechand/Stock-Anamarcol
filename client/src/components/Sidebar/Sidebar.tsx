@@ -36,13 +36,14 @@ interface SidebarProps {
 export default function Sidebar({ open, setOpen }: SidebarProps) {
   const location = useLocation();
   const auth = useContext(UidContext);
-  // Sidebar: envois visible to all; history only for admins/superadmins
   const isAdminOrSuper = auth?.isAdmin || auth?.isSuperadmin;
   const navItems: NavItem[] = [
     ...baseNav,
-    { to: "/envois", label: "Envois", icon: Truck },
     ...(isAdminOrSuper
-      ? [{ to: "/history", label: "Historique", icon: Package }]
+      ? [
+          { to: "/envois", label: "Envois", icon: Truck },
+          { to: "/history", label: "Historique", icon: Package },
+        ]
       : []),
   ];
 
