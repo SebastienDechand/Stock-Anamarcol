@@ -511,7 +511,7 @@ export default function EnvoisPage() {
               {renderField("piece", "Pièce à envoyer", {
                 required: true,
                 icon: Package,
-                placeholder: "Ex: Hooper, facture…",
+                placeholder: "Ex: Hooper...",
               })}
             </div>
 

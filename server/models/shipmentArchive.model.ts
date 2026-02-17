@@ -11,6 +11,8 @@ export interface IShipmentArchive extends Document {
   shipmentCount: number;
   /** PDF binary data */
   fileBuffer: Buffer;
+  /** Raw shipment data for XLSX generation */
+  rawData?: Record<string, string>[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,6 +24,7 @@ const ShipmentArchiveSchema = new Schema<IShipmentArchive>(
     periodEnd: { type: Date, required: true },
     shipmentCount: { type: Number, required: true },
     fileBuffer: { type: Buffer, required: true },
+    rawData: { type: [Schema.Types.Mixed], default: undefined },
   },
   { timestamps: true },
 );

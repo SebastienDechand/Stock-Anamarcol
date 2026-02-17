@@ -64,16 +64,20 @@ const ShipmentHistoryModal = ({ onClose, onArchived }: Props) => {
     }
   };
 
-  const handleDownload = async (id: string, title: string) => {
+  const handleDownload = async (
+    id: string,
+    title: string,
+    format: "pdf" | "xlsx" = "pdf",
+  ) => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}api/shipments/archives/${id}/download`,
+        `${import.meta.env.VITE_API_URL}api/shipments/archives/${id}/download?format=${format}`,
         { withCredentials: true, responseType: "blob" },
       );
       const url = URL.createObjectURL(res.data);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `envois-${title.replace(/[^a-zA-Z0-9àâéèêëïîôùûüç\s-]/g, "")}.pdf`;
+      a.download = `envois-${title.replace(/[^a-zA-Z0-9àâéèêëïîôùûüç\s-]/g, "")}.${format}`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
@@ -196,14 +200,24 @@ const ShipmentHistoryModal = ({ onClose, onArchived }: Props) => {
                         {a.shipmentCount} envoi{a.shipmentCount > 1 ? "s" : ""}
                       </p>
                     </div>
-                    <button
-                      onClick={() => handleDownload(a._id, a.title)}
-                      className="shrink-0 ml-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-medium transition-colors"
-                      title="Télécharger"
-                    >
-                      <Download size={13} />
-                      .pdf
-                    </button>
+                    <div className="shrink-0 ml-3 flex items-center gap-1.5">
+                      <button
+                        onClick={() => handleDownload(a._id, a.title, "pdf")}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-medium transition-colors"
+                        title="Télécharger en PDF"
+                      >
+                        <Download size={13} />
+                        .pdf
+                      </button>
+                      <button
+                        onClick={() => handleDownload(a._id, a.title, "xlsx")}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-medium transition-colors"
+                        title="Télécharger en Excel"
+                      >
+                        <Download size={13} />
+                        .xlsx
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

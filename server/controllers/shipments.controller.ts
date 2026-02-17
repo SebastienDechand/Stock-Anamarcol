@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import ShipmentModel from "../models/shipment.model";
 import ShipmentArchiveModel from "../models/shipmentArchive.model";
 import PDFDocument from "pdfkit";
+import * as XLSX from "xlsx";
 
 /**
  * Archive shipments for a specific calendar month.
@@ -148,12 +149,34 @@ async function performArchiveForMonth(
     doc.end();
   });
 
+  // Build raw data rows for future XLSX export
+  const rawData = shipments.map((s: any) => ({
+    Statut: s.sent ? "Envoyé" : "En attente",
+    Nom: s.nom || "",
+    Prénom: s.prenom || "",
+    Société: s.societe || "",
+    "Société / Fonction": s.societeOuFonction || "",
+    Pièce: s.piece || "",
+    Adresse: s.adresse || "",
+    CP: s.codePostal || "",
+    Ville: s.ville || "",
+    Tél: s.tel || "",
+    "Tél 2": s.tel2 || "",
+    Email: s.email || "",
+    "Envoyé par": s.sentBy || "",
+    "Créé par": s.createdByName || "",
+    "Date création": s.createdAt
+      ? new Date(s.createdAt).toLocaleDateString("fr-FR")
+      : "",
+  }));
+
   const archive = await ShipmentArchiveModel.create({
     title,
     periodStart: start,
     periodEnd: new Date(end.getTime() - 1),
     shipmentCount: shipments.length,
     fileBuffer: buffer,
+    rawData,
   });
 
   // Remove only the archived month's shipments
@@ -350,7 +373,8 @@ export const getArchives = async (
 };
 
 /**
- * Download an archive PDF file.
+ * Download an archive file (PDF or XLSX).
+ * Use ?format=xlsx to get an Excel file. Defaults to PDF.
  */
 export const downloadArchive = async (
   req: Request,
@@ -362,18 +386,51 @@ export const downloadArchive = async (
       res.status(404).json({ message: "Archive introuvable" });
       return;
     }
-    // Mongoose lean() returns BSON Binary — ensure we have a proper Buffer
-    const pdfBuffer = Buffer.isBuffer(archive.fileBuffer)
-      ? archive.fileBuffer
-      : Buffer.from((archive.fileBuffer as any).buffer || archive.fileBuffer);
 
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Length", pdfBuffer.length);
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename="envois-${archive.title.replace(/[^a-zA-Z0-9\u00e0\u00e2\u00e9\u00e8\u00ea\u00eb\u00ef\u00ee\u00f4\u00f9\u00fb\u00fc\u00e7\s-]/g, "")}.pdf"`,
+    const format = (req.query.format as string)?.toLowerCase();
+    const safeTitle = archive.title.replace(
+      /[^a-zA-Z0-9\u00e0\u00e2\u00e9\u00e8\u00ea\u00eb\u00ef\u00ee\u00f4\u00f9\u00fb\u00fc\u00e7\s-]/g,
+      "",
     );
-    res.end(pdfBuffer);
+
+    if (format === "xlsx") {
+      if (!archive.rawData || archive.rawData.length === 0) {
+        res
+          .status(400)
+          .json({ message: "Données XLSX non disponibles pour cette archive" });
+        return;
+      }
+      const ws = XLSX.utils.json_to_sheet(archive.rawData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Envois");
+      const xlsxBuffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
+
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+      res.setHeader("Content-Length", xlsxBuffer.length);
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="envois-${safeTitle}.xlsx"`,
+      );
+      res.end(xlsxBuffer);
+    } else {
+      // Default: PDF
+      const pdfBuffer = Buffer.isBuffer(archive.fileBuffer)
+        ? archive.fileBuffer
+        : Buffer.from(
+            (archive.fileBuffer as any).buffer || archive.fileBuffer,
+          );
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Length", pdfBuffer.length);
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="envois-${safeTitle}.pdf"`,
+      );
+      res.end(pdfBuffer);
+    }
   } catch (err) {
     console.error("Error downloading archive:", err);
     res.status(500).json({ message: "Erreur interne du serveur" });

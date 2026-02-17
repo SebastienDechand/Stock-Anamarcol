@@ -68,7 +68,7 @@ describe("Shipments Controller", () => {
   let res: Partial<Response>;
 
   beforeEach(() => {
-    req = { params: {}, body: {} };
+    req = { params: {}, body: {}, query: {} };
     res = {
       locals: { user: { pseudo: "hotliner", _id: "1" } },
       status: jest.fn().mockReturnThis() as unknown as Response["status"],
