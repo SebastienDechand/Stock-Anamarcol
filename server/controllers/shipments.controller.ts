@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import ShipmentModel from "../models/shipment.model";
+import type { IShipment } from "../models/shipment.model";
 import ShipmentArchiveModel from "../models/shipmentArchive.model";
+import type { IShipmentArchive } from "../models/shipmentArchive.model";
 import PDFDocument from "pdfkit";
 import * as XLSX from "xlsx";
 
@@ -12,7 +14,7 @@ import * as XLSX from "xlsx";
 async function performArchiveForMonth(
   year: number,
   month: number,
-): Promise<any> {
+): Promise<IShipmentArchive | null> {
   const start = new Date(year, month, 1);
   const end = new Date(year, month + 1, 1); // exclusive
 
@@ -150,7 +152,7 @@ async function performArchiveForMonth(
   });
 
   // Build raw data rows for future XLSX export
-  const rawData = shipments.map((s: any) => ({
+  const rawData = shipments.map((s: IShipment) => ({
     Statut: s.sent ? "Envoyé" : "En attente",
     Nom: s.nom || "",
     Prénom: s.prenom || "",
@@ -416,12 +418,11 @@ export const downloadArchive = async (
       );
       res.end(xlsxBuffer);
     } else {
-      // Default: PDF
-      const pdfBuffer = Buffer.isBuffer(archive.fileBuffer)
-        ? archive.fileBuffer
-        : Buffer.from(
-            (archive.fileBuffer as any).buffer || archive.fileBuffer,
-          );
+      // Default: PDF — Mongoose lean() may return BSON Binary; ensure proper Buffer
+      const raw = archive.fileBuffer;
+      const pdfBuffer = Buffer.isBuffer(raw)
+        ? raw
+        : Buffer.from((raw as { buffer?: ArrayBuffer }).buffer ?? raw);
 
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Length", pdfBuffer.length);

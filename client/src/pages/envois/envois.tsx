@@ -24,45 +24,10 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import ExportOptionsModal from "../../components/Modales/ExportOptionsModal";
-import type { ExportFormat } from "../../components/Modales/ExportOptionsModal";
+import type { ExportFormat } from "../../types/shipment";
 import ShipmentHistoryModal from "../../components/Modales/ShipmentHistoryModal";
 import Portal from "../../components/Portal";
-
-interface Shipment {
-  _id: string;
-  nom: string;
-  prenom: string;
-  tel?: string;
-  tel2?: string;
-  email?: string;
-  adresse: string;
-  codePostal: string;
-  ville: string;
-  societeOuFonction: string;
-  societe: string;
-  piece: string;
-  requestDate?: string;
-  sent?: boolean;
-  sentBy?: string;
-  createdByName?: string;
-  createdAt?: string;
-}
-
-/* ── Paste parser ────────────────────────────────────── */
-interface ShipmentForm {
-  nom: string;
-  prenom: string;
-  tel: string;
-  tel2: string;
-  email: string;
-  adresse: string;
-  codePostal: string;
-  ville: string;
-  societeOuFonction: string;
-  societe: string;
-  piece: string;
-  requestDate: string;
-}
+import type { Shipment, ShipmentForm } from "../../types/shipment";
 
 const emptyForm: ShipmentForm = {
   nom: "",
@@ -179,7 +144,7 @@ export default function EnvoisPage() {
     }
     setIsSubmitting(true);
     try {
-      const payload: any = { ...form };
+      const payload: Record<string, unknown> = { ...form };
       if (form.requestDate)
         payload.requestDate = new Date(form.requestDate).toISOString();
       else payload.requestDate = new Date().toISOString();
@@ -197,10 +162,11 @@ export default function EnvoisPage() {
       setForm({ ...emptyForm });
       setShowForm(false);
       toast.success("Envoi ajouté");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
+      const axiosErr = err as { response?: { data?: { message?: string } } };
       const msg =
-        err?.response?.data?.message || "Impossible d'ajouter l'envoi";
+        axiosErr?.response?.data?.message || "Impossible d'ajouter l'envoi";
       toast.error(msg);
     } finally {
       setIsSubmitting(false);
@@ -261,11 +227,15 @@ export default function EnvoisPage() {
       doc.setFontSize(9);
       doc.text(`Exporté le ${new Date().toLocaleDateString("fr-FR")}`, 14, 24);
       const cols = Object.keys(rows[0] || {});
-      // @ts-ignore - jspdf-autotable augments jsPDF
-      doc.autoTable({
+      // jspdf-autotable augments jsPDF prototype at runtime
+      (
+        doc as unknown as { autoTable: (opts: Record<string, unknown>) => void }
+      ).autoTable({
         startY: 28,
         head: [cols],
-        body: rows.map((r) => cols.map((c) => (r as any)[c])),
+        body: rows.map((r) =>
+          cols.map((c) => (r as Record<string, string>)[c]),
+        ),
         styles: { fontSize: 7 },
         headStyles: { fillColor: [107, 138, 71] },
       });
@@ -441,7 +411,7 @@ export default function EnvoisPage() {
 
           {/* Manual fields – explicit row groupings */}
           <form onSubmit={handleCreate} className="space-y-3">
-            {/* Row: Nom / Prénom */}
+            {/* Row: Last name / First name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {renderField("nom", "Nom", {
                 required: true,
@@ -455,7 +425,7 @@ export default function EnvoisPage() {
               })}
             </div>
 
-            {/* Row: Tél / Tél 2 */}
+            {/* Row: Phone / Phone 2 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {renderField("tel", "Téléphone", {
                 icon: Phone,
@@ -484,7 +454,7 @@ export default function EnvoisPage() {
               })}
             </div>
 
-            {/* Row: Société / Société ou Fonction */}
+            {/* Row: Company / Company or Role */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {renderField("societe", "Société", {
                 required: true,
@@ -498,7 +468,7 @@ export default function EnvoisPage() {
               })}
             </div>
 
-            {/* Row: Email / Date demande / Pièce */}
+            {/* Row: Email / Request date / Document */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {renderField("email", "Email", {
                 icon: Mail,

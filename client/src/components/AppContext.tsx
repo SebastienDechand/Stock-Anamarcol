@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, type ReactNode } from "react";
 import axios from "axios";
 import type { AuthContextType } from "../types";
+import { Role } from "../constants";
 
 export const UidContext = createContext<AuthContextType>({
   uid: null,
@@ -16,7 +17,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [uid, setUid] = useState<string | null>(null);
-  const [role, setRole] = useState<string | null>(null);
+  const [role, setRole] = useState<Role | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       })
       .then((res) => {
         setUid(res.data._id || res.data);
-        setRole(res.data.role || "user");
+        setRole((res.data.role || Role.USER) as Role);
       })
       .catch(() => {
         setUid(null);
@@ -35,9 +36,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       .finally(() => setIsAuthLoading(false));
   }, []);
 
-  const isAdmin = role === "admin" || role === "superadmin";
-  const isSuperadmin = role === "superadmin";
-  const isHotline = role === "hotline";
+  const isAdmin = role === Role.ADMIN || role === Role.SUPERADMIN;
+  const isSuperadmin = role === Role.SUPERADMIN;
+  const isHotline = role === Role.HOTLINE;
 
   return (
     <UidContext.Provider

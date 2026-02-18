@@ -1,6 +1,6 @@
 import axios from "axios";
 import toast from "react-hot-toast";
-import type { AppDispatch, Item, ReduxAction } from "../types";
+import type { AppDispatch, Item, ReduxAction, NewItem } from "../types";
 import { getAllItems } from "./items.actions";
 import {
   fetchArticlesWithLowStock,
@@ -23,16 +23,6 @@ export const UPLOAD_ITEM_PICTURE = "UPLOAD_ITEM_PICTURE";
 export const FETCH_HISTORY_REQUEST = "FETCH_HISTORY_REQUEST";
 export const FETCH_HISTORY_SUCCESS = "FETCH_HISTORY_SUCCESS";
 export const FETCH_HISTORY_FAILURE = "FETCH_HISTORY_FAILURE";
-
-interface NewItem {
-  denomination: string;
-  fournisseur: string;
-  quantite: number;
-  etat: string;
-  posterId: string;
-  modifierId?: string;
-  modifierName?: string;
-}
 
 export const addItem = (newItem: NewItem) => {
   return async (dispatch: AppDispatch) => {
@@ -136,7 +126,7 @@ export const updateItem = (
       dispatch(getAllItems());
       toast.success("Article mis à jour");
     } catch (err) {
-      console.error("Erreur lors de la mise à jour de l'article :", err);
+      console.error("Error updating item:", err);
       toast.error("Erreur lors de la mise à jour");
       throw err;
     }
@@ -212,7 +202,7 @@ export const fetchItemHistory = (itemId: string) => {
       );
       dispatch({ type: FETCH_HISTORY_SUCCESS, payload: res.data });
     } catch (err) {
-      console.error("Erreur lors de la récupération de l'historique :", err);
+      console.error("Error fetching item history:", err);
       dispatch({ type: FETCH_HISTORY_FAILURE });
     }
   };
@@ -240,7 +230,7 @@ export const deleteItem = (
       toast.success("Article supprimé");
     } catch (error: unknown) {
       const err = error as Error;
-      console.error("Erreur lors de la suppression de l'article", error);
+      console.error("Error deleting item:", error);
       toast.error("Erreur lors de la suppression");
       dispatch({
         type: DELETE_ITEM_FAILURE,
@@ -266,11 +256,12 @@ export const prepaBatch = (
       );
       dispatch(getAllItems());
       const label = prepa === "prepaCG" ? "CashGuard" : "Caisse TPV";
-      const op = operation === "increment" ? "remis en stock" : "retiré du stock";
+      const op =
+        operation === "increment" ? "remis en stock" : "retiré du stock";
       toast.success(`${label} : ${res.data.updated} articles ${op}`);
       return res.data;
     } catch (err) {
-      console.error("Erreur batch prépa:", err);
+      console.error("Batch prepa error:", err);
       toast.error("Erreur lors de l'opération batch prépa");
       throw err;
     }

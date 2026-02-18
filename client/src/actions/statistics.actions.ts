@@ -22,7 +22,7 @@ export const fetchStatistics = () => {
       );
       dispatch(setGlobalStatistics(response.data));
     } catch (error) {
-      console.error("Erreur lors de la récupération des statistiques :", error);
+      console.error("Error fetching statistics:", error);
     }
   };
 };
@@ -35,7 +35,7 @@ export const fetchTotalStock = () => {
       );
       dispatch(setGlobalStatistics(response.data));
     } catch (error) {
-      console.error("Erreur lors de la récupération du stock total :", error);
+      console.error("Error fetching total stock:", error);
     }
   };
 };
@@ -48,10 +48,7 @@ export const fetchNumberOfSuppliers = () => {
       );
       dispatch(setGlobalStatistics(response.data));
     } catch (error) {
-      console.error(
-        "Erreur lors de la récupération du nombre de fournisseurs :",
-        error,
-      );
+      console.error("Error fetching number of suppliers:", error);
     }
   };
 };
@@ -64,10 +61,7 @@ export const fetchNumberOfArticlesWithStockBelow5 = () => {
       );
       dispatch(setGlobalStatistics(response.data));
     } catch (error) {
-      console.error(
-        "Erreur lors de la récupération du nombre d'articles avec un stock inférieur à 5 :",
-        error,
-      );
+      console.error("Error fetching number of low-stock articles:", error);
     }
   };
 };
@@ -88,7 +82,7 @@ export const fetchArticlesWithLowStock = () => {
   };
 };
 
-// Fournisseurs
+// Suppliers
 export const setFournisseursList = (
   fournisseursList: string[],
 ): ReduxAction => ({
@@ -104,10 +98,7 @@ export const fetchFournisseursList = () => {
       );
       dispatch(setFournisseursList(response.data.fournisseursList));
     } catch (error) {
-      console.error(
-        "Erreur lors de la récupération de la liste des fournisseurs :",
-        error,
-      );
+      console.error("Error fetching suppliers list:", error);
     }
   };
 };
@@ -129,14 +120,14 @@ export const fetchStatisticsForFournisseur = (fournisseur: string) => {
       dispatch(setFournisseurStatistics(response.data, fournisseur));
     } catch (error) {
       console.error(
-        `Erreur lors de la récupération des statistiques pour le fournisseur ${fournisseur} :`,
+        `Error fetching statistics for supplier ${fournisseur}:`,
         error,
       );
     }
   };
 };
 
-// États
+// States
 export const setEtatsList = (etatsList: string[]): ReduxAction => ({
   type: SET_ETATS_LIST,
   payload: etatsList,
@@ -150,10 +141,7 @@ export const fetchEtatsList = () => {
       );
       dispatch(setEtatsList(response.data.etatsList));
     } catch (error) {
-      console.error(
-        "Erreur lors de la récupération de la liste des états :",
-        error,
-      );
+      console.error("Error fetching states list:", error);
     }
   };
 };
@@ -174,10 +162,7 @@ export const fetchStatisticsForEtat = (etat: string) => {
       );
       dispatch(setEtatStatistics(response.data, etat));
     } catch (error) {
-      console.error(
-        `Erreur lors de la récupération des statistiques pour le fournisseur ${etat} :`,
-        error,
-      );
+      console.error(`Error fetching statistics for state ${etat}:`, error);
     }
   };
 };

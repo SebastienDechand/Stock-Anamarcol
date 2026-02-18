@@ -9,8 +9,7 @@ import {
 } from "../../utils/export.utils";
 import { exportItemsToCSV } from "../../utils/csv.utils";
 import type { Item } from "../../types";
-
-export type ExportFormat = "xlsx" | "csv" | "pdf" | "json";
+import type { ExportFormat } from "../../types/shipment";
 
 interface Props {
   onClose: () => void;

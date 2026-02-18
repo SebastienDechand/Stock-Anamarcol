@@ -1,12 +1,12 @@
 import axios from "axios";
-import type { AppDispatch } from "../types";
+import type { AppDispatch, FetchItemsParams } from "../types";
 
 export const GET_ALL_ITEMS = "GET_ALL_ITEMS";
 export const FETCH_ITEMS_REQUEST = "FETCH_ITEMS_REQUEST";
 export const FETCH_ITEMS_SUCCESS = "FETCH_ITEMS_SUCCESS";
 export const FETCH_ITEMS_FAILURE = "FETCH_ITEMS_FAILURE";
 
-// Charge TOUS les articles (utilisé par les stats, etc.)
+// Loads ALL items (used by stats, etc.)
 export const getAllItems = () => {
   return (dispatch: AppDispatch) => {
     return axios
@@ -20,19 +20,7 @@ export const getAllItems = () => {
   };
 };
 
-export interface FetchItemsParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  fournisseur?: string[];
-  etat?: string[];
-  prepaCG?: boolean;
-  prepaTPV?: boolean;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}
-
-// Charge les articles avec pagination et filtres serveur
+// Loads items with pagination and server-side filters
 export const fetchItems = (params: FetchItemsParams = {}) => {
   return async (dispatch: AppDispatch) => {
     dispatch({ type: FETCH_ITEMS_REQUEST });

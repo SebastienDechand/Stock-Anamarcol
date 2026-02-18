@@ -1,40 +1,19 @@
 import { Request, Response } from "express";
 import ItemModel from "../models/item.model";
 import { LOW_STOCK_THRESHOLD } from "../constants";
+import type { DashboardResult, LowStockItemResult } from "../types/stats";
 
-interface DashboardResult {
-  global: {
-    numberOfArticles: number;
-    totalStock: number;
-    numberOfSuppliers: number;
-    numberOfLowStockArticles: number;
-  };
-  fournisseurs: {
-    nom: unknown;
-    numberOfArticles: unknown;
-    totalStock: unknown;
-    numberOfLowStockArticles: unknown;
-  }[];
-  etats: {
-    nom: unknown;
-    numberOfArticles: unknown;
-    totalStock: unknown;
-    numberOfLowStockArticles: unknown;
-  }[];
-  lowStockItems: unknown[];
-}
-
-// Cache simple en mémoire (invalidé à chaque mutation)
+// Simple in-memory cache (invalidated on each mutation)
 let statsCache: DashboardResult | null = null;
 let statsCacheTime = 0;
-const CACHE_TTL = 30_000; // 30 secondes
+const CACHE_TTL = 30_000; // 30 seconds
 
 const invalidateCache = (): void => {
   statsCache = null;
   statsCacheTime = 0;
 };
 
-// Endpoint unifié : toutes les stats en 1 seule requête
+// Unified endpoint: all stats in a single request
 export const getDashboardStats = async (
   _req: Request,
   res: Response,
@@ -46,53 +25,59 @@ export const getDashboardStats = async (
       return;
     }
 
-    const [globalStats, fournisseursStats, etatsStats, lowStockItems, cgItems, tpvItems] =
-      await Promise.all([
-        ItemModel.aggregate([
-          {
-            $group: {
-              _id: null,
-              numberOfArticles: { $sum: 1 },
-              totalStock: { $sum: "$quantite" },
-              numberOfLowStockArticles: {
-                $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
-              },
-              fournisseurs: { $addToSet: "$fournisseur" },
+    const [
+      globalStats,
+      fournisseursStats,
+      etatsStats,
+      lowStockItems,
+      cgItems,
+      tpvItems,
+    ] = await Promise.all([
+      ItemModel.aggregate([
+        {
+          $group: {
+            _id: null,
+            numberOfArticles: { $sum: 1 },
+            totalStock: { $sum: "$quantite" },
+            numberOfLowStockArticles: {
+              $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
+            },
+            fournisseurs: { $addToSet: "$fournisseur" },
+          },
+        },
+      ]),
+      ItemModel.aggregate([
+        {
+          $group: {
+            _id: "$fournisseur",
+            numberOfArticles: { $sum: 1 },
+            totalStock: { $sum: "$quantite" },
+            numberOfLowStockArticles: {
+              $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
             },
           },
-        ]),
-        ItemModel.aggregate([
-          {
-            $group: {
-              _id: "$fournisseur",
-              numberOfArticles: { $sum: 1 },
-              totalStock: { $sum: "$quantite" },
-              numberOfLowStockArticles: {
-                $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
-              },
+        },
+        { $sort: { _id: 1 } },
+      ]),
+      ItemModel.aggregate([
+        {
+          $group: {
+            _id: "$etat",
+            numberOfArticles: { $sum: 1 },
+            totalStock: { $sum: "$quantite" },
+            numberOfLowStockArticles: {
+              $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
             },
           },
-          { $sort: { _id: 1 } },
-        ]),
-        ItemModel.aggregate([
-          {
-            $group: {
-              _id: "$etat",
-              numberOfArticles: { $sum: 1 },
-              totalStock: { $sum: "$quantite" },
-              numberOfLowStockArticles: {
-                $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
-              },
-            },
-          },
-          { $sort: { _id: 1 } },
-        ]),
-        ItemModel.find({ quantite: { $lt: 5 } })
-          .sort({ quantite: 1, denomination: 1 })
-          .lean(),
-        ItemModel.find({ prepaCG: true }).select("denomination quantite").lean(),
-        ItemModel.find({ prepaTPV: true }).select("quantite").lean(),
-      ]);
+        },
+        { $sort: { _id: 1 } },
+      ]),
+      ItemModel.find({ quantite: { $lt: 5 } })
+        .sort({ quantite: 1, denomination: 1 })
+        .lean(),
+      ItemModel.find({ prepaCG: true }).select("denomination quantite").lean(),
+      ItemModel.find({ prepaTPV: true }).select("quantite").lean(),
+    ]);
 
     const global = globalStats[0] || {
       numberOfArticles: 0,
@@ -101,22 +86,31 @@ export const getDashboardStats = async (
       fournisseurs: [],
     };
 
-    // Prépa complète CG = min(qty) de chaque article, cassettes comptent qty/4
-    const typedCgItems = cgItems as { denomination: string; quantite: number }[];
-    const completeCG = typedCgItems.length > 0
-      ? Math.min(...typedCgItems.map((item) => {
-          const isCassette = item.denomination.toLowerCase().includes("cassette");
-          return isCassette ? Math.floor(item.quantite / 4) : item.quantite;
-        }))
-      : 0;
+    // Complete CG prepa = min(qty) of each item, cassettes count qty/4
+    const typedCgItems = cgItems as {
+      denomination: string;
+      quantite: number;
+    }[];
+    const completeCG =
+      typedCgItems.length > 0
+        ? Math.min(
+            ...typedCgItems.map((item) => {
+              const isCassette = item.denomination
+                .toLowerCase()
+                .includes("cassette");
+              return isCassette ? Math.floor(item.quantite / 4) : item.quantite;
+            }),
+          )
+        : 0;
 
-    // Prépa complète TPV = min(qty) de chaque article (1 de chaque)
+    // Complete TPV prepa = min(qty) of each item (1 of each)
     const typedTpvItems = tpvItems as { quantite: number }[];
-    const completeTPV = typedTpvItems.length > 0
-      ? Math.min(...typedTpvItems.map((item) => item.quantite))
-      : 0;
+    const completeTPV =
+      typedTpvItems.length > 0
+        ? Math.min(...typedTpvItems.map((item) => item.quantite))
+        : 0;
 
-    const result = {
+    const result: DashboardResult = {
       global: {
         numberOfArticles: global.numberOfArticles,
         totalStock: global.totalStock,
@@ -126,18 +120,18 @@ export const getDashboardStats = async (
         prepaTPV: completeTPV,
       },
       fournisseurs: fournisseursStats.map((f: Record<string, unknown>) => ({
-        nom: f._id,
-        numberOfArticles: f.numberOfArticles,
-        totalStock: f.totalStock,
-        numberOfLowStockArticles: f.numberOfLowStockArticles,
+        nom: String(f._id),
+        numberOfArticles: Number(f.numberOfArticles),
+        totalStock: Number(f.totalStock),
+        numberOfLowStockArticles: Number(f.numberOfLowStockArticles),
       })),
       etats: etatsStats.map((e: Record<string, unknown>) => ({
-        nom: e._id,
-        numberOfArticles: e.numberOfArticles,
-        totalStock: e.totalStock,
-        numberOfLowStockArticles: e.numberOfLowStockArticles,
+        nom: String(e._id),
+        numberOfArticles: Number(e.numberOfArticles),
+        totalStock: Number(e.totalStock),
+        numberOfLowStockArticles: Number(e.numberOfLowStockArticles),
       })),
-      lowStockItems,
+      lowStockItems: lowStockItems as unknown as LowStockItemResult[],
     };
 
     statsCache = result;
@@ -145,14 +139,14 @@ export const getDashboardStats = async (
 
     res.status(200).json(result);
   } catch (error) {
-    console.error("Erreur stats dashboard:", error);
+    console.error("Dashboard stats error:", error);
     res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
 
 export const invalidateStatsCache = invalidateCache;
 
-// === Anciens endpoints conservés pour rétrocompatibilité ===
+// === Legacy endpoints kept for backward compatibility ===
 
 export const getNumberOfArticles = async (
   _req: Request,

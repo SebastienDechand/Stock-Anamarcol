@@ -15,7 +15,7 @@ import {
 import type { PoleInfo } from "../../constants";
 import type { User } from "../../types";
 
-// Anciens noms pour rétrocompatibilité (si pole pas encore renseigné en BDD)
+// Legacy names for backward compatibility (when pole is not yet set in DB)
 const LEGACY_NAMES: Record<string, string[]> = {
   Direction: ["edith"],
   Hotline: ["franck", "etienne", "étienne"],
@@ -26,7 +26,7 @@ const LEGACY_NAMES: Record<string, string[]> = {
 
 function getUserPole(user: User): string {
   if (user.pole) return user.pole;
-  // Fallback : chercher par prénom
+  // Fallback: search by first name
   const first = (user.pseudo || "").split(/\s+/)[0].toLowerCase();
   for (const [pole, names] of Object.entries(LEGACY_NAMES)) {
     if (names.includes(first)) return pole;
@@ -249,7 +249,7 @@ export default function Membres() {
         )}
       </div>
 
-      {/* Direction (centrée) */}
+      {/* Direction (centered) */}
       <div className="flex justify-center">
         <div className="w-full max-w-md">
           <PoleHeader pole={POLE_DIRECTION} />
@@ -270,9 +270,9 @@ export default function Membres() {
         </div>
       </div>
 
-      {/* Pôles opérationnels : Hotline (+ Entrepôt), Monteur, Gestion du site */}
+      {/* Operational poles: Hotline (+ Warehouse), Installer, Site Management */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {/* Hotline + sous-section Entrepôt */}
+        {/* Hotline + Warehouse sub-section */}
         <div>
           <PoleHeader pole={POLES[0]} />
           <MemberList

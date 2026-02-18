@@ -1,32 +1,12 @@
-interface SignUpError {
-  pseudo: string;
-  email: string;
-  password: string;
-}
+import type {
+  SignUpError,
+  SignInError,
+  UploadError,
+  CreateItemError,
+  MongoError,
+} from "./types/errors";
 
-interface SignInError {
-  email: string;
-  password: string;
-}
-
-interface UploadError {
-  format: string;
-  maxSize: string;
-}
-
-interface CreateItemError {
-  denomination: string;
-  fournisseur: string;
-  etat: string;
-  quantite: string;
-}
-
-interface MongoError extends Error {
-  code?: number;
-  keyValue?: Record<string, unknown>;
-}
-
-// Erreurs pendant le log in
+// Sign-up validation errors
 export const signUpErrors = (err: MongoError): SignUpError => {
   const errors: SignUpError = { pseudo: "", email: "", password: "" };
 
@@ -43,7 +23,7 @@ export const signUpErrors = (err: MongoError): SignUpError => {
   return errors;
 };
 
-// Erreur pendant la connexion
+// Sign-in validation errors
 export const signInErrors = (err: Error): SignInError => {
   const errors: SignInError = { email: "", password: "" };
 
@@ -54,7 +34,7 @@ export const signInErrors = (err: Error): SignInError => {
   return errors;
 };
 
-// Fonction pour gérer les erreurs lors de l'upload d'image
+// Upload image error handler
 export const uploadErrors = (
   err: Error,
   detectedMimeType?: string | null,
@@ -79,7 +59,7 @@ export const uploadErrors = (
   return errors;
 };
 
-// Erreurs pendant la création d'article
+// Item creation validation errors
 export const createItemErrors = (err: Error): CreateItemError => {
   const errors: CreateItemError = {
     denomination: "",

@@ -23,7 +23,7 @@ const AuditSchema = new Schema<IAudit>(
 );
 
 AuditSchema.index({ entity: 1, entityId: 1, createdAt: -1 });
-// Purge auto après 30 jours
+// Auto-purge after 30 days
 AuditSchema.index({ createdAt: 1 }, { expireAfterSeconds: 30 * 24 * 3600 });
 
 const AuditModel: Model<IAudit> = mongoose.model<IAudit>("audit", AuditSchema);

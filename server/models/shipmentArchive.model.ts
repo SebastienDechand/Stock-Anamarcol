@@ -1,7 +1,7 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface IShipmentArchive extends Document {
-  /** Human-readable title, e.g. "Février 2026" */
+  /** Human-readable title, e.g. "February 2026" */
   title: string;
   /** Start of the archived period */
   periodStart: Date;

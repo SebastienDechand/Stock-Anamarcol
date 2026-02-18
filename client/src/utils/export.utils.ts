@@ -8,7 +8,7 @@ export async function exportToXLSX(items: Item[], filename?: string) {
     "État",
     "Quantité",
     "Prépa CG",
-    
+
     "Prépa TPV",
   ];
 
@@ -44,7 +44,7 @@ export async function exportToPDF(items: Item[], filename?: string) {
     "État",
     "Quantité",
     "Prépa CG",
-    
+
     "Prépa TPV",
   ];
 
@@ -59,8 +59,10 @@ export async function exportToPDF(items: Item[], filename?: string) {
   ]);
 
   const doc = new jsPDF();
-  // @ts-ignore - jspdf-autotable augments jsPDF
-  doc.autoTable({ head: [headers], body: rows, styles: { fontSize: 8 } });
+  // jspdf-autotable augments jsPDF prototype at runtime
+  (
+    doc as unknown as { autoTable: (opts: Record<string, unknown>) => void }
+  ).autoTable({ head: [headers], body: rows, styles: { fontSize: 8 } });
   doc.save(
     filename || `stock-anamarcol-${new Date().toISOString().slice(0, 10)}.pdf`,
   );

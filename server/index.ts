@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
-// En production, les variables d'environnement sont déjà définies par o2switch
-// Charge le fichier .env local uniquement si CLIENT_URL n'est pas déjà défini
+// In production, env variables are already defined by the host
+// Only load .env file if CLIENT_URL is not already set
 if (!process.env.CLIENT_URL) {
   dotenv.config({ path: "./config/.env" });
 }

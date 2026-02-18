@@ -63,9 +63,9 @@ const ItemSchema = new Schema<IItem>(
   },
 );
 
-// Index composé pour les filtres fréquents
+// Compound index for frequent filters
 ItemSchema.index({ fournisseur: 1, etat: 1, denomination: 1 });
-// Index pour les requêtes de stock bas
+// Index for low-stock queries
 ItemSchema.index({ quantite: 1 });
 
 const ItemModel: Model<IItem> = mongoose.model<IItem>("item", ItemSchema);

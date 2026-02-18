@@ -43,7 +43,7 @@ const HistorySchema = new Schema<IHistory>(
 );
 
 HistorySchema.index({ itemId: 1, createdAt: -1 });
-// Purge automatique après 30 jours (TTL index)
+// Auto-purge after 30 days (TTL index)
 HistorySchema.index({ createdAt: 1 }, { expireAfterSeconds: 30 * 24 * 3600 });
 
 const HistoryModel: Model<IHistory> = mongoose.model<IHistory>(

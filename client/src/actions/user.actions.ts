@@ -8,7 +8,9 @@ export const UPDATE_NUMERO = "UPDATE_NUMERO";
 export const getUser = (uid: string) => {
   return (dispatch: AppDispatch) => {
     return axios
-      .get(`${import.meta.env.VITE_API_URL}api/user/${uid}`)
+      .get(`${import.meta.env.VITE_API_URL}api/user/${uid}`, {
+        withCredentials: true,
+      })
       .then((res) => {
         dispatch({ type: GET_USER, payload: res.data });
       })
@@ -19,10 +21,14 @@ export const getUser = (uid: string) => {
 export const uploadPicture = (data: FormData, id: string) => {
   return (dispatch: AppDispatch) => {
     return axios
-      .post(`${import.meta.env.VITE_API_URL}api/user/upload`, data)
+      .post(`${import.meta.env.VITE_API_URL}api/user/upload`, data, {
+        withCredentials: true,
+      })
       .then(() => {
         return axios
-          .get(`${import.meta.env.VITE_API_URL}api/user/${id}`)
+          .get(`${import.meta.env.VITE_API_URL}api/user/${id}`, {
+            withCredentials: true,
+          })
           .then((res) => {
             dispatch({ type: UPLOAD_PICTURE, payload: res.data.picture });
           });

@@ -127,9 +127,11 @@ export const deleteContact = async (
     const maybeQuery = ContactModel.findById(req.params.id as string);
     let toDelete: unknown = undefined;
     if (maybeQuery) {
-      if (typeof (maybeQuery as any).lean === "function") {
-        toDelete = await (maybeQuery as any).lean();
-      } else if (typeof (maybeQuery as any).then === "function") {
+      if (typeof maybeQuery.lean === "function") {
+        toDelete = await maybeQuery.lean();
+      } else if (
+        typeof (maybeQuery as { then?: unknown }).then === "function"
+      ) {
         toDelete = await maybeQuery;
       }
     }

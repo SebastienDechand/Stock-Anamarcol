@@ -7,6 +7,8 @@ const config: Config = {
   collectCoverageFrom: [
     "controllers/**/*.ts",
     "middleware/**/*.ts",
+    "utils/**/*.ts",
+    "constants/**/*.ts",
     "errors.utils.ts",
     "!**/node_modules/**",
   ],

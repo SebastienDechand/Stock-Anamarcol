@@ -28,8 +28,17 @@ export default function Login() {
         { withCredentials: true },
       );
       window.location.href = "/home";
-    } catch {
-      setGlobalError("Les identifiants sont erronés. Veuillez réessayer.");
+    } catch (err: unknown) {
+      // Show rate-limit or server message if available, otherwise generic error
+      if (
+        axios.isAxiosError(err) &&
+        err.response?.status === 429 &&
+        err.response.data?.message
+      ) {
+        setGlobalError(err.response.data.message);
+      } else {
+        setGlobalError("Les identifiants sont erronés. Veuillez réessayer.");
+      }
       setIsLoading(false);
     }
   }

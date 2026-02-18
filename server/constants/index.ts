@@ -1,26 +1,26 @@
-// ─── Fournisseurs ────────────────────────────────────
+// ─── Suppliers ───────────────────────────────────────
 export const FOURNISSEURS = [
+  "Amazon",
   "CashGuard",
-  "Aures",
   "LDLC",
+  "MD Ouest",
   "Monétique et Services",
   "Oxhoo",
-  "VNE",
-  "TPV Line",
-  "MD Ouest",
   "Solumag",
   "Tigra",
+  "TPV Line",
+  "VNE",
 ] as const;
 
 export type Fournisseur = (typeof FOURNISSEURS)[number];
 
-// ─── États ───────────────────────────────────────────
+// ─── States ──────────────────────────────────────────
 export const ETATS = ["Neuf", "SAV"] as const;
 
 export type Etat = (typeof ETATS)[number];
 
 // ─── Upload ──────────────────────────────────────────
-export const MAX_FILE_SIZE = 2_500_000; // 2.5 Mo
+export const MAX_FILE_SIZE = 2_500_000; // 2.5 MB
 export const ACCEPTED_IMAGE_TYPES = [
   "image/jpg",
   "image/jpeg",
@@ -30,5 +30,18 @@ export const ACCEPTED_IMAGE_TYPES = [
 // ─── Pagination ──────────────────────────────────────
 export const LOW_STOCK_THRESHOLD = 5;
 
+// ─── Roles ───────────────────────────────────────────
+export enum Role {
+  SUPERADMIN = "superadmin",
+  ADMIN = "admin",
+  USER = "user",
+  HOTLINE = "hotline",
+}
+
+export const ROLES = Object.values(Role);
+
 // ─── Auth ────────────────────────────────────────────
-export const TOKEN_MAX_AGE = 60 * 60 * 1000; // 1 heure
+/** JWT expiry — in seconds (for jwt.sign `expiresIn`) */
+export const JWT_MAX_AGE = 60 * 60; // 1 hour = 3 600 s
+/** Cookie expiry — in milliseconds (for res.cookie `maxAge`) */
+export const COOKIE_MAX_AGE = 60 * 60 * 1000; // 1 hour = 3 600 000 ms

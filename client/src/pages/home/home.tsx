@@ -24,6 +24,12 @@ import {
   YAxis,
   CartesianGrid,
 } from "recharts";
+import type {
+  DashboardStats,
+  FournisseurStats,
+  GlobalStatistics,
+  LowStockItem,
+} from "../../types";
 
 const COLORS = [
   "#16a34a",
@@ -72,36 +78,6 @@ function KpiCard({ icon: Icon, label, value, accent = "brand" }: KpiCardProps) {
   );
 }
 
-interface FournisseurData {
-  nom: string;
-  totalStock: number;
-  numberOfArticles: number;
-  numberOfLowStockArticles: number;
-}
-
-interface LowStockItem {
-  _id: string;
-  denomination: string;
-  fournisseur: string;
-  etat: string;
-  quantite: number;
-}
-
-interface GlobalStats {
-  numberOfArticles?: number;
-  totalStock?: number;
-  numberOfSuppliers?: number;
-  numberOfLowStockArticles?: number;
-  prepaCG?: number;
-  prepaTPV?: number;
-}
-
-interface DashboardStats {
-  global: GlobalStats;
-  fournisseurs: FournisseurData[];
-  lowStockItems: LowStockItem[];
-}
-
 export default function Home() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -134,7 +110,7 @@ export default function Home() {
     );
   }
 
-  const g = stats?.global || {};
+  const g: Partial<GlobalStatistics> = stats?.global ?? {};
   const fournisseurs = stats?.fournisseurs || [];
   const lowStockItems = stats?.lowStockItems || [];
   const filteredLowStock =
@@ -286,7 +262,7 @@ export default function Home() {
                       label={renderPieLabel}
                       labelLine={false}
                     >
-                      {fournisseurs.map((_: FournisseurData, i: number) => (
+                      {fournisseurs.map((_: FournisseurStats, i: number) => (
                         <Cell key={i} fill={COLORS[i % COLORS.length]} />
                       ))}
                     </Pie>
@@ -315,7 +291,7 @@ export default function Home() {
                         label={renderPieLabel}
                         labelLine={false}
                       >
-                        {fournisseurs.map((_: FournisseurData, i: number) => (
+                        {fournisseurs.map((_: FournisseurStats, i: number) => (
                           <Cell key={i} fill={COLORS[i % COLORS.length]} />
                         ))}
                       </Pie>
@@ -352,7 +328,7 @@ export default function Home() {
                         contentStyle={tooltipStyle}
                       />
                       <Bar dataKey="totalStock" radius={[4, 4, 0, 0]}>
-                        {fournisseurs.map((_: FournisseurData, i: number) => (
+                        {fournisseurs.map((_: FournisseurStats, i: number) => (
                           <Cell key={i} fill={COLORS[i % COLORS.length]} />
                         ))}
                       </Bar>
@@ -362,7 +338,7 @@ export default function Home() {
               </div>
 
               <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 mt-2">
-                {fournisseurs.map((f: FournisseurData, i: number) => (
+                {fournisseurs.map((f: FournisseurStats, i: number) => (
                   <div key={f.nom} className="flex items-center gap-1.5">
                     <div
                       className="w-2.5 h-2.5 rounded-full shrink-0"
@@ -387,7 +363,7 @@ export default function Home() {
           </h2>
           {/* Mobile card view */}
           <div className="md:hidden space-y-2">
-            {fournisseurs.map((f: FournisseurData) => (
+            {fournisseurs.map((f: FournisseurStats) => (
               <div key={f.nom} className="bg-gray-50/80 rounded-lg px-3 py-2.5">
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-medium text-gray-800 text-sm">
@@ -430,7 +406,7 @@ export default function Home() {
                 </tr>
               </thead>
               <tbody>
-                {fournisseurs.map((f: FournisseurData) => (
+                {fournisseurs.map((f: FournisseurStats) => (
                   <tr
                     key={f.nom}
                     className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors"

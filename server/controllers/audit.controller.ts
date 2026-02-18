@@ -24,14 +24,14 @@ export const getHistory = async (
         .lean(),
     ]);
 
-    // Récupérer les dénominations des items référencés
+    // Fetch item denominations for referenced items
     const itemIds = [...new Set(itemHistory.map((h) => String(h.itemId)))];
     const items = await ItemModel.find({ _id: { $in: itemIds } })
       .select("denomination")
       .lean();
     const denomMap = new Map(items.map((i) => [String(i._id), i.denomination]));
 
-    // Récupérer les noms des contacts et membres référencés dans les audit events
+    // Fetch names for contacts and users referenced in audit events
     const contactIds = auditEvents
       .filter((e) => e.entity === "contact" && e.entityId)
       .map((e) => String(e.entityId));
@@ -66,7 +66,7 @@ export const getHistory = async (
       auditItems.map((i) => [String(i._id), i.denomination]),
     );
 
-    // Enrichir les audit events avec le nom de l'entité
+    // Enrich audit events with entity name
     const enrichedAuditEvents = auditEvents.map((e) => {
       const obj = { ...e } as Record<string, unknown>;
       const details = (obj.details as Record<string, unknown>) || {};
@@ -130,8 +130,7 @@ export const purgeAllHistoryAndAudit = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userName =
-      (res.locals.user && (res.locals.user as any).pseudo) || "unknown";
+    const userName = (res.locals.user?.pseudo as string) || "unknown";
     const [auditRes, historyRes] = await Promise.all([
       AuditModel.deleteMany({}),
       HistoryModel.deleteMany({}),
@@ -149,12 +148,12 @@ export const purgeAllHistoryAndAudit = async (
     }
 
     console.log(
-      `Purge performed by ${userName}: audit=${(auditRes as any).deletedCount}, history=${(historyRes as any).deletedCount}`,
+      `Purge performed by ${userName}: audit=${auditRes.deletedCount}, history=${historyRes.deletedCount}`,
     );
 
     res.status(200).json({
-      deletedAudit: (auditRes as any).deletedCount ?? null,
-      deletedHistory: (historyRes as any).deletedCount ?? null,
+      deletedAudit: auditRes.deletedCount ?? null,
+      deletedHistory: historyRes.deletedCount ?? null,
     });
   } catch (err) {
     console.error("Error purging audit/history:", err);

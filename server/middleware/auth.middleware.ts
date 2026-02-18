@@ -1,12 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import UserModel from "../models/user.model";
+import type { DecodedToken } from "../types/auth";
+import { Role } from "../constants";
 
-interface DecodedToken {
-  id: string;
-}
-
-// Résout le user à partir du JWT + applique le SUPERADMIN_EMAIL override
+// Resolves user from JWT and applies SUPERADMIN_EMAIL override
 async function resolveUser(token: string) {
   const decoded = jwt.verify(
     token,
@@ -19,13 +17,12 @@ async function resolveUser(token: string) {
     typeof user.email === "string" &&
     user.email.toLowerCase() === process.env.SUPERADMIN_EMAIL.toLowerCase()
   ) {
-    // @ts-ignore
-    user.role = "superadmin";
+    (user as unknown as Record<string, unknown>).role = Role.SUPERADMIN;
   }
   return user;
 }
 
-// Vérifie si l'utilisateur est connecté (non bloquant)
+// Checks if user is logged in (non-blocking)
 export const checkUser = (
   req: Request,
   res: Response,
@@ -49,7 +46,7 @@ export const checkUser = (
     });
 };
 
-// Authentification requise (bloquant - renvoie 401)
+// Authentication required (blocking — returns 401)
 export const requireAuth = (
   req: Request,
   res: Response,
@@ -75,7 +72,7 @@ export const requireAuth = (
     });
 };
 
-// Vérifie que l'utilisateur est admin ou superadmin
+// Requires admin or superadmin role
 export const requireAdmin = (
   req: Request,
   res: Response,
@@ -93,7 +90,7 @@ export const requireAdmin = (
         res.status(401).json({ message: "Utilisateur introuvable" });
         return;
       }
-      if (!(user.role === "admin" || user.role === "superadmin")) {
+      if (!(user.role === Role.ADMIN || user.role === Role.SUPERADMIN)) {
         res.status(403).json({ message: "Accès refusé - admin requis" });
         return;
       }
@@ -105,7 +102,7 @@ export const requireAdmin = (
     });
 };
 
-// Vérifie que l'utilisateur est hotline OR admin/superadmin
+// Requires hotline OR admin/superadmin role
 export const requireHotline = (
   req: Request,
   res: Response,
@@ -125,9 +122,9 @@ export const requireHotline = (
       }
       if (
         !(
-          user.role === "hotline" ||
-          user.role === "admin" ||
-          user.role === "superadmin"
+          user.role === Role.HOTLINE ||
+          user.role === Role.ADMIN ||
+          user.role === Role.SUPERADMIN
         )
       ) {
         res
@@ -143,7 +140,7 @@ export const requireHotline = (
     });
 };
 
-// Vérifie que l'utilisateur est superadmin uniquement
+// Requires superadmin role only
 export const requireSuperAdmin = (
   req: Request,
   res: Response,
@@ -161,7 +158,7 @@ export const requireSuperAdmin = (
         res.status(401).json({ message: "Utilisateur introuvable" });
         return;
       }
-      if (user.role !== "superadmin") {
+      if (user.role !== Role.SUPERADMIN) {
         res.status(403).json({ message: "Accès refusé - superadmin requis" });
         return;
       }

@@ -26,7 +26,7 @@ export const itemInfo = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Lecture paginée avec filtres côté serveur
+// Paginated read with server-side filters
 export const readItem = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
@@ -77,21 +77,26 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
       ItemModel.countDocuments(filter),
     ];
 
-    // Si un filtre prépa est actif, vérifier si le decrement est possible
+    // If a prepa filter is active, check if decrement is possible
     const prepaFields: string[] = [];
     if (prepaCG === "true") prepaFields.push("prepaCG");
     if (prepaTPV === "true") prepaFields.push("prepaTPV");
 
     if (prepaFields.length > 0) {
       for (const field of prepaFields) {
-        // Un item bloque le decrement s'il a qty=0, ou pour CG+cassette si qty<4
+        // An item blocks decrement if qty=0, or for CG+cassette if qty<4
         queries.push(
           ItemModel.countDocuments({
             [field]: true,
             $or: [
               { quantite: { $lte: 0 } },
               ...(field === "prepaCG"
-                ? [{ denomination: { $regex: /cassette/i }, quantite: { $lt: 4 } }]
+                ? [
+                    {
+                      denomination: { $regex: /cassette/i },
+                      quantite: { $lt: 4 },
+                    },
+                  ]
                 : []),
             ],
           }),
@@ -183,10 +188,10 @@ export const updateItem = async (
     }
 
     // Snapshot old values before mutation (guard for mocked objects)
-    const oldItem =
-      typeof (item as any).toObject === "function"
-        ? (item as any).toObject()
-        : { ...(item as any) };
+    const oldItem: Record<string, unknown> =
+      typeof item.toObject === "function"
+        ? (item.toObject() as unknown as Record<string, unknown>)
+        : { ...item };
 
     if (req.body.denomination) item.denomination = req.body.denomination;
     if (req.body.fournisseur) item.fournisseur = req.body.fournisseur;
@@ -240,12 +245,14 @@ export const deleteItem = async (
 
   try {
     const maybeQuery = ItemModel.findById(req.params.id as string);
-    let item: any = undefined;
+    let item: Record<string, unknown> | undefined = undefined;
     if (maybeQuery) {
-      if (typeof (maybeQuery as any).lean === "function") {
-        item = await (maybeQuery as any).lean();
-      } else if (typeof (maybeQuery as any).then === "function") {
-        item = await maybeQuery;
+      if (typeof maybeQuery.lean === "function") {
+        item = (await maybeQuery.lean()) as unknown as Record<string, unknown>;
+      } else if (
+        typeof (maybeQuery as { then?: unknown }).then === "function"
+      ) {
+        item = (await maybeQuery) as unknown as Record<string, unknown>;
       }
     }
 
@@ -255,7 +262,7 @@ export const deleteItem = async (
       try {
         logItemDelete(
           req.params.id as string,
-          item.denomination,
+          String(item.denomination ?? ""),
           res.locals.user?.pseudo || "Admin",
         );
       } catch (err) {
@@ -273,18 +280,25 @@ export const deleteItem = async (
   }
 };
 
-// Opération batch sur une prépa : +1/-1 sur tous les articles (CG : cassettes HV = -4/+4)
+// Batch operation on a prepa set: +1/-1 on all items (CG: cassettes = -4/+4)
 export const prepaBatch = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const { prepa, operation, count: rawCount } = req.body as {
+  const {
+    prepa,
+    operation,
+    count: rawCount,
+  } = req.body as {
     prepa?: string;
     operation?: string;
     count?: number;
   };
-  // count uniquement pour l'increment (remise en stock)
-  const count = operation === "increment" ? Math.max(1, Math.floor(Number(rawCount) || 1)) : 1;
+  // count only for increment (restocking)
+  const count =
+    operation === "increment"
+      ? Math.max(1, Math.floor(Number(rawCount) || 1))
+      : 1;
 
   if (!prepa || !["prepaCG", "prepaTPV"].includes(prepa)) {
     res.status(400).json({ message: "Prépa invalide" });
@@ -303,7 +317,7 @@ export const prepaBatch = async (
     for (const item of items) {
       const oldQty = item.quantite;
 
-      // Pour CG : les cassettes HV changent de 4, le reste de 1 — multiplié par count
+      // For CG: cassettes change by 4, the rest by 1 — multiplied by count
       let delta = 1 * count;
       if (
         prepa === "prepaCG" &&
@@ -323,7 +337,7 @@ export const prepaBatch = async (
 
         logItemChanges(
           String(item._id),
-          { ...item.toObject(), quantite: oldQty } as any,
+          { ...item.toObject(), quantite: oldQty },
           { quantite: newQty },
           userName,
         );

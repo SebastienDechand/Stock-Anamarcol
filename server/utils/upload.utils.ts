@@ -3,8 +3,8 @@ import { uploadErrors } from "../errors.utils";
 import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "../constants";
 
 /**
- * Valide le fichier uploadé (type MIME + taille).
- * Retourne `true` si valide, envoie une erreur et retourne `false` sinon.
+ * Validates the uploaded file (MIME type + size).
+ * Returns `true` if valid; sends an error and returns `false` otherwise.
  */
 export function validateUploadedFile(req: Request, res: Response): boolean {
   const file = req.file;
@@ -33,7 +33,7 @@ export function validateUploadedFile(req: Request, res: Response): boolean {
 }
 
 /**
- * Upload un buffer d'image vers ImgBB et retourne l'URL publique.
+ * Uploads an image buffer to ImgBB and returns the public URL.
  */
 export async function uploadToImgBB(
   fileBuffer: Buffer,

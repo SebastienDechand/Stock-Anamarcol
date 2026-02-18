@@ -25,6 +25,17 @@ jest.mock("../models/shipmentArchive.model", () => ({
   default: mockShipmentArchiveModel,
 }));
 
+const mockXLSX = {
+  utils: {
+    json_to_sheet: jest.fn().mockReturnValue({}),
+    book_new: jest.fn().mockReturnValue({}),
+    book_append_sheet: jest.fn(),
+  },
+  write: jest.fn().mockReturnValue(Buffer.from("fake-xlsx")),
+};
+
+jest.mock("xlsx", () => mockXLSX);
+
 import { EventEmitter } from "events";
 
 jest.mock("pdfkit", () => {
@@ -279,6 +290,151 @@ describe("Shipments Controller", () => {
         "application/pdf",
       );
       expect(res.end).toHaveBeenCalledWith(buf);
+    });
+
+    it("should send XLSX buffer when format=xlsx", async () => {
+      req.params = { id: "arc1" };
+      req.query = { format: "xlsx" };
+      const rawData = [{ Nom: "DUPONT", Prénom: "JEAN" }];
+      mockShipmentArchiveModel.findById.mockReturnValue({
+        lean: jest.fn().mockResolvedValue({
+          _id: "arc1",
+          title: "Janvier 2026",
+          rawData,
+          fileBuffer: Buffer.from("pdf"),
+        }),
+      });
+      await downloadArchive(req as Request, res as Response);
+      expect(mockXLSX.utils.json_to_sheet).toHaveBeenCalledWith(rawData);
+      expect(res.setHeader).toHaveBeenCalledWith(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      );
+      expect(res.end).toHaveBeenCalled();
+    });
+
+    it("should return 400 when xlsx requested but no rawData", async () => {
+      req.params = { id: "arc1" };
+      req.query = { format: "xlsx" };
+      mockShipmentArchiveModel.findById.mockReturnValue({
+        lean: jest.fn().mockResolvedValue({
+          _id: "arc1",
+          title: "Janvier 2026",
+          rawData: [],
+          fileBuffer: Buffer.from("pdf"),
+        }),
+      });
+      await downloadArchive(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+    });
+
+    it("should return 500 on error", async () => {
+      req.params = { id: "arc1" };
+      mockShipmentArchiveModel.findById.mockReturnValue({
+        lean: jest.fn().mockRejectedValue(new Error("DB error")),
+      });
+      await downloadArchive(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(500);
+    });
+  });
+
+  describe("markSent – additional", () => {
+    it("should set sentAt and sentBy when marking sent", async () => {
+      req.params = { id: "s4" };
+      const mockShipment: Record<string, unknown> = {
+        sent: false,
+        sentAt: undefined,
+        sentBy: undefined,
+        save: jest.fn().mockImplementation(function (
+          this: Record<string, unknown>,
+        ) {
+          return Promise.resolve(this);
+        }),
+      };
+      mockShipmentModel.findById.mockResolvedValue(mockShipment);
+      await markSent(req as Request, res as Response);
+      expect(mockShipment.sent).toBe(true);
+      expect(mockShipment.sentAt).toBeInstanceOf(Date);
+      expect(mockShipment.sentBy).toBe("hotliner");
+    });
+
+    it("should return 500 on save error", async () => {
+      req.params = { id: "s5" };
+      const mockShipment = {
+        sent: false,
+        save: jest.fn().mockRejectedValue(new Error("save fail")),
+      };
+      mockShipmentModel.findById.mockResolvedValue(mockShipment);
+      await markSent(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(500);
+    });
+  });
+
+  describe("createShipment – additional", () => {
+    it("should return 500 on create error", async () => {
+      req.body = { ...validBody };
+      mockShipmentModel.create.mockRejectedValue(new Error("DB error"));
+      await createShipment(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(500);
+    });
+
+    it("should report all missing required fields", async () => {
+      req.body = {};
+      await createShipment(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+      const payload = (res.json as jest.Mock).mock.calls[0][0];
+      expect(payload.message).toContain("nom");
+      expect(payload.message).toContain("prenom");
+      expect(payload.message).toContain("piece");
+    });
+  });
+
+  describe("deleteShipment – additional", () => {
+    it("should return 500 on delete error", async () => {
+      req.params = { id: "s6" };
+      mockShipmentModel.deleteOne.mockReturnValue({
+        exec: jest.fn().mockRejectedValue(new Error("delete fail")),
+      });
+      await deleteShipment(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(500);
+    });
+  });
+
+  describe("getShipments – additional", () => {
+    it("should return 500 on error", async () => {
+      mockShipmentModel.findOne.mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          lean: jest.fn().mockRejectedValue(new Error("fail")),
+        }),
+      });
+      await getShipments(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(500);
+    });
+  });
+
+  describe("getArchives – additional", () => {
+    it("should return 500 on error", async () => {
+      mockShipmentArchiveModel.find.mockReturnValue({
+        select: jest.fn().mockReturnValue({
+          sort: jest.fn().mockReturnValue({
+            lean: jest.fn().mockRejectedValue(new Error("fail")),
+          }),
+        }),
+      });
+      await getArchives(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(500);
+    });
+  });
+
+  describe("createArchive – additional", () => {
+    it("should return 500 on error", async () => {
+      mockShipmentModel.find.mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          lean: jest.fn().mockRejectedValue(new Error("fail")),
+        }),
+      });
+      await createArchive(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(500);
     });
   });
 });

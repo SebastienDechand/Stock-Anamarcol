@@ -18,3 +18,13 @@ export const ETATS = ["Neuf", "SAV"] as const;
 export type Etat = (typeof ETATS)[number];
 
 export const LOW_STOCK_THRESHOLD = 5;
+
+// ─── Roles ───────────────────────────────────────────
+export enum Role {
+  SUPERADMIN = "superadmin",
+  ADMIN = "admin",
+  USER = "user",
+  HOTLINE = "hotline",
+}
+
+export const ROLES = Object.values(Role);

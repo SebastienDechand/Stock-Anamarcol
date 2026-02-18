@@ -1,7 +1,7 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface IShipment extends Document {
-  /* ── Fiche client ── */
+  /* ── Client card ── */
   nom: string;
   prenom: string;
   tel?: string;
@@ -12,7 +12,7 @@ export interface IShipment extends Document {
   ville: string;
   societeOuFonction: string;
   societe: string;
-  /* ── Envoi ── */
+  /* ── Shipment ── */
   piece: string;
   requestDate?: Date;
   createdBy?: string;

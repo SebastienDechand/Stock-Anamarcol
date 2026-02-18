@@ -2,14 +2,14 @@ import { Request, Response } from "express";
 import UserModel, { IUser } from "../models/user.model";
 import { validateObjectId } from "../utils/validate.utils";
 import { logEvent } from "../utils/audit.utils";
+import { Role, ROLES } from "../constants";
 
 // Set role for a user (admin only)
 export const setRole = async (req: Request, res: Response): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
 
   const { role } = req.body as { role?: string };
-  const allowed = ["user", "hotline", "admin", "superadmin"];
-  if (!role || !allowed.includes(role)) {
+  if (!role || !ROLES.includes(role as Role)) {
     res.status(400).json({ message: "Role invalide" });
     return;
   }
@@ -20,8 +20,7 @@ export const setRole = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "Utilisateur introuvable" });
       return;
     }
-    // @ts-ignore
-    user.role = role as any;
+    (user as unknown as Record<string, unknown>).role = role;
     const updated = await user.save();
     await logEvent(
       "update",
@@ -39,7 +38,7 @@ export const setRole = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Retourne tous les utilisateurs enregistrés
+// Returns all registered users
 export const getAllUsers = async (
   _req: Request,
   res: Response,
@@ -48,7 +47,7 @@ export const getAllUsers = async (
   res.status(200).json(users);
 };
 
-// Retourne les infos d'un utilisateur par son id
+// Returns a user's info by ID
 export const userInfo = async (req: Request, res: Response): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
 
@@ -67,7 +66,7 @@ export const userInfo = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Mise à jour d'un utilisateur
+// Update a user
 export const updateUser = async (
   req: Request,
   res: Response,
@@ -83,9 +82,7 @@ export const updateUser = async (
     }
 
     const old =
-      typeof (user as any).toObject === "function"
-        ? (user as any).toObject()
-        : { ...(user as any) };
+      typeof user.toObject === "function" ? user.toObject() : { ...user };
     if (req.body.email) user.email = req.body.email;
     if (req.body.password) user.password = req.body.password;
     if (req.body.poste) user.poste = req.body.poste;
@@ -94,15 +91,13 @@ export const updateUser = async (
       user.pole = req.body.pole;
       // Auto-assign/downgrade role based on pole (do not override admins)
       if (String(req.body.pole) === "Hotline") {
-        if (user.role !== "admin" && user.role !== "superadmin") {
-          // @ts-ignore - dynamic assignment for existing IUser
-          user.role = "hotline";
+        if (user.role !== Role.ADMIN && user.role !== Role.SUPERADMIN) {
+          (user as unknown as Record<string, unknown>).role = Role.HOTLINE;
         }
       } else {
-        if (user.role === "hotline") {
-          // revert to plain user when leaving Hotline pole
-          // @ts-ignore
-          user.role = "user";
+        if (user.role === Role.HOTLINE) {
+          // Revert to plain user when leaving Hotline pole
+          (user as unknown as Record<string, unknown>).role = Role.USER;
         }
       }
     }
@@ -150,7 +145,7 @@ export const updateUser = async (
   }
 };
 
-// Suppression d'un utilisateur
+// Delete a user
 export const deleteUser = async (
   req: Request,
   res: Response,
@@ -162,13 +157,14 @@ export const deleteUser = async (
     const maybeQuery = UserModel.findById(req.params.id as string);
     let toDelete: unknown = undefined;
     if (maybeQuery) {
-      if (typeof (maybeQuery as any).lean === "function") {
-        toDelete = await (maybeQuery as any).lean();
-      } else if (typeof (maybeQuery as any).then === "function") {
-        // it's a thenable (promise)
+      if (typeof maybeQuery.lean === "function") {
+        toDelete = await maybeQuery.lean();
+      } else if (
+        typeof (maybeQuery as { then?: unknown }).then === "function"
+      ) {
+        // It's a thenable (promise)
         toDelete = await maybeQuery;
       } else {
-        // fallback: call and hope for the best
         toDelete = undefined;
       }
     }

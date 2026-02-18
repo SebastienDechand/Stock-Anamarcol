@@ -2,8 +2,8 @@ import { Response } from "express";
 import mongoose from "mongoose";
 
 /**
- * Valide un ObjectID MongoDB. Renvoie 400 si invalide.
- * @returns `true` si l'ID est valide, `false` sinon (réponse déjà envoyée).
+ * Validates a MongoDB ObjectID. Returns 400 if invalid.
+ * @returns `true` if the ID is valid, `false` otherwise (response already sent).
  */
 export function validateObjectId(id: string, res: Response): boolean {
   if (!mongoose.Types.ObjectId.isValid(id)) {

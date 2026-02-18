@@ -2,6 +2,8 @@ export {
   FOURNISSEURS,
   ETATS,
   LOW_STOCK_THRESHOLD,
+  Role,
+  ROLES,
   type Fournisseur,
   type Etat,
 } from "./item.constants";

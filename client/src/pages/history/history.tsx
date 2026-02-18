@@ -83,7 +83,7 @@ export default function HistoryPage() {
       .catch((err) => console.error(err));
   }, [auth]);
 
-  // Fermer le dropdown au clic extérieur
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (
@@ -99,18 +99,18 @@ export default function HistoryPage() {
 
   if (!auth?.isAdmin) return null;
 
-  // Events avec un userName connu uniquement
+  // Only events with a known userName
   const knownEvents = events.filter((e) => e.userName);
 
-  // Exclure les événements de type 'update' qui ne modifient que la quantité
+  // Exclude 'update' events that only modify quantity
   const cleanedEvents = knownEvents.filter((e) => {
     if (e.action !== "update") return true;
-    // cas où la modification est décrite avec un champ unique
+    // Case where the change is described with a single field
     if (e.details?.field) {
       const f = String(e.details.field).toLowerCase();
       if (f === "quantity" || f === "quantite") return false;
     }
-    // cas où la modification contient un objet 'changes'
+    // Case where the change contains a 'changes' object
     if (e.details?.changes && typeof e.details.changes === "object") {
       const fields = Object.keys(e.details.changes as Record<string, unknown>);
       if (
@@ -126,10 +126,10 @@ export default function HistoryPage() {
     return true;
   });
 
-  // Actions disponibles pour le filtre (après nettoyage)
+  // Available actions for the filter (after cleanup)
   const availableActions = [...new Set(cleanedEvents.map((e) => e.action))];
 
-  // Appliquer les filtres
+  // Apply filters
   const filtered = cleanedEvents.filter((e) => {
     if (activeFilter !== "all" && e.action !== activeFilter) return false;
     if (selectedUsers.length > 0 && !selectedUsers.includes(e.userName || ""))

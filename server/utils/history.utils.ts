@@ -1,5 +1,6 @@
 import HistoryModel from "../models/history.model";
-import type { IItem } from "../models/item.model";
+
+type ItemSnapshot = Record<string, unknown>;
 
 const TRACKED_FIELDS = [
   "denomination",
@@ -45,7 +46,7 @@ export async function logItemDelete(
 
 export async function logItemChanges(
   itemId: string,
-  oldItem: IItem,
+  oldItem: ItemSnapshot,
   newData: Record<string, unknown>,
   userName: string,
 ): Promise<void> {
@@ -78,13 +79,13 @@ export async function logItemChanges(
     for (const field of TRACKED_FIELDS) {
       if (
         Object.prototype.hasOwnProperty.call(newData, field) &&
-        String(newData[field]) !== String(oldItem[field as keyof IItem])
+        String(newData[field]) !== String(oldItem[field])
       ) {
         entries.push({
           itemId,
           action: "update",
           field,
-          oldValue: String(oldItem[field as keyof IItem] ?? ""),
+          oldValue: String(oldItem[field] ?? ""),
           newValue: String(newData[field]),
           userName,
         });

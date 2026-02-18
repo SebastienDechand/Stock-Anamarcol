@@ -2,22 +2,29 @@ import { Request, Response } from "express";
 import UserModel from "../models/user.model";
 import jwt from "jsonwebtoken";
 import { signUpErrors, signInErrors } from "../errors.utils";
-import { TOKEN_MAX_AGE } from "../constants";
+import { JWT_MAX_AGE, COOKIE_MAX_AGE } from "../constants";
 import { logEvent } from "../utils/audit.utils";
 
-// Création d'un token
+// Create a JWT token
 const createToken = (id: string): string => {
   return jwt.sign({ id }, process.env.TOKEN_SECRET as string, {
-    expiresIn: TOKEN_MAX_AGE,
+    expiresIn: JWT_MAX_AGE,
   });
 };
 
-// S'enregistrer
+// Sign up
 export const signUp = async (req: Request, res: Response): Promise<void> => {
   const { pseudo, email, password, poste, numero, pole } = req.body;
 
   try {
-    const payload: any = { pseudo, email, password, poste, numero, pole };
+    const payload: Record<string, unknown> = {
+      pseudo,
+      email,
+      password,
+      poste,
+      numero,
+      pole,
+    };
     if (pole === "Hotline") payload.role = "hotline";
     const user = await UserModel.create(payload);
     res.status(200).json({ user: user._id });
@@ -29,7 +36,7 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Connexion
+// Sign in
 export const signIn = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
 
@@ -38,7 +45,7 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
     const token = createToken(user._id.toString());
     res.cookie("jwt", token, {
       httpOnly: true,
-      maxAge: TOKEN_MAX_AGE,
+      maxAge: COOKIE_MAX_AGE,
       secure: true,
       sameSite: "none",
     });
@@ -55,7 +62,7 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Déconnexion
+// Sign out
 export const logout = async (_req: Request, res: Response): Promise<void> => {
   res.cookie("jwt", "", { maxAge: 1 });
   try {

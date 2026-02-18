@@ -1,6 +1,7 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import { isEmail } from "validator";
 import bcrypt from "bcrypt";
+import { Role, ROLES } from "../constants";
 
 export interface IUser extends Document {
   pseudo: string;
@@ -10,7 +11,7 @@ export interface IUser extends Document {
   poste?: string;
   numero?: string;
   pole?: string;
-  role: "superadmin" | "admin" | "user" | "hotline";
+  role: Role;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -68,8 +69,8 @@ const userSchema = new Schema<IUser, IUserModel>(
     },
     role: {
       type: String,
-      enum: ["superadmin", "admin", "user", "hotline"],
-      default: "user",
+      enum: ROLES,
+      default: Role.USER,
     },
   },
   {
@@ -77,7 +78,7 @@ const userSchema = new Schema<IUser, IUserModel>(
   },
 );
 
-// Cryptage du mot de passe (seulement si modifié)
+// Hash password (only if modified)
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
@@ -85,7 +86,7 @@ userSchema.pre("save", async function () {
   this.password = hashedPassword;
 });
 
-// Décryptage du mot de passe
+// Verify password on login
 userSchema.statics.login = async function (
   email: string,
   password: string,

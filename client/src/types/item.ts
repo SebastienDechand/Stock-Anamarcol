@@ -14,6 +14,28 @@ export interface Item {
   updatedAt?: string;
 }
 
+export interface NewItem {
+  denomination: string;
+  fournisseur: string;
+  quantite: number;
+  etat: string;
+  posterId: string;
+  modifierId?: string;
+  modifierName?: string;
+}
+
+export interface FetchItemsParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  fournisseur?: string[];
+  etat?: string[];
+  prepaCG?: boolean;
+  prepaTPV?: boolean;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}
+
 export interface History {
   _id: string;
   itemId: string;

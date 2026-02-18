@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useContext, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks/redux";
 import { fetchItems } from "../../actions/items.actions";
-import type { FetchItemsParams } from "../../actions/items.actions";
+import type { FetchItemsParams } from "../../types";
 import {
   deleteItem,
   setSelectedItemId,
@@ -374,7 +374,7 @@ export default function Articles() {
           )}
         </div>
 
-        {/* Prépa filters always visible on mobile, plus visible & stylé */}
+        {/* Prepa filters always visible on mobile, plus visible & styled */}
         <div className="flex sm:hidden gap-2 overflow-x-auto no-scrollbar items-center mt-2 mb-3 px-2 py-2 bg-violet-50 border border-violet-200 rounded-lg shadow-sm justify-center w-full">
           <span className="text-[10px] font-bold text-violet-700 uppercase tracking-wide shrink-0">
             Prépa
@@ -405,7 +405,7 @@ export default function Articles() {
         </div>
       </div>
 
-      {/* Barre d'action prépa */}
+      {/* Prepa action bar */}
       {prepaFilter.length > 0 && (
         <div className="bg-violet-50 border border-violet-200 rounded-lg px-2 py-2.5 flex flex-col gap-2 mb-3 sm:flex-row sm:items-center sm:justify-between sm:px-4">
           <span className="hidden sm:inline text-sm text-violet-800">

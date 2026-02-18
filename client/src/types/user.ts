@@ -1,3 +1,5 @@
+import type { Role } from "../constants";
+
 export interface User {
   _id: string;
   pseudo: string;
@@ -6,7 +8,7 @@ export interface User {
   poste?: string;
   numero?: string;
   pole?: string;
-  role?: "superadmin" | "admin" | "user" | "hotline";
+  role?: Role;
   createdAt?: string;
   updatedAt?: string;
 }

@@ -1,13 +1,15 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import { Role } from "../constants";
 
 // Mock the UserModel
 jest.mock("../models/user.model", () => {
+  const { Role } = require("../constants");
   const mockUser = {
     _id: "507f1f77bcf86cd799439011",
     pseudo: "testuser",
     email: "test@test.com",
-    role: "user",
+    role: Role.USER,
     password: "hashedpassword",
     save: jest.fn(),
   };
@@ -126,6 +128,23 @@ describe("Auth Middleware", () => {
       await new Promise((r) => setTimeout(r, 50));
 
       expect(res.status).toHaveBeenCalledWith(401);
+    });
+
+    it("should return 403 when user is not admin or superadmin", async () => {
+      // mockUser has role Role.USER by default
+      const token = jwt.sign(
+        { id: "507f1f77bcf86cd799439011" },
+        process.env.TOKEN_SECRET!,
+      );
+      req.cookies = { jwt: token };
+
+      await requireAdmin(req as Request, res as Response, next);
+      await new Promise((r) => setTimeout(r, 50));
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Accès refusé - admin requis",
+      });
     });
   });
 

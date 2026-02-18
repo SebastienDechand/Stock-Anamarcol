@@ -55,9 +55,10 @@ const ShipmentHistoryModal = ({ onClose, onArchived }: Props) => {
       toast.success("Envois archivés et purgés");
       await fetchArchives();
       onArchived?.();
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { message?: string } } };
       const msg =
-        err?.response?.data?.message || "Impossible d'archiver les envois";
+        axiosErr?.response?.data?.message || "Impossible d'archiver les envois";
       toast.error(msg);
     } finally {
       setArchiving(false);

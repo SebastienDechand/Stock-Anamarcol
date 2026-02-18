@@ -329,7 +329,7 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
 
             {/* Right — Info */}
             <div className="sm:w-3/5 px-6 py-5 space-y-4">
-              {/* Dénomination */}
+              {/* Denomination */}
               <div>
                 <p className={labelClass}>Dénomination</p>
                 {editing ? (
@@ -369,7 +369,7 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
                 )}
               </div>
 
-              {/* État */}
+              {/* State */}
               <div>
                 <p className={labelClass}>État</p>
                 {editing ? (
@@ -392,7 +392,7 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
                 )}
               </div>
 
-              {/* Quantité */}
+              {/* Quantity */}
               <div>
                 <p className={labelClass}>Quantité</p>
                 {editing || editingQty ? (
@@ -504,10 +504,7 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
           <div className="px-6 py-5 max-h-[400px] overflow-y-auto">
             {isLoadingHistory && (
               <div className="flex items-center justify-center py-8">
-                <Loader2
-                  size={24}
-                  className="animate-spin text-brand-600"
-                />
+                <Loader2 size={24} className="animate-spin text-brand-600" />
               </div>
             )}
 
@@ -526,23 +523,23 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
                   >
                     <span
                       className={`shrink-0 px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                        ACTION_COLORS[entry.action] || "bg-gray-100 text-gray-600"
+                        ACTION_COLORS[entry.action] ||
+                        "bg-gray-100 text-gray-600"
                       }`}
                     >
                       {ACTION_LABELS[entry.action] || entry.action}
                     </span>
                     <div className="flex-1 min-w-0">
                       {entry.action === "create" && (
-                        <p className="text-sm text-gray-700">
-                          Article créé
-                        </p>
+                        <p className="text-sm text-gray-700">Article créé</p>
                       )}
                       {entry.action === "delete" && (
                         <p className="text-sm text-gray-700">
                           Article supprimé
                           {entry.oldValue && (
                             <span className="text-gray-400">
-                              {" "}({entry.oldValue})
+                              {" "}
+                              ({entry.oldValue})
                             </span>
                           )}
                         </p>
@@ -564,8 +561,7 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
                         </p>
                       )}
                       <p className="text-[11px] text-gray-400 mt-0.5">
-                        {entry.userName} &middot;{" "}
-                        {dateParser(entry.createdAt)}
+                        {entry.userName} &middot; {dateParser(entry.createdAt)}
                       </p>
                     </div>
                   </div>

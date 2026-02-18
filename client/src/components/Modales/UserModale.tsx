@@ -52,7 +52,11 @@ export default function UserModale({ onClose, user }: UserModaleProps) {
         >
           <div className="flex items-center justify-between px-5 py-3 border-b">
             <h3 className="font-semibold">Profil</h3>
-            <button onClick={onClose} className="p-1 text-gray-500" title="Fermer">
+            <button
+              onClick={onClose}
+              className="p-1 text-gray-500"
+              title="Fermer"
+            >
               <X size={16} />
             </button>
           </div>
