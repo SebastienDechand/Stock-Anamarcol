@@ -1,5 +1,7 @@
 import type { Contact } from "./contact";
 import type { Item, History } from "./item";
+import type { ClientFile } from "./clientFile";
+import type { InterventionReport } from "./interventionReport";
 
 export interface ContactsState {
   selectedContactId: string | null;
@@ -30,4 +32,16 @@ export interface ItemsState {
 
 export interface MenuState {
   isMenuOpen: boolean;
+}
+
+export interface ClientFilesState {
+  clientFiles: ClientFile[];
+  selectedClientFile: ClientFile | null;
+  isLoading: boolean;
+}
+
+export interface InterventionReportsState {
+  reports: InterventionReport[];
+  selectedReport: InterventionReport | null;
+  isLoading: boolean;
 }

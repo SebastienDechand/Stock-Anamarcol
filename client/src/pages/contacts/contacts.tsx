@@ -4,7 +4,13 @@ import { useAppDispatch } from "../../hooks/redux";
 import { setSelectedContactId } from "../../actions/contacts.action";
 import ContactModale from "../../components/Modales/ContactModale";
 import { UidContext } from "../../components/AppContext";
-import { Globe, Mail, Phone, Users } from "lucide-react";
+import {
+  Globe,
+  Mail,
+  Phone,
+  Users,
+  Contact as ContactIcon,
+} from "lucide-react";
 import type { Contact, ContactsState } from "../../types";
 
 const Contacts = () => {
@@ -116,7 +122,10 @@ const Contacts = () => {
 
   return (
     <div className="space-y-8 mt-0">
-      <h1 className="text-xl font-bold text-gray-900">Contacts</h1>
+      <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+        <ContactIcon size={20} className="text-brand-600 shrink-0" />
+        Contacts
+      </h1>
 
       {exterieurs.length > 0 && (
         <Section title="Contacts Extérieurs" contacts={exterieurs} />

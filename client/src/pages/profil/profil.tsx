@@ -7,6 +7,7 @@ import { dateParser } from "../../Utils";
 import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "../../constants";
 import {
   User,
+  UserCircle,
   Mail,
   Phone,
   Briefcase,
@@ -71,7 +72,10 @@ export default function Profil() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="text-xl font-bold text-gray-900">Mon profil</h1>
+      <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+        <UserCircle size={20} className="text-brand-600 shrink-0" />
+        Mon profil
+      </h1>
 
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
         {/* Header with avatar */}

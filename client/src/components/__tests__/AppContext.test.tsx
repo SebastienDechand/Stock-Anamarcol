@@ -1,24 +1,24 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { useContext } from "react";
 import { AuthProvider, UidContext } from "../AppContext";
 import { Role } from "../../constants";
-import type { AuthContextType } from "../../types";
 import axios from "axios";
 
 vi.mock("axios");
 const mockedAxios = vi.mocked(axios, true);
 
-// Helper component to read context values
+// Helper component to read all context values
 function ContextReader() {
   const ctx = useContext(UidContext);
   return (
     <div>
       <span data-testid="uid">{ctx.uid ?? "null"}</span>
-      <span data-testid="role">{ctx.role ?? "null"}</span>
+      <span data-testid="role">{ctx.roles[0] ?? "null"}</span>
       <span data-testid="isAdmin">{String(ctx.isAdmin)}</span>
       <span data-testid="isSuperadmin">{String(ctx.isSuperadmin)}</span>
       <span data-testid="isHotline">{String(ctx.isHotline)}</span>
+      <span data-testid="isMonteur">{String(ctx.isMonteur)}</span>
       <span data-testid="isAuthLoading">{String(ctx.isAuthLoading)}</span>
     </div>
   );
@@ -37,9 +37,10 @@ describe("AppContext / AuthProvider", () => {
     vi.clearAllMocks();
   });
 
-  it("should set isAdmin=true for admin role", async () => {
+  // ─── Admin role ──────────────────────────────────────────
+  it("should set isAdmin=true for admin roles array", async () => {
     mockedAxios.get.mockResolvedValue({
-      data: { _id: "user1", role: Role.ADMIN },
+      data: { _id: "user1", roles: [Role.ADMIN, Role.USER] },
     });
 
     renderWithProvider();
@@ -52,12 +53,14 @@ describe("AppContext / AuthProvider", () => {
     expect(screen.getByTestId("role").textContent).toBe(Role.ADMIN);
     expect(screen.getByTestId("isAdmin").textContent).toBe("true");
     expect(screen.getByTestId("isSuperadmin").textContent).toBe("false");
-    expect(screen.getByTestId("isHotline").textContent).toBe("false");
+    expect(screen.getByTestId("isHotline").textContent).toBe("true"); // admin also passes hotline
+    expect(screen.getByTestId("isMonteur").textContent).toBe("true"); // admin also passes monteur
   });
 
-  it("should set isAdmin=true and isSuperadmin=true for superadmin role", async () => {
+  // ─── Superadmin role ─────────────────────────────────────
+  it("should set isAdmin=true and isSuperadmin=true for superadmin roles array", async () => {
     mockedAxios.get.mockResolvedValue({
-      data: { _id: "user2", role: Role.SUPERADMIN },
+      data: { _id: "user2", roles: [Role.SUPERADMIN, Role.ADMIN, Role.USER] },
     });
 
     renderWithProvider();
@@ -68,12 +71,14 @@ describe("AppContext / AuthProvider", () => {
 
     expect(screen.getByTestId("isAdmin").textContent).toBe("true");
     expect(screen.getByTestId("isSuperadmin").textContent).toBe("true");
-    expect(screen.getByTestId("isHotline").textContent).toBe("false");
+    expect(screen.getByTestId("isHotline").textContent).toBe("true");
+    expect(screen.getByTestId("isMonteur").textContent).toBe("true");
   });
 
-  it("should set isHotline=true for hotline role", async () => {
+  // ─── Hotline role ────────────────────────────────────────
+  it("should set isHotline=true and isMonteur=false for hotline roles array", async () => {
     mockedAxios.get.mockResolvedValue({
-      data: { _id: "user3", role: Role.HOTLINE },
+      data: { _id: "user3", roles: [Role.USER, Role.HOTLINE] },
     });
 
     renderWithProvider();
@@ -85,11 +90,13 @@ describe("AppContext / AuthProvider", () => {
     expect(screen.getByTestId("isAdmin").textContent).toBe("false");
     expect(screen.getByTestId("isSuperadmin").textContent).toBe("false");
     expect(screen.getByTestId("isHotline").textContent).toBe("true");
+    expect(screen.getByTestId("isMonteur").textContent).toBe("false");
   });
 
-  it("should set all flags false for regular user role", async () => {
+  // ─── Monteur role ────────────────────────────────────────
+  it("should set isMonteur=true and isHotline=false for monteur roles array", async () => {
     mockedAxios.get.mockResolvedValue({
-      data: { _id: "user4", role: Role.USER },
+      data: { _id: "user6", roles: [Role.USER, Role.MONTEUR] },
     });
 
     renderWithProvider();
@@ -101,11 +108,46 @@ describe("AppContext / AuthProvider", () => {
     expect(screen.getByTestId("isAdmin").textContent).toBe("false");
     expect(screen.getByTestId("isSuperadmin").textContent).toBe("false");
     expect(screen.getByTestId("isHotline").textContent).toBe("false");
+    expect(screen.getByTestId("isMonteur").textContent).toBe("true");
   });
 
-  it("should default to Role.USER when API returns no role", async () => {
+  // ─── Plain user role ─────────────────────────────────────
+  it("should set all flags false for plain user roles array", async () => {
     mockedAxios.get.mockResolvedValue({
-      data: { _id: "user5" },
+      data: { _id: "user4", roles: [Role.USER] },
+    });
+
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("isAuthLoading").textContent).toBe("false");
+    });
+
+    expect(screen.getByTestId("isAdmin").textContent).toBe("false");
+    expect(screen.getByTestId("isSuperadmin").textContent).toBe("false");
+    expect(screen.getByTestId("isHotline").textContent).toBe("false");
+    expect(screen.getByTestId("isMonteur").textContent).toBe("false");
+  });
+
+  // ─── Fallback: no roles in response ──────────────────────
+  it("should default to [Role.USER] when API returns empty roles", async () => {
+    mockedAxios.get.mockResolvedValue({
+      data: { _id: "user5", roles: [] },
+    });
+
+    renderWithProvider();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("isAuthLoading").textContent).toBe("false");
+    });
+
+    expect(screen.getByTestId("role").textContent).toBe(Role.USER);
+    expect(screen.getByTestId("isAdmin").textContent).toBe("false");
+  });
+
+  it("should default to [Role.USER] when API returns no roles field", async () => {
+    mockedAxios.get.mockResolvedValue({
+      data: { _id: "user5b" },
     });
 
     renderWithProvider();
@@ -117,7 +159,8 @@ describe("AppContext / AuthProvider", () => {
     expect(screen.getByTestId("role").textContent).toBe(Role.USER);
   });
 
-  it("should set uid=null and role=null on API error", async () => {
+  // ─── API error ───────────────────────────────────────────
+  it("should set uid=null and empty roles on API error", async () => {
     mockedAxios.get.mockRejectedValue(new Error("Network Error"));
 
     renderWithProvider();
@@ -129,10 +172,11 @@ describe("AppContext / AuthProvider", () => {
     expect(screen.getByTestId("uid").textContent).toBe("null");
     expect(screen.getByTestId("role").textContent).toBe("null");
     expect(screen.getByTestId("isAdmin").textContent).toBe("false");
+    expect(screen.getByTestId("isMonteur").textContent).toBe("false");
   });
 
-  it("should provide default context values before auth resolves", () => {
-    // Never-resolving promise to keep loading state
+  // ─── Loading state ───────────────────────────────────────
+  it("should expose isAuthLoading=true before API resolves", () => {
     mockedAxios.get.mockReturnValue(new Promise(() => {}));
 
     renderWithProvider();

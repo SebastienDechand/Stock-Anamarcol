@@ -79,7 +79,7 @@ async function resolveSrvViaDoH(): Promise<string> {
  * 2. If blocked → resolve via DNS-over-HTTPS (works behind VPNs)
  * 3. If a MONGO_URI env var is set, use it directly (manual override)
  */
-async function resolveMongoURI(): Promise<string> {
+export async function resolveMongoURI(): Promise<string> {
   if (process.env.MONGO_URI) {
     console.log("Using MONGO_URI from environment");
     return process.env.MONGO_URI;

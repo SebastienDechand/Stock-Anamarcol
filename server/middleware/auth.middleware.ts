@@ -11,13 +11,17 @@ async function resolveUser(token: string) {
     process.env.TOKEN_SECRET as string,
   ) as DecodedToken;
   const user = await UserModel.findById(decoded.id).select("-password").lean();
-  if (
-    user &&
-    process.env.SUPERADMIN_EMAIL &&
-    typeof user.email === "string" &&
-    user.email.toLowerCase() === process.env.SUPERADMIN_EMAIL.toLowerCase()
-  ) {
-    (user as unknown as Record<string, unknown>).role = Role.SUPERADMIN;
+  if (user) {
+    if (
+      process.env.SUPERADMIN_EMAIL &&
+      typeof user.email === "string" &&
+      user.email.toLowerCase() === process.env.SUPERADMIN_EMAIL.toLowerCase()
+    ) {
+      (user as unknown as Record<string, unknown>).roles = [Role.SUPERADMIN];
+    } else if (!user.roles || user.roles.length === 0) {
+      // Safety fallback for any unmigrated document
+      (user as unknown as Record<string, unknown>).roles = [Role.USER];
+    }
   }
   return user;
 }
@@ -90,7 +94,12 @@ export const requireAdmin = (
         res.status(401).json({ message: "Utilisateur introuvable" });
         return;
       }
-      if (!(user.role === Role.ADMIN || user.role === Role.SUPERADMIN)) {
+      if (
+        !(
+          user.roles?.includes(Role.ADMIN) ||
+          user.roles?.includes(Role.SUPERADMIN)
+        )
+      ) {
         res.status(403).json({ message: "Accès refusé - admin requis" });
         return;
       }
@@ -122,14 +131,52 @@ export const requireHotline = (
       }
       if (
         !(
-          user.role === Role.HOTLINE ||
-          user.role === Role.ADMIN ||
-          user.role === Role.SUPERADMIN
+          user.roles?.includes(Role.HOTLINE) ||
+          user.roles?.includes(Role.ADMIN) ||
+          user.roles?.includes(Role.SUPERADMIN)
         )
       ) {
         res
           .status(403)
           .json({ message: "Accès refusé - hotline ou admin requis" });
+        return;
+      }
+      res.locals.user = user;
+      next();
+    })
+    .catch(() => {
+      res.status(401).json({ message: "Token invalide ou expiré" });
+    });
+};
+
+// Requires monteur OR admin/superadmin role
+export const requireMonteur = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void => {
+  const token = req.cookies.jwt;
+  if (!token) {
+    res.status(401).json({ message: "Authentification requise" });
+    return;
+  }
+
+  resolveUser(token)
+    .then((user) => {
+      if (!user) {
+        res.status(401).json({ message: "Utilisateur introuvable" });
+        return;
+      }
+      if (
+        !(
+          user.roles?.includes(Role.MONTEUR) ||
+          user.roles?.includes(Role.ADMIN) ||
+          user.roles?.includes(Role.SUPERADMIN)
+        )
+      ) {
+        res
+          .status(403)
+          .json({ message: "Accès refusé - monteur ou admin requis" });
         return;
       }
       res.locals.user = user;
@@ -158,7 +205,7 @@ export const requireSuperAdmin = (
         res.status(401).json({ message: "Utilisateur introuvable" });
         return;
       }
-      if (user.role !== Role.SUPERADMIN) {
+      if (!user.roles?.includes(Role.SUPERADMIN)) {
         res.status(403).json({ message: "Accès refusé - superadmin requis" });
         return;
       }

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import UserModel from "../models/user.model";
 import jwt from "jsonwebtoken";
 import { signUpErrors, signInErrors } from "../errors.utils";
-import { JWT_MAX_AGE, COOKIE_MAX_AGE } from "../constants";
+import { JWT_MAX_AGE, COOKIE_MAX_AGE, Role } from "../constants";
 import { logEvent } from "../utils/audit.utils";
 
 // Create a JWT token
@@ -25,7 +25,11 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
       numero,
       pole,
     };
-    if (pole === "Hotline") payload.role = "hotline";
+    if (pole === "Hotline") {
+      payload.roles = [Role.USER, Role.HOTLINE];
+    } else {
+      payload.roles = [Role.USER];
+    }
     const user = await UserModel.create(payload);
     res.status(200).json({ user: user._id });
   } catch (err) {
@@ -55,7 +59,9 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
     } catch (err) {
       console.error("Audit login error:", err);
     }
-    res.status(200).json({ user: user._id, role: user.role });
+    const effectiveRoles: string[] =
+      user.roles && user.roles.length > 0 ? user.roles : [Role.USER];
+    res.status(200).json({ user: user._id, roles: effectiveRoles });
   } catch (err) {
     const errors = signInErrors(err as Error);
     res.status(400).json({ errors });

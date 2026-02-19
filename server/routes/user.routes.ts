@@ -23,8 +23,9 @@ router.post("/", requireAdmin, authController.signUp);
 router.put("/:id", requireAdmin, userController.updateUser);
 router.delete("/:id", requireAdmin, userController.deleteUser);
 
-// Set role (admin only)
+// Set role(s) (admin only)
 router.put("/:id/role", requireAdmin, userController.setRole);
+router.put("/:id/roles", requireAdmin, userController.setRoles);
 
 // Upload (authenticated)
 router.post(

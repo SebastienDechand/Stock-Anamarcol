@@ -3,8 +3,8 @@ import { Role, ROLES, FOURNISSEURS, ETATS } from "../constants";
 describe("Constants", () => {
   // ─── Role enum ───────────────────────────────────────
   describe("Role enum", () => {
-    it("should have exactly 4 members", () => {
-      expect(ROLES).toHaveLength(4);
+    it("should have exactly 5 members", () => {
+      expect(ROLES).toHaveLength(5);
     });
 
     it("should contain the expected string values", () => {
@@ -12,6 +12,7 @@ describe("Constants", () => {
       expect(Role.ADMIN).toBe("admin");
       expect(Role.USER).toBe("user");
       expect(Role.HOTLINE).toBe("hotline");
+      expect(Role.MONTEUR).toBe("monteur");
     });
 
     it("ROLES should equal Object.values(Role)", () => {
@@ -23,6 +24,7 @@ describe("Constants", () => {
       expect(ROLES).toContain(Role.ADMIN);
       expect(ROLES).toContain(Role.USER);
       expect(ROLES).toContain(Role.HOTLINE);
+      expect(ROLES).toContain(Role.MONTEUR);
     });
 
     it("should reject unknown values with ROLES.includes", () => {

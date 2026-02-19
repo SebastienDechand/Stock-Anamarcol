@@ -107,7 +107,7 @@ export default function EnvoisPage() {
       .catch((err) => console.error(err));
   }, [auth]);
 
-  if (!auth?.isAdmin && !auth?.isSuperadmin) {
+  if (!auth?.isHotline) {
     return <Navigate to="/home" replace />;
   }
 
@@ -309,7 +309,10 @@ export default function EnvoisPage() {
     <div className="space-y-5 h-full">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">Envois</h1>
+        <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <Truck size={20} className="text-brand-600 shrink-0" />
+          Envois
+        </h1>
         <div className="flex items-center gap-2">
           {auth?.isAdmin && (
             <button

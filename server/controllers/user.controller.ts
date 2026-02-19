@@ -4,7 +4,16 @@ import { validateObjectId } from "../utils/validate.utils";
 import { logEvent } from "../utils/audit.utils";
 import { Role, ROLES } from "../constants";
 
-// Set role for a user (admin only)
+// Map a single role to canonical roles array
+const ROLE_TO_ROLES: Record<Role, Role[]> = {
+  [Role.SUPERADMIN]: [Role.SUPERADMIN, Role.ADMIN, Role.USER],
+  [Role.ADMIN]: [Role.ADMIN, Role.USER],
+  [Role.MONTEUR]: [Role.USER, Role.MONTEUR],
+  [Role.HOTLINE]: [Role.USER, Role.HOTLINE],
+  [Role.USER]: [Role.USER],
+};
+
+// Set roles via single role value (backward-compat endpoint)
 export const setRole = async (req: Request, res: Response): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
 
@@ -20,20 +29,56 @@ export const setRole = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "Utilisateur introuvable" });
       return;
     }
-    (user as unknown as Record<string, unknown>).role = role;
+    user.roles = ROLE_TO_ROLES[role as Role] ?? [Role.USER];
     const updated = await user.save();
     await logEvent(
       "update",
       "user",
       updated._id.toString(),
       res.locals.user?.pseudo,
-      { role },
+      { roles: user.roles },
     );
     res
       .status(200)
-      .json({ message: "Rôle mis à jour", user: updated._id, role });
+      .json({
+        message: "Rôles mis à jour",
+        user: updated._id,
+        roles: user.roles,
+      });
   } catch (err) {
     console.error("Error setting role:", err);
+    res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+};
+
+// Set multiple roles for a user (admin only)
+export const setRoles = async (req: Request, res: Response): Promise<void> => {
+  if (!validateObjectId(req.params.id as string, res)) return;
+
+  const { roles } = req.body as { roles?: unknown };
+  if (!Array.isArray(roles) || !roles.every((r) => ROLES.includes(r as Role))) {
+    res.status(400).json({ message: "Roles invalides" });
+    return;
+  }
+
+  try {
+    const user = await UserModel.findById(req.params.id);
+    if (!user) {
+      res.status(404).json({ message: "Utilisateur introuvable" });
+      return;
+    }
+    user.roles = roles as Role[];
+    const updated = await user.save();
+    await logEvent(
+      "update",
+      "user",
+      updated._id.toString(),
+      res.locals.user?.pseudo,
+      { roles },
+    );
+    res.status(200).json({ message: "Rôles mis à jour", roles });
+  } catch (err) {
+    console.error("Error setting roles:", err);
     res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
@@ -89,15 +134,19 @@ export const updateUser = async (
     if (req.body.numero) user.numero = req.body.numero;
     if (req.body.pole !== undefined) {
       user.pole = req.body.pole;
-      // Auto-assign/downgrade role based on pole (do not override admins)
+      // Auto-assign/downgrade hotline role based on pole (do not override admins)
       if (String(req.body.pole) === "Hotline") {
-        if (user.role !== Role.ADMIN && user.role !== Role.SUPERADMIN) {
-          (user as unknown as Record<string, unknown>).role = Role.HOTLINE;
+        if (
+          !user.roles.includes(Role.ADMIN) &&
+          !user.roles.includes(Role.SUPERADMIN) &&
+          !user.roles.includes(Role.HOTLINE)
+        ) {
+          user.roles = [...user.roles, Role.HOTLINE];
         }
       } else {
-        if (user.role === Role.HOTLINE) {
-          // Revert to plain user when leaving Hotline pole
-          (user as unknown as Record<string, unknown>).role = Role.USER;
+        if (user.roles.includes(Role.HOTLINE)) {
+          user.roles = user.roles.filter((r) => r !== Role.HOTLINE);
+          if (user.roles.length === 0) user.roles = [Role.USER];
         }
       }
     }
@@ -112,7 +161,7 @@ export const updateUser = async (
         "numero",
         "pole",
         "picture",
-        "role",
+        "roles",
       ];
       const oldObj = old as Partial<Record<keyof IUser, unknown>>;
       const newObj = updatedUser as Partial<Record<keyof IUser, unknown>>;

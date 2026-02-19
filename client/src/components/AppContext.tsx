@@ -5,7 +5,7 @@ import { Role } from "../constants";
 
 export const UidContext = createContext<AuthContextType>({
   uid: null,
-  role: null,
+  roles: [],
   isAdmin: false,
   isHotline: false,
   isAuthLoading: true,
@@ -17,7 +17,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [uid, setUid] = useState<string | null>(null);
-  const [role, setRole] = useState<Role | null>(null);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   useEffect(() => {
@@ -27,22 +27,41 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       })
       .then((res) => {
         setUid(res.data._id || res.data);
-        setRole((res.data.role || Role.USER) as Role);
+        const r: Role[] =
+          Array.isArray(res.data.roles) && res.data.roles.length > 0
+            ? res.data.roles
+            : [Role.USER];
+        setRoles(r);
       })
       .catch(() => {
         setUid(null);
-        setRole(null);
+        setRoles([]);
       })
       .finally(() => setIsAuthLoading(false));
   }, []);
 
-  const isAdmin = role === Role.ADMIN || role === Role.SUPERADMIN;
-  const isSuperadmin = role === Role.SUPERADMIN;
-  const isHotline = role === Role.HOTLINE;
+  const isAdmin = roles.includes(Role.ADMIN) || roles.includes(Role.SUPERADMIN);
+  const isSuperadmin = roles.includes(Role.SUPERADMIN);
+  const isHotline =
+    roles.includes(Role.HOTLINE) ||
+    roles.includes(Role.ADMIN) ||
+    roles.includes(Role.SUPERADMIN);
+  const isMonteur =
+    roles.includes(Role.MONTEUR) ||
+    roles.includes(Role.ADMIN) ||
+    roles.includes(Role.SUPERADMIN);
 
   return (
     <UidContext.Provider
-      value={{ uid, role, isAdmin, isSuperadmin, isHotline, isAuthLoading }}
+      value={{
+        uid,
+        roles,
+        isAdmin,
+        isSuperadmin,
+        isHotline,
+        isMonteur,
+        isAuthLoading,
+      }}
     >
       {children}
     </UidContext.Provider>

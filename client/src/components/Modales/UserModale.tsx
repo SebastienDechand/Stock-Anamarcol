@@ -5,9 +5,11 @@ import { UidContext } from "../../components/AppContext";
 import {
   uploadProfilePicture,
   updateUser,
+  setUserRoles,
 } from "../../actions/userClient.actions";
 import { X, Camera } from "lucide-react";
 import { ALL_POLE_LABELS } from "../../constants";
+import { Role } from "../../constants";
 import Portal from "../Portal";
 import type { User } from "../../types";
 
@@ -27,6 +29,9 @@ export default function UserModale({ onClose, user }: UserModaleProps) {
     numero: user.numero || "",
     pole: user.pole || "",
   });
+  const [pendingRoles, setPendingRoles] = useState<Role[]>(
+    user.roles && user.roles.length > 0 ? user.roles : [Role.USER],
+  );
 
   useEffect(() => {
     setForm({
@@ -36,6 +41,9 @@ export default function UserModale({ onClose, user }: UserModaleProps) {
       numero: user.numero || "",
       pole: user.pole || "",
     });
+    setPendingRoles(
+      user.roles && user.roles.length > 0 ? user.roles : [Role.USER],
+    );
   }, [user]);
 
   const isSuperadmin = !!auth?.isSuperadmin;
@@ -169,6 +177,42 @@ export default function UserModale({ onClose, user }: UserModaleProps) {
                   />
                 </div>
               </div>
+
+              {/* Roles */}
+              {isSuperadmin && (
+                <div>
+                  <label className="text-xs text-gray-500">Rôles</label>
+                  <div className="flex flex-wrap gap-3 mt-1.5">
+                    {(
+                      [
+                        { value: Role.USER, label: "Utilisateur" },
+                        { value: Role.HOTLINE, label: "Hotline" },
+                        { value: Role.MONTEUR, label: "Monteur" },
+                        { value: Role.ADMIN, label: "Admin" },
+                      ] as { value: Role; label: string }[]
+                    ).map(({ value, label }) => (
+                      <label
+                        key={value}
+                        className="flex items-center gap-1.5 text-sm cursor-pointer select-none"
+                      >
+                        <input
+                          type="checkbox"
+                          className="w-4 h-4 accent-brand-600"
+                          checked={pendingRoles.includes(value)}
+                          onChange={(e) =>
+                            setPendingRoles((prev) =>
+                              e.target.checked
+                                ? [...prev, value]
+                                : prev.filter((r) => r !== value),
+                            )
+                          }
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {isSuperadmin && (
@@ -179,7 +223,17 @@ export default function UserModale({ onClose, user }: UserModaleProps) {
                 <button
                   onClick={async () => {
                     try {
-                      await dispatch(updateUser(user._id, form));
+                      await dispatch(
+                        updateUser(user._id, form as Record<string, unknown>),
+                      );
+                      if (pendingRoles.length > 0) {
+                        await dispatch(
+                          setUserRoles(
+                            user._id,
+                            pendingRoles,
+                          ) as unknown as Parameters<typeof dispatch>[0],
+                        );
+                      }
                       toast.success("Membre mis à jour");
                       onClose();
                     } catch (err) {

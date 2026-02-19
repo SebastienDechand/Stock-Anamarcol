@@ -10,4 +10,5 @@ export interface DecodedToken {
 export type LeanUser = Omit<IUser, keyof Document> & {
   _id: import("mongoose").Types.ObjectId;
   role: Role;
+  roles: Role[];
 };

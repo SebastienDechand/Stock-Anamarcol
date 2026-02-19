@@ -22,6 +22,7 @@ import {
   updateUser,
   deleteUser,
   setRole,
+  setRoles,
 } from "../controllers/user.controller";
 
 describe("User Controller", () => {
@@ -155,17 +156,17 @@ describe("User Controller", () => {
         email: "old@test.com",
         poste: "",
         pole: "",
-        role: Role.USER,
+        roles: [Role.USER],
         save: jest.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           pole: "Hotline",
-          role: Role.HOTLINE,
+          roles: [Role.USER, Role.HOTLINE],
         }),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await updateUser(req as Request, res as Response);
-      expect(mockUser.role).toBe(Role.HOTLINE);
+      expect(mockUser.roles).toContain(Role.HOTLINE);
       expect(mockUser.save).toHaveBeenCalled();
     });
 
@@ -178,17 +179,17 @@ describe("User Controller", () => {
         email: "old@test.com",
         poste: "",
         pole: "Hotline",
-        role: Role.HOTLINE,
+        roles: [Role.USER, Role.HOTLINE],
         save: jest.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           pole: "Direction",
-          role: Role.USER,
+          roles: [Role.USER],
         }),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await updateUser(req as Request, res as Response);
-      expect(mockUser.role).toBe(Role.USER);
+      expect(mockUser.roles).not.toContain(Role.HOTLINE);
       expect(mockUser.save).toHaveBeenCalled();
     });
 
@@ -201,17 +202,18 @@ describe("User Controller", () => {
         email: "admin@test.com",
         poste: "",
         pole: "Direction",
-        role: Role.ADMIN,
+        roles: [Role.ADMIN, Role.USER],
         save: jest.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           pole: "Hotline",
-          role: Role.ADMIN,
+          roles: [Role.ADMIN, Role.USER],
         }),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await updateUser(req as Request, res as Response);
-      expect(mockUser.role).toBe(Role.ADMIN);
+      expect(mockUser.roles).toContain(Role.ADMIN);
+      expect(mockUser.roles).not.toContain(Role.HOTLINE);
       expect(mockUser.save).toHaveBeenCalled();
     });
 
@@ -224,17 +226,18 @@ describe("User Controller", () => {
         email: "super@test.com",
         poste: "",
         pole: "Direction",
-        role: Role.SUPERADMIN,
+        roles: [Role.SUPERADMIN, Role.ADMIN, Role.USER],
         save: jest.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           pole: "Hotline",
-          role: Role.SUPERADMIN,
+          roles: [Role.SUPERADMIN, Role.ADMIN, Role.USER],
         }),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await updateUser(req as Request, res as Response);
-      expect(mockUser.role).toBe(Role.SUPERADMIN);
+      expect(mockUser.roles).toContain(Role.SUPERADMIN);
+      expect(mockUser.roles).not.toContain(Role.HOTLINE);
       expect(mockUser.save).toHaveBeenCalled();
     });
   });
@@ -270,16 +273,16 @@ describe("User Controller", () => {
       req.body = { role: Role.ADMIN };
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
-        role: Role.USER,
+        roles: [Role.USER],
         save: jest.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
-          role: Role.ADMIN,
+          roles: [Role.ADMIN, Role.USER],
         }),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await setRole(req as Request, res as Response);
-      expect(mockUser.role).toBe(Role.ADMIN);
+      expect(mockUser.roles).toContain(Role.ADMIN);
       expect(mockUser.save).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
     });
@@ -289,16 +292,16 @@ describe("User Controller", () => {
       req.body = { role: Role.HOTLINE };
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
-        role: Role.USER,
+        roles: [Role.USER],
         save: jest.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
-          role: Role.HOTLINE,
+          roles: [Role.USER, Role.HOTLINE],
         }),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await setRole(req as Request, res as Response);
-      expect(mockUser.role).toBe(Role.HOTLINE);
+      expect(mockUser.roles).toContain(Role.HOTLINE);
       expect(mockUser.save).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
     });
@@ -308,16 +311,16 @@ describe("User Controller", () => {
       req.body = { role: Role.SUPERADMIN };
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
-        role: Role.USER,
+        roles: [Role.USER],
         save: jest.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
-          role: Role.SUPERADMIN,
+          roles: [Role.SUPERADMIN, Role.ADMIN, Role.USER],
         }),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await setRole(req as Request, res as Response);
-      expect(mockUser.role).toBe(Role.SUPERADMIN);
+      expect(mockUser.roles).toContain(Role.SUPERADMIN);
       expect(mockUser.save).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
     });
@@ -327,16 +330,16 @@ describe("User Controller", () => {
       req.body = { role: Role.USER };
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
-        role: Role.ADMIN,
+        roles: [Role.ADMIN, Role.USER],
         save: jest.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
-          role: Role.USER,
+          roles: [Role.USER],
         }),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await setRole(req as Request, res as Response);
-      expect(mockUser.role).toBe(Role.USER);
+      expect(mockUser.roles).toEqual([Role.USER]);
       expect(mockUser.save).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
     });
@@ -347,6 +350,87 @@ describe("User Controller", () => {
       mockUserModel.findById.mockRejectedValue(new Error("DB failure"));
 
       await setRole(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(500);
+    });
+  });
+
+  // ─── setRoles ─────────────────────────────────────────
+  describe("setRoles", () => {
+    it("should return 400 when ID is invalid", async () => {
+      req.params = { id: "invalid" };
+      req.body = { roles: [Role.ADMIN, Role.USER] };
+      await setRoles(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+    });
+
+    it("should return 400 when roles is not an array", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { roles: Role.ADMIN };
+      await setRoles(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ message: "Roles invalides" });
+    });
+
+    it("should return 400 when roles array contains invalid values", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { roles: [Role.USER, "hacker"] };
+      await setRoles(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+    });
+
+    it("should return 404 when user not found", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { roles: [Role.ADMIN, Role.USER] };
+      mockUserModel.findById.mockResolvedValue(null);
+      await setRoles(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(404);
+    });
+
+    it("should update multiple roles successfully", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { roles: [Role.ADMIN, Role.USER] };
+      const mockUser = {
+        _id: "507f1f77bcf86cd799439011",
+        roles: [Role.USER],
+        save: jest.fn().mockResolvedValue({
+          _id: "507f1f77bcf86cd799439011",
+          roles: [Role.ADMIN, Role.USER],
+        }),
+      };
+      mockUserModel.findById.mockResolvedValue(mockUser);
+
+      await setRoles(req as Request, res as Response);
+      expect(mockUser.roles).toEqual([Role.ADMIN, Role.USER]);
+      expect(mockUser.save).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ roles: [Role.ADMIN, Role.USER] }),
+      );
+    });
+
+    it("should assign monteur role successfully", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { roles: [Role.USER, Role.MONTEUR] };
+      const mockUser = {
+        _id: "507f1f77bcf86cd799439011",
+        roles: [Role.USER],
+        save: jest.fn().mockResolvedValue({
+          _id: "507f1f77bcf86cd799439011",
+          roles: [Role.USER, Role.MONTEUR],
+        }),
+      };
+      mockUserModel.findById.mockResolvedValue(mockUser);
+
+      await setRoles(req as Request, res as Response);
+      expect(mockUser.roles).toContain(Role.MONTEUR);
+      expect(res.status).toHaveBeenCalledWith(200);
+    });
+
+    it("should return 500 on internal error", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { roles: [Role.USER] };
+      mockUserModel.findById.mockRejectedValue(new Error("DB failure"));
+      await setRoles(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });

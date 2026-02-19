@@ -79,7 +79,7 @@ describe("Auth Controller", () => {
       expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({
           pole: "Hotline",
-          role: "hotline",
+          roles: [Role.USER, Role.HOTLINE],
         }),
       );
     });
@@ -97,6 +97,7 @@ describe("Auth Controller", () => {
 
       const createArg = mockCreate.mock.calls[0][0];
       expect(createArg.role).toBeUndefined();
+      expect(createArg.roles).toEqual([Role.USER]);
     });
 
     it("should return 400 with errors on validation failure", async () => {
@@ -138,7 +139,7 @@ describe("Auth Controller", () => {
       mockLogin.mockResolvedValue({
         _id: "user123",
         pseudo: "testuser",
-        role: Role.USER,
+        roles: [Role.USER],
       });
 
       await signIn(req as Request, res as Response);
@@ -156,7 +157,7 @@ describe("Auth Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         user: "user123",
-        role: Role.USER,
+        roles: [Role.USER],
       });
     });
 

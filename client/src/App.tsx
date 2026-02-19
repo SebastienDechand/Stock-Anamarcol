@@ -8,6 +8,8 @@ import { getUser } from "./actions/user.actions";
 import { getAllUsers } from "./actions/users.actions";
 import { getAllItems } from "./actions/items.actions";
 import { getAllContacts } from "./actions/contacts.action";
+import { getAllClientFiles } from "./actions/clientFile.actions";
+import { getAllInterventionReports } from "./actions/interventionReport.actions";
 
 export default function App() {
   const { uid } = useContext(UidContext);
@@ -19,6 +21,14 @@ export default function App() {
       dispatch(getAllUsers());
       dispatch(getAllItems());
       dispatch(getAllContacts());
+      dispatch(
+        getAllClientFiles() as unknown as Parameters<typeof dispatch>[0],
+      );
+      dispatch(
+        getAllInterventionReports() as unknown as Parameters<
+          typeof dispatch
+        >[0],
+      );
     }
   }, [uid, dispatch]);
 

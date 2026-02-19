@@ -7,6 +7,9 @@ import Membres from "../pages/membres/membres";
 import Contacts from "../pages/contacts/contacts";
 import HistoryPage from "../pages/history/history";
 import Envois from "../pages/envois/envois";
+import FichesClients from "../pages/fiches-clients/fichesClients";
+import RapportsIntervention from "../pages/rapports-intervention/rapportsIntervention";
+import AdminRoles from "../pages/admin-roles/adminRoles";
 import Layout from "./Layout";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -28,6 +31,12 @@ export default function Router() {
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/envois" element={<Envois />} />
         <Route path="/history" element={<HistoryPage />} />
+        <Route path="/fiches-clients" element={<FichesClients />} />
+        <Route
+          path="/rapports-intervention"
+          element={<RapportsIntervention />}
+        />
+        <Route path="/admin/roles" element={<AdminRoles />} />
       </Route>
     </Routes>
   );

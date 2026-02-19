@@ -9,7 +9,7 @@ jest.mock("../models/user.model", () => {
     _id: "507f1f77bcf86cd799439011",
     pseudo: "testuser",
     email: "test@test.com",
-    role: Role.USER,
+    roles: [Role.USER],
     password: "hashedpassword",
     save: jest.fn(),
   };
@@ -31,6 +31,7 @@ import {
   requireAdmin,
   requireSuperAdmin,
   requireHotline,
+  requireMonteur,
 } from "../middleware/auth.middleware";
 
 describe("Auth Middleware", () => {
@@ -208,6 +209,43 @@ describe("Auth Middleware", () => {
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
         message: "Accès refusé - hotline ou admin requis",
+      });
+    });
+  });
+
+  // ─── requireMonteur ───────────────────────────────
+  describe("requireMonteur", () => {
+    it("should return 401 when no token is provided", () => {
+      requireMonteur(req as Request, res as Response, next);
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Authentification requise",
+      });
+    });
+
+    it("should return 401 when token is invalid", async () => {
+      req.cookies = { jwt: "bad-token" };
+
+      await requireMonteur(req as Request, res as Response, next);
+      await new Promise((r) => setTimeout(r, 50));
+
+      expect(res.status).toHaveBeenCalledWith(401);
+    });
+
+    it("should return 403 when user is not monteur/admin/superadmin", async () => {
+      // mockUser has roles: [Role.USER] by default
+      const token = jwt.sign(
+        { id: "507f1f77bcf86cd799439011" },
+        process.env.TOKEN_SECRET!,
+      );
+      req.cookies = { jwt: token };
+
+      await requireMonteur(req as Request, res as Response, next);
+      await new Promise((r) => setTimeout(r, 50));
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Accès refusé - monteur ou admin requis",
       });
     });
   });

@@ -9,7 +9,20 @@ export type {
   LowStockItem,
   DashboardStats,
 } from "./statistics";
-export type { ContactsState, ItemState, ItemsState, MenuState } from "./state";
+export type {
+  ContactsState,
+  ItemState,
+  ItemsState,
+  MenuState,
+  ClientFilesState,
+  InterventionReportsState,
+} from "./state";
 export type { AuthContextType } from "./auth";
 export type { AuditEvent } from "./audit";
 export type { Shipment, ShipmentForm, ExportFormat } from "./shipment";
+export type { ClientFile, ClientFileForm, Equipement } from "./clientFile";
+export type {
+  InterventionReport,
+  InterventionReportForm,
+  CashguardUnit,
+} from "./interventionReport";

@@ -9,6 +9,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Truck,
+  ClipboardList,
+  Wrench,
+  ShieldCheck,
 } from "lucide-react";
 import { useContext } from "react";
 import { UidContext } from "../AppContext";
@@ -23,6 +26,9 @@ interface NavItem {
 const baseNav: NavItem[] = [
   { to: "/home", label: "Accueil", icon: Home },
   { to: "/articles", label: "Articles", icon: Package },
+];
+
+const contactNav: NavItem[] = [
   { to: "/membres", label: "Membres", icon: Users },
   { to: "/contacts", label: "Contacts", icon: Contact },
   { to: "/profil", label: "Profil", icon: UserCircle },
@@ -39,11 +45,25 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
   const isAdminOrSuper = auth?.isAdmin || auth?.isSuperadmin;
   const navItems: NavItem[] = [
     ...baseNav,
-    ...(isAdminOrSuper
+    ...(auth?.isMonteur
       ? [
-          { to: "/envois", label: "Envois", icon: Truck },
-          { to: "/history", label: "Historique", icon: Package },
+          {
+            to: "/fiches-clients",
+            label: "Fiches Clients",
+            icon: ClipboardList,
+          },
+          { to: "/rapports-intervention", label: "Rapports", icon: Wrench },
         ]
+      : []),
+    ...(auth?.isHotline
+      ? [{ to: "/envois", label: "Envois", icon: Truck }]
+      : []),
+    ...(isAdminOrSuper
+      ? [{ to: "/history", label: "Historique", icon: Package }]
+      : []),
+    ...contactNav,
+    ...(auth?.isSuperadmin
+      ? [{ to: "/admin/roles", label: "Rôles", icon: ShieldCheck }]
       : []),
   ];
 

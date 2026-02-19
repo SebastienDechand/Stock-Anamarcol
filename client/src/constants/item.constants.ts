@@ -25,6 +25,7 @@ export enum Role {
   ADMIN = "admin",
   USER = "user",
   HOTLINE = "hotline",
+  MONTEUR = "monteur",
 }
 
 export const ROLES = Object.values(Role);

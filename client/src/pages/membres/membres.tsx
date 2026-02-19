@@ -5,15 +5,24 @@ import AddMemberModale from "../../components/Modales/AddMemberModale";
 import { UidContext } from "../../components/AppContext";
 import { useAppDispatch } from "../../hooks/redux";
 import { deleteUser, getAllUsers } from "../../actions/users.actions";
-import { Mail, Phone, Trash2 } from "lucide-react";
+import { Mail, Phone, Trash2, Users } from "lucide-react";
 import {
   POLES,
   POLE_DIRECTION,
   POLE_ENTREPOT,
   POLE_GESTION,
+  Role,
 } from "../../constants";
 import type { PoleInfo } from "../../constants";
 import type { User } from "../../types";
+
+// Role display configuration (USER badge is intentionally omitted - it’s implicit)
+const ROLE_BADGE: Partial<Record<Role, { label: string; cls: string }>> = {
+  [Role.HOTLINE]: { label: "Hotline", cls: "bg-sky-100 text-sky-700" },
+  [Role.MONTEUR]: { label: "Monteur", cls: "bg-amber-100 text-amber-700" },
+  [Role.ADMIN]: { label: "Admin", cls: "bg-violet-100 text-violet-700" },
+  [Role.SUPERADMIN]: { label: "Super Admin", cls: "bg-red-100 text-red-700" },
+};
 
 // Legacy names for backward compatibility (when pole is not yet set in DB)
 const LEGACY_NAMES: Record<string, string[]> = {
@@ -41,9 +50,10 @@ function getUsersByPole(users: User[], pole: string): User[] {
 interface MemberCardProps {
   user: User;
   large?: boolean;
+  showRoles?: boolean;
 }
 
-function MemberCard({ user, large }: MemberCardProps) {
+function MemberCard({ user, large, showRoles }: MemberCardProps) {
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden ring-1 ring-black/[0.04]">
       <div
@@ -75,6 +85,27 @@ function MemberCard({ user, large }: MemberCardProps) {
               {user.poste}
             </p>
           )}
+          {/* Role badges — admins only */}
+          {showRoles &&
+            (() => {
+              const roles =
+                user.roles && user.roles.length > 0 ? user.roles : [];
+              const badges = roles
+                .map((r) => ROLE_BADGE[r])
+                .filter((b): b is NonNullable<typeof b> => !!b);
+              return badges.length > 0 ? (
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {badges.map((b, i) => (
+                    <span
+                      key={i}
+                      className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${b.cls}`}
+                    >
+                      {b.label}
+                    </span>
+                  ))}
+                </div>
+              ) : null;
+            })()}
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
             {user.email && (
               <span
@@ -127,6 +158,7 @@ interface MemberListProps {
   setDeleteConfirmId: (id: string | null) => void;
   canDelete: boolean;
   /*  */ canSelect: boolean;
+  showRoles?: boolean;
 }
 
 function MemberList({
@@ -136,6 +168,7 @@ function MemberList({
   setDeleteConfirmId,
   canDelete,
   canSelect,
+  showRoles,
 }: MemberListProps) {
   const dispatch = useAppDispatch();
 
@@ -147,7 +180,7 @@ function MemberList({
             onClick={() => canSelect && onSelect(user)}
             className={canSelect ? "cursor-pointer" : ""}
           >
-            <MemberCard user={user} />
+            <MemberCard user={user} showRoles={showRoles} />
           </div>
           {canDelete && (
             <>
@@ -238,7 +271,10 @@ export default function Membres() {
   return (
     <div className="space-y-4 h-full">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">Équipe</h1>
+        <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <Users size={20} className="text-brand-600 shrink-0" />
+          Équipe
+        </h1>
         {isSuperadmin && (
           <button
             onClick={() => setIsAddOpen(true)}
@@ -260,7 +296,7 @@ export default function Membres() {
                 className={isAdmin ? "cursor-pointer" : ""}
                 onClick={() => isAdmin && setSelectedUser(user)}
               >
-                <MemberCard user={user} large />
+                <MemberCard user={user} large showRoles={isAdmin} />
               </div>
             ))}
             {direction.length === 0 && (
@@ -282,6 +318,7 @@ export default function Membres() {
             setDeleteConfirmId={setDeleteConfirmId}
             canDelete={isSuperadmin}
             canSelect={isAdmin}
+            showRoles={isAdmin}
           />
           <div className="mt-4">
             <PoleHeader pole={POLE_ENTREPOT} />
@@ -292,6 +329,7 @@ export default function Membres() {
               setDeleteConfirmId={setDeleteConfirmId}
               canDelete={isSuperadmin}
               canSelect={isAdmin}
+              showRoles={isAdmin}
             />
           </div>
         </div>
@@ -306,6 +344,7 @@ export default function Membres() {
             setDeleteConfirmId={setDeleteConfirmId}
             canDelete={isSuperadmin}
             canSelect={isAdmin}
+            showRoles={isAdmin}
           />
         </div>
 
@@ -319,6 +358,7 @@ export default function Membres() {
             setDeleteConfirmId={setDeleteConfirmId}
             canDelete={isSuperadmin}
             canSelect={isAdmin}
+            showRoles={isAdmin}
           />
         </div>
       </div>

@@ -167,8 +167,10 @@ export default function HistoryPage() {
   return (
     <div className="space-y-4 h-full">
       <div className="flex flex-wrap items-center gap-2">
-        <Clock size={20} className="text-gray-400" />
-        <h1 className="text-xl font-bold text-gray-900">Historique</h1>
+        <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <Clock size={20} className="text-brand-600 shrink-0" />
+          Historique
+        </h1>
         <span className="text-xs text-gray-400 ml-2">
           {filtered.length} événements
         </span>

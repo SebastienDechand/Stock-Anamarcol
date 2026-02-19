@@ -25,6 +25,7 @@ import {
   Loader2,
   Download,
   Sliders,
+  Package,
 } from "lucide-react";
 import ExportOptionsModal from "../../components/Modales/ExportOptionsModal";
 import FiltersModal from "../../components/Modales/FiltersModal";
@@ -245,9 +246,12 @@ export default function Articles() {
   return (
     <div>
       {/* Toolbar + Filters */}
-      <div className="shrink-0 bg-gray-200/95 backdrop-blur-sm pb-1 space-y-1 -mx-2 px-2 pt-0 mb-1 sm:pb-2 sm:space-y-2 sm:pt-2 sm:mb-2 md:-mx-3 md:px-3 md:pt-3 md:mb-3 lg:-mx-4 lg:px-4 lg:pt-4">
+      <div className="shrink-0 bg-gray-200/95 backdrop-blur-sm pb-2 space-y-1 -mx-2 px-2 pt-0 mb-2 md:-mx-3 md:px-3 lg:-mx-4 lg:px-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-2">
-          <h1 className="text-lg font-bold text-gray-900">Articles</h1>
+          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <Package size={20} className="text-brand-600 shrink-0" />
+            Articles
+          </h1>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-72">
               <Search

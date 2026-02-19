@@ -8,7 +8,7 @@ export interface User {
   poste?: string;
   numero?: string;
   pole?: string;
-  role?: Role;
+  roles?: Role[];
   createdAt?: string;
   updatedAt?: string;
 }

@@ -6,6 +6,8 @@ import itemReducer from "./item.reducer";
 import itemsReducer from "./items.reducer";
 import statisticsReducer from "./statistics.reducer";
 import menuReducer from "./menu.reducer";
+import clientFilesReducer from "./clientFiles.reducer";
+import interventionReportsReducer from "./interventionReports.reducer";
 
 const rootReducer = combineReducers({
   userReducer,
@@ -15,6 +17,8 @@ const rootReducer = combineReducers({
   itemsReducer,
   statisticsReducer,
   menuReducer,
+  clientFilesReducer,
+  interventionReportsReducer,
 });
 
 export default rootReducer;

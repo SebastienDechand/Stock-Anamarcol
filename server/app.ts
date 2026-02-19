@@ -11,6 +11,8 @@ import statisticsRoutes from "./routes/statistics.routes";
 import contactsRoutes from "./routes/contacts.routes";
 import historyRoutes from "./routes/history.routes";
 import shipmentsRoutes from "./routes/shipments.routes";
+import clientFileRoutes from "./routes/clientFile.routes";
+import interventionReportRoutes from "./routes/interventionReport.routes";
 import { requireAuth } from "./middleware/auth.middleware";
 import cors from "cors";
 
@@ -50,12 +52,10 @@ app.use(mongoSanitize);
 // Reject requests gracefully when MongoDB is not connected
 app.use((_req: Request, res: Response, next: NextFunction) => {
   if (mongoose.connection.readyState !== 1) {
-    res
-      .status(503)
-      .json({
-        message:
-          "Service temporairement indisponible — reconnexion à la base de données en cours",
-      });
+    res.status(503).json({
+      message:
+        "Service temporairement indisponible - reconnexion à la base de données en cours",
+    });
     return;
   }
   next();
@@ -79,12 +79,16 @@ app.use("/api/contacts", contactsRoutes);
 app.use("/api/statistics", statisticsRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/shipments", shipmentsRoutes);
+app.use("/api/client-files", clientFileRoutes);
+app.use("/api/intervention-reports", interventionReportRoutes);
 
-// JWT — returns the user ID and role
+// JWT - returns the user ID and roles
 app.get("/jwtid", requireAuth, (req: Request, res: Response) => {
+  const u = res.locals.user;
+  const roles: string[] = u.roles?.length ? u.roles : [u.role || "user"];
   res.status(200).json({
-    _id: res.locals.user._id.toString(),
-    role: res.locals.user.role || "user",
+    _id: u._id.toString(),
+    roles,
   });
 });
 
