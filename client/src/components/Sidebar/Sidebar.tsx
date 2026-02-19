@@ -58,10 +58,10 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
     ...(auth?.isHotline
       ? [{ to: "/envois", label: "Envois", icon: Truck }]
       : []),
+    ...contactNav,
     ...(isAdminOrSuper
       ? [{ to: "/history", label: "Historique", icon: Package }]
       : []),
-    ...contactNav,
     ...(auth?.isSuperadmin
       ? [{ to: "/admin/roles", label: "Rôles", icon: ShieldCheck }]
       : []),
