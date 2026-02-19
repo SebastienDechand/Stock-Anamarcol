@@ -99,8 +99,8 @@ async function resolveMongoURI(): Promise<string> {
   }
 }
 
-function connectWithRetry(attempt = 1): void {
-  resolveMongoURI()
+function connectWithRetry(attempt = 1): Promise<void> {
+  return resolveMongoURI()
     .then((uri) =>
       mongoose.connect(uri, {
         serverSelectionTimeoutMS: 10_000,
@@ -115,7 +115,12 @@ function connectWithRetry(attempt = 1): void {
       const message = err instanceof Error ? err.message : String(err);
       console.error(`MongoDB connection attempt ${attempt} failed: ${message}`);
       console.log(`Retrying in ${RETRY_DELAY_MS / 1000}s...`);
-      setTimeout(() => connectWithRetry(attempt + 1), RETRY_DELAY_MS);
+      return new Promise<void>((resolve) =>
+        setTimeout(
+          () => resolve(connectWithRetry(attempt + 1)),
+          RETRY_DELAY_MS,
+        ),
+      );
     });
 }
 
@@ -128,4 +133,4 @@ mongoose.connection.on("error", (err) => {
   console.error("MongoDB connection error:", err.message);
 });
 
-connectWithRetry();
+export const connectDB = connectWithRetry;

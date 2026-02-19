@@ -4,10 +4,12 @@ import dotenv from "dotenv";
 if (!process.env.CLIENT_URL) {
   dotenv.config({ path: "./config/.env" });
 }
-import "./config/db";
+import { connectDB } from "./config/db";
 import app from "./app";
 
-// Server
-app.listen(process.env.PORT, () => {
-  console.log(`Listening on port ${process.env.PORT}`);
+// Wait for MongoDB before accepting requests
+connectDB().then(() => {
+  app.listen(process.env.PORT, () => {
+    console.log(`Listening on port ${process.env.PORT}`);
+  });
 });

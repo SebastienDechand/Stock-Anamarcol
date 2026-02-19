@@ -29,15 +29,26 @@ export default function Login() {
       );
       window.location.href = "/home";
     } catch (err: unknown) {
-      // Show rate-limit or server message if available, otherwise generic error
-      if (
-        axios.isAxiosError(err) &&
-        err.response?.status === 429 &&
-        err.response.data?.message
-      ) {
-        setGlobalError(err.response.data.message);
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+        if (status === 429 && err.response?.data?.message) {
+          setGlobalError(err.response.data.message);
+        } else if (
+          !err.response ||
+          status === 503 ||
+          status === 500 ||
+          status === 502 ||
+          status === 504
+        ) {
+          // Network/server error (cold start, DB not ready, etc.)
+          setGlobalError(
+            "Le serveur est temporairement indisponible. Veuillez réessayer dans quelques instants.",
+          );
+        } else {
+          setGlobalError("Les identifiants sont erronés. Veuillez réessayer.");
+        }
       } else {
-        setGlobalError("Les identifiants sont erronés. Veuillez réessayer.");
+        setGlobalError("Une erreur inattendue s'est produite.");
       }
       setIsLoading(false);
     }
