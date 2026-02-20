@@ -388,7 +388,7 @@ function ReportWizardModal({
                                 {unit.k7Slots.map((val, slotIdx) => (
                                   <div key={slotIdx}>
                                     <label className="text-[10px] text-gray-400 mb-0.5 block">
-                                      Slot {slotIdx + 1}
+                                      S{slotIdx + 1}
                                     </label>
                                     <input
                                       className={inputCls}
@@ -621,13 +621,14 @@ function ReportDetailView({
                 </p>
                 {row("UP", unit.up)}
                 {row("UB", unit.ub)}
-                {unit.k7Slots?.some(Boolean) &&
-                  row(
-                    "Cassettes",
-                    unit.k7Slots
-                      .map((s, i) => `S${i + 1}:${s || "-"}`)
-                      .join("  "),
-                  )}
+                {unit.k7Slots?.some(Boolean) && (
+                  <>
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest pt-2 pb-0.5">
+                      Cassettes
+                    </p>
+                    {unit.k7Slots.map((s, i) => row(`S${i + 1}`, s || undefined))}
+                  </>
+                )}
                 {unit.assignedCaisses?.length > 0 &&
                   row("Caisses assignées", unit.assignedCaisses.join(", "))}
                 {unit.hasPc && (
@@ -706,10 +707,8 @@ export default function DossierClient() {
     fetchLinkedReports();
   }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Documents ─────────────────────────────────────────────────────────────────
-  const [documents, setDocuments] = useState<ClientFileDoc[]>(
-    clientFile?.documents ?? [],
-  );
+  // ── Documents — derived from Redux so they're always up to date ──────────────
+  const documents: ClientFileDoc[] = clientFile?.documents ?? [];
   const [docUploading, setDocUploading] = useState(false);
   const [docType, setDocType] = useState<ClientFileDocType>("bdc");
   const [showUploadForm, setShowUploadForm] = useState(false);
@@ -753,7 +752,6 @@ export default function DossierClient() {
         fd,
         { withCredentials: true },
       );
-      setDocuments(res.data.documents);
       dispatch(
         getAllClientFiles() as unknown as Parameters<typeof dispatch>[0],
       );
@@ -772,7 +770,6 @@ export default function DossierClient() {
         `${import.meta.env.VITE_API_URL}api/client-files/${id}/documents/${docId}`,
         { withCredentials: true },
       );
-      setDocuments(res.data.documents);
       dispatch(
         getAllClientFiles() as unknown as Parameters<typeof dispatch>[0],
       );
