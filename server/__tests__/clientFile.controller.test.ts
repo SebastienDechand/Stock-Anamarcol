@@ -1,5 +1,12 @@
 import { Request, Response } from "express";
 
+// Mock fs so unlink does not touch the real filesystem
+jest.mock("fs", () => ({
+  ...jest.requireActual("fs"),
+  mkdirSync: jest.fn(),
+  unlink: jest.fn((_p: string, cb: (err: null) => void) => cb(null)),
+}));
+
 const mockClientFileModel = {
   find: jest.fn(),
   findById: jest.fn(),
@@ -32,9 +39,19 @@ import {
   createClientFile,
   updateClientFile,
   deleteClientFile,
+  uploadDocument,
+  deleteDocument,
 } from "../controllers/clientFile.controller";
 
 const VALID_ID = "507f1f77bcf86cd799439011";
+const VALID_DOC_ID = "507f1f77bcf86cd799439022";
+
+const mockDoc = {
+  _id: { toString: () => VALID_DOC_ID },
+  name: "devis.pdf",
+  filename: "1234-devis.pdf",
+  type: "devis",
+};
 
 const mockFile = {
   _id: VALID_ID,
@@ -42,6 +59,8 @@ const mockFile = {
   prenom: "Jean",
   societe: "TestCorp",
   equipement: { nbCaisses: 2, nbCashguard: 1 },
+  remarques: "",
+  documents: [mockDoc],
   save: jest.fn(),
 };
 
@@ -200,6 +219,46 @@ describe("ClientFile Controller", () => {
       expect(file.save).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
     });
+
+    it("should update new planning and equipment fields", async () => {
+      req.params = { id: VALID_ID };
+      req.body = {
+        equipement: { nbCaisses: 5, nbCashguard: 2 },
+        remarques: "Attention fragile",
+        visitePreinstallation: true,
+        decoupePlanMenuiserie: false,
+      };
+
+      const file = { ...mockFile, save: jest.fn().mockResolvedValue(mockFile) };
+      mockClientFileModel.findById.mockResolvedValue(file);
+
+      await updateClientFile(req as Request, res as Response);
+
+      expect((file as Record<string, unknown>).equipement).toEqual({
+        nbCaisses: 5,
+        nbCashguard: 2,
+      });
+      expect((file as Record<string, unknown>).remarques).toBe(
+        "Attention fragile",
+      );
+      expect(file.save).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
+    });
+
+    it("should return 400 on save error", async () => {
+      req.params = { id: VALID_ID };
+      req.body = { nom: "ERR" };
+
+      const file = {
+        ...mockFile,
+        save: jest.fn().mockRejectedValue(new Error("save failed")),
+      };
+      mockClientFileModel.findById.mockResolvedValue(file);
+
+      await updateClientFile(req as Request, res as Response);
+
+      expect(res.status).toHaveBeenCalledWith(400);
+    });
   });
 
   // ─── deleteClientFile ──────────────────────────────────
@@ -227,6 +286,145 @@ describe("ClientFile Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({ message: "Fiche supprimée" });
+    });
+  });
+
+  // ─── uploadDocument ────────────────────────────────────
+  describe("uploadDocument", () => {
+    it("should return 400 when ID is invalid", async () => {
+      req.params = { id: "invalid" };
+      await uploadDocument(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+    });
+
+    it("should return 400 when no file is provided", async () => {
+      req.params = { id: VALID_ID };
+      req.file = undefined;
+      await uploadDocument(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Aucun fichier fourni",
+      });
+    });
+
+    it("should return 404 when client file not found", async () => {
+      req.params = { id: VALID_ID };
+      req.file = {
+        originalname: "test.pdf",
+        filename: "123-test.pdf",
+      } as Express.Multer.File;
+      mockClientFileModel.findById.mockResolvedValue(null);
+
+      await uploadDocument(req as Request, res as Response);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Fiche client introuvable",
+      });
+    });
+
+    it("should add document and return 201", async () => {
+      req.params = { id: VALID_ID };
+      req.body = { type: "devis" };
+      req.file = {
+        originalname: "devis.pdf",
+        filename: "999-devis.pdf",
+      } as Express.Multer.File;
+
+      const file = {
+        ...mockFile,
+        documents: { push: jest.fn() },
+        save: jest.fn().mockResolvedValue(mockFile),
+      };
+      mockClientFileModel.findById.mockResolvedValue(file);
+
+      await uploadDocument(req as Request, res as Response);
+
+      expect(file.documents.push).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "devis.pdf", type: "devis" }),
+      );
+      expect(file.save).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(201);
+    });
+
+    it("should return 500 on unexpected error", async () => {
+      req.params = { id: VALID_ID };
+      req.file = {
+        originalname: "x.pdf",
+        filename: "x.pdf",
+      } as Express.Multer.File;
+      mockClientFileModel.findById.mockRejectedValue(new Error("DB crash"));
+
+      await uploadDocument(req as Request, res as Response);
+
+      expect(res.status).toHaveBeenCalledWith(500);
+    });
+  });
+
+  // ─── deleteDocument ────────────────────────────────────
+  describe("deleteDocument", () => {
+    it("should return 400 when client file ID is invalid", async () => {
+      req.params = { id: "invalid", docId: VALID_DOC_ID };
+      await deleteDocument(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+    });
+
+    it("should return 400 when doc ID is invalid", async () => {
+      req.params = { id: VALID_ID, docId: "notanid" };
+      await deleteDocument(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+    });
+
+    it("should return 404 when client file not found", async () => {
+      req.params = { id: VALID_ID, docId: VALID_DOC_ID };
+      mockClientFileModel.findById.mockResolvedValue(null);
+
+      await deleteDocument(req as Request, res as Response);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Fiche client introuvable",
+      });
+    });
+
+    it("should return 404 when document not found in the file", async () => {
+      req.params = { id: VALID_ID, docId: VALID_DOC_ID };
+      const file = { ...mockFile, documents: [] }; // no documents
+      mockClientFileModel.findById.mockResolvedValue(file);
+
+      await deleteDocument(req as Request, res as Response);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Document introuvable",
+      });
+    });
+
+    it("should delete document from file and return 200", async () => {
+      req.params = { id: VALID_ID, docId: VALID_DOC_ID };
+
+      const file = {
+        ...mockFile,
+        documents: [mockDoc],
+        save: jest.fn().mockResolvedValue(mockFile),
+      };
+      mockClientFileModel.findById.mockResolvedValue(file);
+
+      await deleteDocument(req as Request, res as Response);
+
+      // document should be filtered out
+      expect(file.documents).not.toContain(mockDoc);
+      expect(file.save).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(200);
+    });
+
+    it("should return 500 on unexpected error", async () => {
+      req.params = { id: VALID_ID, docId: VALID_DOC_ID };
+      mockClientFileModel.findById.mockRejectedValue(new Error("crash"));
+
+      await deleteDocument(req as Request, res as Response);
+
+      expect(res.status).toHaveBeenCalledWith(500);
     });
   });
 });
