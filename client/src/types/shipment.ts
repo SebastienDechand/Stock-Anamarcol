@@ -11,6 +11,7 @@ export interface Shipment {
   societeOuFonction: string;
   societe: string;
   piece: string;
+  clientFile?: string;
   requestDate?: string;
   sent?: boolean;
   sentBy?: string;

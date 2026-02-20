@@ -1,8 +1,26 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
+// ─── Document sub-document ───────────────────────────────────────────────────
+export type ClientFileDocType =
+  | "bdc"
+  | "rapport"
+  | "pvrecette"
+  | "visite"
+  | "autre";
+
+export interface IClientFileDoc {
+  _id: Types.ObjectId;
+  name: string;
+  filename: string;
+  type: ClientFileDocType;
+  uploadedAt: Date;
+  uploadedBy?: string;
+}
+
 // ─── Equipment sub-document ───────────────────────────────────────────────────
 export interface IEquipement {
   nbCashguard: number;
+  nbFusion: number;
   nbCaisses: number;
   nbAutresMateriels: number;
   nbBalancesCaisses: number;
@@ -46,6 +64,8 @@ export interface IClientFile extends Document {
   equipement: IEquipement;
   // Remarks
   remarques?: string;
+  // Documents
+  documents: IClientFileDoc[];
   // Link to existing contact (optional)
   contactRef?: Types.ObjectId;
   // Installation dates (filled by installer via rapport)
@@ -60,6 +80,7 @@ export interface IClientFile extends Document {
 const equipementSchema = new Schema<IEquipement>(
   {
     nbCashguard: { type: Number, default: 0 },
+    nbFusion: { type: Number, default: 0 },
     nbCaisses: { type: Number, default: 0 },
     nbAutresMateriels: { type: Number, default: 0 },
     nbBalancesCaisses: { type: Number, default: 0 },
@@ -72,6 +93,21 @@ const equipementSchema = new Schema<IEquipement>(
     carteFidelite: { type: Boolean, default: false },
   },
   { _id: false },
+);
+
+const clientFileDocSchema = new Schema<IClientFileDoc>(
+  {
+    name: { type: String, required: true },
+    filename: { type: String, required: true },
+    type: {
+      type: String,
+      enum: ["bdc", "rapport", "pvrecette", "visite", "autre"],
+      default: "autre",
+    },
+    uploadedAt: { type: Date, default: Date.now },
+    uploadedBy: { type: String },
+  },
+  { _id: true },
 );
 
 const clientFileSchema = new Schema<IClientFile>(
@@ -101,6 +137,7 @@ const clientFileSchema = new Schema<IClientFile>(
     ouverturePrevue: { type: String, trim: true },
     equipement: { type: equipementSchema, default: () => ({}) },
     remarques: { type: String, trim: true },
+    documents: { type: [clientFileDocSchema], default: [] },
     contactRef: { type: Schema.Types.ObjectId, ref: "contact" },
     dateInstallation: { type: Date },
     dateRenouvellement: { type: Date },

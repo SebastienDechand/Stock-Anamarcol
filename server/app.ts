@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
+import path from "path";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
@@ -48,6 +49,12 @@ app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(cookieParser());
 // Sanitize user input against NoSQL injection ($gt, $ne, etc.)
 app.use(mongoSanitize);
+
+// Serve uploaded client-file documents as static files
+app.use(
+  "/uploads",
+  express.static(path.join(process.cwd(), "uploads"), { maxAge: "7d" }),
+);
 
 // Reject requests gracefully when MongoDB is not connected
 app.use((_req: Request, res: Response, next: NextFunction) => {

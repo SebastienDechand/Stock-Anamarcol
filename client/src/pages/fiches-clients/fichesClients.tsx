@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks/redux";
 import { UidContext } from "../../components/AppContext";
@@ -19,11 +19,14 @@ import {
   MapPin,
   Phone,
   Mail,
-  Eye,
+  FolderOpen,
+  FileText,
   ClipboardList,
   Trash2,
   Pencil,
   FileSpreadsheet,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import type { ClientFile, ClientFilesState, Equipement } from "../../types";
@@ -115,14 +118,24 @@ const BDC_MAP: Record<string, BDCEntry> = {
   "nombre de caisses": { type: "equipNum", key: "nbCaisses" },
   "nombre de cashguard": { type: "equipNum", key: "nbCashguard" },
   "nb cashguard": { type: "equipNum", key: "nbCashguard" },
+  cashguard: { type: "equipNum", key: "nbCashguard" },
+  "nombre de fusion": { type: "equipNum", key: "nbFusion" },
+  "nb fusion": { type: "equipNum", key: "nbFusion" },
+  fusion: { type: "equipNum", key: "nbFusion" },
+  caisses: { type: "equipNum", key: "nbCaisses" },
   "autres materiels": { type: "equipNum", key: "nbAutresMateriels" },
+  "autres materiaux": { type: "equipNum", key: "nbAutresMateriels" },
   "autres matériels": { type: "equipNum", key: "nbAutresMateriels" },
   "nombre de balances/caisses": { type: "equipNum", key: "nbBalancesCaisses" },
   "nombre de balances": { type: "equipNum", key: "nbBalancesCaisses" },
   "nb balances/caisses": { type: "equipNum", key: "nbBalancesCaisses" },
   "licences tactis": { type: "equipNum", key: "licencesTactis" },
+  "licence tactis": { type: "equipNum", key: "licencesTactis" },
   "licences inno": { type: "equipNum", key: "licencesInno" },
+  "licence inno": { type: "equipNum", key: "licencesInno" },
   "pc backoffice": { type: "equipNum", key: "pcBackoffice" },
+  "pc de gestion": { type: "equipNum", key: "pcBackoffice" },
+  "pc gestion": { type: "equipNum", key: "pcBackoffice" },
   // equipement - booleans
   "borne allergene": { type: "equipBool", key: "borneAllergene" },
   "borne allergène": { type: "equipBool", key: "borneAllergene" },
@@ -148,30 +161,57 @@ type BDCPatch = Omit<Partial<ClientFormSnapshot>, "equipement"> & {
   equipement?: Partial<Equipement>;
 };
 
+/** Lowercase + strip accents + collapse spaces → robust key lookup */
+function normalizeKey(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** BDC_MAP indexed by normalized key for accent-insensitive matching */
+const BDC_MAP_NORM: Record<string, (typeof BDC_MAP)[keyof typeof BDC_MAP]> =
+  Object.fromEntries(
+    Object.entries(BDC_MAP).map(([k, v]) => [normalizeKey(k), v]),
+  );
+
+/** Resolve a raw value to boolean */
+function toBool(v: string): boolean {
+  const vl = v.toLowerCase().trim();
+  return (
+    vl === "oui" || vl === "true" || vl === "1" || vl === "x" || vl === "yes"
+  );
+}
+
+/** Resolve a raw value to number — treats x/X/oui as 1 */
+function toNum(v: string): number {
+  const vl = v.toLowerCase().trim();
+  if (vl === "x" || vl === "oui" || vl === "yes") return 1;
+  const n = parseInt(v, 10);
+  return isNaN(n) ? 0 : n;
+}
+
 function applyBDCEntries(
   entries: { label: string; value: string }[],
 ): BDCPatch {
   const patch: BDCPatch = {};
   for (const { label, value } of entries) {
-    const key = label.trim().toLowerCase().replace(/\s+/g, " ");
-    const mapping = BDC_MAP[key];
+    const key = normalizeKey(label);
+    const mapping = BDC_MAP_NORM[key];
     if (!mapping) continue;
     const v = value.trim();
     if (mapping.type === "str") {
       (patch as Record<string, unknown>)[mapping.key] = v;
     } else if (mapping.type === "bool") {
-      const vl = v.toLowerCase();
-      (patch as Record<string, unknown>)[mapping.key] =
-        vl === "oui" || vl === "true" || v === "1" || vl === "x";
+      (patch as Record<string, unknown>)[mapping.key] = toBool(v);
     } else if (mapping.type === "equipNum") {
       if (!patch.equipement) patch.equipement = {};
-      (patch.equipement as Record<string, unknown>)[mapping.key] =
-        parseInt(v) || 0;
+      (patch.equipement as Record<string, unknown>)[mapping.key] = toNum(v);
     } else if (mapping.type === "equipBool") {
       if (!patch.equipement) patch.equipement = {};
-      const vl = v.toLowerCase();
-      (patch.equipement as Record<string, unknown>)[mapping.key] =
-        vl === "oui" || vl === "true" || v === "1" || vl === "x";
+      (patch.equipement as Record<string, unknown>)[mapping.key] = toBool(v);
     }
   }
   return patch;
@@ -235,9 +275,102 @@ async function parseXlsxBDC(file: File): Promise<{
   return { patch, allEntries };
 }
 
+async function parsePdfBDC(file: File): Promise<BDCPatch> {
+  const pdfjsLib = await import("pdfjs-dist");
+  if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+  }
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(buf) }).promise;
+  // Collect entries across all pages grouped by visual line (y-coordinate)
+  const allEntries: { label: string; value: string }[] = [];
+
+  type PdfTextItem = { str: string; transform: number[] };
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+
+    // Group text items by rounded y-coordinate (tolerance ±3px)
+    const lineMap = new Map<number, { str: string; x: number }[]>();
+
+    for (const raw of content.items) {
+      if (!("str" in raw)) continue;
+      const item = raw as PdfTextItem;
+      const text = item.str.trim();
+      if (!text) continue;
+      const y = Math.round(item.transform[5]);
+      const x = item.transform[4];
+
+      // Find existing bucket within ±3px
+      let bucket: number | undefined;
+      for (const k of lineMap.keys()) {
+        if (Math.abs(k - y) <= 3) {
+          bucket = k;
+          break;
+        }
+      }
+      if (bucket === undefined) {
+        lineMap.set(y, []);
+        bucket = y;
+      }
+      lineMap.get(bucket)!.push({ str: text, x });
+    }
+
+    // Sort lines top→bottom (PDF y is bottom-up so descending y = top of page)
+    const lines = [...lineMap.entries()]
+      .sort(([a], [b]) => b - a)
+      .map(([, items]) => items.sort((a, b) => a.x - b.x).map((i) => i.str));
+
+    for (const lineItems of lines) {
+      if (lineItems.length === 0) continue;
+
+      // Pair items as (label, value) — strip trailing colons from labels.
+      // If the next item is itself a recognized BDC key (e.g. empty cell followed
+      // by a right-column label like "PC DE GESTION"), treat current label as
+      // having no value and don't consume the next item as a value.
+      for (let j = 0; j < lineItems.length; ) {
+        const rawLabel = lineItems[j].replace(/:+\s*$/, "").trim();
+        const nextRaw =
+          j + 1 < lineItems.length
+            ? lineItems[j + 1].replace(/:+\s*$/, "").trim()
+            : null;
+        const nextIsKey =
+          nextRaw !== null && !!BDC_MAP_NORM[normalizeKey(nextRaw)];
+
+        if (nextRaw === null || nextIsKey) {
+          // Current label has no value — check for inline colon fallback
+          const idx = rawLabel.indexOf(":");
+          if (idx > 0) {
+            allEntries.push({
+              label: rawLabel.substring(0, idx).trim(),
+              value: rawLabel.substring(idx + 1).trim(),
+            });
+          }
+          j += 1;
+        } else {
+          // Normal pair
+          if (rawLabel) allEntries.push({ label: rawLabel, value: nextRaw });
+          j += 2;
+        }
+      }
+    }
+  }
+
+  // Fallback: if positional parsing found nothing, flag it
+  if (allEntries.length === 0) {
+    throw new Error(
+      "Impossible d'extraire le texte du PDF (probablement un scan ou format non supporté)",
+    );
+  }
+
+  return applyBDCEntries(allEntries);
+}
+
 // ─── Empty form ───────────────────────────────────────────────────────────────
 const emptyEquipement: Equipement = {
   nbCashguard: 0,
+  nbFusion: 0,
   nbCaisses: 0,
   nbAutresMateriels: 0,
   nbBalancesCaisses: 0,
@@ -324,6 +457,7 @@ function ClientFileModal({
 
   const [loading, setLoading] = useState(false);
   const [xlsxImporting, setXlsxImporting] = useState(false);
+  const [pdfImporting, setPdfImporting] = useState(false);
 
   const applyPatch = (patch: BDCPatch) => {
     setForm((f) => ({
@@ -357,6 +491,26 @@ function ClientFileModal({
       toast.error("Erreur lors de la lecture du fichier");
     } finally {
       setXlsxImporting(false);
+      e.target.value = "";
+    }
+  };
+
+  const handlePdf = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPdfImporting(true);
+    try {
+      const patch = await parsePdfBDC(file);
+      applyPatch(patch);
+      const count =
+        Object.keys(patch).length + Object.keys(patch.equipement ?? {}).length;
+      toast.success(`${count} champ(s) mis à jour depuis le PDF`);
+    } catch (err) {
+      const msg =
+        err instanceof Error ? err.message : "Erreur lors de la lecture du PDF";
+      toast.error(msg);
+    } finally {
+      setPdfImporting(false);
       e.target.value = "";
     }
   };
@@ -431,28 +585,42 @@ function ClientFileModal({
             <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
               <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide flex items-center gap-1.5 mb-2.5">
                 <FileSpreadsheet size={14} />
-                Importer depuis un fichier BDC (.xlsx)
+                Importer depuis un fichier BDC
               </p>
-              <label className="flex items-center gap-2 px-3 py-2 border border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-amber-400 hover:bg-white/60 transition-colors bg-white">
-                <FileSpreadsheet
-                  size={16}
-                  className="text-amber-500 shrink-0"
-                />
-                <span className="text-xs text-gray-500">
-                  {xlsxImporting
-                    ? "Lecture en cours…"
-                    : "Choisir le fichier BDC (.xlsx)"}
-                </span>
-                <input
-                  type="file"
-                  accept=".xlsx,.xls"
-                  className="hidden"
-                  disabled={xlsxImporting}
-                  onChange={handleXlsx}
-                />
-              </label>
+              <div className="flex flex-wrap gap-2">
+                <label className="flex items-center gap-2 px-3 py-2 border border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-amber-400 hover:bg-white/60 transition-colors bg-white">
+                  <FileSpreadsheet
+                    size={16}
+                    className="text-amber-500 shrink-0"
+                  />
+                  <span className="text-xs text-gray-500">
+                    {xlsxImporting ? "Lecture XLSX…" : "Importer .xlsx"}
+                  </span>
+                  <input
+                    type="file"
+                    accept=".xlsx,.xls"
+                    className="hidden"
+                    disabled={xlsxImporting || pdfImporting}
+                    onChange={handleXlsx}
+                  />
+                </label>
+                <label className="flex items-center gap-2 px-3 py-2 border border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-amber-400 hover:bg-white/60 transition-colors bg-white">
+                  <FileText size={16} className="text-red-400 shrink-0" />
+                  <span className="text-xs text-gray-500">
+                    {pdfImporting ? "Lecture PDF…" : "Importer .pdf"}
+                  </span>
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    className="hidden"
+                    disabled={xlsxImporting || pdfImporting}
+                    onChange={handlePdf}
+                  />
+                </label>
+              </div>
               <p className="text-[11px] text-gray-400 mt-1.5">
-                Libellés en colonne A - valeurs en colonne B.
+                XLSX : libellés col. A — valeurs col. B.  PDF : texte digital
+                uniquement (pas de scan).
               </p>
             </div>
 
@@ -692,6 +860,7 @@ function ClientFileModal({
                 {(
                   [
                     { key: "nbCashguard", label: "Nombre de CashGuard" },
+                    { key: "nbFusion", label: "Nombre de Fusion" },
                     { key: "nbCaisses", label: "Nombre de Caisses" },
                     { key: "nbAutresMateriels", label: "Autres matériels" },
                     {
@@ -909,6 +1078,7 @@ function ClientDetailModal({
             {/* Équipements */}
             <p className={sec}>Équipements commandés</p>
             {row("CashGuard", eq.nbCashguard || undefined)}
+            {row("Fusion", eq.nbFusion || undefined)}
             {row("Caisses", eq.nbCaisses || undefined)}
             {row("Balances / Caisses", eq.nbBalancesCaisses || undefined)}
             {row("Licences TACTIS", eq.licencesTactis || undefined)}
@@ -942,6 +1112,7 @@ function ClientDetailModal({
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function FichesClients() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const auth = useContext(UidContext);
   const isMonteur = !!auth?.isMonteur;
   const isAdmin = !!auth?.isAdmin;
@@ -952,14 +1123,18 @@ export default function FichesClients() {
   );
 
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 9;
   const [modalOpen, setModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<ClientFile | undefined>();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-  const [detailTarget, setDetailTarget] = useState<ClientFile | null>(null);
-
   useEffect(() => {
     dispatch(getAllClientFiles() as unknown as Parameters<typeof dispatch>[0]);
   }, [dispatch]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   if (!isMonteur) {
     return <Navigate to="/home" replace />;
@@ -975,6 +1150,12 @@ export default function FichesClients() {
       (f.cp ?? "").includes(q)
     );
   });
+
+  const totalPageCount = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginated = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
 
   const openCreate = () => {
     setEditTarget(undefined);
@@ -1058,7 +1239,7 @@ export default function FichesClients() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((file) => (
+          {paginated.map((file) => (
             <div
               key={file._id}
               className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-3"
@@ -1104,7 +1285,7 @@ export default function FichesClients() {
                     </span>
                   </p>
                 )}
-                {file.tel && (
+                {(file.tel || file.mobile) && (
                   <p className="text-xs text-gray-500 flex items-center gap-1.5">
                     <Phone size={12} className="text-gray-400 shrink-0" />
                     {file.mobile ? file.mobile : file.tel}
@@ -1139,6 +1320,11 @@ export default function FichesClients() {
                     {file.equipement.nbCashguard} CashGuard
                   </span>
                 )}
+                {file.equipement.nbFusion > 0 && (
+                  <span className="text-[10px] bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded-full">
+                    {file.equipement.nbFusion} Fusion
+                  </span>
+                )}
                 {file.equipement.licencesTactis > 0 && (
                   <span className="text-[10px] bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full">
                     {file.equipement.licencesTactis} TACTIS
@@ -1166,11 +1352,11 @@ export default function FichesClients() {
               {/* Actions */}
               <div className="flex gap-2 pt-2 border-t border-gray-50">
                 <button
-                  onClick={() => setDetailTarget(file)}
-                  className="flex items-center gap-1 text-xs text-gray-500 hover:text-brand-600 transition-colors"
+                  onClick={() => navigate(`/fiches-clients/${file._id}`)}
+                  className="flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700 font-medium transition-colors"
                 >
-                  <Eye size={13} />
-                  Voir le détail
+                  <FolderOpen size={13} />
+                  Ouvrir le dossier
                 </button>
                 {isMonteur && (
                   <button
@@ -1195,20 +1381,57 @@ export default function FichesClients() {
         </div>
       )}
 
-      {/* Detail modal */}
-      {detailTarget && (
-        <ClientDetailModal
-          file={detailTarget}
-          onClose={() => setDetailTarget(null)}
-          onEdit={
-            isMonteur
-              ? () => {
-                  openEdit(detailTarget);
-                  setDetailTarget(null);
-                }
-              : undefined
-          }
-        />
+      {/* Pagination */}
+      {filtered.length > 0 && (
+        <div className="flex items-center justify-center gap-1.5 py-4 flex-wrap">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          {Array.from({ length: totalPageCount }, (_, i) => i + 1)
+            .filter(
+              (p) =>
+                p === 1 ||
+                p === totalPageCount ||
+                Math.abs(p - currentPage) <= 1,
+            )
+            .reduce<(number | "...")[]>((acc, p, idx, arr) => {
+              if (idx > 0 && p - (arr[idx - 1] as number) > 1) acc.push("...");
+              acc.push(p);
+              return acc;
+            }, [])
+            .map((p, i) =>
+              p === "..." ? (
+                <span key={`e${i}`} className="px-1 text-gray-400 text-sm">
+                  …
+                </span>
+              ) : (
+                <button
+                  key={p}
+                  onClick={() => setCurrentPage(p as number)}
+                  className={`min-w-[2rem] h-8 px-2 rounded-lg text-sm font-medium border transition-colors ${
+                    currentPage === p
+                      ? "bg-brand-600 text-white border-brand-600"
+                      : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                  }`}
+                >
+                  {p}
+                </button>
+              ),
+            )}
+          <button
+            onClick={() =>
+              setCurrentPage((p) => Math.min(totalPageCount, p + 1))
+            }
+            disabled={currentPage === totalPageCount}
+            className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
       )}
 
       {/* Create / edit modal */}

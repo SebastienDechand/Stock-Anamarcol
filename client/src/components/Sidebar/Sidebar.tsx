@@ -10,7 +10,6 @@ import {
   ChevronRight,
   Truck,
   ClipboardList,
-  Wrench,
   ShieldCheck,
 } from "lucide-react";
 import { useContext } from "react";
@@ -52,7 +51,6 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
             label: "Fiches Clients",
             icon: ClipboardList,
           },
-          { to: "/rapports-intervention", label: "Rapports", icon: Wrench },
         ]
       : []),
     ...(auth?.isHotline

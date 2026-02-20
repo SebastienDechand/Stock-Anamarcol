@@ -23,6 +23,9 @@ import {
   ChevronDown,
   ChevronUp,
   Building2,
+  FileText,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import type {
@@ -92,6 +95,7 @@ function ReportModal({
   const [notes, setNotes] = useState(existing?.notes ?? "");
   const [loading, setLoading] = useState(false);
   const [expandedUnit, setExpandedUnit] = useState<number>(0);
+  const [step, setStep] = useState<1 | 2>(1);
 
   const setUnit = (idx: number, field: keyof CashguardUnit, value: unknown) =>
     setUnits((prev) =>
@@ -117,8 +121,7 @@ function ReportModal({
   const removeUnit = (idx: number) =>
     setUnits((prev) => prev.filter((_, i) => i !== idx));
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (!clientFileId) {
       toast.error("Veuillez sélectionner une fiche client");
       return;
@@ -172,284 +175,381 @@ function ReportModal({
         >
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10">
-            <h3 className="font-semibold text-gray-900">
+            <h3 className="font-semibold text-gray-900 text-sm">
               {existing
                 ? "Modifier le rapport"
                 : "Nouveau rapport d'intervention"}
             </h3>
-            <button
-              onClick={onClose}
-              className="p-1 text-gray-500 hover:text-gray-700"
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
-            {/* Fiche client */}
-            <div>
-              <p className="text-xs font-semibold text-brand-600 uppercase tracking-wide mb-3">
-                Fiche client associée
-              </p>
-              <select
-                className={inputCls}
-                value={clientFileId}
-                onChange={(e) => setClientFileId(e.target.value)}
-                required
-              >
-                <option value="">-- Sélectionner une fiche client --</option>
-                {clientFiles.map((f) => (
-                  <option key={f._id} value={f._id}>
-                    {f.nom.toUpperCase()}
-                    {f.prenom ? ` ${f.prenom}` : ""}
-                    {f.societe ? ` - ${f.societe}` : ""}
-                    {f.cp ? ` (${f.cp})` : ""}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* TW codes */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-semibold text-brand-600 uppercase tracking-wide">
-                  Codes TW (saisis par le technicien préparateur)
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setTwCaisses((p) => [...p, ""])}
-                  className="flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700"
-                >
-                  <Plus size={13} /> Ajouter une caisse
-                </button>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                {twCaisses.map((tw, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <div className="flex-1">
-                      <label className={labelCls}>TW Caisse {idx + 1}</label>
-                      <input
-                        className={inputCls}
-                        value={tw}
-                        onChange={(e) =>
-                          setTwCaisses((p) =>
-                            p.map((v, i) => (i === idx ? e.target.value : v)),
-                          )
-                        }
-                      />
-                    </div>
-                    {twCaisses.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setTwCaisses((p) => p.filter((_, i) => i !== idx))
-                        }
-                        className="mt-5 text-red-400 hover:text-red-600"
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5">
+                {(
+                  [
+                    { n: 1, label: "Préparation" },
+                    { n: 2, label: "Notes" },
+                  ] as const
+                ).map(({ n, label }, idx, arr) => (
+                  <div key={n} className="flex items-center gap-1.5">
+                    <div
+                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${step === n ? "bg-brand-600 text-white" : step > n ? "bg-brand-100 text-brand-700" : "bg-gray-100 text-gray-400"}`}
+                    >
+                      <span
+                        className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${step === n ? "bg-white/30" : step > n ? "bg-brand-200" : "bg-gray-200"}`}
                       >
-                        <X size={13} />
-                      </button>
+                        {n}
+                      </span>
+                      {label}
+                    </div>
+                    {idx < arr.length - 1 && (
+                      <span className="w-4 h-px bg-gray-200" />
                     )}
                   </div>
                 ))}
-                <div>
-                  <label className={labelCls}>TW PC</label>
-                  <input
-                    className={inputCls}
-                    value={twPc}
-                    onChange={(e) => setTwPc(e.target.value)}
-                  />
-                </div>
               </div>
+              <button
+                onClick={onClose}
+                className="p-1 text-gray-500 hover:text-gray-700"
+              >
+                <X size={18} />
+              </button>
             </div>
+          </div>
 
-            {/* CashGuard units */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-semibold text-brand-600 uppercase tracking-wide">
-                  Unités CashGuard
-                </p>
-                <button
-                  type="button"
-                  onClick={addUnit}
-                  className="flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700"
-                >
-                  <Plus size={13} />
-                  Ajouter une unité
-                </button>
-              </div>
-
-              <div className="space-y-3">
-                {units.map((unit, idx) => (
-                  <div
-                    key={idx}
-                    className="border border-gray-200 rounded-xl overflow-hidden"
+          <div className="p-6">
+            {step === 1 && (
+              <div className="space-y-6">
+                {/* Fiche client */}
+                <div>
+                  <p className="text-xs font-semibold text-brand-600 uppercase tracking-wide mb-3">
+                    Fiche client associée
+                  </p>
+                  <select
+                    className={inputCls}
+                    value={clientFileId}
+                    onChange={(e) => setClientFileId(e.target.value)}
+                    required
                   >
-                    {/* Unit header */}
-                    <div
-                      className="flex items-center justify-between px-4 py-2.5 bg-gray-50 cursor-pointer"
-                      onClick={() =>
-                        setExpandedUnit(expandedUnit === idx ? -1 : idx)
-                      }
+                    <option value="">
+                      -- Sélectionner une fiche client --
+                    </option>
+                    {clientFiles.map((f) => (
+                      <option key={f._id} value={f._id}>
+                        {f.nom.toUpperCase()}
+                        {f.prenom ? ` ${f.prenom}` : ""}
+                        {f.societe ? ` - ${f.societe}` : ""}
+                        {f.cp ? ` (${f.cp})` : ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* TW codes */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-semibold text-brand-600 uppercase tracking-wide">
+                      Codes TW (saisis par le technicien préparateur)
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setTwCaisses((p) => [...p, ""])}
+                      className="flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700"
                     >
-                      <span className="text-sm font-medium text-gray-700">
-                        Unité {idx + 1}
-                        {unit.nSerie ? ` - N° ${unit.nSerie}` : ""}
-                      </span>
-                      <div className="flex items-center gap-3">
-                        {units.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeUnit(idx);
-                            }}
-                            className="text-red-400 hover:text-red-600"
-                          >
-                            <Trash2 size={13} />
-                          </button>
-                        )}
-                        {expandedUnit === idx ? (
-                          <ChevronUp size={14} />
-                        ) : (
-                          <ChevronDown size={14} />
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Unit body */}
-                    {expandedUnit === idx && (
-                      <div className="p-4 space-y-4">
-                        <div className="grid grid-cols-3 gap-3">
-                          <div>
-                            <label className={labelCls}>N° de série</label>
-                            <input
-                              className={inputCls}
-                              value={unit.nSerie ?? ""}
-                              onChange={(e) =>
-                                setUnit(idx, "nSerie", e.target.value)
-                              }
-                            />
-                          </div>
-                          <div>
-                            <label className={labelCls}>UP</label>
-                            <input
-                              className={inputCls}
-                              value={unit.up ?? ""}
-                              onChange={(e) =>
-                                setUnit(idx, "up", e.target.value)
-                              }
-                            />
-                          </div>
-                          <div>
-                            <label className={labelCls}>UB</label>
-                            <input
-                              className={inputCls}
-                              value={unit.ub ?? ""}
-                              onChange={(e) =>
-                                setUnit(idx, "ub", e.target.value)
-                              }
-                            />
-                          </div>
-                        </div>
-
-                        {/* K7 slots */}
-                        <div>
-                          <p className={`${labelCls} mb-2`}>
-                            Cassettes - 4 slots
-                          </p>
-                          <div className="grid grid-cols-4 gap-2">
-                            {unit.k7Slots.map((val, slotIdx) => (
-                              <div key={slotIdx}>
-                                <label className="text-[10px] text-gray-400 mb-0.5 block">
-                                  Slot {slotIdx + 1}
-                                </label>
-                                <input
-                                  className={inputCls}
-                                  value={val}
-                                  onChange={(e) =>
-                                    setK7(idx, slotIdx, e.target.value)
-                                  }
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Assigned caisses */}
-                        <div>
+                      <Plus size={13} /> Ajouter une caisse
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {twCaisses.map((tw, idx) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        <div className="flex-1">
                           <label className={labelCls}>
-                            Caisses assignées (séparées par des virgules)
+                            TW Caisse {idx + 1}
                           </label>
                           <input
                             className={inputCls}
-                            value={unit.assignedCaisses.join(", ")}
+                            value={tw}
                             onChange={(e) =>
-                              setUnit(
-                                idx,
-                                "assignedCaisses",
-                                e.target.value
-                                  .split(",")
-                                  .map((s) => s.trim())
-                                  .filter(Boolean),
+                              setTwCaisses((p) =>
+                                p.map((v, i) =>
+                                  i === idx ? e.target.value : v,
+                                ),
                               )
                             }
-                            placeholder="CAISSE 1, CAISSE 2…"
                           />
                         </div>
-
-                        <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={unit.hasPc}
-                            onChange={(e) =>
-                              setUnit(idx, "hasPc", e.target.checked)
+                        {twCaisses.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setTwCaisses((p) => p.filter((_, i) => i !== idx))
                             }
-                            className="w-4 h-4 rounded accent-brand-600"
-                          />
-                          PC Backoffice associé
-                        </label>
+                            className="mt-5 text-red-400 hover:text-red-600"
+                          >
+                            <X size={13} />
+                          </button>
+                        )}
                       </div>
-                    )}
+                    ))}
+                    <div>
+                      <label className={labelCls}>TW PC</label>
+                      <input
+                        className={inputCls}
+                        value={twPc}
+                        onChange={(e) => setTwPc(e.target.value)}
+                      />
+                    </div>
                   </div>
-                ))}
+                </div>
+
+                {/* CashGuard units */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-semibold text-brand-600 uppercase tracking-wide">
+                      Unités CashGuard
+                    </p>
+                    <button
+                      type="button"
+                      onClick={addUnit}
+                      className="flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700"
+                    >
+                      <Plus size={13} />
+                      Ajouter une unité
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {units.map((unit, idx) => (
+                      <div
+                        key={idx}
+                        className="border border-gray-200 rounded-xl overflow-hidden"
+                      >
+                        {/* Unit header */}
+                        <div
+                          className="flex items-center justify-between px-4 py-2.5 bg-gray-50 cursor-pointer"
+                          onClick={() =>
+                            setExpandedUnit(expandedUnit === idx ? -1 : idx)
+                          }
+                        >
+                          <span className="text-sm font-medium text-gray-700">
+                            Unité {idx + 1}
+                            {unit.nSerie ? ` - N° ${unit.nSerie}` : ""}
+                          </span>
+                          <div className="flex items-center gap-3">
+                            {units.length > 1 && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeUnit(idx);
+                                }}
+                                className="text-red-400 hover:text-red-600"
+                              >
+                                <Trash2 size={13} />
+                              </button>
+                            )}
+                            {expandedUnit === idx ? (
+                              <ChevronUp size={14} />
+                            ) : (
+                              <ChevronDown size={14} />
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Unit body */}
+                        {expandedUnit === idx && (
+                          <div className="p-4 space-y-4">
+                            <div className="grid grid-cols-3 gap-3">
+                              <div>
+                                <label className={labelCls}>N° de série</label>
+                                <input
+                                  className={inputCls}
+                                  value={unit.nSerie ?? ""}
+                                  onChange={(e) =>
+                                    setUnit(idx, "nSerie", e.target.value)
+                                  }
+                                />
+                              </div>
+                              <div>
+                                <label className={labelCls}>UP</label>
+                                <input
+                                  className={inputCls}
+                                  value={unit.up ?? ""}
+                                  onChange={(e) =>
+                                    setUnit(idx, "up", e.target.value)
+                                  }
+                                />
+                              </div>
+                              <div>
+                                <label className={labelCls}>UB</label>
+                                <input
+                                  className={inputCls}
+                                  value={unit.ub ?? ""}
+                                  onChange={(e) =>
+                                    setUnit(idx, "ub", e.target.value)
+                                  }
+                                />
+                              </div>
+                            </div>
+
+                            {/* K7 slots */}
+                            <div>
+                              <p className={`${labelCls} mb-2`}>
+                                Cassettes - 4 slots
+                              </p>
+                              <div className="grid grid-cols-4 gap-2">
+                                {unit.k7Slots.map((val, slotIdx) => (
+                                  <div key={slotIdx}>
+                                    <label className="text-[10px] text-gray-400 mb-0.5 block">
+                                      Slot {slotIdx + 1}
+                                    </label>
+                                    <input
+                                      className={inputCls}
+                                      value={val}
+                                      onChange={(e) =>
+                                        setK7(idx, slotIdx, e.target.value)
+                                      }
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Assigned caisses */}
+                            <div>
+                              <label className={labelCls}>
+                                Caisses assignées (séparées par des virgules)
+                              </label>
+                              <input
+                                className={inputCls}
+                                value={unit.assignedCaisses.join(", ")}
+                                onChange={(e) =>
+                                  setUnit(
+                                    idx,
+                                    "assignedCaisses",
+                                    e.target.value
+                                      .split(",")
+                                      .map((s) => s.trim())
+                                      .filter(Boolean),
+                                  )
+                                }
+                                placeholder="CAISSE 1, CAISSE 2…"
+                              />
+                            </div>
+
+                            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={unit.hasPc}
+                                onChange={(e) =>
+                                  setUnit(idx, "hasPc", e.target.checked)
+                                }
+                                className="w-4 h-4 rounded accent-brand-600"
+                              />
+                              PC Backoffice associé
+                            </label>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-4 border-t">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!clientFileId) {
+                        toast.error("Veuillez sélectionner une fiche client");
+                        return;
+                      }
+                      setStep(2);
+                    }}
+                    className="px-5 py-2 text-sm font-medium bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors"
+                  >
+                    Suivant : Notes →
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Notes */}
-            <div>
-              <label className="text-xs font-semibold text-brand-600 uppercase tracking-wide block mb-2">
-                Notes
-              </label>
-              <textarea
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white min-h-[70px] resize-y"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Remarques d'intervention…"
-              />
-            </div>
+            {step === 2 && (
+              <div className="space-y-6">
+                <p className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                  <FileText size={16} className="text-brand-600" />
+                  Notes & Finalisation
+                </p>
 
-            {/* Actions */}
-            <div className="flex justify-end gap-3 pt-2 border-t">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50"
-              >
-                Annuler
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-5 py-2 text-sm font-medium bg-brand-600 text-white rounded-lg hover:bg-brand-700 disabled:opacity-50"
-              >
-                {loading
-                  ? "Enregistrement…"
-                  : existing
-                    ? "Mettre à jour"
-                    : "Créer"}
-              </button>
-            </div>
-          </form>
+                {/* Récap step 1 */}
+                <div className="rounded-xl bg-brand-50 border border-brand-100 px-4 py-3 text-xs text-brand-700 space-y-0.5">
+                  <p className="font-semibold mb-1">
+                    Récapitulatif - Préparation :
+                  </p>
+                  {(() => {
+                    const cf = clientFiles.find((f) => f._id === clientFileId);
+                    return cf ? (
+                      <p>
+                        {cf.nom.toUpperCase()}
+                        {cf.prenom ? ` ${cf.prenom}` : ""}
+                        {cf.societe ? ` - ${cf.societe}` : ""}
+                      </p>
+                    ) : null;
+                  })()}
+                  {twCaisses.filter(Boolean).map((tw, i) => (
+                    <p key={i}>
+                      TW Caisse {i + 1} :{" "}
+                      <span className="font-mono font-medium">{tw}</span>
+                    </p>
+                  ))}
+                  {twPc && (
+                    <p>
+                      TW PC :{" "}
+                      <span className="font-mono font-medium">{twPc}</span>
+                    </p>
+                  )}
+                  <p>
+                    {units.length} unité{units.length > 1 ? "s" : ""} CashGuard
+                    {units
+                      .filter((u) => u.nSerie)
+                      .map((u) => ` · N°${u.nSerie}`)
+                      .join("")}
+                  </p>
+                </div>
+
+                {/* Notes */}
+                <div>
+                  <label className="text-xs font-semibold text-brand-600 uppercase tracking-wide block mb-2">
+                    Notes
+                  </label>
+                  <textarea
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white min-h-[120px] resize-y"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Remarques d'intervention…"
+                  />
+                </div>
+
+                <div className="flex justify-between pt-4 border-t">
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    ← Retour Préparation
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="px-5 py-2 text-sm font-medium bg-brand-600 text-white rounded-lg hover:bg-brand-700 disabled:opacity-50 transition-colors"
+                  >
+                    {loading
+                      ? "Enregistrement…"
+                      : existing
+                        ? "Mettre à jour"
+                        : "Créer le rapport"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </Portal>
@@ -633,6 +733,8 @@ export default function RapportsIntervention() {
   );
 
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 12;
   const [modalOpen, setModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<
     InterventionReport | undefined
@@ -649,6 +751,10 @@ export default function RapportsIntervention() {
     dispatch(getAllClientFiles() as unknown as Parameters<typeof dispatch>[0]);
   }, [dispatch]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
   if (!isMonteur) {
     return <Navigate to="/home" replace />;
   }
@@ -663,6 +769,12 @@ export default function RapportsIntervention() {
       (cf?.cp ?? "").includes(q)
     );
   });
+
+  const totalPageCount = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginated = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
 
   const openCreate = () => {
     setEditTarget(undefined);
@@ -757,7 +869,7 @@ export default function RapportsIntervention() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((report) => {
+          {paginated.map((report) => {
             const cf =
               typeof report.clientFile === "object" ? report.clientFile : null;
             return (
@@ -860,6 +972,31 @@ export default function RapportsIntervention() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {filtered.length > 0 && totalPageCount > 1 && (
+        <div className="flex items-center justify-center gap-3 py-4">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <span className="text-sm text-gray-500">
+            Page {currentPage} / {totalPageCount}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage((p) => Math.min(totalPageCount, p + 1))
+            }
+            disabled={currentPage === totalPageCount}
+            className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+          >
+            <ChevronRight size={16} />
+          </button>
         </div>
       )}
 

@@ -1,7 +1,11 @@
 import { useContext, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
 import { UidContext } from "../../components/AppContext";
+import { useAppDispatch } from "../../hooks/redux";
+import { getAllClientFiles } from "../../actions/clientFile.actions";
+import type { ClientFilesState } from "../../types";
 import {
   Plus,
   Check,
@@ -17,10 +21,15 @@ import {
   Download,
   History,
   ClipboardPaste,
+  Link,
+  FolderOpen,
   Building2,
   Phone,
   Mail,
   Eye,
+  Search,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import ExportOptionsModal from "../../components/Modales/ExportOptionsModal";
@@ -87,6 +96,14 @@ function parsePastedText(text: string): Partial<ShipmentForm> {
 /* ── Component ───────────────────────────────────────── */
 export default function EnvoisPage() {
   const auth = useContext(UidContext);
+  const dispatch = useAppDispatch();
+  const clientFiles = useSelector(
+    (s: { clientFilesReducer: ClientFilesState }) =>
+      s.clientFilesReducer.clientFiles,
+  );
+  const [linkedClientFileId, setLinkedClientFileId] = useState("");
+  const [clientFileSearch, setClientFileSearch] = useState("");
+  const [showCfSuggestions, setShowCfSuggestions] = useState(false);
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<ShipmentForm>({ ...emptyForm });
@@ -95,8 +112,22 @@ export default function EnvoisPage() {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [detailShipment, setDetailShipment] = useState<Shipment | null>(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "sent">(
+    "all",
+  );
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 20;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter]);
 
   const canEdit = auth?.isHotline || auth?.isAdmin;
+
+  useEffect(() => {
+    dispatch(getAllClientFiles() as unknown as Parameters<typeof dispatch>[0]);
+  }, [dispatch]);
 
   useEffect(() => {
     axios
@@ -113,6 +144,34 @@ export default function EnvoisPage() {
 
   const pending = shipments.filter((s) => !s.sent);
   const sent = shipments.filter((s) => s.sent);
+
+  const filtered = shipments.filter((s) => {
+    const q = search.toLowerCase();
+    const matchSearch =
+      !q ||
+      [
+        s.nom,
+        s.prenom,
+        s.societe,
+        s.societeOuFonction,
+        s.piece,
+        s.ville,
+        s.codePostal,
+        s.tel || "",
+        s.email || "",
+      ].some((v) => v.toLowerCase().includes(q));
+    const matchStatus =
+      statusFilter === "all" ||
+      (statusFilter === "pending" && !s.sent) ||
+      (statusFilter === "sent" && s.sent);
+    return matchSearch && matchStatus;
+  });
+
+  const totalPageCount = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginated = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
 
   const setField = (key: keyof ShipmentForm, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -152,6 +211,7 @@ export default function EnvoisPage() {
       if (!payload.tel) delete payload.tel;
       if (!payload.tel2) delete payload.tel2;
       if (!payload.email) delete payload.email;
+      if (linkedClientFileId) payload.clientFile = linkedClientFileId;
 
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}api/shipments`,
@@ -160,6 +220,8 @@ export default function EnvoisPage() {
       );
       setShipments((s) => [res.data, ...s]);
       setForm({ ...emptyForm });
+      setLinkedClientFileId("");
+      setClientFileSearch("");
       setShowForm(false);
       toast.success("Envoi ajouté");
     } catch (err: unknown) {
@@ -381,12 +443,183 @@ export default function EnvoisPage() {
         </div>
       </div>
 
+      {/* ── Search & Filter ── */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+        <div className="relative flex-1 w-full">
+          <Search
+            size={15}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          />
+          <input
+            type="text"
+            placeholder="Rechercher par nom, société, pièce, ville…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+          />
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          {(["all", "pending", "sent"] as const).map((st) => (
+            <button
+              key={st}
+              onClick={() => setStatusFilter(st)}
+              className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                statusFilter === st
+                  ? "bg-brand-600 text-white"
+                  : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              {st === "all"
+                ? "Tous"
+                : st === "pending"
+                  ? "En attente"
+                  : "Envoyés"}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* ── Creation form ── */}
       {showForm && canEdit && (
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 animate-in slide-in-from-top-2 space-y-4">
           <h2 className="text-sm font-semibold text-gray-700">Nouvel envoi</h2>
 
-          {/* Paste zone */}
+          {/* Lier à une fiche client — combobox */}
+          {clientFiles.length > 0 && (
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-gray-500 flex items-center gap-1">
+                <Link size={13} />
+                Lier à une fiche client (optionnel)
+              </label>
+              {linkedClientFileId ? (
+                (() => {
+                  const cf = clientFiles.find(
+                    (f) => f._id === linkedClientFileId,
+                  );
+                  return (
+                    <div className="flex items-center gap-2 px-3 py-2 bg-brand-50 border border-brand-200 rounded-lg">
+                      <FolderOpen
+                        size={13}
+                        className="text-brand-600 shrink-0"
+                      />
+                      <span className="text-sm text-brand-700 font-medium flex-1 truncate">
+                        {cf
+                          ? `${cf.nom.toUpperCase()}${cf.prenom ? ` ${cf.prenom}` : ""}${cf.societe ? ` — ${cf.societe}` : ""}`
+                          : "Fiche liée"}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setLinkedClientFileId("");
+                          setClientFileSearch("");
+                        }}
+                        className="text-brand-400 hover:text-brand-700 shrink-0"
+                      >
+                        <X size={13} />
+                      </button>
+                    </div>
+                  );
+                })()
+              ) : (
+                <div className="relative">
+                  <Search
+                    size={14}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
+                  <input
+                    type="text"
+                    value={clientFileSearch}
+                    placeholder="Rechercher une fiche client…"
+                    onChange={(e) => {
+                      setClientFileSearch(e.target.value);
+                      setShowCfSuggestions(true);
+                    }}
+                    onFocus={() => setShowCfSuggestions(true)}
+                    onBlur={() =>
+                      setTimeout(() => setShowCfSuggestions(false), 150)
+                    }
+                    className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/30 focus:border-brand-500 transition-all"
+                  />
+                  {showCfSuggestions && (
+                    <div className="absolute z-20 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
+                      {clientFiles
+                        .filter((f) => {
+                          const q = clientFileSearch.toLowerCase();
+                          if (!q) return true;
+                          return (
+                            f.nom.toLowerCase().includes(q) ||
+                            (f.prenom ?? "").toLowerCase().includes(q) ||
+                            (f.societe ?? "").toLowerCase().includes(q) ||
+                            (f.ville ?? "").toLowerCase().includes(q) ||
+                            (f.cp ?? "").includes(q)
+                          );
+                        })
+                        .slice(0, 8)
+                        .map((f) => (
+                          <button
+                            key={f._id}
+                            type="button"
+                            onMouseDown={(e) => e.preventDefault()}
+                            onClick={() => {
+                              setLinkedClientFileId(f._id);
+                              setClientFileSearch("");
+                              setShowCfSuggestions(false);
+                              setForm((prev) => ({
+                                ...prev,
+                                nom: f.nom,
+                                prenom: f.prenom ?? "",
+                                tel: f.tel ?? f.mobile ?? "",
+                                email: f.email ?? "",
+                                adresse: f.adresse ?? "",
+                                codePostal: f.cp ?? "",
+                                ville: f.ville ?? "",
+                                societe: f.societe ?? "",
+                                societeOuFonction: f.societe ?? "",
+                              }));
+                            }}
+                            className="w-full flex items-start gap-2 px-3 py-2.5 text-left hover:bg-brand-50 transition-colors border-b border-gray-50 last:border-0"
+                          >
+                            <FolderOpen
+                              size={13}
+                              className="text-brand-400 shrink-0 mt-0.5"
+                            />
+                            <div>
+                              <p className="text-sm font-medium text-gray-800">
+                                {f.nom.toUpperCase()}
+                                {f.prenom ? ` ${f.prenom}` : ""}
+                              </p>
+                              {f.societe && (
+                                <p className="text-xs text-gray-400">
+                                  {f.societe}
+                                </p>
+                              )}
+                              {(f.cp || f.ville) && (
+                                <p className="text-xs text-gray-400">
+                                  {[f.cp, f.ville].filter(Boolean).join(" ")}
+                                </p>
+                              )}
+                            </div>
+                          </button>
+                        ))}
+                      {clientFiles.filter((f) => {
+                        const q = clientFileSearch.toLowerCase();
+                        return (
+                          !q ||
+                          f.nom.toLowerCase().includes(q) ||
+                          (f.prenom ?? "").toLowerCase().includes(q) ||
+                          (f.societe ?? "").toLowerCase().includes(q)
+                        );
+                      }).length === 0 && (
+                        <p className="px-4 py-3 text-xs text-gray-400 text-center">
+                          Aucun résultat
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
           <div className="space-y-2">
             <label className="text-xs font-medium text-gray-500 flex items-center gap-1">
               <ClipboardPaste size={13} />
@@ -419,12 +652,12 @@ export default function EnvoisPage() {
               {renderField("nom", "Nom", {
                 required: true,
                 icon: User,
-                placeholder: "DUPONT",
+                placeholder: "ex : MARTIN",
               })}
               {renderField("prenom", "Prénom", {
                 required: true,
                 icon: User,
-                placeholder: "JEAN",
+                placeholder: "ex : Sophie",
               })}
             </div>
 
@@ -432,11 +665,11 @@ export default function EnvoisPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {renderField("tel", "Téléphone", {
                 icon: Phone,
-                placeholder: "06 12 34 56 78",
+                placeholder: "ex : 06 12 34 56 78",
               })}
               {renderField("tel2", "Téléphone 2", {
                 icon: Phone,
-                placeholder: "01 23 45 67 89",
+                placeholder: "ex : 01 23 45 67 89",
               })}
             </div>
 
@@ -445,15 +678,15 @@ export default function EnvoisPage() {
               {renderField("adresse", "Adresse", {
                 required: true,
                 icon: MapPin,
-                placeholder: "7 AVENUE MOZART",
+                placeholder: "ex : 7 avenue Mozart",
               })}
               {renderField("codePostal", "Code postal", {
                 required: true,
-                placeholder: "75016",
+                placeholder: "ex : 75016",
               })}
               {renderField("ville", "Ville", {
                 required: true,
-                placeholder: "PARIS",
+                placeholder: "ex : Paris",
               })}
             </div>
 
@@ -462,12 +695,12 @@ export default function EnvoisPage() {
               {renderField("societe", "Société", {
                 required: true,
                 icon: Building2,
-                placeholder: "BOULANGERIE RAYBAUD",
+                placeholder: "ex : Boulangerie Raybaud",
               })}
               {renderField("societeOuFonction", "Société ou Fonction", {
                 required: true,
                 icon: Building2,
-                placeholder: "LA FLUTE ENCHANTEE",
+                placeholder: "ex : Raison sociale ou fonction du contact",
               })}
             </div>
 
@@ -475,7 +708,7 @@ export default function EnvoisPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {renderField("email", "Email", {
                 icon: Mail,
-                placeholder: "email@exemple.com",
+                placeholder: "ex : contact@boutique.fr",
               })}
               {renderField("requestDate", "Date demande", {
                 type: "datetime-local",
@@ -484,7 +717,7 @@ export default function EnvoisPage() {
               {renderField("piece", "Pièce à envoyer", {
                 required: true,
                 icon: Package,
-                placeholder: "Ex: Hooper...",
+                placeholder: "ex : Hooper, rouleau TPE, clavier...",
               })}
             </div>
 
@@ -511,8 +744,21 @@ export default function EnvoisPage() {
         </div>
       )}
 
+      {/* ── No results ── */}
+      {shipments.length > 0 && filtered.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mb-3">
+            <Search size={24} className="text-gray-300" />
+          </div>
+          <p className="text-sm font-medium text-gray-500">Aucun résultat</p>
+          <p className="text-xs text-gray-400 mt-1">
+            Modifiez votre recherche ou filtre
+          </p>
+        </div>
+      )}
+
       {/* ── Shipments table ── */}
-      {shipments.length > 0 && (
+      {filtered.length > 0 && (
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto">
@@ -540,7 +786,7 @@ export default function EnvoisPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {[...pending, ...sent].map((s) => (
+                {paginated.map((s) => (
                   <tr
                     key={s._id}
                     className={
@@ -620,7 +866,7 @@ export default function EnvoisPage() {
 
           {/* Mobile cards */}
           <div className="md:hidden divide-y divide-gray-100">
-            {[...pending, ...sent].map((s) => (
+            {paginated.map((s) => (
               <div
                 key={s._id}
                 className={`p-4 space-y-2 ${s.sent ? "opacity-60" : ""}`}
@@ -712,6 +958,31 @@ export default function EnvoisPage() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {filtered.length > 0 && totalPageCount > 1 && (
+        <div className="flex items-center justify-center gap-3 py-4">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <span className="text-sm text-gray-500">
+            Page {currentPage} / {totalPageCount}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage((p) => Math.min(totalPageCount, p + 1))
+            }
+            disabled={currentPage === totalPageCount}
+            className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+          >
+            <ChevronRight size={16} />
+          </button>
         </div>
       )}
 

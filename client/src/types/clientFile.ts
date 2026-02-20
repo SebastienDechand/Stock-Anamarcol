@@ -1,5 +1,22 @@
+export type ClientFileDocType =
+  | "bdc"
+  | "rapport"
+  | "pvrecette"
+  | "visite"
+  | "autre";
+
+export interface ClientFileDoc {
+  _id: string;
+  name: string;
+  filename: string;
+  type: ClientFileDocType;
+  uploadedAt: string;
+  uploadedBy?: string;
+}
+
 export interface Equipement {
   nbCashguard: number;
+  nbFusion: number;
   nbCaisses: number;
   nbAutresMateriels: number;
   nbBalancesCaisses: number;
@@ -39,6 +56,7 @@ export interface ClientFile {
   ouverturePrevue?: string;
   equipement: Equipement;
   remarques?: string;
+  documents?: ClientFileDoc[];
   contactRef?:
     | string
     | { _id: string; nom: string; email?: string; tel?: string };

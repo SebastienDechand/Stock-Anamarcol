@@ -222,7 +222,13 @@ export const getShipments = async (
 ): Promise<void> => {
   try {
     await autoArchiveIfNeeded();
-    const shipments = await ShipmentModel.find().sort({ createdAt: -1 }).lean();
+    const { clientFileId } = req.query;
+    const filter: Record<string, unknown> = {};
+    if (clientFileId && typeof clientFileId === "string")
+      filter.clientFile = clientFileId;
+    const shipments = await ShipmentModel.find(filter)
+      .sort({ createdAt: -1 })
+      .lean();
     res.status(200).json(shipments);
   } catch (err) {
     console.error("Error fetching shipments:", err);
@@ -247,6 +253,7 @@ export const createShipment = async (
     societe,
     piece,
     requestDate,
+    clientFile,
   } = req.body;
 
   // Validate required fields
@@ -279,6 +286,7 @@ export const createShipment = async (
       societeOuFonction,
       societe,
       piece,
+      clientFile: clientFile || undefined,
       requestDate: requestDate ? new Date(requestDate) : undefined,
       createdBy: res.locals.user?._id?.toString(),
       createdByName: res.locals.user?.pseudo,

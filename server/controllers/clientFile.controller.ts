@@ -1,7 +1,45 @@
 import { Request, Response } from "express";
+import path from "path";
+import fs from "fs";
+import multer from "multer";
 import ClientFileModel from "../models/clientFile.model";
+import type { ClientFileDocType } from "../models/clientFile.model";
 import { validateObjectId } from "../utils/validate.utils";
 import { logEvent } from "../utils/audit.utils";
+
+// ─── Multer config for client file documents ───────────────────────────────────
+const UPLOAD_DIR = path.join(process.cwd(), "uploads", "client-files");
+
+export const docUpload = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => {
+      fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+      cb(null, UPLOAD_DIR);
+    },
+    filename: (_req, file, cb) => {
+      const safe = file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
+      cb(null, `${Date.now()}-${safe}`);
+    },
+  }),
+  limits: { fileSize: 25 * 1024 * 1024 }, // 25 MB
+  fileFilter: (_req, file, cb) => {
+    const allowed = [
+      "application/pdf",
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // xlsx
+      "application/vnd.ms-excel", // xls
+    ];
+    if (allowed.includes(file.mimetype)) cb(null, true);
+    else
+      cb(
+        new Error(
+          "Type de fichier non supporté (PDF, image, XLS ou XLSX uniquement)",
+        ),
+      );
+  },
+});
 
 // ─── List all client files ────────────────────────────────────────────────────
 export const getClientFiles = async (
@@ -148,5 +186,83 @@ export const deleteClientFile = async (
   } catch (err) {
     console.error("Error deleting client file:", err);
     res.status(500).json({ message: "Erreur interne du serveur" });
+  }
+};
+
+// ─── Upload a document to a client file ───────────────────────────────────────
+export const uploadDocument = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  if (!validateObjectId(req.params.id as string, res)) return;
+  if (!req.file) {
+    res.status(400).json({ message: "Aucun fichier fourni" });
+    return;
+  }
+
+  try {
+    const file = await ClientFileModel.findById(req.params.id);
+    if (!file) {
+      res.status(404).json({ message: "Fiche client introuvable" });
+      return;
+    }
+
+    const docType: ClientFileDocType =
+      (req.body.type as ClientFileDocType) || "autre";
+
+    file.documents.push({
+      name: req.file.originalname,
+      filename: req.file.filename,
+      type: docType,
+      uploadedAt: new Date(),
+      uploadedBy: res.locals.user?.pseudo,
+    } as never);
+
+    const updated = await file.save();
+    res.status(201).json(updated);
+  } catch (err) {
+    console.error("Error uploading document:", err);
+    res.status(500).json({ message: "Erreur lors de l'upload" });
+  }
+};
+
+// ─── Delete a document from a client file ─────────────────────────────────────
+export const deleteDocument = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  if (!validateObjectId(req.params.id as string, res)) return;
+  if (!validateObjectId(req.params.docId as string, res)) return;
+
+  try {
+    const file = await ClientFileModel.findById(req.params.id);
+    if (!file) {
+      res.status(404).json({ message: "Fiche client introuvable" });
+      return;
+    }
+
+    const doc = file.documents.find(
+      (d) => d._id.toString() === req.params.docId,
+    );
+    if (!doc) {
+      res.status(404).json({ message: "Document introuvable" });
+      return;
+    }
+
+    // Delete file from disk
+    const filePath = path.join(UPLOAD_DIR, doc.filename);
+    fs.unlink(filePath, (err) => {
+      if (err) console.warn("Could not delete file from disk:", filePath, err);
+    });
+
+    file.documents = file.documents.filter(
+      (d) => d._id.toString() !== req.params.docId,
+    ) as never;
+
+    const updated = await file.save();
+    res.status(200).json(updated);
+  } catch (err) {
+    console.error("Error deleting document:", err);
+    res.status(500).json({ message: "Erreur lors de la suppression" });
   }
 };

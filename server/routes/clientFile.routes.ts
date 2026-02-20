@@ -16,6 +16,27 @@ router.get("/:id", requireAuth, clientFileController.getClientFile);
 router.post("/", requireMonteur, clientFileController.createClientFile);
 router.put("/:id", requireMonteur, clientFileController.updateClientFile);
 
+// Documents: upload (monteur+) and delete (monteur+)
+router.post(
+  "/:id/documents",
+  requireMonteur,
+  (req, res, next) => {
+    clientFileController.docUpload.single("file")(req, res, (err) => {
+      if (err) {
+        res.status(400).json({ message: (err as Error).message });
+        return;
+      }
+      next();
+    });
+  },
+  clientFileController.uploadDocument,
+);
+router.delete(
+  "/:id/documents/:docId",
+  requireMonteur,
+  clientFileController.deleteDocument,
+);
+
 // Delete: admin/superadmin only
 router.delete("/:id", requireAdmin, clientFileController.deleteClientFile);
 

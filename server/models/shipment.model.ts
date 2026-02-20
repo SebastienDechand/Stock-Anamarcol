@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
 export interface IShipment extends Document {
   /* ── Client card ── */
@@ -14,6 +14,7 @@ export interface IShipment extends Document {
   societe: string;
   /* ── Shipment ── */
   piece: string;
+  clientFile?: Types.ObjectId;
   requestDate?: Date;
   createdBy?: string;
   createdByName?: string;
@@ -37,6 +38,11 @@ const ShipmentSchema = new Schema<IShipment>(
     societeOuFonction: { type: String, required: true, trim: true },
     societe: { type: String, required: true, trim: true },
     piece: { type: String, required: true, trim: true },
+    clientFile: {
+      type: Schema.Types.ObjectId,
+      ref: "clientfile",
+      default: null,
+    },
     requestDate: { type: Date, default: null },
     createdBy: { type: String },
     createdByName: { type: String },
