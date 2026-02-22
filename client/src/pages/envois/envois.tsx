@@ -117,6 +117,7 @@ export default function EnvoisPage() {
     "all",
   );
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const ITEMS_PER_PAGE = 20;
 
   useEffect(() => {
@@ -849,7 +850,7 @@ export default function EnvoisPage() {
                         )}
                         {auth?.isAdmin && (
                           <button
-                            onClick={() => remove(s._id)}
+                            onClick={() => setDeleteConfirm(s._id)}
                             className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                             title="Supprimer"
                           >
@@ -946,7 +947,7 @@ export default function EnvoisPage() {
                     )}
                     {auth?.isAdmin && (
                       <button
-                        onClick={() => remove(s._id)}
+                        onClick={() => setDeleteConfirm(s._id)}
                         className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                         title="Supprimer"
                       >
@@ -1017,6 +1018,39 @@ export default function EnvoisPage() {
           onClose={() => setIsHistoryOpen(false)}
           onArchived={refreshShipments}
         />
+      )}
+
+      {/* Confirmation suppression */}
+      {deleteConfirm && (
+        <Portal>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 animate-in fade-in zoom-in-95">
+              <p className="text-sm font-semibold text-gray-800 mb-1">
+                Supprimer cet envoi ?
+              </p>
+              <p className="text-xs text-gray-500 mb-5">
+                Cette action est irréversible.
+              </p>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setDeleteConfirm(null)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={async () => {
+                    await remove(deleteConfirm);
+                    setDeleteConfirm(null);
+                  }}
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition-colors"
+                >
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          </div>
+        </Portal>
       )}
 
       {/* Detail modal */}

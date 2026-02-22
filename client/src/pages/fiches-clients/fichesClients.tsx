@@ -28,6 +28,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import axios from "axios";
 import toast from "react-hot-toast";
 import type { ClientFile, ClientFilesState, Equipement } from "../../types";
 
@@ -64,7 +65,18 @@ const BDC_MAP: Record<string, BDCEntry> = {
   "n° de siret": { type: "str", key: "siret" },
   siret: { type: "str", key: "siret" },
   "n° de tva intra": { type: "str", key: "tvaIntra" },
+  "n° de tva intracommunautaire": { type: "str", key: "tvaIntra" },
+  "n° de t.v.a intracommunautaire": { type: "str", key: "tvaIntra" },
+  "n° tva intra": { type: "str", key: "tvaIntra" },
+  "n° tva intracommunautaire": { type: "str", key: "tvaIntra" },
+  "n° tva": { type: "str", key: "tvaIntra" },
   "tva intra": { type: "str", key: "tvaIntra" },
+  "tva intracommunautaire": { type: "str", key: "tvaIntra" },
+  "numero de tva intra": { type: "str", key: "tvaIntra" },
+  "numero de tva intracommunautaire": { type: "str", key: "tvaIntra" },
+  "numéro de tva intra": { type: "str", key: "tvaIntra" },
+  "numero tva": { type: "str", key: "tvaIntra" },
+  "no tva intra": { type: "str", key: "tvaIntra" },
   "code naf": { type: "str", key: "codeNaf" },
   "jour(s) de fermeture": { type: "str", key: "joursFermeture" },
   "jours de fermeture": { type: "str", key: "joursFermeture" },
@@ -136,6 +148,8 @@ const BDC_MAP: Record<string, BDCEntry> = {
   "pc backoffice": { type: "equipNum", key: "pcBackoffice" },
   "pc de gestion": { type: "equipNum", key: "pcBackoffice" },
   "pc gestion": { type: "equipNum", key: "pcBackoffice" },
+  "pc de centralisation": { type: "equipNum", key: "pcCentralisation" },
+  "pc centralisation": { type: "equipNum", key: "pcCentralisation" },
   // equipement - booleans
   "borne allergene": { type: "equipBool", key: "borneAllergene" },
   "borne allergène": { type: "equipBool", key: "borneAllergene" },
@@ -161,11 +175,12 @@ type BDCPatch = Omit<Partial<ClientFormSnapshot>, "equipement"> & {
   equipement?: Partial<Equipement>;
 };
 
-/** Lowercase + strip accents + collapse spaces → robust key lookup */
+/** Lowercase + strip accents + strip dots + collapse spaces → robust key lookup */
 function normalizeKey(s: string): string {
   return s
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\u0300-\u036f]/g, "") // accents
+    .replace(/\./g, "")              // T.V.A → TVA
     .toLowerCase()
     .replace(/\s+/g, " ")
     .trim();
@@ -325,33 +340,71 @@ async function parsePdfBDC(file: File): Promise<BDCPatch> {
     for (const lineItems of lines) {
       if (lineItems.length === 0) continue;
 
-      // Pair items as (label, value) — strip trailing colons from labels.
-      // If the next item is itself a recognized BDC key (e.g. empty cell followed
-      // by a right-column label like "PC DE GESTION"), treat current label as
-      // having no value and don't consume the next item as a value.
+      // Pair items as (label, value).
+      // A BDC key may span multiple consecutive PDF text items (e.g. "N°", "TVA",
+      // "INTRA" are three separate items for the label "N° TVA INTRA"). We try to
+      // concatenate up to 4 consecutive items to find the longest matching key,
+      // then take the item immediately after as the value.
+      // Standalone colon items (":" alone) between a key and its value are skipped.
       for (let j = 0; j < lineItems.length; ) {
-        const rawLabel = lineItems[j].replace(/:+\s*$/, "").trim();
-        const nextRaw =
-          j + 1 < lineItems.length
-            ? lineItems[j + 1].replace(/:+\s*$/, "").trim()
-            : null;
-        const nextIsKey =
-          nextRaw !== null && !!BDC_MAP_NORM[normalizeKey(nextRaw)];
+        const item = lineItems[j].replace(/:+\s*$/, "").trim();
+        if (!item) { j++; continue; }
 
-        if (nextRaw === null || nextIsKey) {
-          // Current label has no value — check for inline colon fallback
-          const idx = rawLabel.indexOf(":");
-          if (idx > 0) {
+        // Try matching 1–4 consecutive items as a BDC key (longest match first)
+        let keyLen = 0;
+        let rawLabel = "";
+        for (let tryLen = Math.min(4, lineItems.length - j); tryLen >= 1; tryLen--) {
+          const candidate = lineItems
+            .slice(j, j + tryLen)
+            .map((s) => s.replace(/:+\s*$/, "").trim())
+            .filter(Boolean)
+            .join(" ");
+          if (BDC_MAP_NORM[normalizeKey(candidate)]) {
+            keyLen = tryLen;
+            rawLabel = candidate;
+            break;
+          }
+        }
+
+        if (keyLen === 0) {
+          // No key found — check for inline colon (e.g. "N° TVA INTRA : FR123…")
+          const colonIdx = item.indexOf(":");
+          if (colonIdx > 0) {
             allEntries.push({
-              label: rawLabel.substring(0, idx).trim(),
-              value: rawLabel.substring(idx + 1).trim(),
+              label: item.substring(0, colonIdx).trim(),
+              value: item.substring(colonIdx + 1).trim(),
             });
           }
-          j += 1;
+          j++;
+          continue;
+        }
+
+        // Key found — skip standalone colon items, then take the next real item as value
+        let valueIdx = j + keyLen;
+        while (
+          valueIdx < lineItems.length &&
+          lineItems[valueIdx].replace(/[:\s]/g, "") === ""
+        ) {
+          valueIdx++;
+        }
+        const nextRaw =
+          valueIdx < lineItems.length
+            ? lineItems[valueIdx].replace(/:+\s*$/, "").trim()
+            : null;
+
+        if (nextRaw && !BDC_MAP_NORM[normalizeKey(nextRaw)]) {
+          allEntries.push({ label: rawLabel, value: nextRaw });
+          j = valueIdx + 1;
         } else {
-          // Normal pair
-          if (rawLabel) allEntries.push({ label: rawLabel, value: nextRaw });
-          j += 2;
+          // No value after key — try inline colon on the first item
+          const colonIdx = item.indexOf(":");
+          if (colonIdx > 0) {
+            allEntries.push({
+              label: item.substring(0, colonIdx).trim(),
+              value: item.substring(colonIdx + 1).trim(),
+            });
+          }
+          j = valueIdx;
         }
       }
     }
@@ -377,6 +430,7 @@ const emptyEquipement: Equipement = {
   licencesTactis: 0,
   licencesInno: 0,
   pcBackoffice: 0,
+  pcCentralisation: 0,
   borneAllergene: false,
   borneCommande: false,
   etiquettesElectronique: false,
@@ -546,8 +600,19 @@ function ClientFileModal({
         toast.success("Fiche créée");
       }
       onClose();
-    } catch {
-      toast.error("Erreur lors de l'enregistrement");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
+        const data = err.response.data as {
+          message: string;
+          duplicate?: { nom: string; societe?: string };
+        };
+        const who = [data.duplicate?.nom, data.duplicate?.societe]
+          .filter(Boolean)
+          .join(" — ");
+        toast.error(`${data.message}${who ? ` (${who})` : ""}`, { duration: 5000 });
+      } else {
+        toast.error("Erreur lors de l'enregistrement");
+      }
     } finally {
       setLoading(false);
     }
@@ -870,6 +935,7 @@ function ClientFileModal({
                     { key: "licencesTactis", label: "Licences TACTIS" },
                     { key: "licencesInno", label: "Licences INNO" },
                     { key: "pcBackoffice", label: "PC Backoffice" },
+                    { key: "pcCentralisation", label: "PC Centralisation" },
                   ] as { key: keyof Equipement; label: string }[]
                 ).map(({ key, label }) => (
                   <div key={key}>
@@ -1140,16 +1206,20 @@ export default function FichesClients() {
     return <Navigate to="/home" replace />;
   }
 
-  const filtered = clientFiles.filter((f) => {
-    const q = search.toLowerCase();
-    return (
-      f.nom.toLowerCase().includes(q) ||
-      (f.prenom ?? "").toLowerCase().includes(q) ||
-      (f.societe ?? "").toLowerCase().includes(q) ||
-      (f.ville ?? "").toLowerCase().includes(q) ||
-      (f.cp ?? "").includes(q)
+  const filtered = clientFiles
+    .filter((f) => {
+      const q = search.toLowerCase();
+      return (
+        f.nom.toLowerCase().includes(q) ||
+        (f.prenom ?? "").toLowerCase().includes(q) ||
+        (f.societe ?? "").toLowerCase().includes(q) ||
+        (f.ville ?? "").toLowerCase().includes(q) ||
+        (f.cp ?? "").includes(q)
+      );
+    })
+    .sort((a, b) =>
+      a.nom.localeCompare(b.nom, "fr", { sensitivity: "base" }),
     );
-  });
 
   const totalPageCount = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice(

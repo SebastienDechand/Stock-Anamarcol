@@ -684,6 +684,7 @@ export default function DossierClient() {
     null,
   );
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [deleteDocConfirm, setDeleteDocConfirm] = useState<string | null>(null);
 
   // ── Envois liés à cette fiche ─────────────────────────────────────────────────
   const [linkedShipments, setLinkedShipments] = useState<Shipment[]>([]);
@@ -831,11 +832,9 @@ export default function DossierClient() {
     )
       return null;
     return (
-      <div className="flex gap-3">
-        <span className="text-gray-400 w-44 shrink-0 text-xs leading-relaxed">
-          {label}
-        </span>
-        <span className="text-gray-800 font-medium text-xs break-all leading-relaxed">
+      <div>
+        <span className="text-[10px] text-gray-400 block leading-tight">{label}</span>
+        <span className="text-xs text-gray-800 font-medium break-words leading-snug">
           {typeof value === "boolean" ? "Oui" : String(value)}
         </span>
       </div>
@@ -976,76 +975,105 @@ export default function DossierClient() {
             ))}
           </div>
 
-          {/* Full details — 3 cols × 2 rows */}
-          <div className="px-6 py-5 grid grid-cols-1 lg:grid-cols-3 gap-x-8 gap-y-6">
-            {/* Row 1 — Col 1 : Identité */}
-            <div className="space-y-1.5">
-              <p className={sec}>Identité</p>
-              {row("Raison sociale", clientFile.raisonSociale)}
-              {row("Nom du magasin", clientFile.nomMagasin)}
-              {row("SIRET", clientFile.siret)}
-              {row("TVA Intra", clientFile.tvaIntra)}
-              {row("Code NAF", clientFile.codeNaf)}
-              {row("Statut juridique", clientFile.statutJuridique)}
-            </div>
+          {/* Full details — info (top/left) + map (bottom/right) */}
+          <div className="px-6 py-5 grid grid-cols-1 xl:grid-cols-[7fr_3fr] gap-6 items-start">
 
-            {/* Row 1 — Col 2 : Coordonnées */}
-            <div className="space-y-1.5">
-              <p className={sec}>Coordonnées</p>
-              {row("Adresse", clientFile.adresse)}
-              {row(
-                "CP / Ville",
-                [clientFile.cp, clientFile.ville].filter(Boolean).join(" ") || undefined,
-              )}
-              {row("Téléphone", clientFile.tel)}
-              {row("Mobile", clientFile.mobile)}
-              {row("Email", clientFile.email)}
-              {row("Jours de fermeture", clientFile.joursFermeture)}
-            </div>
-
-            {/* Row 1 — Col 3 : Planning */}
-            <div className="space-y-1.5">
-              <p className={sec}>Planning</p>
-              {row("Installation souhaitée", clientFile.dateInstallationSouhaitee)}
-              {row("Formation souhaitée", clientFile.dateFormationSouhaitee)}
-              {row("Ouverture prévue", clientFile.ouverturePrevue)}
-              {row("Visite préinstallation", clientFile.visitePreinstallation || undefined)}
-              {row("Saisir fichier produit", clientFile.saisirFichierProduit || undefined)}
-              {row("Découpe plan menuiserie", clientFile.decoupePlanMenuiserie || undefined)}
-              {row("Découpe plan marbrerie", clientFile.decoupePlanMarbrerie || undefined)}
-            </div>
-
-            {/* Row 2 — Col 1+2 : Équipements */}
-            <div className="space-y-1.5 lg:col-span-2">
-              <p className={sec}>Équipements commandés</p>
-              <div className="grid grid-cols-2 gap-x-8">
-                <div className="space-y-1.5">
-                  {row("CashGuard", eq.nbCashguard || undefined)}
-                  {row("Caisses", eq.nbCaisses || undefined)}
-                  {row("Balances / Caisses", eq.nbBalancesCaisses || undefined)}
-                  {row("Licences TACTIS", eq.licencesTactis || undefined)}
-                  {row("Licences INNO", eq.licencesInno || undefined)}
-                  {row("PC Backoffice", eq.pcBackoffice || undefined)}
-                </div>
-                <div className="space-y-1.5">
-                  {row("Autres matériels", eq.nbAutresMateriels || undefined)}
-                  {row("Borne Allergène", eq.borneAllergene || undefined)}
-                  {row("Borne de commande", eq.borneCommande || undefined)}
-                  {row("Étiquettes électroniques", eq.etiquettesElectronique || undefined)}
-                  {row("Carte fidélité", eq.carteFidelite || undefined)}
-                </div>
-              </div>
-            </div>
-
-            {/* Row 2 — Col 3 : Remarques */}
-            {clientFile.remarques ? (
+            {/* ── Info panel : 1 col → 2 cols → 3 cols → 2 cols (xl) ── */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 gap-x-6 gap-y-6">
+              {/* Identité */}
               <div className="space-y-1.5">
-                <p className={sec}>Remarques</p>
-                <p className="text-xs text-gray-700 whitespace-pre-wrap leading-relaxed">
-                  {clientFile.remarques}
-                </p>
+                <p className={sec}>Identité</p>
+                {row("Raison sociale", clientFile.raisonSociale)}
+                {row("Nom du magasin", clientFile.nomMagasin)}
+                {row("SIRET", clientFile.siret)}
+                {row("TVA Intra", clientFile.tvaIntra)}
+                {row("Code NAF", clientFile.codeNaf)}
+                {row("Statut juridique", clientFile.statutJuridique)}
               </div>
-            ) : <div />}
+
+              {/* Coordonnées */}
+              <div className="space-y-1.5">
+                <p className={sec}>Coordonnées</p>
+                {row("Adresse", clientFile.adresse)}
+                {row(
+                  "CP / Ville",
+                  [clientFile.cp, clientFile.ville].filter(Boolean).join(" ") || undefined,
+                )}
+                {row("Téléphone", clientFile.tel)}
+                {row("Mobile", clientFile.mobile)}
+                {row("Email", clientFile.email)}
+                {row("Jours de fermeture", clientFile.joursFermeture)}
+              </div>
+
+              {/* Planning */}
+              <div className="space-y-1.5">
+                <p className={sec}>Planning</p>
+                {row("Installation souhaitée", clientFile.dateInstallationSouhaitee)}
+                {row("Formation souhaitée", clientFile.dateFormationSouhaitee)}
+                {row("Ouverture prévue", clientFile.ouverturePrevue)}
+                {row("Visite préinstallation", clientFile.visitePreinstallation || undefined)}
+                {row("Saisir fichier produit", clientFile.saisirFichierProduit || undefined)}
+                {row("Découpe plan menuiserie", clientFile.decoupePlanMenuiserie || undefined)}
+                {row("Découpe plan marbrerie", clientFile.decoupePlanMarbrerie || undefined)}
+              </div>
+
+              {/* Équipements — pleine largeur du panneau gauche */}
+              <div className="space-y-1.5">
+                <p className={sec}>Équipements commandés</p>
+                <div className="grid grid-cols-2 gap-x-8">
+                  <div className="space-y-1.5">
+                    {row("CashGuard", eq.nbCashguard || undefined)}
+                    {row("Caisses", eq.nbCaisses || undefined)}
+                    {row("Balances / Caisses", eq.nbBalancesCaisses || undefined)}
+                    {row("Licences TACTIS", eq.licencesTactis || undefined)}
+                    {row("Licences INNO", eq.licencesInno || undefined)}
+                    {row("PC Backoffice", eq.pcBackoffice || undefined)}
+                    {row("PC Centralisation", eq.pcCentralisation || undefined)}
+                  </div>
+                  <div className="space-y-1.5">
+                    {row("Autres matériels", eq.nbAutresMateriels || undefined)}
+                    {row("Borne Allergène", eq.borneAllergene || undefined)}
+                    {row("Borne de commande", eq.borneCommande || undefined)}
+                    {row("Étiquettes électroniques", eq.etiquettesElectronique || undefined)}
+                    {row("Carte fidélité", eq.carteFidelite || undefined)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Remarques */}
+              {clientFile.remarques && (
+                <div className="space-y-1.5">
+                  <p className={sec}>Remarques</p>
+                  <p className="text-xs text-gray-700 whitespace-pre-wrap leading-relaxed">
+                    {clientFile.remarques}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* ── Right panel : Google Maps (30%) ── */}
+            <div className="flex flex-col">
+              <p className={sec}>Localisation</p>
+              {(clientFile.adresse || clientFile.cp || clientFile.ville) ? (
+                <iframe
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(
+                    [clientFile.adresse, clientFile.cp, clientFile.ville]
+                      .filter(Boolean)
+                      .join(", ")
+                  )}&output=embed&hl=fr`}
+                  className="flex-1 min-h-[320px] w-full rounded-lg border-0"
+                  loading="lazy"
+                  title="Localisation client"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              ) : (
+                <div className="flex-1 min-h-[320px] rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center">
+                  <p className="text-xs text-gray-400 italic text-center px-4">
+                    Aucune adresse renseignée
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -1169,7 +1197,7 @@ export default function DossierClient() {
                         <FileDown size={14} />
                       </a>
                       <button
-                        onClick={() => handleDeleteDoc(doc._id)}
+                        onClick={() => setDeleteDocConfirm(doc._id)}
                         className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
                         title="Supprimer"
                       >
@@ -1535,6 +1563,39 @@ export default function DossierClient() {
             fetchLinkedReports();
           }}
         />
+      )}
+
+      {/* ── Delete doc confirm ──────────────────────────────────────────────── */}
+      {deleteDocConfirm && (
+        <Portal>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 space-y-4">
+              <h3 className="font-semibold text-gray-900">
+                Supprimer ce document ?
+              </h3>
+              <p className="text-sm text-gray-500">
+                Cette action est irréversible.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setDeleteDocConfirm(null)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={async () => {
+                    await handleDeleteDoc(deleteDocConfirm);
+                    setDeleteDocConfirm(null);
+                  }}
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition-colors"
+                >
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          </div>
+        </Portal>
       )}
 
       {/* ── Delete confirm ──────────────────────────────────────────────────── */}

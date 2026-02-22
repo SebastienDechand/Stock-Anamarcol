@@ -23,6 +23,7 @@ export interface Equipement {
   licencesTactis: number;
   licencesInno: number;
   pcBackoffice: number;
+  pcCentralisation: number;
   borneAllergene: boolean;
   borneCommande: boolean;
   etiquettesElectronique: boolean;

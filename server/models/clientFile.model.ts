@@ -27,6 +27,7 @@ export interface IEquipement {
   licencesTactis: number;
   licencesInno: number;
   pcBackoffice: number;
+  pcCentralisation: number;
   borneAllergene: boolean;
   borneCommande: boolean;
   etiquettesElectronique: boolean;
@@ -87,6 +88,7 @@ const equipementSchema = new Schema<IEquipement>(
     licencesTactis: { type: Number, default: 0 },
     licencesInno: { type: Number, default: 0 },
     pcBackoffice: { type: Number, default: 0 },
+    pcCentralisation: { type: Number, default: 0 },
     borneAllergene: { type: Boolean, default: false },
     borneCommande: { type: Boolean, default: false },
     etiquettesElectronique: { type: Boolean, default: false },

@@ -87,6 +87,37 @@ export const createClientFile = async (
 ): Promise<void> => {
   try {
     const data = { ...req.body, createdBy: res.locals.user?.pseudo };
+
+    // ─── Duplicate check ─────────────────────────────────────────────────────
+    // 1. SIRET + adresse (même enseigne, même boutique)
+    if (data.siret?.trim() && data.adresse?.trim()) {
+      const bySiretAddr = await ClientFileModel.findOne({
+        siret: data.siret.trim(),
+        adresse: { $regex: `^${data.adresse.trim()}$`, $options: "i" },
+      }).lean();
+      if (bySiretAddr) {
+        res.status(409).json({
+          message: "Une fiche client avec ce SIRET et cette adresse existe déjà",
+          duplicate: { _id: bySiretAddr._id, nom: bySiretAddr.nom, societe: bySiretAddr.societe },
+        });
+        return;
+      }
+    }
+    // 2. nom + adresse
+    if (data.nom?.trim() && data.adresse?.trim()) {
+      const byAddr = await ClientFileModel.findOne({
+        nom: { $regex: `^${data.nom.trim()}$`, $options: "i" },
+        adresse: { $regex: `^${data.adresse.trim()}$`, $options: "i" },
+      }).lean();
+      if (byAddr) {
+        res.status(409).json({
+          message: "Une fiche client avec ce nom et cette adresse existe déjà",
+          duplicate: { _id: byAddr._id, nom: byAddr.nom, societe: byAddr.societe },
+        });
+        return;
+      }
+    }
+
     const file = await ClientFileModel.create(data);
     await logEvent(
       "create",
