@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎨 Stock Anamarcol — Frontend
+# Stock Anamarcol — Frontend
 
 **Application React SPA pour la gestion de stock Anamarcol**
 
@@ -18,128 +18,140 @@ Interface moderne, responsive et performante.
 
 ## 📦 Stack technique
 
-| Technologie | Version | Rôle |
-|---|---|---|
-| ⚛️ React | `19.2` | Bibliothèque UI |
-| 🟦 TypeScript | `5.9` | Typage statique |
-| ⚡ Vite | `6.3` | Bundler & serveur de dev |
-| 🗃️ Redux Toolkit | `2.11` | State management global |
-| 🔄 Redux Thunk | `3.1` | Actions asynchrones |
-| 🧭 React Router DOM | `7.13` | Routing client |
-| 🎨 Tailwind CSS | `3.4` | Framework CSS utilitaire |
-| 📡 Axios | `1.13` | Client HTTP |
-| ✨ Framer Motion | `12.x` | Animations & transitions |
-| 📊 Recharts | `3.7` | Graphiques / data viz |
-| 🧩 Radix UI | `-` | Composants accessibles |
-| 🎯 Lucide React | `0.563` | Icônes SVG |
-| 🔔 React Hot Toast | `2.6` | Notifications toast |
+| Technologie      | Version | Rôle                     |
+| ---------------- | ------- | ------------------------ |
+| React            | `19.2`  | Bibliothèque UI          |
+| TypeScript       | `5.9`   | Typage statique          |
+| Vite             | `6.3`   | Bundler & serveur de dev |
+| Redux Toolkit    | `2.11`  | State management global  |
+| Redux Thunk      | `3.1`   | Actions asynchrones      |
+| React Router DOM | `7.13`  | Routing client           |
+| Tailwind CSS     | `3.4`   | Framework CSS utilitaire |
+| Axios            | `1.13`  | Client HTTP              |
+| Framer Motion    | `12.x`  | Animations & transitions |
+| Recharts         | `3.7`   | Graphiques / data viz    |
+| Radix UI         | `-`     | Composants accessibles   |
+| Lucide React     | `0.563` | Icônes SVG               |
+| React Hot Toast  | `2.6`   | Notifications toast      |
 
 ---
 
 ## 🗂️ Architecture
 
 ```
-📁 client/
-├── 📁 public/
-│   ├── 🖼️ logo_small.jpg
-│   ├── 📄 manifest.json
-│   └── 🤖 robots.txt
+client/
+├── public/
+│   ├── manifest.json
+│   └── robots.txt
 │
-├── 📁 src/
-│   ├── 🔌 actions/                     Actions Redux (thunks Axios)
+├── src/
+│   ├── actions/                     Actions Redux (thunks Axios)
+│   │   ├── clientFile.actions.ts    CRUD fiches clients
 │   │   ├── contacts.action.ts
-│   │   ├── item.actions.ts              CRUD article, upload image, historique
-│   │   ├── items.actions.ts             Liste paginée + liste complète
-│   │   ├── menu.action.ts              Toggle sidebar
+│   │   ├── interventionReport.actions.ts  CRUD rapports d'intervention
+│   │   ├── item.actions.ts          CRUD article, upload image, historique
+│   │   ├── items.actions.ts         Liste paginée + liste complète
+│   │   ├── menu.action.ts           Toggle sidebar
 │   │   ├── statistics.actions.ts
-│   │   ├── user.actions.ts              Profil utilisateur courant
-│   │   └── users.actions.ts             Liste de tous les utilisateurs
+│   │   ├── user.actions.ts          Profil utilisateur courant
+│   │   ├── userClient.actions.ts
+│   │   └── users.actions.ts         Liste de tous les utilisateurs
 │   │
-│   ├── 🖼️ assets/                       Images statiques
+│   ├── assets/                      Images statiques
 │   │
-│   ├── 🧩 components/
-│   │   ├── Delete/                     Suppression avec confirmation
-│   │   ├── Logout/                     Déconnexion
-│   │   ├── Modales/                    AddModale, ItemModale, ContactModale, UserModale, AddMemberModale, FiltersModal, ExportOptionsModal
-│   │   ├── Sidebar/                    Navigation latérale repliable
-│   │   ├── SpinnerOverlay/             Overlay de chargement
-│   │   ├── Stats/                      Dashboard statistiques
-│   │   ├── Topbar/                     Barre supérieure
-│   │   ├── Portal.tsx                  🌀 Portail React (createPortal)
-│   │   ├── AppContext.tsx              🔐 Contexte d'authentification
-│   │   ├── Layout.tsx                  📐 Layout (Sidebar + Topbar + Outlet)
-│   │   ├── ProtectedRoute.tsx          🛡️ Guard d'authentification
-│   │   └── Routes.tsx                  🧭 Configuration des routes
+│   ├── components/
+│   │   ├── Delete/                  Suppression avec confirmation
+│   │   ├── Logout/                  Déconnexion
+│   │   ├── Modales/                 AddModale, ItemModale, ContactModale, UserModale, AddMemberModale, FiltersModal, ExportOptionsModal
+│   │   ├── Sidebar/                 Navigation latérale repliable
+│   │   ├── SpinnerOverlay/          Overlay de chargement
+│   │   ├── Stats/                   Dashboard statistiques
+│   │   ├── Topbar/                  Barre supérieure
+│   │   ├── Portal.tsx               Portail React (createPortal)
+│   │   ├── AppContext.tsx           Contexte d'authentification
+│   │   ├── Layout.tsx               Layout (Sidebar + Topbar + Outlet)
+│   │   ├── ProtectedRoute.tsx       Guard d'authentification
+│   │   └── Routes.tsx               Configuration des routes
 │   │
-│   ├── 📋 constants/                    Constantes scindées par thème
-│   │   ├── item.constants.ts            Fournisseurs, états, seuil stock bas
-│   │   ├── upload.constants.ts          Taille max, types MIME acceptés
-│   │   └── index.ts                     Barrel re-export
+│   ├── constants/
+│   │   ├── item.constants.ts        Fournisseurs, états, seuil stock bas
+│   │   ├── upload.constants.ts      Taille max, types MIME acceptés
+│   │   └── index.ts                 Barrel re-export
 │   │
-│   ├── 🪝 hooks/redux.ts               useAppDispatch & useAppSelector
-│   ├── 🛠️ lib/utils.ts                 cn() (clsx + tailwind-merge)
+│   ├── hooks/redux.ts               useAppDispatch & useAppSelector
+│   ├── lib/utils.ts                 cn() (clsx + tailwind-merge)
 │   │
-│   ├── 📄 pages/
-│   │   ├── articles/                   Page articles (grille, filtres, pagination, export CSV/XLSX/PDF, prépa batch)
-│   │   ├── contacts/                   Page contacts (annuaire par catégorie)
-│   │   ├── history/                    Page historique & audit (journal, filtres, purge superadmin)
-│   │   ├── home/                       Dashboard / accueil
-│   │   ├── login/                      Page de connexion
-│   │   ├── membres/                    Page membres (organisation par pôles)
-│   │   └── profil/                     Page profil utilisateur (édition, avatar)
+│   ├── pages/
+│   │   ├── admin-roles/             Gestion des rôles (superadmin)
+│   │   ├── articles/                Grille articles, filtres, pagination, export CSV/XLSX/PDF, prépa batch
+│   │   ├── contacts/                Annuaire par catégorie
+│   │   ├── envois/                  Gestion des envois et expéditions
+│   │   ├── fiches-clients/          Fiches détaillées par client
+│   │   ├── history/                 Journal historique & audit, filtres, purge superadmin
+│   │   ├── home/                    Dashboard / accueil
+│   │   ├── login/                   Page de connexion
+│   │   ├── membres/                 Équipe organisée par pôles
+│   │   ├── profil/                  Profil utilisateur (édition, avatar)
+│   │   └── rapports-intervention/   Rapports d'intervention terrain
 │   │
-│   ├── 🗃️ reducers/
-│   │   ├── __tests__/                  Tests des reducers
-│   │   ├── index.ts                    combineReducers (root)
+│   ├── reducers/
+│   │   ├── __tests__/               Tests des reducers
+│   │   ├── index.ts                 combineReducers (root)
+│   │   ├── clientFiles.reducer.ts
 │   │   ├── contacts.reducer.ts
-│   │   ├── item.reducer.ts             Article sélectionné + historique
-│   │   ├── items.reducer.ts            Liste paginée (items) + liste complète (allItems)
-│   │   ├── menu.reducer.ts             État sidebar
+│   │   ├── interventionReports.reducer.ts
+│   │   ├── item.reducer.ts          Article sélectionné + historique
+│   │   ├── items.reducer.ts         Liste paginée (items) + liste complète (allItems)
+│   │   ├── menu.reducer.ts          État sidebar
 │   │   ├── statistics.reducer.ts
-│   │   ├── user.reducer.ts             Utilisateur courant
-│   │   └── users.reducer.ts            Liste utilisateurs
+│   │   ├── user.reducer.ts          Utilisateur courant
+│   │   └── users.reducer.ts         Liste utilisateurs
 │   │
-│   ├── 🟦 types/                        Types TS scindés par domaine
-│   │   ├── redux.ts                     RootState, AppDispatch, AppThunk, ReduxAction
-│   │   ├── user.ts                      User
-│   │   ├── item.ts                      Item, History
-│   │   ├── contact.ts                   Contact
-│   │   ├── statistics.ts               GlobalStatistics, FournisseurStats, StatisticsState
-│   │   ├── state.ts                     ContactsState, ItemState, ItemsState, MenuState
-│   │   ├── auth.ts                      AuthContextType
-│   │   └── index.ts                     Barrel re-export
+│   ├── types/
+│   │   ├── redux.ts                 RootState, AppDispatch, AppThunk, ReduxAction
+│   │   ├── user.ts                  User
+│   │   ├── item.ts                  Item, History
+│   │   ├── contact.ts               Contact
+│   │   ├── statistics.ts            GlobalStatistics, FournisseurStats, StatisticsState
+│   │   ├── state.ts                 ContactsState, ItemState, ItemsState, MenuState
+│   │   ├── auth.ts                  AuthContextType
+│   │   └── index.ts                 Barrel re-export
 │   │
-│   ├── 🛠️ utils/                        Utilitaires scindés par thème
-│   │   ├── csv.utils.ts                 Export CSV des articles
-│   │   ├── date.utils.ts                dateParser
-│   │   └── export.utils.ts              Export XLSX et PDF des articles
+│   ├── utils/
+│   │   ├── csv.utils.ts             Export CSV des articles
+│   │   ├── date.utils.ts            dateParser
+│   │   └── export.utils.ts          Export XLSX et PDF des articles
 │   │
-│   ├── ⚛️ App.tsx                       AuthProvider + Router
-│   ├── 🚀 index.tsx                     Bootstrap (Store, Axios, render)
-│   └── 🎨 index.css                     Styles globaux + Tailwind
+│   ├── App.tsx                      AuthProvider + Router
+│   ├── index.tsx                    Bootstrap (Store, Axios, render)
+│   └── index.css                    Styles globaux + Tailwind
 │
-├── 📄 index.html
-├── ⚙️ vite.config.ts
-├── 🎨 tailwind.config.cjs
-├── 📄 tsconfig.json
-└── 📦 package.json
+├── index.html
+├── vite.config.ts
+├── tailwind.config.cjs
+├── tsconfig.json
+└── package.json
 ```
 
 ---
 
 ## 🧭 Routes
 
-| Chemin | Page | Accès | Description |
-|---|---|:---:|---|
-| `/` | Login | 🌐 Public | Connexion email + mot de passe |
-| `/home` | Dashboard | 🔒 Auth | Statistiques et vue d'ensemble |
-| `/articles` | Articles | 🔒 Auth | Grille articles, filtres, prépa batch, export CSV/XLSX/PDF |
-| `/profil` | Profil | 🔒 Auth | Profil utilisateur, avatar, édition |
-| `/membres` | Membres | 🔒 Auth | Équipe organisée par pôles |
-| `/contacts` | Contacts | 🔒 Auth | Annuaire contacts par catégorie |
-| `/historique` | Historique | 🔒 Auth | Journal des modifications et audit |
+| Chemin                   | Page                    |   Accès    | Description                                                |
+| ------------------------ | ----------------------- | :--------: | ---------------------------------------------------------- |
+| `/`                      | Login                   |   Public   | Connexion email + mot de passe                             |
+| `/home`                  | Dashboard               |    Auth    | Statistiques et vue d'ensemble                             |
+| `/articles`              | Articles                |    Auth    | Grille articles, filtres, prépa batch, export CSV/XLSX/PDF |
+| `/profil`                | Profil                  |    Auth    | Profil utilisateur, avatar, édition                        |
+| `/membres`               | Membres                 |    Auth    | Équipe organisée par pôles                                 |
+| `/contacts`              | Contacts                |    Auth    | Annuaire contacts par catégorie                            |
+| `/historique`            | Historique              |    Auth    | Journal des modifications et audit                         |
+| `/envois`                | Envois                  |    Auth    | Gestion des envois et expéditions                          |
+| `/fiches-clients`        | Fiches clients          |    Auth    | Fiches détaillées par client                               |
+| `/rapports-intervention` | Rapports d'intervention |    Auth    | Rapports d'intervention terrain                            |
+| `/admin/roles`           | Admin — Rôles           | Superadmin | Gestion des rôles utilisateurs                             |
 
-> 🛡️ Toutes les routes sauf `/` sont protégées par `<ProtectedRoute>` qui vérifie le JWT via `/jwtid`.
+> Toutes les routes sauf `/` sont protégées par `<ProtectedRoute>` qui vérifie le JWT via `/jwtid`.
 
 ---
 
@@ -151,15 +163,17 @@ Configuré avec `@reduxjs/toolkit` (`configureStore`), devTools désactivé en p
 
 ### Reducers
 
-| Reducer | Responsabilité |
-|---|---|
-| 👤 `userReducer` | Utilisateur connecté (profil, avatar, numéro) |
-| 👥 `usersReducer` | Liste de tous les utilisateurs |
-| 📦 `itemReducer` | Article sélectionné, quantité, info détaillée |
-| 📋 `itemsReducer` | Liste complète des articles |
-| 📇 `contactsReducer` | Contact sélectionné + liste |
-| 📊 `statisticsReducer` | Stats globales, par fournisseur, par état |
-| 📱 `menuReducer` | État d'ouverture de la sidebar |
+| Reducer                      | Responsabilité                                |
+| ---------------------------- | --------------------------------------------- |
+| `userReducer`                | Utilisateur connecté (profil, avatar, numéro) |
+| `usersReducer`               | Liste de tous les utilisateurs                |
+| `itemReducer`                | Article sélectionné, quantité, info détaillée |
+| `itemsReducer`               | Liste complète des articles                   |
+| `contactsReducer`            | Contact sélectionné + liste                   |
+| `clientFilesReducer`         | Fiches clients                                |
+| `interventionReportsReducer` | Rapports d'intervention                       |
+| `statisticsReducer`          | Stats globales, par fournisseur, par état     |
+| `menuReducer`                | État d'ouverture de la sidebar                |
 
 ### Pattern des actions
 
@@ -183,12 +197,12 @@ export const getUser = (uid: string) => {
 ### Flux
 
 ```
-1. 📝 Login      POST /api/user/login (email + password)
-2. 🍪 Cookie     Le serveur renvoie un cookie JWT httpOnly
-3. 🔄 Vérif      AuthProvider appelle GET /jwtid au montage
-4. 🔑 Contexte   UidContext fournit uid, role, isAdmin
-5. 🛡️ Guard      ProtectedRoute redirige vers / si non auth
-6. 🚪 Logout     GET /api/user/logout supprime le cookie
+1. Login      POST /api/user/login (email + password)
+2. Cookie     Le serveur renvoie un cookie JWT httpOnly
+3. Vérif      AuthProvider appelle GET /jwtid au montage
+4. Contexte   UidContext fournit uid, role, isAdmin
+5. Guard      ProtectedRoute redirige vers / si non auth
+6. Logout     GET /api/user/logout supprime le cookie
 ```
 
 ### Contexte (`UidContext`)
@@ -219,7 +233,7 @@ interface User {
   poste?: string;
   numero?: string;
   pole?: string;
-  role?: string;   // "user" | "admin" | "superadmin"
+  role?: string; // "user" | "admin" | "superadmin"
 }
 ```
 
@@ -237,7 +251,7 @@ interface Item {
   quantite: number;
   fournisseur: string;
   image?: string;
-  etat: string;           // "Neuf" | "SAV"
+  etat: string; // "Neuf" | "SAV"
   prepaCG?: boolean;
   prepaCaisse?: boolean;
   prepaTPV?: boolean;
@@ -268,20 +282,30 @@ interface Contact {
 ## 📋 Constantes
 
 ```typescript
-// 🏭 Fournisseurs disponibles
-FOURNISSEURS = ["Amazon", "CashGuard", "LDLC", "MD Ouest",
-  "Monétique et Services", "Oxhoo", "Solumag", "Tigra", "TPV Line", "VNE"]
+// Fournisseurs disponibles
+FOURNISSEURS = [
+  "Amazon",
+  "CashGuard",
+  "LDLC",
+  "MD Ouest",
+  "Monétique et Services",
+  "Oxhoo",
+  "Solumag",
+  "Tigra",
+  "TPV Line",
+  "VNE",
+];
 
-// 📦 États possibles
-ETATS = ["Neuf", "SAV"]
+// États possibles
+ETATS = ["Neuf", "SAV"];
 
-// 🖼️ Contraintes upload
-MAX_FILE_SIZE = 2_500_000      // 2.5 Mo
-ACCEPTED_IMAGE_TYPES = ["image/jpg", "image/jpeg", "image/png"]
+// Contraintes upload
+MAX_FILE_SIZE = 2_500_000; // 2.5 Mo
+ACCEPTED_IMAGE_TYPES = ["image/jpg", "image/jpeg", "image/png"];
 
-// ⚠️ Seuils
-LOW_STOCK_THRESHOLD = 5
-TOKEN_MAX_AGE = 3_600_000      // 1 heure
+// Seuils
+LOW_STOCK_THRESHOLD = 5;
+TOKEN_MAX_AGE = 3_600_000; // 1 heure
 ```
 
 ---
@@ -292,11 +316,11 @@ TOKEN_MAX_AGE = 3_600_000      // 1 heure
 
 Configuration dans `tailwind.config.cjs` :
 
-| Élément | Détail |
-|---|---|
-| 🎨 **Couleurs custom** | `brand` (vert), `primary` (vert), `surface` (beige/crème) |
-| ✍️ **Police** | Inter, system-ui, sans-serif |
-| 📂 **Portée** | `./index.html` et `./src/**/*.{js,jsx,ts,tsx}` |
+| Élément             | Détail                                                    |
+| ------------------- | --------------------------------------------------------- |
+| **Couleurs custom** | `brand` (vert), `primary` (vert), `surface` (beige/crème) |
+| **Police**          | Inter, system-ui, sans-serif                              |
+| **Portée**          | `./index.html` et `./src/**/*.{js,jsx,ts,tsx}`            |
 
 ### Utilitaire CSS
 
@@ -328,8 +352,8 @@ export function cn(...inputs) {
 
 ## 🌍 Variables d'environnement
 
-| Variable | 🔧 Dev | 🚀 Prod |
-|---|---|---|
+| Variable       | Dev                      | Prod                               |
+| -------------- | ------------------------ | ---------------------------------- |
 | `VITE_API_URL` | `http://localhost:4000/` | `https://stock-api.anamarcol.com/` |
 
 ---
@@ -337,22 +361,22 @@ export function cn(...inputs) {
 ## 📜 Scripts
 
 ```bash
-npm run dev         # 🔄 Serveur de dev (port 3000)
-npm run build       # 📦 Build production → build/
-npm run preview     # 👁️ Preview du build
-npm test            # 🧪 Tests Vitest
-npm run test:watch  # 🔄 Tests en mode watch
+npm run dev         # Serveur de dev (port 3000)
+npm run build       # Build production → build/
+npm run preview     # Preview du build
+npm test            # Tests Vitest
+npm run test:watch  # Tests en mode watch
 ```
 
 ---
 
 ## 🧪 Tests
 
-| | Détail |
-|---|---|
-| 🧪 **Framework** | Vitest + jsdom |
-| 📚 **Libs** | @testing-library/react, user-event, jest-dom |
-| 📂 **Emplacement** | `src/__tests__/` et `src/reducers/__tests__/` |
+|                 | Détail                                       |
+| --------------- | -------------------------------------------- |
+| **Framework**   | Vitest + jsdom                               |
+| **Libs**        | @testing-library/react, user-event, jest-dom |
+| **Emplacement** | `src/reducers/__tests__/`                    |
 
 ```bash
 npm test              # Lancer tous les tests
