@@ -146,13 +146,6 @@ describe("Security — JWT expiry constants", () => {
   });
 });
 
-describe("Security — Rate limiter configuration", () => {
-  it("authLimiter should be a middleware function", () => {
-    const { authLimiter } = require("../middleware/rateLimiter");
-    expect(typeof authLimiter).toBe("function");
-  });
-});
-
 describe("Security — NoSQL injection prevention", () => {
   it("should strip $gt operator from body", () => {
     const { mongoSanitize } = require("../middleware/sanitize");

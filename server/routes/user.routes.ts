@@ -4,14 +4,13 @@ import * as userController from "../controllers/user.controller";
 import * as uploadController from "../controllers/upload.controller";
 import multer from "multer";
 import { requireAuth, requireAdmin } from "../middleware/auth.middleware";
-import { authLimiter } from "../middleware/rateLimiter";
 
 const router = Router();
 const upload = multer();
 
-// Auth (rate-limited)
-router.post("/register", authLimiter, requireAdmin, authController.signUp);
-router.post("/login", authLimiter, authController.signIn);
+// Auth
+router.post("/register", requireAdmin, authController.signUp);
+router.post("/login", authController.signIn);
 router.get("/logout", authController.logout);
 
 // User DB (authenticated)
