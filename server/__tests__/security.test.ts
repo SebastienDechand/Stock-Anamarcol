@@ -147,11 +147,6 @@ describe("Security — JWT expiry constants", () => {
 });
 
 describe("Security — Rate limiter configuration", () => {
-  it("globalLimiter should be a middleware function", () => {
-    const { globalLimiter } = require("../middleware/rateLimiter");
-    expect(typeof globalLimiter).toBe("function");
-  });
-
   it("authLimiter should be a middleware function", () => {
     const { authLimiter } = require("../middleware/rateLimiter");
     expect(typeof authLimiter).toBe("function");

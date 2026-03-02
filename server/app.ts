@@ -5,7 +5,6 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import mongoose from "mongoose";
 import { mongoSanitize } from "./middleware/sanitize";
-import { globalLimiter } from "./middleware/rateLimiter";
 import userRoutes from "./routes/user.routes";
 import itemRoutes from "./routes/item.routes";
 import statisticsRoutes from "./routes/statistics.routes";
@@ -79,7 +78,6 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 // Routes
-app.use(globalLimiter);
 app.use("/api/user", userRoutes);
 app.use("/api/item", itemRoutes);
 app.use("/api/contacts", contactsRoutes);
