@@ -6,9 +6,11 @@ if (!process.env.CLIENT_URL) {
 }
 import { connectDB } from "./config/db";
 import app from "./app";
+import { motionDetectionService } from "./services/motionDetection.service";
 
 // Wait for MongoDB before accepting requests
-connectDB().then(() => {
+connectDB().then(async () => {
+  await motionDetectionService.loadState();
   app.listen(process.env.PORT, () => {
     console.log(`Listening on port ${process.env.PORT}`);
   });

@@ -135,7 +135,7 @@ export default function Login() {
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-6">
-          &copy; {new Date().getFullYear()} AnaMarCol - Stock Manager
+          &copy; {new Date().getFullYear()} ANAMARCOL - Stock Manager
         </p>
       </div>
     </div>

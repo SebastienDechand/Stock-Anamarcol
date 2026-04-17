@@ -13,6 +13,7 @@ import historyRoutes from "./routes/history.routes";
 import shipmentsRoutes from "./routes/shipments.routes";
 import clientFileRoutes from "./routes/clientFile.routes";
 import interventionReportRoutes from "./routes/interventionReport.routes";
+import cameraRoutes from "./routes/camera.routes";
 import { requireAuth } from "./middleware/auth.middleware";
 import cors from "cors";
 
@@ -86,6 +87,7 @@ app.use("/api/history", historyRoutes);
 app.use("/api/shipments", shipmentsRoutes);
 app.use("/api/client-files", clientFileRoutes);
 app.use("/api/intervention-reports", interventionReportRoutes);
+app.use("/api/cameras", cameraRoutes);
 
 // JWT - returns the user ID and roles
 app.get("/jwtid", requireAuth, (req: Request, res: Response) => {

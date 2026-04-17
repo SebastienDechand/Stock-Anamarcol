@@ -11,6 +11,7 @@ import FichesClients from "../pages/fiches-clients/fichesClients";
 import DossierClient from "../pages/fiches-clients/DossierClient";
 import AdminRoles from "../pages/admin-roles/adminRoles";
 import Surveillance from "../pages/surveillance/surveillance";
+import NotFound from "../pages/not-found/NotFound";
 import Layout from "./Layout";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -36,6 +37,7 @@ export default function Router() {
         <Route path="/fiches-clients/:id" element={<DossierClient />} />
         <Route path="/admin/roles" element={<AdminRoles />} />
         <Route path="/surveillance" element={<Surveillance />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );

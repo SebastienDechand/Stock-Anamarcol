@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
 import { UidContext } from "../../components/AppContext";
+import AccessDenied from "../../components/AccessDenied/AccessDenied";
 import { Clock, ChevronDown, X, Trash2, AlertTriangle } from "lucide-react";
 import toast from "react-hot-toast";
 import { ACTION_MAP, DEFAULT_ACTION, ENTITY_MAP } from "../../constants";
@@ -68,7 +69,8 @@ export default function HistoryPage() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!auth?.isAdmin) return;
+    const isAuthorized = auth?.isAdmin || auth?.isSuperadmin;
+    if (!isAuthorized) return;
     axios
       .get(`${import.meta.env.VITE_API_URL}api/history/`, {
         withCredentials: true,
@@ -97,7 +99,11 @@ export default function HistoryPage() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  if (!auth?.isAdmin) return null;
+  const isAuthorized = auth?.isAdmin || auth?.isSuperadmin;
+
+  if (!isAuthorized) {
+    return <AccessDenied />;
+  }
 
   // Only events with a known userName
   const knownEvents = events.filter((e) => e.userName);

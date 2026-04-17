@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
-import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { ShieldCheck, Search, Loader2 } from "lucide-react";
 import { UidContext } from "../../components/AppContext";
+import AccessDenied from "../../components/AccessDenied/AccessDenied";
 import { Role } from "../../constants";
 import type { User } from "../../types";
 
@@ -45,7 +45,12 @@ export default function AdminRoles() {
   const [search, setSearch] = useState("");
 
   if (!auth?.isSuperadmin) {
-    return <Navigate to="/home" replace />;
+    return (
+      <AccessDenied
+        title="Accès administrateur requis"
+        message="Cette page est réservée aux super administrateurs."
+      />
+    );
   }
 
   const filtered = users.filter((u) => {

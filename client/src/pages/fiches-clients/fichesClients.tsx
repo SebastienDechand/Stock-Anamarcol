@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks/redux";
 import { UidContext } from "../../components/AppContext";
+import AccessDenied from "../../components/AccessDenied/AccessDenied";
 import {
   getAllClientFiles,
   createClientFile,
@@ -180,7 +181,7 @@ function normalizeKey(s: string): string {
   return s
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "") // accents
-    .replace(/\./g, "")              // T.V.A → TVA
+    .replace(/\./g, "") // T.V.A → TVA
     .toLowerCase()
     .replace(/\s+/g, " ")
     .trim();
@@ -348,12 +349,19 @@ async function parsePdfBDC(file: File): Promise<BDCPatch> {
       // Standalone colon items (":" alone) between a key and its value are skipped.
       for (let j = 0; j < lineItems.length; ) {
         const item = lineItems[j].replace(/:+\s*$/, "").trim();
-        if (!item) { j++; continue; }
+        if (!item) {
+          j++;
+          continue;
+        }
 
         // Try matching 1–4 consecutive items as a BDC key (longest match first)
         let keyLen = 0;
         let rawLabel = "";
-        for (let tryLen = Math.min(4, lineItems.length - j); tryLen >= 1; tryLen--) {
+        for (
+          let tryLen = Math.min(4, lineItems.length - j);
+          tryLen >= 1;
+          tryLen--
+        ) {
           const candidate = lineItems
             .slice(j, j + tryLen)
             .map((s) => s.replace(/:+\s*$/, "").trim())
@@ -609,7 +617,9 @@ function ClientFileModal({
         const who = [data.duplicate?.nom, data.duplicate?.societe]
           .filter(Boolean)
           .join(" — ");
-        toast.error(`${data.message}${who ? ` (${who})` : ""}`, { duration: 5000 });
+        toast.error(`${data.message}${who ? ` (${who})` : ""}`, {
+          duration: 5000,
+        });
       } else {
         toast.error("Erreur lors de l'enregistrement");
       }
@@ -1203,7 +1213,12 @@ export default function FichesClients() {
   }, [search]);
 
   if (!isMonteur) {
-    return <Navigate to="/home" replace />;
+    return (
+      <AccessDenied
+        title="Accès monteur requis"
+        message="Cette page est réservée aux monteurs."
+      />
+    );
   }
 
   const filtered = clientFiles
@@ -1217,9 +1232,7 @@ export default function FichesClients() {
         (f.cp ?? "").includes(q)
       );
     })
-    .sort((a, b) =>
-      a.nom.localeCompare(b.nom, "fr", { sensitivity: "base" }),
-    );
+    .sort((a, b) => a.nom.localeCompare(b.nom, "fr", { sensitivity: "base" }));
 
   const totalPageCount = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice(

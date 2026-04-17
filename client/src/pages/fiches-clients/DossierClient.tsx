@@ -3,6 +3,7 @@ import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks/redux";
 import { UidContext } from "../../components/AppContext";
+import AccessDenied from "../../components/AccessDenied/AccessDenied";
 import {
   createInterventionReport,
   updateInterventionReport,
@@ -626,7 +627,9 @@ function ReportDetailView({
                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest pt-2 pb-0.5">
                       Cassettes
                     </p>
-                    {unit.k7Slots.map((s, i) => row(`S${i + 1}`, s || undefined))}
+                    {unit.k7Slots.map((s, i) =>
+                      row(`S${i + 1}`, s || undefined),
+                    )}
                   </>
                 )}
                 {unit.assignedCaisses?.length > 0 &&
@@ -690,6 +693,16 @@ export default function DossierClient() {
   const [linkedShipments, setLinkedShipments] = useState<Shipment[]>([]);
   const [shipmentsLoading, setShipmentsLoading] = useState(false);
   const [detailShipment, setDetailShipment] = useState<Shipment | null>(null);
+
+  // ── Protection d'accès ─────────────────────────────────────────────────────────
+  if (!isMonteur) {
+    return (
+      <AccessDenied
+        title="Accès monteur requis"
+        message="Cette page est réservée aux monteurs."
+      />
+    );
+  }
 
   const fetchLinkedReports = async () => {
     if (!id) return;
@@ -833,7 +846,9 @@ export default function DossierClient() {
       return null;
     return (
       <div>
-        <span className="text-[10px] text-gray-400 block leading-tight">{label}</span>
+        <span className="text-[10px] text-gray-400 block leading-tight">
+          {label}
+        </span>
         <span className="text-xs text-gray-800 font-medium break-words leading-snug">
           {typeof value === "boolean" ? "Oui" : String(value)}
         </span>
@@ -977,7 +992,6 @@ export default function DossierClient() {
 
           {/* Full details — info (top/left) + map (bottom/right) */}
           <div className="px-6 py-5 grid grid-cols-1 xl:grid-cols-[7fr_3fr] gap-6 items-start">
-
             {/* ── Info panel : 1 col → 2 cols → 3 cols → 2 cols (xl) ── */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 gap-x-6 gap-y-6">
               {/* Identité */}
@@ -997,7 +1011,8 @@ export default function DossierClient() {
                 {row("Adresse", clientFile.adresse)}
                 {row(
                   "CP / Ville",
-                  [clientFile.cp, clientFile.ville].filter(Boolean).join(" ") || undefined,
+                  [clientFile.cp, clientFile.ville].filter(Boolean).join(" ") ||
+                    undefined,
                 )}
                 {row("Téléphone", clientFile.tel)}
                 {row("Mobile", clientFile.mobile)}
@@ -1008,13 +1023,28 @@ export default function DossierClient() {
               {/* Planning */}
               <div className="space-y-1.5">
                 <p className={sec}>Planning</p>
-                {row("Installation souhaitée", clientFile.dateInstallationSouhaitee)}
+                {row(
+                  "Installation souhaitée",
+                  clientFile.dateInstallationSouhaitee,
+                )}
                 {row("Formation souhaitée", clientFile.dateFormationSouhaitee)}
                 {row("Ouverture prévue", clientFile.ouverturePrevue)}
-                {row("Visite préinstallation", clientFile.visitePreinstallation || undefined)}
-                {row("Saisir fichier produit", clientFile.saisirFichierProduit || undefined)}
-                {row("Découpe plan menuiserie", clientFile.decoupePlanMenuiserie || undefined)}
-                {row("Découpe plan marbrerie", clientFile.decoupePlanMarbrerie || undefined)}
+                {row(
+                  "Visite préinstallation",
+                  clientFile.visitePreinstallation || undefined,
+                )}
+                {row(
+                  "Saisir fichier produit",
+                  clientFile.saisirFichierProduit || undefined,
+                )}
+                {row(
+                  "Découpe plan menuiserie",
+                  clientFile.decoupePlanMenuiserie || undefined,
+                )}
+                {row(
+                  "Découpe plan marbrerie",
+                  clientFile.decoupePlanMarbrerie || undefined,
+                )}
               </div>
 
               {/* Équipements — pleine largeur du panneau gauche */}
@@ -1024,7 +1054,10 @@ export default function DossierClient() {
                   <div className="space-y-1.5">
                     {row("CashGuard", eq.nbCashguard || undefined)}
                     {row("Caisses", eq.nbCaisses || undefined)}
-                    {row("Balances / Caisses", eq.nbBalancesCaisses || undefined)}
+                    {row(
+                      "Balances / Caisses",
+                      eq.nbBalancesCaisses || undefined,
+                    )}
                     {row("Licences TACTIS", eq.licencesTactis || undefined)}
                     {row("Licences INNO", eq.licencesInno || undefined)}
                     {row("PC Backoffice", eq.pcBackoffice || undefined)}
@@ -1034,7 +1067,10 @@ export default function DossierClient() {
                     {row("Autres matériels", eq.nbAutresMateriels || undefined)}
                     {row("Borne Allergène", eq.borneAllergene || undefined)}
                     {row("Borne de commande", eq.borneCommande || undefined)}
-                    {row("Étiquettes électroniques", eq.etiquettesElectronique || undefined)}
+                    {row(
+                      "Étiquettes électroniques",
+                      eq.etiquettesElectronique || undefined,
+                    )}
                     {row("Carte fidélité", eq.carteFidelite || undefined)}
                   </div>
                 </div>
@@ -1054,12 +1090,12 @@ export default function DossierClient() {
             {/* ── Right panel : Google Maps (30%) ── */}
             <div className="flex flex-col">
               <p className={sec}>Localisation</p>
-              {(clientFile.adresse || clientFile.cp || clientFile.ville) ? (
+              {clientFile.adresse || clientFile.cp || clientFile.ville ? (
                 <iframe
                   src={`https://maps.google.com/maps?q=${encodeURIComponent(
                     [clientFile.adresse, clientFile.cp, clientFile.ville]
                       .filter(Boolean)
-                      .join(", ")
+                      .join(", "),
                   )}&output=embed&hl=fr`}
                   className="flex-1 min-h-[320px] w-full rounded-lg border-0"
                   loading="lazy"

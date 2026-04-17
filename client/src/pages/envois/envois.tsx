@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
 import axios from "axios";
 import { UidContext } from "../../components/AppContext";
+import AccessDenied from "../../components/AccessDenied/AccessDenied";
 import { useAppDispatch } from "../../hooks/redux";
 import { getAllClientFiles } from "../../actions/clientFile.actions";
 import type { ClientFilesState } from "../../types";
@@ -140,7 +140,12 @@ export default function EnvoisPage() {
   }, [auth]);
 
   if (!auth?.isHotline) {
-    return <Navigate to="/home" replace />;
+    return (
+      <AccessDenied
+        title="Accès hotline requis"
+        message="Cette page est réservée aux hotlines."
+      />
+    );
   }
 
   const pending = shipments.filter((s) => !s.sent);
