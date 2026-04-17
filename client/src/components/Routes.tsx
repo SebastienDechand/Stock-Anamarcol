@@ -10,6 +10,7 @@ import Envois from "../pages/envois/envois";
 import FichesClients from "../pages/fiches-clients/fichesClients";
 import DossierClient from "../pages/fiches-clients/DossierClient";
 import AdminRoles from "../pages/admin-roles/adminRoles";
+import Surveillance from "../pages/surveillance/surveillance";
 import Layout from "./Layout";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -34,6 +35,7 @@ export default function Router() {
         <Route path="/fiches-clients" element={<FichesClients />} />
         <Route path="/fiches-clients/:id" element={<DossierClient />} />
         <Route path="/admin/roles" element={<AdminRoles />} />
+        <Route path="/surveillance" element={<Surveillance />} />
       </Route>
     </Routes>
   );

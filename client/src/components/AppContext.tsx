@@ -7,7 +7,9 @@ export const UidContext = createContext<AuthContextType>({
   uid: null,
   roles: [],
   isAdmin: false,
+  isSuperadmin: false,
   isHotline: false,
+  isMonteur: false,
   isAuthLoading: true,
 });
 

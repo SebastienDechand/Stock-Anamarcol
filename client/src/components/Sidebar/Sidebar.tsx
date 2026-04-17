@@ -11,6 +11,7 @@ import {
   Truck,
   ClipboardList,
   ShieldCheck,
+  Monitor,
 } from "lucide-react";
 import { useContext } from "react";
 import { UidContext } from "../AppContext";
@@ -58,7 +59,10 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
       : []),
     ...contactNav,
     ...(isAdminOrSuper
-      ? [{ to: "/history", label: "Historique", icon: Package }]
+      ? [
+          { to: "/history", label: "Historique", icon: Package },
+          { to: "/surveillance", label: "Surveillance", icon: Monitor },
+        ]
       : []),
     ...(auth?.isSuperadmin
       ? [{ to: "/admin/roles", label: "Rôles", icon: ShieldCheck }]
