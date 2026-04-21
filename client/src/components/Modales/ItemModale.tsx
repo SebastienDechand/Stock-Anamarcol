@@ -502,6 +502,13 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
         {/* History tab */}
         {activeTab === "history" && (
           <div className="px-6 py-5 max-h-[400px] overflow-y-auto">
+            <div className="text-xs text-gray-400 mb-4">
+              Historique depuis le{" "}
+              {new Date(Date.now() - 60 * 24 * 3600 * 1000).toLocaleDateString(
+                "fr-FR",
+                { day: "numeric", month: "long", year: "numeric" },
+              )}
+            </div>
             {isLoadingHistory && (
               <div className="flex items-center justify-center py-8">
                 <Loader2 size={24} className="animate-spin text-brand-600" />

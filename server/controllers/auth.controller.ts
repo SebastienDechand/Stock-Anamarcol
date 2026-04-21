@@ -71,11 +71,5 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
 // Sign out
 export const logout = async (_req: Request, res: Response): Promise<void> => {
   res.cookie("jwt", "", { maxAge: 1 });
-  try {
-    // Optionally log logout — res.locals.user not available here, skip userName
-    await logEvent("logout", "user", undefined, undefined);
-  } catch (err) {
-    console.error("Audit logout error:", err);
-  }
   res.status(200).json({ message: "Déconnexion réussie" });
 };

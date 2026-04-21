@@ -183,7 +183,7 @@ export default function HistoryPage() {
         <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
           <span className="text-xs text-gray-400">
             Historique depuis le{" "}
-            {new Date(Date.now() - 30 * 24 * 3600 * 1000).toLocaleDateString(
+            {new Date(Date.now() - 60 * 24 * 3600 * 1000).toLocaleDateString(
               "fr-FR",
               { day: "numeric", month: "long", year: "numeric" },
             )}
