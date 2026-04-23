@@ -18,7 +18,7 @@ export const getAllVehicles = createAsyncThunk(
   "vehicles/getAllVehicles",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/api/vehicles", {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}api/vehicles`, {
         withCredentials: true,
       });
       return response.data;
@@ -38,7 +38,7 @@ export const getVehicleById = createAsyncThunk(
   "vehicles/getVehicleById",
   async (id: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/api/vehicles/${id}`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}api/vehicles/${id}`, {
         withCredentials: true,
       });
       return response.data;
@@ -74,7 +74,7 @@ export const searchVehicles = createAsyncThunk(
         queryParams.append("assignedTo", params.assignedTo);
 
       const response = await axios.get(
-        `/api/vehicles/search?${queryParams.toString()}`,
+        `${import.meta.env.VITE_API_URL}api/vehicles/search?${queryParams.toString()}`,
         { withCredentials: true },
       );
       return response.data;
@@ -95,7 +95,7 @@ export const createVehicle = createAsyncThunk(
   async (vehicleData: VehicleForm, { rejectWithValue }) => {
     try {
       const cleanedData = cleanVehicleData(vehicleData);
-      const response = await axios.post("/api/vehicles", cleanedData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}api/vehicles`, cleanedData, {
         withCredentials: true,
       });
       return response.data;
@@ -119,7 +119,7 @@ export const updateVehicle = createAsyncThunk(
   ) => {
     try {
       const cleanedData = cleanVehicleData(data);
-      const response = await axios.put(`/api/vehicles/${id}`, cleanedData, {
+      const response = await axios.put(`${import.meta.env.VITE_API_URL}api/vehicles/${id}`, cleanedData, {
         withCredentials: true,
       });
       return response.data;
@@ -139,7 +139,7 @@ export const deleteVehicle = createAsyncThunk(
   "vehicles/deleteVehicle",
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`/api/vehicles/${id}`, { withCredentials: true });
+      await axios.delete(`${import.meta.env.VITE_API_URL}api/vehicles/${id}`, { withCredentials: true });
       return id;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -161,7 +161,7 @@ export const uploadVehicleDocument = createAsyncThunk(
   ) => {
     try {
       const response = await axios.post(
-        `/api/vehicles/${id}/documents`,
+        `${import.meta.env.VITE_API_URL}api/vehicles/${id}/documents`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -189,7 +189,7 @@ export const deleteVehicleDocument = createAsyncThunk(
   ) => {
     try {
       const response = await axios.delete(
-        `/api/vehicles/${vehicleId}/documents/${docId}`,
+        `${import.meta.env.VITE_API_URL}api/vehicles/${vehicleId}/documents/${docId}`,
         { withCredentials: true },
       );
       return response.data;

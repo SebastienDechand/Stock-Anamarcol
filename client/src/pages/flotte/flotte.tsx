@@ -816,7 +816,7 @@ export default function FlottePage() {
     const isImage = ["jpg", "jpeg", "png", "gif", "webp"].includes(ext);
     setViewerDoc({
       name: doc.name,
-      url: `/uploads/vehicules/${doc.filename}`,
+      url: `${import.meta.env.VITE_API_URL}uploads/vehicules/${doc.filename}`,
       isImage,
     });
   };
