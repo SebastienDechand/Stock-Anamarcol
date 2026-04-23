@@ -15,7 +15,7 @@ export const sendMotionAlert = async (
   to: string,
 ): Promise<void> => {
   if (!process.env.RESEND_API_KEY) {
-    console.warn("[Mailer] RESEND_API_KEY non configuré — email ignoré");
+    console.warn("[Mailer] RESEND_API_KEY non configuré - email ignoré");
     return;
   }
 
@@ -41,7 +41,7 @@ export const sendMotionAlert = async (
   await getResendClient().emails.send({
     from: "AnaMarCol Surveillance <onboarding@resend.dev>",
     to,
-    subject: `🚨 Mouvement détecté — ${cameraName} (${timeStr})`,
+    subject: `🚨 Mouvement détecté - ${cameraName} (${timeStr})`,
     html: `
 <!DOCTYPE html>
 <html lang="fr">

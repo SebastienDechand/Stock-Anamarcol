@@ -271,10 +271,13 @@ export default function Membres() {
   return (
     <div className="space-y-4 h-full">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-          <Users size={20} className="text-brand-600 shrink-0" />
-          Équipe
-        </h1>
+        <div>
+          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <Users size={20} className="text-brand-600 shrink-0" />
+            Équipe
+          </h1>
+          <p className="text-sm text-gray-600 mt-1">Gestion de l'équipe et des accès</p>
+        </div>
         {isSuperadmin && (
           <button
             onClick={() => setIsAddOpen(true)}

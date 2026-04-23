@@ -10,6 +10,7 @@ import { getAllItems } from "./actions/items.actions";
 import { getAllContacts } from "./actions/contacts.action";
 import { getAllClientFiles } from "./actions/clientFile.actions";
 import { getAllInterventionReports } from "./actions/interventionReport.actions";
+import { getAllVehicles } from "./actions/vehicles.actions";
 
 export default function App() {
   const { uid } = useContext(UidContext);
@@ -29,6 +30,7 @@ export default function App() {
           typeof dispatch
         >[0],
       );
+      dispatch(getAllVehicles() as unknown as Parameters<typeof dispatch>[0]);
     }
   }, [uid, dispatch]);
 

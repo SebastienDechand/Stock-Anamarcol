@@ -7,6 +7,7 @@ import Membres from "../pages/membres/membres";
 import Contacts from "../pages/contacts/contacts";
 import HistoryPage from "../pages/history/history";
 import Envois from "../pages/envois/envois";
+import Flotte from "../pages/flotte/flotte";
 import FichesClients from "../pages/fiches-clients/fichesClients";
 import DossierClient from "../pages/fiches-clients/DossierClient";
 import AdminRoles from "../pages/admin-roles/adminRoles";
@@ -14,6 +15,7 @@ import Surveillance from "../pages/surveillance/surveillance";
 import NotFound from "../pages/not-found/NotFound";
 import Layout from "./Layout";
 import ProtectedRoute from "./ProtectedRoute";
+import AdminRoute from "./AdminRoute";
 
 export default function Router() {
   return (
@@ -32,11 +34,12 @@ export default function Router() {
         <Route path="/membres" element={<Membres />} />
         <Route path="/contacts" element={<Contacts />} />
         <Route path="/envois" element={<Envois />} />
-        <Route path="/history" element={<HistoryPage />} />
+        <Route path="/flotte" element={<AdminRoute><Flotte /></AdminRoute>} />
+        <Route path="/history" element={<AdminRoute><HistoryPage /></AdminRoute>} />
         <Route path="/fiches-clients" element={<FichesClients />} />
         <Route path="/fiches-clients/:id" element={<DossierClient />} />
-        <Route path="/admin/roles" element={<AdminRoles />} />
-        <Route path="/surveillance" element={<Surveillance />} />
+        <Route path="/admin/roles" element={<AdminRoute superAdminOnly><AdminRoles /></AdminRoute>} />
+        <Route path="/surveillance" element={<AdminRoute><Surveillance /></AdminRoute>} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

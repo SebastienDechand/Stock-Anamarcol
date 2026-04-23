@@ -172,15 +172,18 @@ export default function HistoryPage() {
 
   return (
     <div className="space-y-4 h-full">
-      <div className="flex flex-wrap items-center gap-2">
-        <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-          <Clock size={20} className="text-brand-600 shrink-0" />
-          Historique
-        </h1>
-        <span className="text-xs text-gray-400 ml-2">
-          {filtered.length} événements
-        </span>
-        <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <Clock size={20} className="text-brand-600 shrink-0" />
+            Historique
+          </h1>
+          <p className="text-sm text-gray-600 mt-1">
+            Journal des actions - {filtered.length} événement
+            {filtered.length !== 1 ? "s" : ""} sur les 60 derniers jours
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
           <span className="text-xs text-gray-400">
             Historique depuis le{" "}
             {new Date(Date.now() - 60 * 24 * 3600 * 1000).toLocaleDateString(

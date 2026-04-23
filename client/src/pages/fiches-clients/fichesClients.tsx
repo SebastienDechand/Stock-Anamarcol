@@ -616,7 +616,7 @@ function ClientFileModal({
         };
         const who = [data.duplicate?.nom, data.duplicate?.societe]
           .filter(Boolean)
-          .join(" — ");
+          .join(" - ");
         toast.error(`${data.message}${who ? ` (${who})` : ""}`, {
           duration: 5000,
         });

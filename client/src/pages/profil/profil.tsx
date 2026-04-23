@@ -72,10 +72,13 @@ export default function Profil() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-        <UserCircle size={20} className="text-brand-600 shrink-0" />
-        Mon profil
-      </h1>
+      <div>
+        <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <UserCircle size={20} className="text-brand-600 shrink-0" />
+          Mon profil
+        </h1>
+        <p className="text-sm text-gray-600 mt-1">Gérez vos informations personnelles</p>
+      </div>
 
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
         {/* Header with avatar */}

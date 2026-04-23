@@ -122,10 +122,13 @@ const Contacts = () => {
 
   return (
     <div className="space-y-8 mt-0">
-      <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-        <ContactIcon size={20} className="text-brand-600 shrink-0" />
-        Contacts
-      </h1>
+      <div>
+        <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <ContactIcon size={20} className="text-brand-600 shrink-0" />
+          Contacts
+        </h1>
+        <p className="text-sm text-gray-600 mt-1">Annuaire des clients et partenaires</p>
+      </div>
 
       {exterieurs.length > 0 && (
         <Section title="Contacts Extérieurs" contacts={exterieurs} />

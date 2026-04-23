@@ -12,6 +12,7 @@ import {
   ClipboardList,
   ShieldCheck,
   Monitor,
+  HistoryIcon,
 } from "lucide-react";
 import { useContext } from "react";
 import { UidContext } from "../AppContext";
@@ -55,13 +56,14 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
         ]
       : []),
     ...(auth?.isHotline
-      ? [{ to: "/envois", label: "Envois", icon: Truck }]
+      ? [{ to: "/envois", label: "Envois", icon: Package }]
       : []),
     ...contactNav,
     ...(isAdminOrSuper
       ? [
-          { to: "/history", label: "Historique", icon: Package },
           { to: "/surveillance", label: "Surveillance", icon: Monitor },
+          { to: "/flotte", label: "Flotte véhicules", icon: Truck },
+          { to: "/history", label: "Historique", icon: HistoryIcon },
         ]
       : []),
     ...(auth?.isSuperadmin

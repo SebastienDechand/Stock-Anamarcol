@@ -248,10 +248,13 @@ export default function Articles() {
       {/* Toolbar + Filters */}
       <div className="shrink-0 bg-gray-200/95 backdrop-blur-sm pb-2 space-y-1 -mx-2 px-2 pt-0 mb-2 md:-mx-3 md:px-3 lg:-mx-4 lg:px-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-2">
-          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <Package size={20} className="text-brand-600 shrink-0" />
-            Articles
-          </h1>
+          <div>
+            <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <Package size={20} className="text-brand-600 shrink-0" />
+              Articles
+            </h1>
+            <p className="text-sm text-gray-600 mt-1">Gestion du stock et des équipements</p>
+          </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-72">
               <Search

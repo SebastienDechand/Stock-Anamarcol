@@ -8,6 +8,7 @@ import statisticsReducer from "./statistics.reducer";
 import menuReducer from "./menu.reducer";
 import clientFilesReducer from "./clientFiles.reducer";
 import interventionReportsReducer from "./interventionReports.reducer";
+import vehiclesReducer from "./vehicles.reducer";
 
 const rootReducer = combineReducers({
   userReducer,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   menuReducer,
   clientFilesReducer,
   interventionReportsReducer,
+  vehiclesReducer,
 });
 
 export default rootReducer;

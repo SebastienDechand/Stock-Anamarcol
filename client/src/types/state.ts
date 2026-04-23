@@ -2,6 +2,7 @@ import type { Contact } from "./contact";
 import type { Item, History } from "./item";
 import type { ClientFile } from "./clientFile";
 import type { InterventionReport } from "./interventionReport";
+import type { Vehicle } from "./vehicle";
 
 export interface ContactsState {
   selectedContactId: string | null;
@@ -44,4 +45,13 @@ export interface InterventionReportsState {
   reports: InterventionReport[];
   selectedReport: InterventionReport | null;
   isLoading: boolean;
+}
+
+export interface VehiclesState {
+  vehicles: Vehicle[];
+  isLoading: boolean;
+  error?: string;
+  selectedVehicleId?: string;
+  totalPages?: number;
+  currentPage?: number;
 }

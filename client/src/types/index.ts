@@ -32,3 +32,13 @@ export type {
   InterventionReportForm,
   CashguardUnit,
 } from "./interventionReport";
+export type {
+  Vehicle,
+  VehicleForm,
+  VehiclesState,
+  VehicleBrand,
+  VehicleModel,
+  VehicleFormat,
+  VehicleDocument,
+  DocumentType,
+} from "./vehicle";
