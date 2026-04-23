@@ -151,7 +151,7 @@ describe("Auth Controller", () => {
         expect.objectContaining({
           httpOnly: true,
           secure: true,
-          sameSite: "none",
+          sameSite: "lax",
         }),
       );
       expect(res.status).toHaveBeenCalledWith(200);

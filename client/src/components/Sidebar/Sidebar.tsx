@@ -96,7 +96,7 @@ export default function Sidebar({ open, setOpen }: SidebarProps) {
                 <Package size={18} className="text-white" />
               </div>
               <span className="text-lg font-bold text-white tracking-tight">
-                AnaMarCol
+                ANAMARCOL
               </span>
             </Link>
           )}

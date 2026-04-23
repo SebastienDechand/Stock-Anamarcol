@@ -51,7 +51,7 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
       httpOnly: true,
       maxAge: COOKIE_MAX_AGE,
       secure: true,
-      sameSite: "none",
+      sameSite: "lax",
     });
     // Audit: login
     try {
