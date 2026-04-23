@@ -16,7 +16,7 @@ export const getHistory = async (
     // Fetch audit events (sans logout) and item history entries
     const [auditEvents, itemHistory] = await Promise.all([
       getRecentEvents(limit, {
-        action: { $nin: ["logout", "upload", "quantity_change"] },
+        action: { $nin: ["logout", "quantity_change"] },
       }),
       HistoryModel.find({ action: { $nin: ["upload", "quantity_change"] } })
         .sort({ createdAt: -1 })

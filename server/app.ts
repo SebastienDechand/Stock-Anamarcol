@@ -15,6 +15,7 @@ import clientFileRoutes from "./routes/clientFile.routes";
 import interventionReportRoutes from "./routes/interventionReport.routes";
 import vehicleRoutes from "./routes/vehicle.routes";
 import cameraRoutes from "./routes/camera.routes";
+import reminderRoutes from "./routes/reminder.routes";
 import { requireAuth } from "./middleware/auth.middleware";
 import cors from "cors";
 
@@ -90,6 +91,7 @@ app.use("/api/client-files", clientFileRoutes);
 app.use("/api/intervention-reports", interventionReportRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/cameras", cameraRoutes);
+app.use("/api/reminders", reminderRoutes);
 
 // JWT - returns the user ID and roles
 app.get("/jwtid", requireAuth, (req: Request, res: Response) => {

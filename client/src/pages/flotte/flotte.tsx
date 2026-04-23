@@ -176,7 +176,10 @@ const revisionInlineClass = (date: string | Date | undefined) => {
 };
 
 // ─── Custom animated select ───────────────────────────
-interface SelectOption { value: string; label: string }
+interface SelectOption {
+  value: string;
+  label: string;
+}
 
 const CustomSelect = ({
   name,
@@ -198,7 +201,8 @@ const CustomSelect = ({
   useEffect(() => {
     if (!open) return;
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -222,7 +226,9 @@ const CustomSelect = ({
 
       <div
         className={`absolute z-50 w-full mt-1.5 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden transition-all duration-200 ease-out origin-top ${
-          open ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+          open
+            ? "opacity-100 scale-100"
+            : "opacity-0 scale-95 pointer-events-none"
         }`}
       >
         <div className="p-1">
@@ -231,7 +237,9 @@ const CustomSelect = ({
               key={opt.value}
               type="button"
               onClick={() => {
-                onChange({ target: { name, value: opt.value } } as unknown as React.ChangeEvent<HTMLSelectElement>);
+                onChange({
+                  target: { name, value: opt.value },
+                } as unknown as React.ChangeEvent<HTMLSelectElement>);
                 setOpen(false);
               }}
               className={`w-full px-3 py-2 text-sm text-left rounded-lg transition-colors ${
@@ -253,7 +261,9 @@ const CustomSelect = ({
 interface VehicleFormFieldsProps {
   form: VehicleForm;
   users: any[];
-  onChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
+  onChange: React.ChangeEventHandler<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  >;
 }
 
 function VehicleFormFields({ form, users, onChange }: VehicleFormFieldsProps) {
@@ -261,14 +271,23 @@ function VehicleFormFields({ form, users, onChange }: VehicleFormFieldsProps) {
     { value: "mercedes", label: "Mercedes" },
     { value: "nissan", label: "Nissan" },
   ];
-  const modeleOptions: SelectOption[] = getValidModels(form.marque).map((m) => ({
-    value: m,
-    label: m === "citan" ? "Citan" : m === "vito" ? "Vito" : "Navara",
-  }));
-  const formatOptions: SelectOption[] = getValidFormats(form.modele).map((f) => ({
-    value: f,
-    label: f === "utilitaire" ? "Utilitaire" : f === "pickup" ? "Pickup" : "Camion",
-  }));
+  const modeleOptions: SelectOption[] = getValidModels(form.marque).map(
+    (m) => ({
+      value: m,
+      label: m === "citan" ? "Citan" : m === "vito" ? "Vito" : "Navara",
+    }),
+  );
+  const formatOptions: SelectOption[] = getValidFormats(form.modele).map(
+    (f) => ({
+      value: f,
+      label:
+        f === "utilitaire"
+          ? "Utilitaire"
+          : f === "pickup"
+            ? "Pickup"
+            : "Camion",
+    }),
+  );
   const assignedOptions: SelectOption[] = [
     { value: "", label: "Aucun" },
     ...(Array.isArray(users)
@@ -276,28 +295,52 @@ function VehicleFormFields({ form, users, onChange }: VehicleFormFieldsProps) {
       : []),
   ];
 
-  const inputCls = "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
+  const inputCls =
+    "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Marque *</label>
-          <CustomSelect name="marque" value={form.marque} onChange={onChange} options={marqueOptions} />
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Marque *
+          </label>
+          <CustomSelect
+            name="marque"
+            value={form.marque}
+            onChange={onChange}
+            options={marqueOptions}
+          />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Modèle *</label>
-          <CustomSelect name="modele" value={form.modele} onChange={onChange} options={modeleOptions} />
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Modèle *
+          </label>
+          <CustomSelect
+            name="modele"
+            value={form.modele}
+            onChange={onChange}
+            options={modeleOptions}
+          />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Format *</label>
-          <CustomSelect name="format" value={form.format} onChange={onChange} options={formatOptions} />
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Format *
+          </label>
+          <CustomSelect
+            name="format"
+            value={form.format}
+            onChange={onChange}
+            options={formatOptions}
+          />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Immatriculation *</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Immatriculation *
+          </label>
           <input
             type="text"
             name="immatriculation"
@@ -311,43 +354,90 @@ function VehicleFormFields({ form, users, onChange }: VehicleFormFieldsProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Date Révision</label>
-          <input type="date" name="dateRevision" value={form.dateRevision || ""} onChange={onChange as any} className={inputCls} />
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Date Révision
+          </label>
+          <input
+            type="date"
+            name="dateRevision"
+            value={form.dateRevision || ""}
+            onChange={onChange as any}
+            className={inputCls}
+          />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Affecté à</label>
-          <CustomSelect name="assignedTo" value={form.assignedTo || ""} onChange={onChange} options={assignedOptions} />
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Affecté à
+          </label>
+          <CustomSelect
+            name="assignedTo"
+            value={form.assignedTo || ""}
+            onChange={onChange}
+            options={assignedOptions}
+          />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Date CT réalisé</label>
-          <input type="date" name="dateCtInspection" value={form.dateCtInspection || ""} onChange={onChange as any} className={inputCls} />
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Date CT réalisé
+          </label>
+          <input
+            type="date"
+            name="dateCtInspection"
+            value={form.dateCtInspection || ""}
+            onChange={onChange as any}
+            className={inputCls}
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            CT expire le <span className="text-gray-400 font-normal">(auto +2 ans)</span>
+            CT expire le{" "}
+            <span className="text-gray-400 font-normal">(auto +2 ans)</span>
           </label>
-          <input type="date" name="dateCtExpiration" value={form.dateCtExpiration || ""} onChange={onChange as any} className={inputCls} />
+          <input
+            type="date"
+            name="dateCtExpiration"
+            value={form.dateCtExpiration || ""}
+            onChange={onChange as any}
+            className={inputCls}
+          />
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Date Anti-Pollution réalisé</label>
-          <input type="date" name="dateControlAntiPollutionInspection" value={form.dateControlAntiPollutionInspection || ""} onChange={onChange as any} className={inputCls} />
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Date Anti-Pollution réalisé
+          </label>
+          <input
+            type="date"
+            name="dateControlAntiPollutionInspection"
+            value={form.dateControlAntiPollutionInspection || ""}
+            onChange={onChange as any}
+            className={inputCls}
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Anti-Pollution expire le <span className="text-gray-400 font-normal">(auto +2 ans)</span>
+            Anti-Pollution expire le{" "}
+            <span className="text-gray-400 font-normal">(auto +2 ans)</span>
           </label>
-          <input type="date" name="dateControlAntiPollutionExpiration" value={form.dateControlAntiPollutionExpiration || ""} onChange={onChange as any} className={inputCls} />
+          <input
+            type="date"
+            name="dateControlAntiPollutionExpiration"
+            value={form.dateControlAntiPollutionExpiration || ""}
+            onChange={onChange as any}
+            className={inputCls}
+          />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Notes
+        </label>
         <textarea
           name="notes"
           value={form.notes || ""}
@@ -390,7 +480,9 @@ export default function FlottePage() {
     url: string;
     isImage: boolean;
   } | null>(null);
-  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(
+    new Set(),
+  );
 
   useEffect(() => {
     dispatch(getAllVehicles() as unknown as Parameters<typeof dispatch>[0]);
@@ -540,9 +632,10 @@ export default function FlottePage() {
               .toISOString()
               .split("T")[0]
           : "",
-      assignedTo: (typeof vehicle.assignedTo === "object" && vehicle.assignedTo !== null
-        ? (vehicle.assignedTo as any)._id
-        : vehicle.assignedTo) || "",
+      assignedTo:
+        (typeof vehicle.assignedTo === "object" && vehicle.assignedTo !== null
+          ? (vehicle.assignedTo as any)._id
+          : vehicle.assignedTo) || "",
       notes: (vehicle as any).notes || "",
     });
     setIsEditModalOpen(true);
@@ -607,7 +700,9 @@ export default function FlottePage() {
             <Truck size={20} className="text-brand-600 shrink-0" />
             Flotte véhicules
           </h1>
-          <p className="text-sm text-gray-600 mt-1">Gestion et suivi des véhicules de l'entreprise</p>
+          <p className="text-sm text-gray-600 mt-1">
+            Gestion et suivi des véhicules de l'entreprise
+          </p>
         </div>
         <button
           onClick={() => {
@@ -635,7 +730,9 @@ export default function FlottePage() {
         <CustomSelect
           name="filterMarque"
           value={filterMarque}
-          onChange={(e) => setFilterMarque((e.target.value as VehicleBrand) || "")}
+          onChange={(e) =>
+            setFilterMarque((e.target.value as VehicleBrand) || "")
+          }
           options={[
             { value: "", label: "Toutes les marques" },
             { value: "mercedes", label: "Mercedes" },
@@ -672,21 +769,40 @@ export default function FlottePage() {
                 </colgroup>
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Type</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Immatriculation</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Affecté à</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Révision</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">CT (expire)</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Anti-Pollution (expire)</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Type
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Immatriculation
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Affecté à
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Révision
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      CT (expiration)
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Anti-Pollution (expiration)
+                    </th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 {MODEL_SECTIONS.map((section) => {
-                  const sv = filteredVehicles.filter((v) => v.modele === section.key);
+                  const sv = filteredVehicles.filter(
+                    (v) => v.modele === section.key,
+                  );
                   if (sv.length === 0) return null;
                   const isCollapsed = collapsedSections.has(section.key);
                   return (
-                    <tbody key={section.key} className="divide-y divide-gray-200">
+                    <tbody
+                      key={section.key}
+                      className="divide-y divide-gray-200"
+                    >
                       <tr
                         className="bg-gray-50 hover:bg-gray-100 cursor-pointer select-none transition-colors"
                         onClick={() => toggleSection(section.key)}
@@ -697,38 +813,82 @@ export default function FlottePage() {
                               size={14}
                               className={`text-gray-500 shrink-0 transition-transform duration-200 ${isCollapsed ? "-rotate-90" : ""}`}
                             />
-                            <span className="font-semibold text-gray-700 text-sm">{section.label}</span>
-                            <span className="px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-600 font-medium">{sv.length}</span>
+                            <span className="font-semibold text-gray-700 text-sm">
+                              {section.label}
+                            </span>
+                            <span className="px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-600 font-medium">
+                              {sv.length}
+                            </span>
                           </div>
                         </td>
                       </tr>
-                      {!isCollapsed && sv.map((vehicle) => (
-                        <tr
-                          key={vehicle._id}
-                          className="hover:bg-gray-50 transition-colors cursor-pointer border-t border-gray-100"
-                          onClick={() => { setSelectedVehicle(vehicle); setIsDetailsModalOpen(true); }}
-                        >
-                          <td className="px-4 py-3"><FormatBadge format={vehicle.format} /></td>
-                          <td className="px-4 py-3 text-sm font-medium text-gray-900 truncate">{vehicle.immatriculation}</td>
-                          <td className="px-4 py-3 text-sm text-gray-600 truncate">{vehicle.assignedToName || "-"}</td>
-                          <td className="px-4 py-3 text-sm"><RevisionDateCell date={vehicle.dateRevision} /></td>
-                          <td className="px-4 py-3 text-sm"><DateCell date={vehicle.dateCtExpiration} /></td>
-                          <td className="px-4 py-3 text-sm"><DateCell date={vehicle.dateControlAntiPollutionExpiration} /></td>
-                          <td className="px-4 py-3 text-sm" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center gap-1">
-                              <button onClick={() => openEditModal(vehicle)} className="p-1.5 rounded-lg hover:bg-blue-100 text-blue-600 transition-colors" title="Éditer">
-                                <Edit size={18} />
-                              </button>
-                              <button onClick={() => { setSelectedVehicle(vehicle); setIsDetailsModalOpen(true); }} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Détails">
-                                <Eye size={18} />
-                              </button>
-                              <button onClick={() => setDeleteConfirmId(vehicle._id || "")} className="p-1.5 rounded-lg hover:bg-red-100 text-red-600 transition-colors" title="Supprimer">
-                                <Trash2 size={18} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
+                      {!isCollapsed &&
+                        sv.map((vehicle) => (
+                          <tr
+                            key={vehicle._id}
+                            className="hover:bg-gray-50 transition-colors cursor-pointer border-t border-gray-100"
+                            onClick={() => {
+                              setSelectedVehicle(vehicle);
+                              setIsDetailsModalOpen(true);
+                            }}
+                          >
+                            <td className="px-4 py-3">
+                              <FormatBadge format={vehicle.format} />
+                            </td>
+                            <td className="px-4 py-3 text-sm font-medium text-gray-900 truncate">
+                              {vehicle.immatriculation}
+                            </td>
+                            <td className="px-4 py-3 text-sm text-gray-600 truncate">
+                              {vehicle.assignedToName || "-"}
+                            </td>
+                            <td className="px-4 py-3 text-sm">
+                              <RevisionDateCell date={vehicle.dateRevision} />
+                            </td>
+                            <td className="px-4 py-3 text-sm">
+                              <DateCell date={vehicle.dateCtExpiration} />
+                            </td>
+                            <td className="px-4 py-3 text-sm">
+                              <DateCell
+                                date={
+                                  vehicle.dateControlAntiPollutionExpiration
+                                }
+                              />
+                            </td>
+                            <td
+                              className="px-4 py-3 text-sm"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={() => openEditModal(vehicle)}
+                                  className="p-1.5 rounded-lg hover:bg-blue-100 text-blue-600 transition-colors"
+                                  title="Éditer"
+                                >
+                                  <Edit size={18} />
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setSelectedVehicle(vehicle);
+                                    setIsDetailsModalOpen(true);
+                                  }}
+                                  className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+                                  title="Détails"
+                                >
+                                  <Eye size={18} />
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    setDeleteConfirmId(vehicle._id || "")
+                                  }
+                                  className="p-1.5 rounded-lg hover:bg-red-100 text-red-600 transition-colors"
+                                  title="Supprimer"
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   );
                 })}
@@ -739,19 +899,31 @@ export default function FlottePage() {
           {/* ── Mobile cards ── */}
           <div className="md:hidden flex flex-col gap-4">
             {MODEL_SECTIONS.map((section) => {
-              const sv = filteredVehicles.filter((v) => v.modele === section.key);
+              const sv = filteredVehicles.filter(
+                (v) => v.modele === section.key,
+              );
               if (sv.length === 0) return null;
               const isCollapsed = collapsedSections.has(section.key);
               return (
-                <div key={section.key} className="bg-white rounded-lg shadow-sm overflow-hidden">
+                <div
+                  key={section.key}
+                  className="bg-white rounded-lg shadow-sm overflow-hidden"
+                >
                   <button
                     type="button"
                     onClick={() => toggleSection(section.key)}
                     className="w-full flex items-center gap-3 px-4 py-3 bg-gray-50 border-b border-gray-200 hover:bg-gray-100 transition-colors text-left select-none"
                   >
-                    <ChevronDown size={14} className={`text-gray-500 shrink-0 transition-transform duration-200 ${isCollapsed ? "-rotate-90" : ""}`} />
-                    <span className="font-semibold text-gray-700 text-sm">{section.label}</span>
-                    <span className="px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-600 font-medium">{sv.length}</span>
+                    <ChevronDown
+                      size={14}
+                      className={`text-gray-500 shrink-0 transition-transform duration-200 ${isCollapsed ? "-rotate-90" : ""}`}
+                    />
+                    <span className="font-semibold text-gray-700 text-sm">
+                      {section.label}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-600 font-medium">
+                      {sv.length}
+                    </span>
                   </button>
                   {!isCollapsed && (
                     <div className="divide-y divide-gray-200">
@@ -759,24 +931,88 @@ export default function FlottePage() {
                         <div
                           key={vehicle._id}
                           className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
-                          onClick={() => { setSelectedVehicle(vehicle); setIsDetailsModalOpen(true); }}
+                          onClick={() => {
+                            setSelectedVehicle(vehicle);
+                            setIsDetailsModalOpen(true);
+                          }}
                         >
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2 min-w-0">
                               <FormatBadge format={vehicle.format} />
-                              <span className="font-semibold text-gray-900 truncate">{vehicle.immatriculation}</span>
+                              <span className="font-semibold text-gray-900 truncate">
+                                {vehicle.immatriculation}
+                              </span>
                             </div>
-                            <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
-                              <button onClick={() => openEditModal(vehicle)} className="p-1.5 rounded-lg hover:bg-blue-100 text-blue-600 transition-colors" title="Éditer"><Edit size={16} /></button>
-                              <button onClick={() => { setSelectedVehicle(vehicle); setIsDetailsModalOpen(true); }} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" title="Détails"><Eye size={16} /></button>
-                              <button onClick={() => setDeleteConfirmId(vehicle._id || "")} className="p-1.5 rounded-lg hover:bg-red-100 text-red-600 transition-colors" title="Supprimer"><Trash2 size={16} /></button>
+                            <div
+                              className="flex items-center gap-1 shrink-0"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <button
+                                onClick={() => openEditModal(vehicle)}
+                                className="p-1.5 rounded-lg hover:bg-blue-100 text-blue-600 transition-colors"
+                                title="Éditer"
+                              >
+                                <Edit size={16} />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setSelectedVehicle(vehicle);
+                                  setIsDetailsModalOpen(true);
+                                }}
+                                className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors"
+                                title="Détails"
+                              >
+                                <Eye size={16} />
+                              </button>
+                              <button
+                                onClick={() =>
+                                  setDeleteConfirmId(vehicle._id || "")
+                                }
+                                className="p-1.5 rounded-lg hover:bg-red-100 text-red-600 transition-colors"
+                                title="Supprimer"
+                              >
+                                <Trash2 size={16} />
+                              </button>
                             </div>
                           </div>
-                          {vehicle.assignedToName && <p className="text-sm text-gray-500 mt-1">{vehicle.assignedToName}</p>}
+                          {vehicle.assignedToName && (
+                            <p className="text-sm text-gray-500 mt-1">
+                              {vehicle.assignedToName}
+                            </p>
+                          )}
                           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs">
-                            <span className="text-gray-400">Rév. <span className={revisionInlineClass(vehicle.dateRevision)}>{formatDate(vehicle.dateRevision)}</span></span>
-                            <span className="text-gray-400">CT <span className={dateInlineClass(vehicle.dateCtExpiration)}>{formatDate(vehicle.dateCtExpiration)}</span></span>
-                            <span className="text-gray-400">AP <span className={dateInlineClass(vehicle.dateControlAntiPollutionExpiration)}>{formatDate(vehicle.dateControlAntiPollutionExpiration)}</span></span>
+                            <span className="text-gray-400">
+                              Rév.{" "}
+                              <span
+                                className={revisionInlineClass(
+                                  vehicle.dateRevision,
+                                )}
+                              >
+                                {formatDate(vehicle.dateRevision)}
+                              </span>
+                            </span>
+                            <span className="text-gray-400">
+                              CT{" "}
+                              <span
+                                className={dateInlineClass(
+                                  vehicle.dateCtExpiration,
+                                )}
+                              >
+                                {formatDate(vehicle.dateCtExpiration)}
+                              </span>
+                            </span>
+                            <span className="text-gray-400">
+                              AP{" "}
+                              <span
+                                className={dateInlineClass(
+                                  vehicle.dateControlAntiPollutionExpiration,
+                                )}
+                              >
+                                {formatDate(
+                                  vehicle.dateControlAntiPollutionExpiration,
+                                )}
+                              </span>
+                            </span>
                           </div>
                         </div>
                       ))}

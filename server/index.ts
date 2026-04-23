@@ -8,6 +8,7 @@ import { connectDB } from "./config/db";
 import app from "./app";
 import { motionDetectionService } from "./services/motionDetection.service";
 import { purgeOldEntries } from "./services/purge.service";
+import { startReminderScheduler } from "./scheduler/reminder.scheduler";
 
 // Wait for MongoDB before accepting requests
 connectDB().then(async () => {
@@ -16,6 +17,9 @@ connectDB().then(async () => {
   // Run initial purge and then every 6 hours
   await purgeOldEntries();
   setInterval(purgeOldEntries, 6 * 60 * 60 * 1000);
+
+  // Start reminder scheduler (daily at 08:00 CET)
+  startReminderScheduler();
 
   app.listen(process.env.PORT, () => {
     console.log(`Listening on port ${process.env.PORT}`);

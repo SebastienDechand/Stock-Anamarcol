@@ -41,6 +41,8 @@ function describeEvent(e: AuditEvent): string {
     return name ? `a supprimé ${entity} "${name}"` : `a supprimé un ${entity}`;
   }
   if (e.action === "upload") return `a uploadé une photo${entityLabel(e)}`;
+  if (e.action === "upload_document") return `a ajouté un document sur véhicule${entityLabel(e)}`;
+  if (e.action === "delete_document") return `a supprimé un document sur véhicule${entityLabel(e)}`;
   if (e.action === "move") return `a déplacé un article${entityLabel(e)}`;
   if (e.action === "quantity_change" && e.details) {
     return `a changé la quantité${entityLabel(e)} (${e.details.oldValue} → ${e.details.newValue})`;
@@ -132,12 +134,13 @@ export default function HistoryPage() {
     return true;
   });
 
-  // Available actions for the filter (after cleanup)
-  const availableActions = [...new Set(cleanedEvents.map((e) => e.action))];
+  // Always show all known action filters, regardless of what's in the data
+  const availableActions = Object.keys(ACTION_MAP);
 
   // Apply filters
   const filtered = cleanedEvents.filter((e) => {
-    if (activeFilter !== "all" && e.action !== activeFilter) return false;
+    if (activeFilter === "upload" && !["upload", "upload_document", "delete_document"].includes(e.action)) return false;
+    if (activeFilter !== "all" && activeFilter !== "upload" && e.action !== activeFilter) return false;
     if (selectedUsers.length > 0 && !selectedUsers.includes(e.userName || ""))
       return false;
     return true;

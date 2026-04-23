@@ -93,8 +93,8 @@ function MemberCard({ user, large, showRoles }: MemberCardProps) {
               const badges = roles
                 .map((r) => ROLE_BADGE[r])
                 .filter((b): b is NonNullable<typeof b> => !!b);
-              return badges.length > 0 ? (
-                <div className="flex flex-wrap gap-1 mt-1">
+              return (
+                <div className="flex flex-wrap gap-1 mt-1 min-h-[1.375rem]">
                   {badges.map((b, i) => (
                     <span
                       key={i}
@@ -104,7 +104,7 @@ function MemberCard({ user, large, showRoles }: MemberCardProps) {
                     </span>
                   ))}
                 </div>
-              ) : null;
+              );
             })()}
           <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
             {user.email && (
@@ -299,7 +299,7 @@ export default function Membres() {
                 className={isAdmin ? "cursor-pointer" : ""}
                 onClick={() => isAdmin && setSelectedUser(user)}
               >
-                <MemberCard user={user} large showRoles={isAdmin} />
+                <MemberCard user={user} showRoles={isAdmin} />
               </div>
             ))}
             {direction.length === 0 && (
