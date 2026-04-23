@@ -30,6 +30,8 @@ import {
   Eye,
   ChevronDown,
   FileText,
+  Calendar,
+  FileEdit,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -257,6 +259,179 @@ const CustomSelect = ({
   );
 };
 
+// ─── Text Input Component ─────────────────────────────
+interface TextInputProps {
+  name: string;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  icon?: React.ReactNode;
+  required?: boolean;
+  uppercase?: boolean;
+}
+
+function TextInput({
+  name,
+  label,
+  value,
+  onChange,
+  placeholder,
+  icon,
+  required,
+  uppercase,
+}: TextInputProps) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-800 mb-2">
+        {label}
+        {required && <span className="text-red-500 ml-1">*</span>}
+      </label>
+      <div className="relative group">
+        {icon && (
+          <div className="absolute left-3 top-3 text-blue-400 pointer-events-none">
+            {icon}
+          </div>
+        )}
+        <input
+          type="text"
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`w-full ${icon ? "pl-10" : "px-4"} pr-4 py-2.5 border-2 border-gray-200 rounded-lg bg-white text-gray-800 placeholder-gray-400 transition-all duration-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 hover:border-gray-300 ${uppercase ? "uppercase" : ""}`}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── Select Input Component ───────────────────────────
+interface SelectInputProps {
+  name: string;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: Array<{ value: string; label: string }>;
+  icon?: React.ReactNode;
+  required?: boolean;
+}
+
+function SelectInput({
+  name,
+  label,
+  value,
+  onChange,
+  options,
+  icon,
+  required,
+}: SelectInputProps) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-800 mb-2">
+        {label}
+        {required && <span className="text-red-500 ml-1">*</span>}
+      </label>
+      <div className="relative group">
+        {icon && (
+          <div className="absolute left-3 top-3 text-blue-400 pointer-events-none z-10">
+            {icon}
+          </div>
+        )}
+        <select
+          name={name}
+          value={value}
+          onChange={onChange}
+          className={`w-full ${icon ? "pl-10" : "px-4"} pr-10 py-2.5 border-2 border-gray-200 rounded-lg bg-white text-gray-800 appearance-none transition-all duration-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 hover:border-gray-300 cursor-pointer`}
+        >
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        <ChevronDown className="absolute right-3 top-3 w-5 h-5 text-gray-400 pointer-events-none" />
+      </div>
+    </div>
+  );
+}
+
+// ─── Textarea Input Component ─────────────────────────
+interface TextareaInputProps {
+  name: string;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  placeholder?: string;
+  rows?: number;
+}
+
+function TextareaInput({
+  name,
+  label,
+  value,
+  onChange,
+  placeholder,
+  rows = 3,
+}: TextareaInputProps) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-800 mb-2">
+        {label}
+      </label>
+      <div className="relative group">
+        <FileEdit className="absolute left-3 top-3 w-5 h-5 text-blue-400 pointer-events-none" />
+        <textarea
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          rows={rows}
+          className="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-lg bg-white text-gray-800 placeholder-gray-400 transition-all duration-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 hover:border-gray-300 resize-none"
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── Date Input Component ────────────────────────────
+interface DateInputProps {
+  name: string;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  optional?: boolean;
+  hint?: string;
+}
+
+function DateInput({
+  name,
+  label,
+  value,
+  onChange,
+  optional,
+  hint,
+}: DateInputProps) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-800 mb-2">
+        {label}
+        {hint && <span className="text-gray-500 font-normal ml-1">{hint}</span>}
+      </label>
+      <div className="relative group">
+        <Calendar className="absolute left-3 top-3.5 w-5 h-5 text-blue-400 pointer-events-none" />
+        <input
+          type="date"
+          name={name}
+          value={value || ""}
+          onChange={onChange}
+          className="w-full pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-lg bg-white text-gray-800 transition-all duration-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 hover:border-gray-300"
+        />
+      </div>
+    </div>
+  );
+}
+
 // ─── Vehicle Form Fields ──────────────────────────────
 interface VehicleFormFieldsProps {
   form: VehicleForm;
@@ -299,152 +474,107 @@ function VehicleFormFields({ form, users, onChange }: VehicleFormFieldsProps) {
     "w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
+      {/* Véhicule */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Marque *
-          </label>
-          <CustomSelect
-            name="marque"
-            value={form.marque}
-            onChange={onChange}
-            options={marqueOptions}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Modèle *
-          </label>
-          <CustomSelect
-            name="modele"
-            value={form.modele}
-            onChange={onChange}
-            options={modeleOptions}
-          />
-        </div>
+        <SelectInput
+          name="marque"
+          label="Marque"
+          value={form.marque}
+          onChange={onChange as any}
+          options={marqueOptions}
+          required
+        />
+        <SelectInput
+          name="modele"
+          label="Modèle"
+          value={form.modele}
+          onChange={onChange as any}
+          options={modeleOptions}
+          required
+        />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Format *
-          </label>
-          <CustomSelect
-            name="format"
-            value={form.format}
-            onChange={onChange}
-            options={formatOptions}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Immatriculation *
-          </label>
-          <input
-            type="text"
-            name="immatriculation"
-            value={form.immatriculation}
-            onChange={onChange as any}
-            placeholder="Ex: AB-123-CD"
-            className={`${inputCls} uppercase`}
-          />
-        </div>
+        <SelectInput
+          name="format"
+          label="Format"
+          value={form.format}
+          onChange={onChange as any}
+          options={formatOptions}
+          required
+        />
+        <TextInput
+          name="immatriculation"
+          label="Immatriculation"
+          value={form.immatriculation}
+          onChange={onChange as any}
+          placeholder="Ex: AB-123-CD"
+          required
+          uppercase
+        />
       </div>
 
+      {/* Révision + Responsable */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Date Révision
-          </label>
-          <input
-            type="date"
-            name="dateRevision"
-            value={form.dateRevision || ""}
-            onChange={onChange as any}
-            className={inputCls}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Affecté à
-          </label>
-          <CustomSelect
-            name="assignedTo"
-            value={form.assignedTo || ""}
-            onChange={onChange}
-            options={assignedOptions}
-          />
-        </div>
+        <DateInput
+          name="dateRevision"
+          label="Date Révision"
+          value={form.dateRevision || ""}
+          onChange={onChange as any}
+        />
+        <SelectInput
+          name="assignedTo"
+          label="Affecté à"
+          value={form.assignedTo || ""}
+          onChange={onChange as any}
+          options={assignedOptions}
+        />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Date CT réalisé
-          </label>
-          <input
-            type="date"
-            name="dateCtInspection"
-            value={form.dateCtInspection || ""}
-            onChange={onChange as any}
-            className={inputCls}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            CT expire le{" "}
-            <span className="text-gray-400 font-normal">(auto +2 ans)</span>
-          </label>
-          <input
-            type="date"
-            name="dateCtExpiration"
-            value={form.dateCtExpiration || ""}
-            onChange={onChange as any}
-            className={inputCls}
-          />
-        </div>
+      {/* CT */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-gray-200">
+        <DateInput
+          name="dateCtInspection"
+          label="Date CT réalisée"
+          value={form.dateCtInspection || ""}
+          onChange={onChange as any}
+        />
+        <DateInput
+          name="dateCtExpiration"
+          label="CT expire le"
+          value={form.dateCtExpiration || ""}
+          onChange={onChange as any}
+          hint="(auto +2 ans)"
+        />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Date Anti-Pollution réalisé
-          </label>
-          <input
-            type="date"
-            name="dateControlAntiPollutionInspection"
-            value={form.dateControlAntiPollutionInspection || ""}
-            onChange={onChange as any}
-            className={inputCls}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Anti-Pollution expire le{" "}
-            <span className="text-gray-400 font-normal">(auto +2 ans)</span>
-          </label>
-          <input
-            type="date"
-            name="dateControlAntiPollutionExpiration"
-            value={form.dateControlAntiPollutionExpiration || ""}
-            onChange={onChange as any}
-            className={inputCls}
-          />
-        </div>
+      {/* Anti-Pollution */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-gray-200">
+        <DateInput
+          name="dateControlAntiPollutionInspection"
+          label="Anti-Pollution réalisée"
+          value={form.dateControlAntiPollutionInspection || ""}
+          onChange={onChange as any}
+        />
+        <DateInput
+          name="dateControlAntiPollutionExpiration"
+          label="Anti-Pollution expire le"
+          value={form.dateControlAntiPollutionExpiration || ""}
+          onChange={onChange as any}
+          hint="(auto +2 ans)"
+        />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Notes
-        </label>
-        <textarea
+      {/* Notes */}
+      <div className="pt-3 border-t border-gray-200">
+        <TextareaInput
           name="notes"
+          label="Notes"
           value={form.notes || ""}
           onChange={onChange as any}
           placeholder="Notes ou commentaires..."
-          rows={3}
-          className={`${inputCls} resize-none`}
+          rows={2}
         />
       </div>
     </div>

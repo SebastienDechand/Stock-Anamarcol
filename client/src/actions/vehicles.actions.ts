@@ -2,12 +2,25 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import type { Vehicle, VehicleForm } from "../types/vehicle";
 
+// ─── Helper: Clean empty strings to null ─────────────
+function cleanVehicleData(data: VehicleForm | Partial<VehicleForm>) {
+  return Object.entries(data).reduce(
+    (acc, [key, value]) => ({
+      ...acc,
+      [key]: value === "" ? null : value,
+    }),
+    {} as VehicleForm | Partial<VehicleForm>,
+  );
+}
+
 // ─── Fetch all vehicles ──────────────────────────────
 export const getAllVehicles = createAsyncThunk(
   "vehicles/getAllVehicles",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("/api/vehicles");
+      const response = await axios.get("/api/vehicles", {
+        withCredentials: true,
+      });
       return response.data;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -25,7 +38,9 @@ export const getVehicleById = createAsyncThunk(
   "vehicles/getVehicleById",
   async (id: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/api/vehicles/${id}`);
+      const response = await axios.get(`/api/vehicles/${id}`, {
+        withCredentials: true,
+      });
       return response.data;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -60,6 +75,7 @@ export const searchVehicles = createAsyncThunk(
 
       const response = await axios.get(
         `/api/vehicles/search?${queryParams.toString()}`,
+        { withCredentials: true },
       );
       return response.data;
     } catch (error: unknown) {
@@ -78,7 +94,10 @@ export const createVehicle = createAsyncThunk(
   "vehicles/createVehicle",
   async (vehicleData: VehicleForm, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/vehicles", vehicleData);
+      const cleanedData = cleanVehicleData(vehicleData);
+      const response = await axios.post("/api/vehicles", cleanedData, {
+        withCredentials: true,
+      });
       return response.data;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -99,7 +118,10 @@ export const updateVehicle = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await axios.put(`/api/vehicles/${id}`, data);
+      const cleanedData = cleanVehicleData(data);
+      const response = await axios.put(`/api/vehicles/${id}`, cleanedData, {
+        withCredentials: true,
+      });
       return response.data;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -117,7 +139,7 @@ export const deleteVehicle = createAsyncThunk(
   "vehicles/deleteVehicle",
   async (id: string, { rejectWithValue }) => {
     try {
-      await axios.delete(`/api/vehicles/${id}`);
+      await axios.delete(`/api/vehicles/${id}`, { withCredentials: true });
       return id;
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -143,6 +165,7 @@ export const uploadVehicleDocument = createAsyncThunk(
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
         },
       );
       return response.data;
@@ -167,6 +190,7 @@ export const deleteVehicleDocument = createAsyncThunk(
     try {
       const response = await axios.delete(
         `/api/vehicles/${vehicleId}/documents/${docId}`,
+        { withCredentials: true },
       );
       return response.data;
     } catch (error: unknown) {
