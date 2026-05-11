@@ -5,6 +5,7 @@ import AuditModel from "../models/audit.model";
 import ItemModel from "../models/item.model";
 import ContactModel from "../models/contact.model";
 import UserModel from "../models/user.model";
+import { Role } from "../constants";
 
 export const getHistory = async (
   req: Request,
@@ -42,7 +43,11 @@ export const getHistory = async (
       .filter((e) => e.entity === "item" && e.entityId)
       .map((e) => String(e.entityId));
 
-    const [contacts, users, auditItems] = await Promise.all([
+    const actionUserNames = [
+      ...new Set(auditEvents.map((e) => e.userName).filter(Boolean)),
+    ] as string[];
+
+    const [contacts, users, auditItems, actionUsers] = await Promise.all([
       contactIds.length > 0
         ? ContactModel.find({ _id: { $in: [...new Set(contactIds)] } })
             .select("nom")
@@ -58,6 +63,11 @@ export const getHistory = async (
             .select("denomination")
             .lean()
         : [],
+      actionUserNames.length > 0
+        ? UserModel.find({ pseudo: { $in: actionUserNames } })
+            .select("pseudo roles")
+            .lean()
+        : [],
     ]);
 
     const contactNameMap = new Map(contacts.map((c) => [String(c._id), c.nom]));
@@ -66,34 +76,48 @@ export const getHistory = async (
       auditItems.map((i) => [String(i._id), i.denomination]),
     );
 
-    // Enrich audit events with entity name
-    const enrichedAuditEvents = auditEvents.map((e) => {
-      const obj = { ...e } as Record<string, unknown>;
-      const details = (obj.details as Record<string, unknown>) || {};
-      let entityName: string | undefined;
+    const superadminMap = new Map(
+      actionUsers.map((u) => [
+        u.pseudo,
+        (u.roles as string[])?.includes(Role.SUPERADMIN) || false,
+      ]),
+    );
 
-      if (e.entity === "contact") {
-        entityName =
-          contactNameMap.get(String(e.entityId)) ||
-          ((details.deleted as Record<string, unknown>)?.nom as string) ||
-          undefined;
-      } else if (e.entity === "user") {
-        entityName =
-          userNameMap.get(String(e.entityId)) ||
-          ((details.deleted as Record<string, unknown>)?.pseudo as string) ||
-          undefined;
-      } else if (e.entity === "item") {
-        entityName =
-          auditItemNameMap.get(String(e.entityId)) ||
-          (details.denomination as string) ||
-          undefined;
-      }
+    const enrichedAuditEvents = auditEvents
+      .filter((e) => {
+        // Exclude login events for superadmins
+        if (e.action === "login" && e.userName) {
+          return !superadminMap.get(e.userName);
+        }
+        return true;
+      })
+      .map((e) => {
+        const obj = { ...e } as Record<string, unknown>;
+        const details = (obj.details as Record<string, unknown>) || {};
+        let entityName: string | undefined;
 
-      if (entityName) {
-        obj.details = { ...details, entityName };
-      }
-      return obj;
-    });
+        if (e.entity === "contact") {
+          entityName =
+            contactNameMap.get(String(e.entityId)) ||
+            ((details.deleted as Record<string, unknown>)?.nom as string) ||
+            undefined;
+        } else if (e.entity === "user") {
+          entityName =
+            userNameMap.get(String(e.entityId)) ||
+            ((details.deleted as Record<string, unknown>)?.pseudo as string) ||
+            undefined;
+        } else if (e.entity === "item") {
+          entityName =
+            auditItemNameMap.get(String(e.entityId)) ||
+            (details.denomination as string) ||
+            undefined;
+        }
+
+        if (entityName) {
+          obj.details = { ...details, entityName };
+        }
+        return obj;
+      });
 
     // Normalize item history entries into audit-like shape
     const itemEvents = itemHistory.map((h) => ({
