@@ -399,7 +399,7 @@ server/
 | `CLIENT_URL`       | URL du frontend (CORS)     | `http://localhost:3000` |
 | `TOKEN_SECRET`     | Secret pour signer les JWT | `mon_secret_jwt`        |
 | `IMGBB_API_KEY`    | Clé API ImgBB              | `abc123...`             |
-| `SUPERADMIN_EMAIL` | Email du superadmin        | `admin@anamarcol.com`   |
+| `SUPERADMIN_EMAIL` | Email du superadmin        | `admin@example.com`     |
 
 > En production (o2switch), les variables sont définies directement sur l'hébergeur. Le `.env` n'est chargé que si `CLIENT_URL` n'est pas déjà définie.
 
@@ -410,9 +410,9 @@ server/
 |              | Détail                                                                 |
 | ------------ | ---------------------------------------------------------------------- |
 | **Service**  | MongoDB Atlas                                                          |
-| **Cluster**  | `anamarcol.fa6bdkr.mongodb.net`                                        |
+| **Cluster**  | `&lt;cluster&gt;.mongodb.net`                                        |
 | **Database** | `Anamarcol`                                                            |
-| **URI**      | `mongodb+srv://<DB_USER_PASS>@anamarcol.fa6bdkr.mongodb.net/Anamarcol` |
+| **URI**      | `mongodb+srv://<DB_USER_PASS>@&lt;cluster&gt;.mongodb.net/Anamarcol` |
 
 ---
 

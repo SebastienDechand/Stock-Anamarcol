@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { promises as dnsPromises } from "node:dns";
 import https from "node:https";
 
-const SRV_HOST = "anamarcol.fa6bdkr.mongodb.net";
+const SRV_HOST = process.env.MONGO_HOST ?? "";
 const DB_NAME = "Anamarcol";
 const RETRY_DELAY_MS = 5_000;
 

@@ -1,9 +1,3 @@
-// Credentials et configuration des caméras
-export const CAMERA_CREDENTIALS = {
-  username: "root",
-  password: "admin",
-} as const;
-
 export interface CameraConfig {
   id: string;
   name: string;
@@ -25,6 +19,3 @@ export const CAMERAS_CONFIG: CameraConfig[] = [
     cameraId: "413",
   },
 ];
-
-export const CAMERA_BASE_URL = "80.14.140.205";
-export const CAMERA_VIEW_PATH = "/axis-cgi/mjpg/video.cgi";
