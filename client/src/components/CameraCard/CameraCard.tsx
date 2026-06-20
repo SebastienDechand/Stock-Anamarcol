@@ -10,58 +10,17 @@ interface CameraCardProps {
   showHeader?: boolean;
   showFooter?: boolean;
   fullHeight?: boolean;
-  motionEnabled?: boolean;
-  globalMotionEnabled?: boolean;
-  onMotionToggle?: (enabled: boolean) => void;
 }
 
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 5;
 const ZOOM_STEP = 0.3;
 
-function MotionSwitch({
-  checked,
-  onChange,
-  disabled,
-}: {
-  checked: boolean;
-  onChange: (v: boolean) => void;
-  disabled?: boolean;
-}) {
-  return (
-    <button
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      disabled={disabled}
-      title={
-        disabled
-          ? "Activez la détection globale d'abord"
-          : checked
-            ? "Désactiver la détection"
-            : "Activer la détection"
-      }
-      className={`relative inline-flex h-4 w-7 shrink-0 items-center rounded-full transition-colors focus:outline-none disabled:opacity-40 ${
-        checked && !disabled ? "bg-green-400" : "bg-white/30"
-      }`}
-    >
-      <span
-        className={`inline-block h-3 w-3 rounded-full bg-white shadow transition-transform ${
-          checked ? "translate-x-3.5" : "translate-x-0.5"
-        }`}
-      />
-    </button>
-  );
-}
-
 export default function CameraCard({
   camera,
   showHeader = true,
   showFooter = true,
   fullHeight = false,
-  motionEnabled = false,
-  globalMotionEnabled = false,
-  onMotionToggle,
 }: CameraCardProps) {
   const [zoom, setZoom] = useState(1);
   const zoomRef = useRef(1);
@@ -216,18 +175,6 @@ export default function CameraCard({
           </h3>
 
           <div className="flex items-center gap-2 shrink-0">
-            {/* Motion detection toggle */}
-            {onMotionToggle && (
-              <div className="flex items-center gap-1.5">
-                <span className="text-white/70 text-xs">Mouvement</span>
-                <MotionSwitch
-                  checked={motionEnabled}
-                  onChange={onMotionToggle}
-                  disabled={!globalMotionEnabled}
-                />
-              </div>
-            )}
-
             {/* Zoom controls */}
             <div className="flex items-center gap-0.5">
               <button
@@ -318,13 +265,6 @@ export default function CameraCard({
               En direct
             </div>
 
-            {/* Motion active indicator */}
-            {globalMotionEnabled && motionEnabled && (
-              <div className="absolute top-2 left-2 flex items-center gap-1 bg-black/70 px-2 py-1 rounded pointer-events-none">
-                <span className="inline-block h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-white text-xs">Détection active</span>
-              </div>
-            )}
           </>
         )}
       </div>

@@ -6,14 +6,11 @@ if (!process.env.CLIENT_URL) {
 }
 import { connectDB } from "./config/db";
 import app from "./app";
-import { motionDetectionService } from "./services/motionDetection.service";
 import { purgeOldEntries } from "./services/purge.service";
 import { startReminderScheduler } from "./scheduler/reminder.scheduler";
 
 // Wait for MongoDB before accepting requests
 connectDB().then(async () => {
-  await motionDetectionService.loadState();
-
   // Run initial purge and then every 6 hours
   await purgeOldEntries();
   setInterval(purgeOldEntries, 6 * 60 * 60 * 1000);

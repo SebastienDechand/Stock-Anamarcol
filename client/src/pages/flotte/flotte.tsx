@@ -822,7 +822,7 @@ export default function FlottePage() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-4">
+    <div className="w-full flex flex-col gap-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
