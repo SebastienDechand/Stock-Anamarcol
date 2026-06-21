@@ -1,0 +1,314 @@
+@use '../../../scss/mixins' as m;
+
+.admin-roles-page {
+  @include m.page-container;
+}
+
+.search-wrap {
+  position: relative;
+  width: min(260px, 100%);
+
+  &__icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-muted);
+    pointer-events: none;
+  }
+
+  &__input {
+    @include m.input-base;
+    width: 100%;
+    padding-left: 32px;
+  }
+}
+
+.roles-table-wrap {
+  @include m.card;
+  overflow-x: auto;
+  display: none;
+
+  @include m.md {
+    display: block;
+  }
+}
+
+.roles-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  &__th {
+    padding: 10px 12px;
+    background: var(--surface-50);
+    border-bottom: 1px solid var(--surface-200);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+    white-space: nowrap;
+
+    &--member {
+      text-align: left;
+    }
+    &--role {
+      text-align: center;
+    }
+  }
+
+  &__row {
+    border-bottom: 1px solid var(--surface-100, #f5f3ef);
+    transition: background 0.1s;
+
+    &:hover {
+      background: var(--surface-50);
+    }
+  }
+
+  &__td {
+    padding: 10px 12px;
+    vertical-align: middle;
+
+    &--member {
+      min-width: 180px;
+    }
+
+    &--checkbox {
+      text-align: center;
+    }
+  }
+}
+
+.member-name {
+  display: block;
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 0.875rem;
+}
+
+.member-email {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  @include m.truncate;
+}
+
+.saving-icon {
+  display: inline-block;
+  color: var(--brand-500);
+  margin-left: 6px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.role-checkbox {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &__box {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid var(--surface-300);
+    background: var(--bg-input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+
+    &--checked {
+      border-color: var(--primary-700);
+      background: var(--primary-700);
+    }
+
+    &--locked {
+      border-color: #9ca3af;
+      background: #9ca3af;
+    }
+  }
+
+  &__check {
+    width: 10px;
+    height: 8px;
+    fill: none;
+    stroke: white;
+    stroke-width: 2;
+  }
+}
+
+.role-badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+
+  &--user {
+    background: #f3f4f6;
+    color: #4b5563;
+  }
+  &--hotline {
+    background: #e0f2fe;
+    color: #0369a1;
+  }
+  &--monteur {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  &--admin {
+    background: #ede9fe;
+    color: #6d28d9;
+  }
+  &--superadmin {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+  &--dim {
+    opacity: 0.5;
+  }
+}
+
+// ─── Mobile cards ─────────────────────────────────────
+
+.roles-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @include m.md {
+    display: none;
+  }
+}
+
+.user-card {
+  @include m.card;
+  padding: 0;
+  overflow: hidden;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  &__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary-600);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.0625rem;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__name {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+  }
+
+  &__email {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__roles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 12px 16px;
+  }
+}
+
+.role-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border-default);
+  background: transparent;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:not(:disabled):hover {
+    border-color: var(--surface-400);
+    color: var(--text-secondary);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &--active {
+    &.role-toggle--user {
+      border-color: var(--surface-400);
+      background: var(--surface-200);
+      color: var(--text-secondary);
+    }
+    &.role-toggle--hotline {
+      background: #0284c7;
+      border-color: #0284c7;
+      color: #fff;
+    }
+    &.role-toggle--monteur {
+      background: #d97706;
+      border-color: #d97706;
+      color: #fff;
+    }
+    &.role-toggle--admin {
+      background: #7c3aed;
+      border-color: #7c3aed;
+      color: #fff;
+    }
+    &.role-toggle--superadmin {
+      background: #dc2626;
+      border-color: #dc2626;
+      color: #fff;
+    }
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 48px 20px;
+  color: var(--color-muted);
+}

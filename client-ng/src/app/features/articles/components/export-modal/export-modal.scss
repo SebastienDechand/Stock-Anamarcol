@@ -1,0 +1,75 @@
+@use '../../../../../scss/mixins' as m;
+
+.modal-backdrop {
+  @include m.overlay-backdrop;
+}
+.modal-panel {
+  @include m.modal-panel;
+  width: min(400px, 95vw);
+}
+
+.modal-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--surface-200);
+}
+
+.modal-panel__title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.modal-panel__body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.export-count {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+.export-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--surface-200);
+  background: white;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  color: var(--color-text);
+
+  &:hover {
+    border-color: var(--primary-500);
+    background: color-mix(in srgb, var(--primary-500) 6%, white);
+  }
+
+  &__label {
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+
+  &__desc {
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    margin-left: auto;
+  }
+}
+
+.icon-btn {
+  @include m.btn-icon;
+}

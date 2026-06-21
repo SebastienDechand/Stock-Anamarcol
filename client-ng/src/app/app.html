@@ -1,0 +1,8 @@
+@if (isAuthLoading$ | async) {
+  <div class="app-loader">
+    <div class="app-loader__spinner"></div>
+    <p class="app-loader__text">Chargement de la session...</p>
+  </div>
+}
+
+<router-outlet />

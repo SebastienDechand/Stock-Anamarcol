@@ -1,0 +1,149 @@
+:root {
+  // Primary (vert)
+  --primary-50: #f0fdf4;
+  --primary-100: #dcfce7;
+  --primary-500: #22c55e;
+  --primary-600: #16a34a;
+  --primary-700: #15803d;
+  --primary-900: #14532d;
+
+  // Brand (kaki/olive)
+  --brand-50: #f8faf5;
+  --brand-100: #eef2e8;
+  --brand-200: #d5e1c4;
+  --brand-500: #85a55e;
+  --brand-600: #6b8a47;
+  --brand-700: #546c38;
+  --brand-800: #4a5e32;
+  --brand-900: #3b4a2a;
+
+  // Surface (neutres chauds)
+  --surface-50: #fafaf7;
+  --surface-100: #f5f3ee;
+  --surface-200: #eae5da;
+  --surface-300: #ddd5c4;
+  --surface-400: #c9bda8;
+
+  // Sémantique
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-warning: #d97706;
+  --color-info: #2563eb;
+  --color-success: #22c55e;
+
+  // Texte
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --text-inverse: #ffffff;
+
+  // Bordures
+  --border-light: #f3f4f6;
+  --border-default: #e5e7eb;
+  --border-medium: #d1d5db;
+
+  // Espacement
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  // Typographie
+  --font-sans: 'DM Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'DM Mono', ui-monospace, 'Cascadia Code', monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+
+  // Border radius
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+
+  // Ombres
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  // Backgrounds sémantiques
+  --bg-base: var(--surface-50);
+  --bg-card: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-input: #f9fafb;
+
+  // Aliases rétro-compatibilité
+  --color-text: var(--text-primary);
+  --color-muted: var(--text-muted);
+
+  // Transitions
+  --transition-fast: 0.1s ease;
+  --transition-base: 0.15s ease;
+  --transition-slow: 0.3s ease;
+
+  // Layout
+  --sidebar-width: 16rem;
+  --sidebar-collapsed: 5rem;
+  --topbar-height: 64px;
+}
+
+// ─── Dark mode ───────────────────────────────────────────────────────────────
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  // Surfaces — légèrement plus claires pour la hiérarchie visuelle
+  --surface-50: #1f2a1a;
+  --surface-100: #243020;
+  --surface-200: #2e4024;
+  --surface-300: #3a5230;
+  --surface-400: #6b8652; // était #54703f — trop sombre, contraste insuffisant
+
+  // Backgrounds
+  --bg-base: #161e12;
+  --bg-card: #1f2a1a;
+  --bg-elevated: #273822;
+  --bg-input: #243020;
+
+  // Texte — ratios WCAG AA vérifiés sur --bg-card #1f2a1a (L≈0.035)
+  --text-primary: #e4edd8; // ~10:1
+  --text-secondary: #9bb878; // ~5.9:1
+  --text-muted: #80a261; // ~4.6:1 (minimum AA)
+  --text-inverse: #161e12;
+
+  // Bordures — plus visibles qu'avant
+  --border-light: #2a3c22;
+  --border-default: #344e28;
+  --border-medium: #406038;
+
+  // Brand (dark)
+  --brand-50: #1e2b15;
+  --brand-100: #253618;
+
+  // Ombres renforcées
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.5);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+}
+
+// Alias SCSS (pour calc/maps)
+$primary-600: #16a34a;
+$brand-900: #3b4a2a;
+$brand-600: #6b8a47;
+$surface-200: #eae5da;
+$danger: #ef4444;

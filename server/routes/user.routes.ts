@@ -18,8 +18,10 @@ router.get("/", requireAuth, userController.getAllUsers);
 router.get("/:id", requireAuth, userController.userInfo);
 // Admins can create users (add members)
 router.post("/", requireAdmin, authController.signUp);
-// Admins can update or delete users
-router.put("/:id", requireAdmin, userController.updateUser);
+// Admins can update any user; a user can also update their own profile
+// (self-service fields only — see authorization check inside the controller)
+router.put("/:id", requireAuth, userController.updateUser);
+// Admins can delete users
 router.delete("/:id", requireAdmin, userController.deleteUser);
 
 // Set role(s) (admin only)

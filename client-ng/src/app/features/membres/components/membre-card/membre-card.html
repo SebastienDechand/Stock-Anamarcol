@@ -1,0 +1,49 @@
+<div class="membre-card" [class.membre-card--clickable]="clickable" (click)="onClick()">
+  <div class="membre-card__avatar">
+    @if (avatarUrl) {
+      <img [src]="avatarUrl" [alt]="user.pseudo" class="membre-card__img" />
+    } @else {
+      <span class="membre-card__initials">{{ initials }}</span>
+    }
+  </div>
+
+  <div class="membre-card__info">
+    <div class="membre-card__name-row">
+      <p class="membre-card__name">{{ user.pseudo }}</p>
+      @if (showRoles) {
+        @for (badge of badges; track badge.role) {
+          <span class="role-badge role-badge--{{ badge.role }}">{{
+            badge.labelKey | translate
+          }}</span>
+        }
+      }
+    </div>
+    @if (user.poste) {
+      <p class="membre-card__poste">{{ user.poste }}</p>
+    }
+    <div class="membre-card__contact">
+      @if (user.email) {
+        <span class="contact-item">
+          <lucide-icon name="mail" [size]="12" />
+          {{ user.email }}
+        </span>
+      }
+      @if (user.numero) {
+        <span class="contact-item">
+          <lucide-icon name="phone" [size]="12" />
+          {{ user.numero }}
+        </span>
+      }
+    </div>
+  </div>
+
+  @if (canDelete) {
+    <button
+      class="membre-card__delete"
+      (click)="$event.stopPropagation(); deleteRequested.emit(user)"
+      [title]="'MEMBERS.DELETE' | translate"
+    >
+      <lucide-icon name="trash-2" [size]="13" />
+    </button>
+  }
+</div>

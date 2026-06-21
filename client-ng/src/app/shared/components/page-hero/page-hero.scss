@@ -1,0 +1,36 @@
+@use '../../../../scss/tokens' as *;
+@use '../../../../scss/mixins' as m;
+
+:host {
+  display: block;
+  margin-bottom: 24px;
+}
+
+.hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.hero__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+
+  lucide-icon {
+    color: var(--brand-600);
+    flex-shrink: 0;
+  }
+}
+
+.hero__subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+}

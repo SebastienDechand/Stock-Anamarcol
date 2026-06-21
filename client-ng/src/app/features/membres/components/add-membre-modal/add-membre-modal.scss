@@ -1,0 +1,93 @@
+@use '../../../../../scss/mixins' as m;
+
+.modal-backdrop {
+  @include m.overlay-backdrop;
+}
+.modal-panel {
+  @include m.modal-panel;
+  width: min(520px, 95vw);
+}
+
+.modal-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--surface-200);
+}
+
+.modal-panel__title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.modal-panel__body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-panel__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--surface-200);
+  margin-top: 4px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-label {
+  @include m.label-base;
+}
+.form-input {
+  @include m.input-base;
+}
+
+.input-wrap {
+  position: relative;
+
+  .form-input {
+    padding-right: 38px;
+    width: 100%;
+  }
+
+  &__toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-muted);
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      color: var(--color-text);
+    }
+  }
+}
+
+.btn-primary {
+  @include m.btn-primary;
+}
+.btn-ghost {
+  @include m.btn-ghost;
+}
+.icon-btn {
+  @include m.btn-icon;
+}

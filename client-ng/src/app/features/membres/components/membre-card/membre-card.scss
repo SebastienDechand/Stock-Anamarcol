@@ -1,0 +1,142 @@
+@use '../../../../../scss/mixins' as m;
+
+.membre-card {
+  @include m.card;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px;
+  position: relative;
+  transition: box-shadow 0.2s;
+
+  &--clickable {
+    cursor: pointer;
+    &:hover {
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--surface-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--surface-300);
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__initials {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  &__name-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text);
+    @include m.truncate;
+    flex-shrink: 0;
+  }
+
+  &__poste {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    @include m.truncate;
+  }
+
+  &__contact {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 4px;
+  }
+
+  &__delete {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+    color: var(--color-danger);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+
+    &:hover {
+      background: var(--color-danger);
+      color: white;
+    }
+  }
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  @include m.truncate;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+
+  &--user {
+    background: var(--surface-200);
+    color: var(--text-secondary);
+  }
+
+  &--hotline {
+    background: #e0f2fe;
+    color: #0369a1;
+  }
+  &--monteur {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  &--admin {
+    background: #ede9fe;
+    color: #6d28d9;
+  }
+  &--superadmin {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+}

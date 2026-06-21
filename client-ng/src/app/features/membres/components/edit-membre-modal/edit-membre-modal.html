@@ -1,0 +1,91 @@
+<div class="modal-backdrop" (click)="cancelled.emit()">
+  <div class="modal-panel" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <div class="modal-panel__header">
+      <h2 class="modal-panel__title">{{ 'MEMBERS.EDIT_TITLE' | translate }}</h2>
+      <button
+        class="icon-btn"
+        type="button"
+        (click)="cancelled.emit()"
+        [title]="'COMMON.CLOSE' | translate"
+      >
+        <lucide-icon name="x" [size]="18" />
+      </button>
+    </div>
+
+    <form class="modal-panel__body" (ngSubmit)="submit()">
+      @if (isSuperadmin) {
+        <div class="avatar-section">
+          <div class="avatar-wrap">
+            @if (avatarUrl) {
+              <img [src]="avatarUrl" [alt]="user.pseudo" class="avatar-img" />
+            } @else {
+              <span class="avatar-initials">{{ initials }}</span>
+            }
+            <label class="avatar-upload" [title]="'MEMBERS.CHANGE_PHOTO' | translate">
+              <lucide-icon name="camera" [size]="14" />
+              <input type="file" accept="image/*" class="sr-only" (change)="onFileChange($event)" />
+            </label>
+          </div>
+        </div>
+      }
+
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">{{ 'MEMBERS.PSEUDO' | translate }} *</label>
+          <input class="form-input" [(ngModel)]="form.pseudo" name="pseudo" required />
+        </div>
+        <div class="form-row">
+          <label class="form-label">{{ 'MEMBERS.EMAIL' | translate }} *</label>
+          <input class="form-input" type="email" [(ngModel)]="form.email" name="email" required />
+        </div>
+        <div class="form-row">
+          <label class="form-label">{{ 'MEMBERS.POSITION' | translate }}</label>
+          <input
+            class="form-input"
+            [(ngModel)]="form.poste"
+            name="poste"
+            [placeholder]="'MEMBERS.POSITION_PLACEHOLDER' | translate"
+          />
+        </div>
+        <div class="form-row">
+          <label class="form-label">{{ 'MEMBERS.PHONE' | translate }}</label>
+          <input
+            class="form-input"
+            [(ngModel)]="form.numero"
+            name="numero"
+            placeholder="06 XX XX XX XX"
+          />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">{{ 'MEMBERS.POLE' | translate }}</label>
+        <select class="form-input" [(ngModel)]="form.pole" name="pole">
+          <option value="">{{ 'MEMBERS.SELECT' | translate }}</option>
+          @for (pole of poles; track pole) {
+            <option [value]="pole">{{ pole }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="modal-panel__footer">
+        <button
+          type="button"
+          class="btn-ghost"
+          (click)="cancelled.emit()"
+          [title]="'COMMON.CANCEL' | translate"
+        >
+          {{ 'COMMON.CANCEL' | translate }}
+        </button>
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="!form.pseudo?.trim() || !form.email?.trim()"
+          [title]="'COMMON.SAVE' | translate"
+        >
+          {{ 'COMMON.SAVE' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

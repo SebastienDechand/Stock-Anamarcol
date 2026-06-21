@@ -1,0 +1,42 @@
+<div class="kpi-grid">
+  <app-kpi-card
+    [label]="'HOME.KPI_ARTICLES' | translate"
+    [value]="stats.numberOfArticles"
+    icon="package"
+    accent="brand"
+  />
+  <app-kpi-card
+    [label]="'HOME.KPI_TOTAL_STOCK' | translate"
+    [value]="stats.totalStock"
+    icon="warehouse"
+    accent="blue"
+  />
+  <app-kpi-card
+    [label]="'HOME.KPI_SUPPLIERS' | translate"
+    [value]="stats.numberOfSuppliers"
+    icon="truck"
+    accent="amber"
+  />
+  <app-kpi-card
+    [label]="'HOME.KPI_LOW_STOCK' | translate"
+    [value]="stats.numberOfLowStockArticles"
+    icon="alert-triangle"
+    accent="red"
+  />
+  @if (stats.prepaCG !== undefined) {
+    <app-kpi-card
+      [label]="'HOME.KPI_PRECA_CG' | translate"
+      [value]="stats.prepaCG"
+      icon="monitor"
+      accent="violet"
+    />
+  }
+  @if (stats.prepaTPV !== undefined) {
+    <app-kpi-card
+      [label]="'HOME.KPI_PRECA_TPV' | translate"
+      [value]="stats.prepaTPV"
+      icon="credit-card"
+      accent="violet"
+    />
+  }
+</div>

@@ -1,0 +1,122 @@
+@use '../../../../../scss/tokens' as *;
+@use '../../../../../scss/mixins' as *;
+
+.camera-card {
+  @include card;
+  padding: 0;
+  overflow: hidden;
+
+  &--full {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--brand-900);
+    color: #fff;
+    gap: 8px;
+  }
+
+  &__header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  &__live-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  &__ctrl-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 4px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  &__viewport {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: #000;
+    cursor: grab;
+    user-select: none;
+
+    &--dragging {
+      cursor: grabbing;
+    }
+
+    &--full {
+      flex: 1;
+      aspect-ratio: unset;
+    }
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    transform-origin: center center;
+    transition: transform 0.05s linear;
+    pointer-events: none;
+  }
+
+  &__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.85rem;
+  }
+
+  &__footer {
+    padding: 6px 14px;
+    font-size: 0.72rem;
+    color: var(--surface-400);
+    background: var(--surface-50);
+    border-top: 1px solid var(--surface-200);
+  }
+}

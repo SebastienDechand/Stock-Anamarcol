@@ -1,3 +1,4 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { Response } from "express";
 import { validateObjectId } from "../utils/validate.utils";
 
@@ -6,8 +7,8 @@ describe("validateObjectId", () => {
 
   beforeEach(() => {
     res = {
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
     };
   });
 

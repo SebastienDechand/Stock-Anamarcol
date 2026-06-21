@@ -1,0 +1,284 @@
+<div class="overlay" (click)="closed.emit()">
+  <div class="panel" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="panel__header">
+      <div>
+        <h3 class="panel__title">
+          {{
+            isEdit
+              ? ('CLIENT_FILES.EDIT_REPORT' | translate)
+              : ('CLIENT_FILES.ADD_REPORT' | translate)
+          }}
+        </h3>
+        <p class="panel__subtitle">{{ clientLabel }}</p>
+      </div>
+      <div class="panel__header-right">
+        <!-- Step indicators -->
+        <div class="steps">
+          @for (s of steps; track s.n; let idx = $index) {
+            <div
+              class="step"
+              [class.step--active]="step() === s.n"
+              [class.step--done]="step() > s.n"
+            >
+              <span class="step__dot">{{ s.n }}</span>
+              {{ s.label | translate }}
+            </div>
+            @if (idx < steps.length - 1) {
+              <span class="steps__sep"></span>
+            }
+          }
+        </div>
+        <button class="btn-close" (click)="closed.emit()" [title]="'COMMON.CLOSE' | translate">
+          <lucide-icon [img]="x" [size]="18" />
+        </button>
+      </div>
+    </div>
+
+    <div class="panel__body">
+      <!-- ── Étape 1 ── -->
+      @if (step() === 1) {
+        <div class="step-content">
+          <p class="step-content__heading">
+            <lucide-icon [img]="wrench" [size]="15" class="step-content__icon" />
+            {{ 'CLIENT_FILES.WIZARD_HEADING' | translate }}
+          </p>
+
+          <!-- TW Codes -->
+          <div class="section">
+            <div class="section__head">
+              <p class="section__label">{{ 'CLIENT_FILES.TW_CODES' | translate }}</p>
+              <button
+                class="btn-add"
+                type="button"
+                (click)="addCaisse()"
+                [title]="'CLIENT_FILES.ADD_REGISTER' | translate"
+              >
+                <lucide-icon [img]="plus" [size]="13" />
+                {{ 'CLIENT_FILES.ADD_REGISTER' | translate }}
+              </button>
+            </div>
+            <div class="tw-grid">
+              @for (tw of twCaisses(); track $index; let i = $index) {
+                <div class="tw-item">
+                  <div class="tw-item__field">
+                    <label class="form-label">{{
+                      'CLIENT_FILES.TW_REGISTER' | translate: { n: i + 1 }
+                    }}</label>
+                    <input
+                      class="input-base"
+                      [value]="tw"
+                      (input)="setCaisse(i, $any($event.target).value)"
+                    />
+                  </div>
+                  @if (twCaisses().length > 1) {
+                    <button
+                      class="btn-remove"
+                      type="button"
+                      (click)="removeCaisse(i)"
+                      [title]="'CLIENT_FILES.REMOVE_REGISTER' | translate"
+                    >
+                      <lucide-icon [img]="x" [size]="12" />
+                    </button>
+                  }
+                </div>
+              }
+              <div>
+                <label class="form-label">{{ 'CLIENT_FILES.TW_PC' | translate }}</label>
+                <input
+                  class="input-base"
+                  [value]="twPc()"
+                  (input)="twPc.set($any($event.target).value)"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- CashGuard units -->
+          <div class="section">
+            <div class="section__head">
+              <p class="section__label">
+                {{ 'CLIENT_FILES.CG_UNITS' | translate: { n: units().length } }}
+              </p>
+              <button
+                class="btn-add"
+                type="button"
+                (click)="addUnit()"
+                [title]="'CLIENT_FILES.ADD_UNIT' | translate"
+              >
+                <lucide-icon [img]="plus" [size]="13" /> {{ 'CLIENT_FILES.ADD_UNIT' | translate }}
+              </button>
+            </div>
+            <div class="units">
+              @for (unit of units(); track $index; let i = $index) {
+                <div class="unit">
+                  <div class="unit__bar" (click)="toggleExpand(i)">
+                    <span class="unit__name">
+                      {{ 'CLIENT_FILES.CG_UNIT' | translate: { n: i + 1 } }} {{ unitLabel(unit) }}
+                    </span>
+                    <div class="unit__bar-right">
+                      @if (units().length > 1) {
+                        <button
+                          class="btn-remove"
+                          type="button"
+                          (click)="$event.stopPropagation(); removeUnit(i)"
+                          [title]="'CLIENT_FILES.REMOVE_UNIT' | translate"
+                        >
+                          <lucide-icon [img]="trash2" [size]="12" />
+                        </button>
+                      }
+                      <lucide-icon [img]="expandedUnit() === i ? chevUp : chevDown" [size]="14" />
+                    </div>
+                  </div>
+                  @if (expandedUnit() === i) {
+                    <div class="unit__body">
+                      <div class="unit__fields unit__fields--2">
+                        <div>
+                          <label class="form-label">{{
+                            'CLIENT_FILES.UP_LABEL' | translate
+                          }}</label>
+                          <input
+                            class="input-base"
+                            [value]="unit.up ?? ''"
+                            (input)="setUnitField(i, 'up', $any($event.target).value)"
+                          />
+                        </div>
+                        <div>
+                          <label class="form-label">{{
+                            'CLIENT_FILES.UB_LABEL' | translate
+                          }}</label>
+                          <input
+                            class="input-base"
+                            [value]="unit.ub ?? ''"
+                            (input)="setUnitField(i, 'ub', $any($event.target).value)"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <p class="form-label" style="margin-bottom: 6px">
+                          {{ 'CLIENT_FILES.CASSETTES_SLOTS' | translate }}
+                        </p>
+                        <div class="k7-grid">
+                          @for (slot of unit.k7Slots; track $index; let si = $index) {
+                            <div>
+                              <label class="slot-label">S{{ si + 1 }}</label>
+                              <input
+                                class="input-base"
+                                [value]="slot"
+                                (input)="setK7(i, si, $any($event.target).value)"
+                              />
+                            </div>
+                          }
+                        </div>
+                      </div>
+                      <div>
+                        <label class="form-label">
+                          {{ 'CLIENT_FILES.ASSIGNED_REGISTERS_HINT' | translate }}
+                        </label>
+                        <input
+                          class="input-base"
+                          [value]="unit.assignedCaisses.join(', ')"
+                          (input)="setAssignedCaisses(i, $any($event.target).value)"
+                          [placeholder]="'CLIENT_FILES.REGISTERS_PLACEHOLDER' | translate"
+                        />
+                      </div>
+                      <label class="checkbox-label">
+                        <input
+                          type="checkbox"
+                          [checked]="unit.hasPc"
+                          (change)="setUnitField(i, 'hasPc', $any($event.target).checked)"
+                        />
+                        {{ 'CLIENT_FILES.PC_ASSOCIATED' | translate }}
+                      </label>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="step-footer step-footer--right">
+            <button
+              class="btn-primary"
+              type="button"
+              (click)="step.set(2)"
+              [title]="'COMMON.NEXT' | translate"
+            >
+              {{ 'COMMON.NEXT' | translate }} →
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- ── Étape 2 ── -->
+      @if (step() === 2) {
+        <div class="step-content">
+          <p class="step-content__heading">
+            <lucide-icon [img]="fileText" [size]="15" class="step-content__icon" />
+            {{ 'CLIENT_FILES.WIZARD_FINALIZE' | translate }}
+          </p>
+
+          <!-- Recap -->
+          <div class="recap">
+            <p class="recap__title">{{ 'CLIENT_FILES.RECAP_TITLE' | translate }}</p>
+            @for (tw of recap.caisses; track $index; let i = $index) {
+              <p>
+                {{ 'CLIENT_FILES.TW_REGISTER' | translate: { n: i + 1 } }} :
+                <span class="recap__mono">{{ tw }}</span>
+              </p>
+            }
+            @if (recap.pc) {
+              <p>
+                {{ 'CLIENT_FILES.TW_PC' | translate }} :
+                <span class="recap__mono">{{ recap.pc }}</span>
+              </p>
+            }
+            <p>
+              {{ 'CLIENT_FILES.RECAP_UNITS' | translate: { count: recap.unitCount } }}
+              @if (recap.unitNames) {
+                · {{ recap.unitNames }}
+              }
+            </p>
+          </div>
+
+          <div class="form-field">
+            <label class="section__label">{{ 'CLIENT_FILES.NOTES_LABEL' | translate }}</label>
+            <textarea
+              class="input-base textarea"
+              rows="5"
+              [value]="notes()"
+              (input)="notes.set($any($event.target).value)"
+              [placeholder]="'CLIENT_FILES.WIZARD_NOTES_PLACEHOLDER' | translate"
+            ></textarea>
+          </div>
+
+          <div class="step-footer step-footer--between">
+            <button
+              class="btn-secondary"
+              type="button"
+              (click)="step.set(1)"
+              [title]="'COMMON.PREVIOUS' | translate"
+            >
+              ← {{ 'COMMON.PREVIOUS' | translate }}
+            </button>
+            <button
+              class="btn-primary"
+              type="button"
+              [disabled]="loading()"
+              (click)="submit()"
+              [title]="isEdit ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate)"
+            >
+              {{
+                loading()
+                  ? ('COMMON.LOADING' | translate)
+                  : isEdit
+                    ? ('COMMON.UPDATE' | translate)
+                    : ('COMMON.CREATE' | translate)
+              }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

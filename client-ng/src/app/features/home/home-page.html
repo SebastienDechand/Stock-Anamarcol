@@ -1,0 +1,113 @@
+@if (facade.isLoading$ | async) {
+  <app-spinner [inline]="true" [message]="'HOME.LOADING' | translate" />
+} @else {
+  <div class="home">
+    <app-page-hero
+      class="home__hero"
+      [title]="'HOME.TITLE' | translate"
+      iconName="layout-dashboard"
+      [subtitle]="'HOME.SUBTITLE' | translate"
+    />
+    @if (facade.globalStats$ | async; as stats) {
+      <app-kpi-grid [stats]="stats" />
+    }
+
+    <div class="home__charts-row">
+      <!-- Chart card -->
+      <div class="home__card">
+        <div class="home__card-header">
+          <h2 class="home__section-title">{{ 'HOME.STOCK_BY_SUPPLIER' | translate }}</h2>
+          <div class="home__chart-toggle">
+            <button
+              class="home__toggle-icon"
+              [class.home__toggle-icon--active]="chartType() === 'pie'"
+              (click)="toggleChart('pie')"
+              type="button"
+              [title]="'HOME.CHART_PIE' | translate"
+            >
+              <lucide-icon name="pie-chart" [size]="16" />
+            </button>
+            <button
+              class="home__toggle-icon"
+              [class.home__toggle-icon--active]="chartType() === 'bar'"
+              (click)="toggleChart('bar')"
+              type="button"
+              [title]="'HOME.CHART_BAR' | translate"
+            >
+              <lucide-icon name="bar-chart-3" [size]="16" />
+            </button>
+          </div>
+        </div>
+        @if (facade.fournisseurStats$ | async; as fournisseurs) {
+          <app-stock-chart [stats]="fournisseurs" [chartType]="chartType()" />
+        }
+      </div>
+
+      <!-- Supplier details card -->
+      <div class="home__card">
+        <h2 class="home__section-title home__section-title--mb">
+          {{ 'HOME.SUPPLIER_DETAILS' | translate }}
+        </h2>
+        @if (facade.fournisseurStats$ | async; as fournisseurs) {
+          <!-- Mobile card view -->
+          <div class="home__supplier-cards">
+            @for (f of fournisseurs; track f.nom) {
+              <div class="home__supplier-card">
+                <div class="home__supplier-card-top">
+                  <span class="home__supplier-card-name">{{ f.nom }}</span>
+                  <span
+                    class="home__badge"
+                    [class.home__badge--danger]="f.numberOfLowStockArticles > 0"
+                  >
+                    {{ f.numberOfLowStockArticles }}
+                  </span>
+                </div>
+                <div class="home__supplier-card-meta">
+                  <span>{{ f.numberOfArticles }} {{ 'HOME.ARTICLES_COUNT' | translate }}</span>
+                  <span>{{ 'HOME.STOCK' | translate }} : {{ f.totalStock }}</span>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Desktop table -->
+          <div class="home__supplier-table-wrap">
+            <table class="home__supplier-table">
+              <thead>
+                <tr>
+                  <th class="home__th home__th--left">{{ 'HOME.SUPPLIER' | translate }}</th>
+                  <th class="home__th home__th--right">{{ 'HOME.ARTICLES_COUNT' | translate }}</th>
+                  <th class="home__th home__th--right">{{ 'HOME.STOCK' | translate }}</th>
+                  <th class="home__th home__th--right">{{ 'HOME.LOW_STOCK' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (f of fournisseurs; track f.nom) {
+                  <tr class="home__tr">
+                    <td class="home__td home__td--name">{{ f.nom }}</td>
+                    <td class="home__td home__td--right">{{ f.numberOfArticles }}</td>
+                    <td class="home__td home__td--right">{{ f.totalStock }}</td>
+                    <td class="home__td home__td--right">
+                      <span
+                        class="home__badge"
+                        [class.home__badge--danger]="f.numberOfLowStockArticles > 0"
+                      >
+                        {{ f.numberOfLowStockArticles }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (facade.lowStockItems$ | async; as items) {
+      @if (items.length > 0) {
+        <app-low-stock-table [items]="items" />
+      }
+    }
+  </div>
+}

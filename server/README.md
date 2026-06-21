@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚙️ Stock Anamarcol — Backend
+# ⚙️ Stock Anamarcol - Backend
 
 **API REST pour la gestion de stock Anamarcol**
 
@@ -10,7 +10,7 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 ![Express](https://img.shields.io/badge/Express-5.2-000000?style=flat-square&logo=express&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat-square&logo=mongodb&logoColor=white)
-![Jest](https://img.shields.io/badge/Jest-30.2-C21325?style=flat-square&logo=jest&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-4.1-6E9F18?style=flat-square&logo=vitest&logoColor=white)
 
 </div>
 
@@ -125,27 +125,32 @@ server/
 
 > Base URL : `/api`
 
-### Authentification — `/api/user`
+### Authentification - `/api/user`
 
-| Méthode | Route       |  Auth  | Description                           |
-| ------- | ----------- | :----: | ------------------------------------- |
-| `POST`  | `/register` | Public | Inscription (pseudo, email, password) |
-| `POST`  | `/login`    | Public | Connexion → cookie JWT                |
-| `GET`   | `/logout`   | Public | Déconnexion (suppression cookie)      |
+| Méthode | Route       |  Auth  | Description                                          |
+| ------- | ----------- | :----: | ------------------------------------------------------ |
+| `POST`  | `/register` | Admin  | Création d'un compte (pseudo, email, password)         |
+| `POST`  | `/login`    | Public | Connexion → cookie JWT                                 |
+| `GET`   | `/logout`   | Public | Déconnexion (suppression cookie)                       |
 
-### Utilisateurs — `/api/user`
+> `/register` n'est pas de l'auto-inscription : seul un admin peut créer un compte (mêmes handler et route que `POST /api/user`, voir ci-dessous).
 
-| Méthode  | Route       |    Auth    | Description                      |
-| -------- | ----------- | :--------: | -------------------------------- |
-| `GET`    | `/`         |   Public   | Liste de tous les utilisateurs   |
-| `GET`    | `/:id`      |   Public   | Détail d'un utilisateur          |
-| `POST`   | `/`         | Superadmin | Création d'un utilisateur        |
-| `PUT`    | `/:id`      |   Public   | Mise à jour d'un utilisateur     |
-| `PUT`    | `/:id/role` | Superadmin | Changer le rôle d'un utilisateur |
-| `DELETE` | `/:id`      |   Public   | Suppression d'un utilisateur     |
-| `POST`   | `/upload`   |   Multer   | Upload d'avatar                  |
+### Utilisateurs - `/api/user`
 
-### Articles — `/api/item`
+| Méthode  | Route        | Auth  | Description                                                  |
+| -------- | ------------- | :---: | --------------------------------------------------------------- |
+| `GET`    | `/`           |  🔒   | Liste de tous les utilisateurs                                  |
+| `GET`    | `/:id`        |  🔒   | Détail d'un utilisateur                                          |
+| `POST`   | `/`           | Admin | Création d'un utilisateur                                       |
+| `PUT`    | `/:id`        |  🔒   | Mise à jour d'un utilisateur (soi-même, ou n'importe qui si admin) |
+| `DELETE` | `/:id`        | Admin | Suppression d'un utilisateur                                     |
+| `PUT`    | `/:id/role`   | Admin | Changer le rôle unique d'un utilisateur (legacy)                 |
+| `PUT`    | `/:id/roles`  | Admin | Remplacer le tableau `roles[]` d'un utilisateur                  |
+| `POST`   | `/upload`     |  🔒   | Upload d'avatar                                                  |
+
+> `PUT /:id` accepte un utilisateur non-admin modifiant son propre profil ; les champs modifiables hors admin sont restreints côté contrôleur (`user.controller.ts`), pas au niveau de la route.
+
+### Articles - `/api/item`
 
 | Méthode  | Route          |    Auth     | Description                                                           |
 | -------- | -------------- | :---------: | --------------------------------------------------------------------- |
@@ -158,14 +163,14 @@ server/
 | `POST`   | `/prepa-batch` |     🔒      | Décrémentation/incrémentation groupée par préparation                 |
 | `POST`   | `/upload`      | 🔒 + Multer | Upload d'image article                                                |
 
-### Historique — `/api/history`
+### Historique - `/api/history`
 
 | Méthode | Route    |    Auth    | Description                                          |
 | ------- | -------- | :--------: | ---------------------------------------------------- |
 | `GET`   | `/`      |     🔒     | Journal des modifications et audit (limité 30 jours) |
 | `POST`  | `/purge` | Superadmin | Purge complète historique + audit                    |
 
-### Contacts — `/api/contacts`
+### Contacts - `/api/contacts`
 
 | Méthode  | Route     |      Auth      | Description                |
 | -------- | --------- | :------------: | -------------------------- |
@@ -176,37 +181,41 @@ server/
 | `DELETE` | `/:id`    |     Admin      | Suppression d'un contact   |
 | `POST`   | `/upload` | Admin + Multer | Upload photo contact       |
 
-### Envois — `/api/shipments`
+### Envois - `/api/shipments`
 
-| Méthode  | Route  | Auth  | Description            |
-| -------- | ------ | :---: | ---------------------- |
-| `GET`    | `/`    |  🔒   | Liste des envois       |
-| `GET`    | `/:id` |  🔒   | Détail d'un envoi      |
-| `POST`   | `/`    |  🔒   | Création d'un envoi    |
-| `PUT`    | `/:id` |  🔒   | Mise à jour d'un envoi |
-| `DELETE` | `/:id` | Admin | Suppression d'un envoi |
+| Méthode  | Route                      |  Auth   | Description                             |
+| -------- | --------------------------- | :-----: | ---------------------------------------- |
+| `GET`    | `/`                          |   🔒    | Liste des envois                         |
+| `GET`    | `/archives`                  |  Admin  | Liste des envois archivés                |
+| `GET`    | `/archives/:id/download`     |  Admin  | Téléchargement d'une archive              |
+| `POST`   | `/`                          | Hotline | Création d'un envoi                      |
+| `POST`   | `/archive`                   |  Admin  | Archivage d'un envoi                     |
+| `PUT`    | `/:id/sent`                  | Hotline | Marquer un envoi comme envoyé            |
+| `DELETE` | `/:id`                       |  Admin  | Suppression d'un envoi                   |
 
-### Fiches clients — `/api/client-files`
+### Fiches clients - `/api/client-files`
 
-| Méthode  | Route  | Auth  | Description                    |
-| -------- | ------ | :---: | ------------------------------ |
-| `GET`    | `/`    |  🔒   | Liste des fiches clients       |
-| `GET`    | `/:id` |  🔒   | Détail d'une fiche client      |
-| `POST`   | `/`    | Admin | Création d'une fiche client    |
-| `PUT`    | `/:id` | Admin | Mise à jour d'une fiche client |
-| `DELETE` | `/:id` | Admin | Suppression d'une fiche client |
+| Méthode  | Route                        |  Auth   | Description                    |
+| -------- | ----------------------------- | :-----: | ------------------------------- |
+| `GET`    | `/`                            |   🔒    | Liste des fiches clients        |
+| `GET`    | `/:id`                         |   🔒    | Détail d'une fiche client       |
+| `POST`   | `/`                            | Monteur | Création d'une fiche client     |
+| `PUT`    | `/:id`                         | Monteur | Mise à jour d'une fiche client  |
+| `POST`   | `/:id/documents`               | Monteur | Upload d'un document lié        |
+| `DELETE` | `/:id/documents/:docId`        | Monteur | Suppression d'un document       |
+| `DELETE` | `/:id`                         |  Admin  | Suppression d'une fiche client  |
 
-### Rapports d'intervention — `/api/intervention-reports`
+### Rapports d'intervention - `/api/intervention-reports`
 
-| Méthode  | Route  | Auth  | Description              |
-| -------- | ------ | :---: | ------------------------ |
-| `GET`    | `/`    |  🔒   | Liste des rapports       |
-| `GET`    | `/:id` |  🔒   | Détail d'un rapport      |
-| `POST`   | `/`    |  🔒   | Création d'un rapport    |
-| `PUT`    | `/:id` |  🔒   | Mise à jour d'un rapport |
-| `DELETE` | `/:id` | Admin | Suppression d'un rapport |
+| Méthode  | Route  |  Auth   | Description              |
+| -------- | ------ | :-----: | ------------------------- |
+| `GET`    | `/`    |   🔒    | Liste des rapports        |
+| `GET`    | `/:id` |   🔒    | Détail d'un rapport       |
+| `POST`   | `/`    | Monteur | Création d'un rapport     |
+| `PUT`    | `/:id` | Monteur | Mise à jour d'un rapport  |
+| `DELETE` | `/:id` |  Admin  | Suppression d'un rapport  |
 
-### Statistiques — `/api/statistics`
+### Statistiques - `/api/statistics`
 
 | Méthode | Route                        | Auth | Description                                        |
 | ------- | ---------------------------- | :--: | -------------------------------------------------- |
@@ -221,13 +230,13 @@ server/
 | `GET`   | `/etats/list`                |  🔒  | Liste des états                                    |
 | `GET`   | `/etats/:etat`               |  🔒  | Stats par état                                     |
 
-### JWT — `/jwtid`
+### JWT - `/jwtid`
 
 | Méthode | Route    | Auth | Description                                   |
 | ------- | -------- | :--: | --------------------------------------------- |
 | `GET`   | `/jwtid` |  🔒  | Retourne `{ _id, role }` depuis le cookie JWT |
 
-> **Légende :** Public • 🔒 `requireAuth` • Admin `requireAdmin` • Superadmin `requireSuperAdmin` • Multer (upload)
+> **Légende :** Public • 🔒 `requireAuth` • Hotline `requireHotline` • Monteur `requireMonteur` • Admin `requireAdmin` • Superadmin `requireSuperAdmin` • Multer (upload)
 
 ---
 
@@ -244,8 +253,8 @@ server/
   picture: string; // défaut: "./uploads/profil/random-user.png"
   poste: string; // max 1024 caractères
   numero: string;
-  pole: string; // Pôle de l'équipe (Direction, Hotline, Entrepôt, Monteur, Gestion du site)
-  role: string; // "admin" | "user" (défaut: "user")
+  pole: string; // enum: Direction, Hotline, Entrepôt, Monteur, Gestion du site, "" (défaut: "")
+  roles: string[]; // enum cumulable: superadmin, admin, hotline, monteur, user (défaut: [])
   timestamps: true; // createdAt, updatedAt
 }
 
@@ -300,15 +309,17 @@ server/
 
 ## 🛡️ Middleware d'authentification
 
-| Middleware          | Type                | Comportement                                                       |
-| ------------------- | ------------------- | ------------------------------------------------------------------ |
-| `checkUser`         | Non-bloquant        | Vérifie le JWT, peuple `res.locals.user`, continue même sans token |
-| `requireAuth`       | 🔒 Bloquant         | Exige un JWT valide → `401` sinon                                  |
-| `requireAdmin`      | Admin Bloquant      | Exige JWT + `role === "admin"` ou superadmin → `401`/`403` sinon   |
-| `requireSuperAdmin` | Superadmin Bloquant | Exige JWT + email === `SUPERADMIN_EMAIL` → `401`/`403` sinon       |
+| Middleware          | Type                | Comportement                                                              |
+| -------------------- | -------------------- | --------------------------------------------------------------------------- |
+| `checkUser`          | Non-bloquant         | Vérifie le JWT, peuple `res.locals.user`, continue même sans token          |
+| `requireAuth`        | 🔒 Bloquant          | Exige un JWT valide → `401` sinon                                          |
+| `requireHotline`     | Hotline Bloquant     | Exige `roles` incluant `hotline`, `admin` ou `superadmin` → `401`/`403`     |
+| `requireMonteur`     | Monteur Bloquant     | Exige `roles` incluant `monteur`, `admin` ou `superadmin` → `401`/`403`     |
+| `requireAdmin`       | Admin Bloquant       | Exige `roles` incluant `admin` ou `superadmin` → `401`/`403` sinon          |
+| `requireSuperAdmin`  | Superadmin Bloquant  | Exige `roles` incluant `superadmin` → `401`/`403` sinon                     |
 
-> Tous les middlewares lisent le token depuis le cookie `jwt` et vérifient avec `TOKEN_SECRET`.
-> Le superadmin est déterminé par la variable d'environnement `SUPERADMIN_EMAIL`.
+> Tous les middlewares lisent le token depuis le cookie `jwt`, vérifient avec `TOKEN_SECRET`, puis chargent `user.roles` (tableau cumulable) en base.
+> Si l'email du compte correspond à `SUPERADMIN_EMAIL`, `roles` est forcé à `["superadmin"]` à la volée (voir `resolveUser` dans `auth.middleware.ts`), sans persister ce rôle en base.
 
 ---
 
@@ -334,7 +345,7 @@ server/
 | ----------------- | -------------------------------------- |
 | 🖼️ Types acceptés | `image/jpg`, `image/jpeg`, `image/png` |
 | 📏 Taille max     | 2.5 Mo                                 |
-| ☁️ Stockage       | Aucun fichier local — tout sur ImgBB   |
+| ☁️ Stockage       | Aucun fichier local - tout sur ImgBB   |
 
 ### Controllers
 
@@ -407,11 +418,11 @@ server/
 
 ## 🌿 Base de données
 
-|              | Détail                                                                 |
-| ------------ | ---------------------------------------------------------------------- |
-| **Service**  | MongoDB Atlas                                                          |
+|              | Détail                                                               |
+| ------------ | -------------------------------------------------------------------- |
+| **Service**  | MongoDB Atlas                                                        |
 | **Cluster**  | `&lt;cluster&gt;.mongodb.net`                                        |
-| **Database** | `Anamarcol`                                                            |
+| **Database** | `Anamarcol`                                                          |
 | **URI**      | `mongodb+srv://<DB_USER_PASS>@&lt;cluster&gt;.mongodb.net/Anamarcol` |
 
 ---
@@ -422,7 +433,7 @@ server/
 npm run dev         # Développement (nodemon + ts-node)
 npm run build       # Compilation TypeScript → dist/
 npm start           # Lancement du build (dist/index.js)
-npm test            # Tests Jest
+npm test            # Tests Vitest
 npm run test:ci     # Tests + couverture (CI)
 ```
 
@@ -432,7 +443,7 @@ npm run test:ci     # Tests + couverture (CI)
 
 |                 | Détail                         |
 | --------------- | ------------------------------ |
-| **Framework**   | Jest + ts-jest                 |
+| **Framework**   | Vitest                         |
 | **HTTP**        | Supertest                      |
 | **Emplacement** | `__tests__/`                   |
 | **Couverture**  | Controllers, middleware, utils |

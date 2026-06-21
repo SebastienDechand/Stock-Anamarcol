@@ -1,0 +1,107 @@
+<div class="vehicle-card" [class.vehicle-card--alert]="hasAlert">
+  <div class="vehicle-card__header">
+    <div class="vehicle-card__title-row">
+      <span class="vehicle-card__plate">{{ vehicle.immatriculation }}</span>
+      <span [class]="formatBadgeClass">{{ formatLabel | translate }}</span>
+    </div>
+    @if (vehicle.assignedToName) {
+      <p class="vehicle-card__assigned">
+        {{ 'FLEET.ASSIGNED' | translate }} : {{ vehicle.assignedToName }}
+      </p>
+    }
+  </div>
+
+  <div class="vehicle-card__dates">
+    <div class="vehicle-card__date-row">
+      <span class="vehicle-card__date-label">{{ 'FLEET.REVISION' | translate }}</span>
+      <span
+        class="vehicle-card__date-value"
+        [class.text-warning]="revisionStatus() === 'soon'"
+        [class.text-danger]="revisionStatus() === 'expired'"
+      >
+        {{ formatDate(vehicle.dateRevision) }}
+        @if (revisionStatus() === 'expired') {
+          <span class="vehicle-card__date-tag vehicle-card__date-tag--danger">
+            <lucide-icon [img]="alertCircle" [size]="12" /> {{ 'FLEET.EXPIRED' | translate }}
+          </span>
+        }
+        @if (revisionStatus() === 'soon') {
+          <span class="vehicle-card__date-tag vehicle-card__date-tag--warning">
+            <lucide-icon [img]="alertCircle" [size]="12" /> {{ 'FLEET.SOON' | translate }}
+          </span>
+        }
+      </span>
+    </div>
+
+    <div class="vehicle-card__date-row">
+      <span class="vehicle-card__date-label">{{ 'FLEET.CT_EXPIRATION' | translate }}</span>
+      <span
+        class="vehicle-card__date-value"
+        [class.text-warning]="dateStatus(vehicle.dateCtExpiration) === 'soon'"
+        [class.text-danger]="dateStatus(vehicle.dateCtExpiration) === 'expired'"
+      >
+        {{ formatDate(vehicle.dateCtExpiration) }}
+        @if (dateStatus(vehicle.dateCtExpiration) === 'expired') {
+          <span class="vehicle-card__date-tag vehicle-card__date-tag--danger">
+            <lucide-icon [img]="alertCircle" [size]="12" /> {{ 'FLEET.EXPIRED' | translate }}
+          </span>
+        }
+        @if (dateStatus(vehicle.dateCtExpiration) === 'soon') {
+          <span class="vehicle-card__date-tag vehicle-card__date-tag--warning">
+            <lucide-icon [img]="alertCircle" [size]="12" /> {{ 'FLEET.SOON' | translate }}
+          </span>
+        }
+      </span>
+    </div>
+
+    <div class="vehicle-card__date-row">
+      <span class="vehicle-card__date-label">{{ 'FLEET.ANTI_POLLUTION' | translate }}</span>
+      <span
+        class="vehicle-card__date-value"
+        [class.text-warning]="dateStatus(vehicle.dateControlAntiPollutionExpiration) === 'soon'"
+        [class.text-danger]="dateStatus(vehicle.dateControlAntiPollutionExpiration) === 'expired'"
+      >
+        {{ formatDate(vehicle.dateControlAntiPollutionExpiration) }}
+        @if (dateStatus(vehicle.dateControlAntiPollutionExpiration) === 'expired') {
+          <span class="vehicle-card__date-tag vehicle-card__date-tag--danger">
+            <lucide-icon [img]="alertCircle" [size]="12" /> {{ 'FLEET.EXPIRED' | translate }}
+          </span>
+        }
+        @if (dateStatus(vehicle.dateControlAntiPollutionExpiration) === 'soon') {
+          <span class="vehicle-card__date-tag vehicle-card__date-tag--warning">
+            <lucide-icon [img]="alertCircle" [size]="12" /> {{ 'FLEET.SOON' | translate }}
+          </span>
+        }
+      </span>
+    </div>
+  </div>
+
+  @if (vehicle.notes) {
+    <p class="vehicle-card__notes">{{ vehicle.notes }}</p>
+  }
+
+  <div class="vehicle-card__footer">
+    <button
+      class="btn-icon"
+      (click)="viewDocuments.emit(vehicle)"
+      [title]="'FLEET.DOCUMENTS' | translate"
+    >
+      <lucide-icon [img]="fileText" [size]="16" />
+      @if (vehicle.documents.length) {
+        <span class="vehicle-card__doc-count">{{ vehicle.documents.length }}</span>
+      }
+    </button>
+    @if (isAdmin) {
+      <button class="btn-icon" (click)="edit.emit(vehicle)" [title]="'FLEET.EDIT' | translate">
+        <lucide-icon [img]="edit2" [size]="16" />
+      </button>
+      <button
+        class="btn-icon btn-icon--danger"
+        (click)="delete.emit(vehicle)"
+        [title]="'FLEET.DELETE' | translate"
+      >
+        <lucide-icon [img]="trash2" [size]="16" />
+      </button>
+    }
+  </div>
+</div>

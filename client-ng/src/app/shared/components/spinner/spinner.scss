@@ -1,0 +1,40 @@
+@use '../../../../scss/mixins' as m;
+
+.spinner-overlay {
+  @include m.flex-center;
+  flex-direction: column;
+  gap: var(--space-3);
+  position: fixed;
+  inset: 0;
+  background: rgb(255 255 255 / 0.85);
+  backdrop-filter: blur(2px);
+  z-index: 100;
+
+  &--inline {
+    position: relative;
+    background: transparent;
+    backdrop-filter: none;
+    padding: var(--space-8) 0;
+  }
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid var(--surface-200);
+  border-top-color: var(--brand-600);
+  animation: spin 0.75s linear infinite;
+}
+
+.spinner-message {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

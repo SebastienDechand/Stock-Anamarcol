@@ -1,0 +1,50 @@
+<div
+  class="contact-card"
+  [class.contact-card--clickable]="clickable"
+  (click)="clickable && selected.emit(contact)"
+>
+  <div class="contact-card__top">
+    <div class="contact-card__avatar">
+      @if (avatarUrl) {
+        <img [src]="avatarUrl" [alt]="contact.nom" class="contact-card__img" />
+      } @else {
+        <span class="contact-card__initials">{{ initials }}</span>
+      }
+    </div>
+    <div class="contact-card__identity">
+      @if (contact.poste) {
+        <p class="contact-card__poste">{{ contact.poste }}</p>
+      }
+      @if (contact.nom) {
+        <h3 class="contact-card__name">{{ contact.nom }}</h3>
+      }
+    </div>
+  </div>
+
+  <div class="contact-card__details">
+    @if (contact.email) {
+      <div class="detail-row">
+        <lucide-icon name="mail" [size]="13" />
+        <span>{{ contact.email }}</span>
+      </div>
+    }
+    @if (contact.tel) {
+      <div class="detail-row">
+        <lucide-icon name="phone" [size]="13" />
+        <span>{{ contact.tel }}</span>
+      </div>
+    }
+    @if (contact.lien) {
+      <a
+        [href]="contact.lien"
+        target="_blank"
+        rel="noopener noreferrer"
+        (click)="$event.stopPropagation()"
+        class="detail-row detail-row--link"
+      >
+        <lucide-icon name="globe" [size]="13" />
+        <span>Voir le site</span>
+      </a>
+    }
+  </div>
+</div>

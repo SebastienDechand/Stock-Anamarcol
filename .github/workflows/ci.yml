@@ -57,3 +57,28 @@ jobs:
       - name: Run tests
         working-directory: ./client
         run: npm test
+
+  # ─── Tests Frontend Angular ──────────────────────────
+  test-client-ng:
+    name: Tests Frontend Angular
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: client-ng/package-lock.json
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+      - name: Install dependencies
+        working-directory: ./client-ng
+        run: npm ci
+
+      - name: Run tests
+        working-directory: ./client-ng
+        run: npm test

@@ -1,0 +1,88 @@
+@use '../../../scss/mixins' as m;
+
+.membres-page {
+  @include m.page-container;
+}
+
+.pole-section {
+  margin-bottom: 20px;
+
+  &--centered {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+
+    .membre-list--single {
+      width: 100%;
+      max-width: 420px;
+    }
+  }
+}
+
+.pole-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-muted);
+  }
+
+  &__icon {
+    &--direction {
+      color: #7c3aed;
+    }
+    &--hotline {
+      color: #0284c7;
+    }
+    &--entrepot {
+      color: #0891b2;
+    }
+    &--monteur {
+      color: #b45309;
+    }
+    &--gestion {
+      color: var(--brand-600);
+    }
+  }
+}
+
+.poles-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @include m.md {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include m.lg {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+.membre-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.empty-pole {
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+  font-style: italic;
+  padding: 8px 0;
+}
+
+.btn-primary {
+  @include m.btn-primary;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

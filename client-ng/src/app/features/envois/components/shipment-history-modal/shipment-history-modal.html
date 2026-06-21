@@ -1,0 +1,102 @@
+<div class="overlay-backdrop" (click)="closed.emit()">
+  <div class="modal-panel" role="dialog" (click)="$event.stopPropagation()">
+    <div class="modal-panel__header">
+      <h2 class="modal-panel__title">{{ 'SHIPMENTS.HISTORY_TITLE' | translate }}</h2>
+      <button class="btn-icon" (click)="closed.emit()" [title]="'COMMON.CLOSE' | translate">
+        <lucide-icon [img]="x" [size]="18" />
+      </button>
+    </div>
+    <div class="modal-panel__body">
+      <button
+        class="archive-btn"
+        [disabled]="archiving()"
+        (click)="showConfirm.set(true)"
+        [title]="'SHIPMENTS.ARCHIVE_BUTTON' | translate"
+      >
+        <lucide-icon [img]="archiveIcon" [size]="14" />
+        {{
+          archiving()
+            ? ('SHIPMENTS.ARCHIVING' | translate)
+            : ('SHIPMENTS.ARCHIVE_BUTTON' | translate)
+        }}
+      </button>
+
+      @if (showConfirm()) {
+        <div class="archive-confirm">
+          <div class="archive-confirm__row">
+            <div class="archive-confirm__icon">
+              <lucide-icon [img]="alertTriangle" [size]="16" />
+            </div>
+            <div>
+              <p class="archive-confirm__title">
+                {{ 'SHIPMENTS.ARCHIVE_CONFIRM_TITLE' | translate }}
+              </p>
+              <p class="archive-confirm__message">
+                {{ 'SHIPMENTS.ARCHIVE_CONFIRM_MESSAGE' | translate }}
+              </p>
+            </div>
+          </div>
+          <div class="archive-confirm__actions">
+            <button class="btn-secondary" (click)="showConfirm.set(false)">
+              {{ 'SHIPMENTS.CANCEL' | translate }}
+            </button>
+            <button class="btn-danger" (click)="handleArchive()">
+              {{ 'SHIPMENTS.ARCHIVE_CONFIRM_YES' | translate }}
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (loading()) {
+        <div class="history-empty">
+          <lucide-icon [img]="archiveIcon" [size]="24" />
+        </div>
+      } @else if (!archives().length) {
+        <div class="history-empty">
+          <lucide-icon [img]="archiveIcon" [size]="28" />
+          <p class="history-empty__title">{{ 'SHIPMENTS.NO_ARCHIVES' | translate }}</p>
+          <p class="history-empty__hint">{{ 'SHIPMENTS.NO_ARCHIVES_HINT' | translate }}</p>
+        </div>
+      } @else {
+        <ul class="history-list">
+          @for (a of archives(); track a._id) {
+            <li class="history-item">
+              <div>
+                <div class="history-item__name">{{ a.title }}</div>
+                <div class="history-item__meta">
+                  {{
+                    'SHIPMENTS.ARCHIVE_PERIOD'
+                      | translate
+                        : {
+                            start: formatDate(a.periodStart),
+                            end: formatDate(a.periodEnd),
+                            count: a.shipmentCount,
+                          }
+                  }}
+                </div>
+              </div>
+              <div class="history-item__actions">
+                <button
+                  class="download-btn"
+                  (click)="handleDownload(a, 'pdf')"
+                  [title]="'SHIPMENTS.DOWNLOAD_PDF' | translate"
+                >
+                  <lucide-icon [img]="download" [size]="13" />
+                  .pdf
+                </button>
+                <button
+                  class="download-btn download-btn--xlsx"
+                  (click)="handleDownload(a, 'xlsx')"
+                  [title]="'SHIPMENTS.DOWNLOAD_XLSX' | translate"
+                >
+                  <lucide-icon [img]="download" [size]="13" />
+                  .xlsx
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </div>
+</div>

@@ -1,60 +1,61 @@
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import { Request, Response } from "express";
 
-const mockShipmentModel = {
-  find: jest.fn(),
-  findOne: jest.fn(),
-  create: jest.fn(),
-  findById: jest.fn(),
-  deleteOne: jest.fn(),
-  deleteMany: jest.fn(),
-};
+const mockShipmentModel = vi.hoisted(() => ({
+  find: vi.fn(),
+  findOne: vi.fn(),
+  create: vi.fn(),
+  findById: vi.fn(),
+  deleteOne: vi.fn(),
+  deleteMany: vi.fn(),
+}));
 
-const mockShipmentArchiveModel = {
-  find: jest.fn(),
-  create: jest.fn(),
-  findById: jest.fn(),
-};
+const mockShipmentArchiveModel = vi.hoisted(() => ({
+  find: vi.fn(),
+  create: vi.fn(),
+  findById: vi.fn(),
+}));
 
-jest.mock("../models/shipment.model", () => ({
+vi.mock("../models/shipment.model", () => ({
   __esModule: true,
   default: mockShipmentModel,
 }));
 
-jest.mock("../models/shipmentArchive.model", () => ({
+vi.mock("../models/shipmentArchive.model", () => ({
   __esModule: true,
   default: mockShipmentArchiveModel,
 }));
 
-const mockXLSX = {
+const mockXLSX = vi.hoisted(() => ({
   utils: {
-    json_to_sheet: jest.fn().mockReturnValue({}),
-    book_new: jest.fn().mockReturnValue({}),
-    book_append_sheet: jest.fn(),
+    json_to_sheet: vi.fn().mockReturnValue({}),
+    book_new: vi.fn().mockReturnValue({}),
+    book_append_sheet: vi.fn(),
   },
-  write: jest.fn().mockReturnValue(Buffer.from("fake-xlsx")),
-};
+  write: vi.fn().mockReturnValue(Buffer.from("fake-xlsx")),
+}));
 
-jest.mock("xlsx", () => mockXLSX);
+vi.mock("xlsx", () => mockXLSX);
 
 import { EventEmitter } from "events";
 
-jest.mock("pdfkit", () => {
-  return jest.fn().mockImplementation(() => {
+vi.mock("pdfkit", () => {
+  const PDFDocumentMock = vi.fn().mockImplementation(function () {
     const emitter = new EventEmitter() as any;
-    emitter.fontSize = jest.fn().mockReturnValue(emitter);
-    emitter.fillColor = jest.fn().mockReturnValue(emitter);
-    emitter.text = jest.fn().mockReturnValue(emitter);
-    emitter.moveDown = jest.fn().mockReturnValue(emitter);
-    emitter.rect = jest.fn().mockReturnValue(emitter);
-    emitter.fill = jest.fn().mockReturnValue(emitter);
-    emitter.font = jest.fn().mockReturnValue(emitter);
-    emitter.save = jest.fn().mockReturnValue(emitter);
-    emitter.restore = jest.fn().mockReturnValue(emitter);
-    emitter.addPage = jest.fn().mockReturnValue(emitter);
-    emitter.heightOfString = jest.fn().mockReturnValue(10);
+    emitter.fontSize = vi.fn().mockReturnValue(emitter);
+    emitter.fillColor = vi.fn().mockReturnValue(emitter);
+    emitter.text = vi.fn().mockReturnValue(emitter);
+    emitter.moveDown = vi.fn().mockReturnValue(emitter);
+    emitter.rect = vi.fn().mockReturnValue(emitter);
+    emitter.fill = vi.fn().mockReturnValue(emitter);
+    emitter.font = vi.fn().mockReturnValue(emitter);
+    emitter.save = vi.fn().mockReturnValue(emitter);
+    emitter.restore = vi.fn().mockReturnValue(emitter);
+    emitter.addPage = vi.fn().mockReturnValue(emitter);
+    emitter.heightOfString = vi.fn().mockReturnValue(10);
     emitter.page = { height: 600 };
     emitter.y = 100;
-    emitter.end = jest.fn().mockImplementation(() => {
+    emitter.end = vi.fn().mockImplementation(() => {
       process.nextTick(() => {
         emitter.emit("data", Buffer.from("fake-pdf"));
         emitter.emit("end");
@@ -62,6 +63,7 @@ jest.mock("pdfkit", () => {
     });
     return emitter;
   });
+  return { __esModule: true, default: PDFDocumentMock };
 });
 
 import {
@@ -82,17 +84,17 @@ describe("Shipments Controller", () => {
     req = { params: {}, body: {}, query: {} };
     res = {
       locals: { user: { pseudo: "hotliner", _id: "1" } },
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
-      setHeader: jest.fn() as unknown as Response["setHeader"],
-      send: jest.fn() as unknown as Response["send"],
-      end: jest.fn() as unknown as Response["end"],
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
+      setHeader: vi.fn() as unknown as Response["setHeader"],
+      send: vi.fn() as unknown as Response["send"],
+      end: vi.fn() as unknown as Response["end"],
     };
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   const validBody = {
     nom: "DUPONT",
@@ -109,15 +111,15 @@ describe("Shipments Controller", () => {
     it("should return all shipments", async () => {
       // autoArchiveIfNeeded: no oldest shipment → skip
       mockShipmentModel.findOne.mockReturnValue({
-        sort: jest
+        sort: vi
           .fn()
-          .mockReturnValue({ lean: jest.fn().mockResolvedValue(null) }),
+          .mockReturnValue({ lean: vi.fn().mockResolvedValue(null) }),
       });
       const mockList = [{ _id: "s1", nom: "DUPONT" }];
       mockShipmentModel.find.mockReturnValue({
-        sort: jest
+        sort: vi
           .fn()
-          .mockReturnValue({ lean: jest.fn().mockResolvedValue(mockList) }),
+          .mockReturnValue({ lean: vi.fn().mockResolvedValue(mockList) }),
       });
       await getShipments(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
@@ -173,7 +175,7 @@ describe("Shipments Controller", () => {
       req.params = { id: "s2" };
       const mockShipment: any = {
         sent: false,
-        save: jest.fn().mockResolvedValue({ sent: true }),
+        save: vi.fn().mockResolvedValue({ sent: true }),
       };
       mockShipmentModel.findById.mockResolvedValue(mockShipment);
       await markSent(req as Request, res as Response);
@@ -187,7 +189,7 @@ describe("Shipments Controller", () => {
     it("should delete and respond 200", async () => {
       req.params = { id: "s3" };
       mockShipmentModel.deleteOne.mockReturnValue({
-        exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
+        exec: vi.fn().mockResolvedValue({ deletedCount: 1 }),
       });
       await deleteShipment(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
@@ -197,9 +199,9 @@ describe("Shipments Controller", () => {
   describe("createArchive", () => {
     it("should return 400 when no shipments exist for current month", async () => {
       mockShipmentModel.find.mockReturnValue({
-        sort: jest
+        sort: vi
           .fn()
-          .mockReturnValue({ lean: jest.fn().mockResolvedValue([]) }),
+          .mockReturnValue({ lean: vi.fn().mockResolvedValue([]) }),
       });
       await createArchive(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
@@ -225,9 +227,9 @@ describe("Shipments Controller", () => {
         },
       ];
       mockShipmentModel.find.mockReturnValue({
-        sort: jest
+        sort: vi
           .fn()
-          .mockReturnValue({ lean: jest.fn().mockResolvedValue(shipments) }),
+          .mockReturnValue({ lean: vi.fn().mockResolvedValue(shipments) }),
       });
       mockShipmentArchiveModel.create.mockResolvedValue({
         _id: "arc1",
@@ -252,10 +254,10 @@ describe("Shipments Controller", () => {
     it("should return archives without fileBuffer", async () => {
       const archives = [{ _id: "arc1", title: "Janvier 2026" }];
       mockShipmentArchiveModel.find.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          sort: jest
+        select: vi.fn().mockReturnValue({
+          sort: vi
             .fn()
-            .mockReturnValue({ lean: jest.fn().mockResolvedValue(archives) }),
+            .mockReturnValue({ lean: vi.fn().mockResolvedValue(archives) }),
         }),
       });
       await getArchives(req as Request, res as Response);
@@ -268,7 +270,7 @@ describe("Shipments Controller", () => {
     it("should return 404 when archive not found", async () => {
       req.params = { id: "missing" };
       mockShipmentArchiveModel.findById.mockReturnValue({
-        lean: jest.fn().mockResolvedValue(null),
+        lean: vi.fn().mockResolvedValue(null),
       });
       await downloadArchive(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(404);
@@ -278,7 +280,7 @@ describe("Shipments Controller", () => {
       req.params = { id: "arc1" };
       const buf = Buffer.from("pdf-data");
       mockShipmentArchiveModel.findById.mockReturnValue({
-        lean: jest.fn().mockResolvedValue({
+        lean: vi.fn().mockResolvedValue({
           _id: "arc1",
           title: "Janvier 2026",
           fileBuffer: buf,
@@ -297,7 +299,7 @@ describe("Shipments Controller", () => {
       req.query = { format: "xlsx" };
       const rawData = [{ Nom: "DUPONT", Prénom: "JEAN" }];
       mockShipmentArchiveModel.findById.mockReturnValue({
-        lean: jest.fn().mockResolvedValue({
+        lean: vi.fn().mockResolvedValue({
           _id: "arc1",
           title: "Janvier 2026",
           rawData,
@@ -317,7 +319,7 @@ describe("Shipments Controller", () => {
       req.params = { id: "arc1" };
       req.query = { format: "xlsx" };
       mockShipmentArchiveModel.findById.mockReturnValue({
-        lean: jest.fn().mockResolvedValue({
+        lean: vi.fn().mockResolvedValue({
           _id: "arc1",
           title: "Janvier 2026",
           rawData: [],
@@ -331,7 +333,7 @@ describe("Shipments Controller", () => {
     it("should return 500 on error", async () => {
       req.params = { id: "arc1" };
       mockShipmentArchiveModel.findById.mockReturnValue({
-        lean: jest.fn().mockRejectedValue(new Error("DB error")),
+        lean: vi.fn().mockRejectedValue(new Error("DB error")),
       });
       await downloadArchive(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
@@ -345,7 +347,7 @@ describe("Shipments Controller", () => {
         sent: false,
         sentAt: undefined,
         sentBy: undefined,
-        save: jest.fn().mockImplementation(function (
+        save: vi.fn().mockImplementation(function (
           this: Record<string, unknown>,
         ) {
           return Promise.resolve(this);
@@ -362,7 +364,7 @@ describe("Shipments Controller", () => {
       req.params = { id: "s5" };
       const mockShipment = {
         sent: false,
-        save: jest.fn().mockRejectedValue(new Error("save fail")),
+        save: vi.fn().mockRejectedValue(new Error("save fail")),
       };
       mockShipmentModel.findById.mockResolvedValue(mockShipment);
       await markSent(req as Request, res as Response);
@@ -382,7 +384,7 @@ describe("Shipments Controller", () => {
       req.body = {};
       await createShipment(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
-      const payload = (res.json as jest.Mock).mock.calls[0][0];
+      const payload = (res.json as Mock).mock.calls[0][0];
       expect(payload.message).toContain("nom");
       expect(payload.message).toContain("prenom");
       expect(payload.message).toContain("piece");
@@ -393,7 +395,7 @@ describe("Shipments Controller", () => {
     it("should return 500 on delete error", async () => {
       req.params = { id: "s6" };
       mockShipmentModel.deleteOne.mockReturnValue({
-        exec: jest.fn().mockRejectedValue(new Error("delete fail")),
+        exec: vi.fn().mockRejectedValue(new Error("delete fail")),
       });
       await deleteShipment(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
@@ -403,8 +405,8 @@ describe("Shipments Controller", () => {
   describe("getShipments – additional", () => {
     it("should return 500 on error", async () => {
       mockShipmentModel.findOne.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          lean: jest.fn().mockRejectedValue(new Error("fail")),
+        sort: vi.fn().mockReturnValue({
+          lean: vi.fn().mockRejectedValue(new Error("fail")),
         }),
       });
       await getShipments(req as Request, res as Response);
@@ -415,9 +417,9 @@ describe("Shipments Controller", () => {
   describe("getArchives – additional", () => {
     it("should return 500 on error", async () => {
       mockShipmentArchiveModel.find.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          sort: jest.fn().mockReturnValue({
-            lean: jest.fn().mockRejectedValue(new Error("fail")),
+        select: vi.fn().mockReturnValue({
+          sort: vi.fn().mockReturnValue({
+            lean: vi.fn().mockRejectedValue(new Error("fail")),
           }),
         }),
       });
@@ -429,8 +431,8 @@ describe("Shipments Controller", () => {
   describe("createArchive – additional", () => {
     it("should return 500 on error", async () => {
       mockShipmentModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          lean: jest.fn().mockRejectedValue(new Error("fail")),
+        sort: vi.fn().mockReturnValue({
+          lean: vi.fn().mockRejectedValue(new Error("fail")),
         }),
       });
       await createArchive(req as Request, res as Response);

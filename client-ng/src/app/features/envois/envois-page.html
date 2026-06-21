@@ -1,0 +1,693 @@
+<div class="page-container">
+  <app-page-hero
+    [title]="'SHIPMENTS.TITLE' | translate"
+    [icon]="truck"
+    [subtitle]="'SHIPMENTS.SUBTITLE' | translate"
+  >
+    <div class="header-actions">
+      @if (isAdmin$ | async) {
+        <button
+          class="btn-secondary btn-secondary--icon"
+          (click)="showExportModal.set(true)"
+          [title]="'COMMON.EXPORT' | translate"
+        >
+          <lucide-icon [img]="download" [size]="16" />
+        </button>
+        <button
+          class="btn-secondary btn-secondary--icon"
+          (click)="openHistory()"
+          [title]="'SHIPMENTS.HISTORY' | translate"
+        >
+          <lucide-icon [img]="history" [size]="16" />
+        </button>
+      }
+      @if ((isAdmin$ | async) || (isHotline$ | async)) {
+        <button
+          class="btn-primary"
+          (click)="showForm.set(!showForm())"
+          [title]="showForm() ? ('COMMON.CLOSE' | translate) : ('SHIPMENTS.ADD' | translate)"
+        >
+          <lucide-icon [img]="showForm() ? x : plus" [size]="16" />
+          {{ showForm() ? ('COMMON.CLOSE' | translate) : ('SHIPMENTS.ADD' | translate) }}
+        </button>
+      }
+    </div>
+  </app-page-hero>
+
+  <!-- KPI bar -->
+  <div class="kpi-bar">
+    <div class="kpi-card">
+      <div class="kpi-card__icon kpi-card__icon--blue">
+        <lucide-icon [img]="packageIcon" [size]="16" />
+      </div>
+      <div>
+        <p class="kpi-card__label">{{ 'COMMON.TOTAL' | translate }}</p>
+        <p class="kpi-card__value">{{ totalCount() }}</p>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__icon kpi-card__icon--red">
+        <lucide-icon [img]="circleAlert" [size]="16" />
+      </div>
+      <div>
+        <p class="kpi-card__label">{{ 'SHIPMENTS.PENDING' | translate }}</p>
+        <p class="kpi-card__value kpi-card__value--red">{{ pendingCount() }}</p>
+      </div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-card__icon kpi-card__icon--green">
+        <lucide-icon [img]="check" [size]="16" />
+      </div>
+      <div>
+        <p class="kpi-card__label">{{ 'SHIPMENTS.SENT' | translate }}</p>
+        <p class="kpi-card__value kpi-card__value--green">{{ sentCount() }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & filter -->
+  <div class="filter-row">
+    <div class="search-box">
+      <lucide-icon [img]="searchIcon" [size]="15" class="search-box__icon" />
+      <input
+        type="text"
+        class="search-box__input"
+        [placeholder]="'SHIPMENTS.SEARCH_PLACEHOLDER' | translate"
+        [value]="search()"
+        (input)="setSearch($any($event.target).value)"
+      />
+    </div>
+    <div class="filter-tabs">
+      @for (tab of statusTabs; track tab.value) {
+        <button
+          class="filter-tab"
+          [class.filter-tab--active]="statusFilter() === tab.value"
+          (click)="setStatusFilter(tab.value)"
+          [title]="tab.labelKey | translate"
+        >
+          {{ tab.labelKey | translate }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Creation form -->
+  @if (showForm() && ((isAdmin$ | async) || (isHotline$ | async))) {
+    <div class="envoi-form-panel" (paste)="onPaste($event)">
+      <h2 class="envoi-form-panel__title">{{ 'SHIPMENTS.FORM_TITLE' | translate }}</h2>
+
+      <!-- Lier à une fiche client -->
+      @if (clientFiles().length > 0) {
+        <div class="form-section">
+          <label class="cf-label">
+            <lucide-icon [img]="link" [size]="13" />
+            {{ 'SHIPMENTS.CLIENT_LINKED' | translate }}
+          </label>
+          @if (linkedClientFile()) {
+            <div class="cf-linked">
+              <lucide-icon [img]="folderOpen" [size]="13" class="cf-linked__icon" />
+              <span class="cf-linked__name">{{ clientFileLabel(linkedClientFile()!) }}</span>
+              <button
+                class="cf-linked__remove"
+                (click)="clearClientFile()"
+                [title]="'COMMON.DELETE' | translate"
+              >
+                <lucide-icon [img]="x" [size]="13" />
+              </button>
+            </div>
+          } @else {
+            <div class="cf-search">
+              <lucide-icon [img]="searchIcon" [size]="14" class="cf-search__icon" />
+              <input
+                class="cf-search__input"
+                type="text"
+                [placeholder]="'SHIPMENTS.SEARCH_CLIENT' | translate"
+                [value]="clientFileSearch()"
+                (input)="
+                  clientFileSearch.set($any($event.target).value); showCfSuggestions.set(true)
+                "
+                (focus)="showCfSuggestions.set(true)"
+                (blur)="showCfSuggestions.set(false)"
+              />
+              @if (showCfSuggestions() && filteredClientFiles().length > 0) {
+                <div class="cf-dropdown">
+                  @for (cf of filteredClientFiles(); track cf._id) {
+                    <button
+                      class="cf-dropdown__item"
+                      type="button"
+                      (mousedown)="$event.preventDefault()"
+                      (click)="selectClientFile(cf)"
+                      [title]="
+                        'SHIPMENTS.SELECT_CLIENT_TITLE'
+                          | translate: { name: cf.nom + (cf.prenom ? ' ' + cf.prenom : '') }
+                      "
+                    >
+                      <lucide-icon [img]="folderOpen" [size]="13" class="cf-dropdown__icon" />
+                      <div>
+                        <p class="cf-dropdown__name">
+                          {{ cf.nom.toUpperCase() }}{{ cf.prenom ? ' ' + cf.prenom : '' }}
+                        </p>
+                        @if (cf.societe) {
+                          <p class="cf-dropdown__sub">{{ cf.societe }}</p>
+                        }
+                        @if (cf.cp || cf.ville) {
+                          <p class="cf-dropdown__sub">{{ cf.cp }} {{ cf.ville }}</p>
+                        }
+                      </div>
+                    </button>
+                  }
+                  @if (filteredClientFiles().length === 0) {
+                    <p class="cf-dropdown__empty">{{ 'COMMON.EMPTY' | translate }}</p>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Paste parser -->
+      <div class="form-section">
+        <label class="cf-label">
+          <lucide-icon [img]="clipPaste" [size]="13" />
+          {{ 'SHIPMENTS.NOTES' | translate }}
+        </label>
+        <textarea
+          class="paste-area"
+          [placeholder]="'SHIPMENTS.PASTE_PLACEHOLDER' | translate"
+          [value]="pasteText()"
+          (input)="pasteText.set($any($event.target).value)"
+          rows="4"
+        ></textarea>
+        <button
+          type="button"
+          class="btn-parse"
+          [disabled]="!pasteText().trim()"
+          (click)="handleParse()"
+          [title]="'SHIPMENTS.PARSE' | translate"
+        >
+          <lucide-icon [img]="clipPaste" [size]="13" />
+          {{ 'SHIPMENTS.PARSE' | translate }}
+        </button>
+      </div>
+
+      <hr class="form-divider" />
+
+      <!-- Form fields -->
+      <div class="envoi-form-grid">
+        <div class="field-wrap">
+          <label class="label-base">{{ 'COMMON.NAME' | translate }} *</label>
+          <div class="input-icon-wrap">
+            <lucide-icon [img]="userIcon" [size]="14" class="input-icon" />
+            <input
+              class="input-base input-base--icon"
+              type="text"
+              [placeholder]="'SHIPMENTS.NAME_PLACEHOLDER' | translate"
+              [value]="form().nom"
+              (input)="updateField('nom', $any($event.target).value)"
+            />
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="label-base">{{ 'COMMON.FIRST_NAME' | translate }} *</label>
+          <div class="input-icon-wrap">
+            <lucide-icon [img]="userIcon" [size]="14" class="input-icon" />
+            <input
+              class="input-base input-base--icon"
+              type="text"
+              [placeholder]="'SHIPMENTS.FIRST_NAME_PLACEHOLDER' | translate"
+              [value]="form().prenom"
+              (input)="updateField('prenom', $any($event.target).value)"
+            />
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="label-base">{{ 'COMMON.PHONE' | translate }}</label>
+          <div class="input-icon-wrap">
+            <lucide-icon [img]="phone" [size]="14" class="input-icon" />
+            <input
+              class="input-base input-base--icon"
+              type="text"
+              [placeholder]="'SHIPMENTS.PHONE_PLACEHOLDER' | translate"
+              [value]="form().tel"
+              (input)="updateField('tel', $any($event.target).value)"
+            />
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="label-base">{{ 'COMMON.PHONE2' | translate }}</label>
+          <div class="input-icon-wrap">
+            <lucide-icon [img]="phone" [size]="14" class="input-icon" />
+            <input
+              class="input-base input-base--icon"
+              type="text"
+              [placeholder]="'SHIPMENTS.PHONE2_PLACEHOLDER' | translate"
+              [value]="form().tel2"
+              (input)="updateField('tel2', $any($event.target).value)"
+            />
+          </div>
+        </div>
+        <div class="field-wrap field-wrap--full">
+          <label class="label-base">{{ 'COMMON.ADDRESS' | translate }} *</label>
+          <div class="input-icon-wrap">
+            <lucide-icon [img]="mapPin" [size]="14" class="input-icon" />
+            <input
+              class="input-base input-base--icon"
+              type="text"
+              [placeholder]="'SHIPMENTS.ADDRESS_PLACEHOLDER' | translate"
+              [value]="form().adresse"
+              (input)="updateField('adresse', $any($event.target).value)"
+            />
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="label-base">{{ 'COMMON.ZIP_CODE' | translate }} *</label>
+          <input
+            class="input-base"
+            type="text"
+            [placeholder]="'SHIPMENTS.ZIP_PLACEHOLDER' | translate"
+            [value]="form().codePostal"
+            (input)="updateField('codePostal', $any($event.target).value)"
+          />
+        </div>
+        <div class="field-wrap">
+          <label class="label-base">{{ 'COMMON.CITY' | translate }} *</label>
+          <input
+            class="input-base"
+            type="text"
+            [placeholder]="'SHIPMENTS.CITY_PLACEHOLDER' | translate"
+            [value]="form().ville"
+            (input)="updateField('ville', $any($event.target).value)"
+          />
+        </div>
+        <div class="field-wrap">
+          <label class="label-base">{{ 'SHIPMENTS.COMPANY' | translate }} *</label>
+          <div class="input-icon-wrap">
+            <lucide-icon [img]="building2" [size]="14" class="input-icon" />
+            <input
+              class="input-base input-base--icon"
+              type="text"
+              [placeholder]="'SHIPMENTS.COMPANY_PLACEHOLDER' | translate"
+              [value]="form().societe"
+              (input)="updateField('societe', $any($event.target).value)"
+            />
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="label-base">{{ 'SHIPMENTS.COMPANY_OR_FUNCTION' | translate }} *</label>
+          <div class="input-icon-wrap">
+            <lucide-icon [img]="building2" [size]="14" class="input-icon" />
+            <input
+              class="input-base input-base--icon"
+              type="text"
+              [placeholder]="'SHIPMENTS.COMPANY_OR_FUNCTION_PLACEHOLDER' | translate"
+              [value]="form().societeOuFonction"
+              (input)="updateField('societeOuFonction', $any($event.target).value)"
+            />
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="label-base">{{ 'COMMON.EMAIL' | translate }}</label>
+          <div class="input-icon-wrap">
+            <lucide-icon [img]="mail" [size]="14" class="input-icon" />
+            <input
+              class="input-base input-base--icon"
+              type="email"
+              [placeholder]="'SHIPMENTS.EMAIL_PLACEHOLDER' | translate"
+              [value]="form().email"
+              (input)="updateField('email', $any($event.target).value)"
+            />
+          </div>
+        </div>
+        <div class="field-wrap">
+          <label class="label-base">{{ 'SHIPMENTS.REQUEST_DATE' | translate }}</label>
+          <div class="input-icon-wrap">
+            <lucide-icon [img]="clock" [size]="14" class="input-icon" />
+            <input
+              class="input-base input-base--icon"
+              type="datetime-local"
+              [value]="form().requestDate"
+              (input)="updateField('requestDate', $any($event.target).value)"
+            />
+          </div>
+        </div>
+        <div class="field-wrap field-wrap--full">
+          <label class="label-base">{{ 'SHIPMENTS.PIECE_LABEL' | translate }}</label>
+          <div class="input-icon-wrap">
+            <lucide-icon [img]="packageIcon" [size]="14" class="input-icon" />
+            <input
+              class="input-base input-base--icon"
+              type="text"
+              [placeholder]="'SHIPMENTS.PIECE_PLACEHOLDER' | translate"
+              [value]="form().piece"
+              (input)="updateField('piece', $any($event.target).value)"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="envoi-form-panel__footer">
+        <button
+          class="btn-secondary"
+          [title]="'SHIPMENTS.CANCEL' | translate"
+          (click)="
+            showForm.set(false);
+            form.set({
+              nom: '',
+              prenom: '',
+              tel: '',
+              tel2: '',
+              email: '',
+              adresse: '',
+              codePostal: '',
+              ville: '',
+              societeOuFonction: '',
+              societe: '',
+              piece: '',
+              requestDate: '',
+            })
+          "
+        >
+          {{ 'SHIPMENTS.CANCEL' | translate }}
+        </button>
+        <button
+          class="btn-primary"
+          [disabled]="!form().nom.trim() || !form().piece.trim()"
+          (click)="submitCreate()"
+          [title]="'SHIPMENTS.ADD_SUBMIT' | translate"
+        >
+          <lucide-icon [img]="plus" [size]="15" />
+          {{ 'SHIPMENTS.ADD_SUBMIT' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (isLoading$ | async) {
+    <div class="page-spinner"><app-spinner /></div>
+  } @else {
+    @if (allShipments().length === 0) {
+      <div class="page-empty">
+        <div class="page-empty__icon-wrap">
+          <lucide-icon [img]="truck" [size]="28" />
+        </div>
+        <p class="page-empty__title">{{ 'SHIPMENTS.EMPTY' | translate }}</p>
+        <p class="page-empty__sub">{{ 'SHIPMENTS.ADD' | translate }}</p>
+      </div>
+    } @else if (filtered().length === 0) {
+      <div class="page-empty">
+        <div class="page-empty__icon-wrap">
+          <lucide-icon [img]="searchIcon" [size]="24" />
+        </div>
+        <p class="page-empty__title">{{ 'COMMON.EMPTY' | translate }}</p>
+        <p class="page-empty__sub">{{ 'SHIPMENTS.REFINE_SEARCH' | translate }}</p>
+      </div>
+    } @else {
+      <!-- Desktop table -->
+      <div class="table-wrap">
+        <table class="shipments-table">
+          <thead>
+            <tr>
+              <th>{{ 'COMMON.STATUS' | translate }}</th>
+              <th>{{ 'SHIPMENTS.CLIENT' | translate }}</th>
+              <th>{{ 'SHIPMENTS.COMPANY' | translate }}</th>
+              <th>{{ 'SHIPMENTS.PIECE' | translate }}</th>
+              <th>{{ 'SHIPMENTS.CREATED_BY' | translate }}</th>
+              <th class="col-actions">{{ 'COMMON.ACTIONS' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (s of paginatedItems(); track s._id) {
+              <tr [class.row--sent]="s.sent" (click)="detailShipment.set(s)">
+                <td>
+                  @if (s.sent) {
+                    <span class="badge badge--green">
+                      <lucide-icon [img]="check" [size]="12" />{{
+                        'SHIPMENTS.STATUS_SENT' | translate
+                      }}
+                    </span>
+                  } @else {
+                    <span class="badge badge--red">
+                      <lucide-icon [img]="circleAlert" [size]="12" />{{
+                        'SHIPMENTS.STATUS_PENDING' | translate
+                      }}
+                    </span>
+                  }
+                </td>
+                <td>
+                  <span class="client-name" [class.client-name--sent]="s.sent">
+                    {{ s.prenom }} {{ s.nom }}
+                  </span>
+                </td>
+                <td class="col-secondary">{{ s.societe }}</td>
+                <td class="col-piece">{{ s.piece || '-' }}</td>
+                <td class="col-secondary">{{ s.createdByName }}</td>
+                <td>
+                  <div class="row-actions">
+                    @if (!s.sent && ((isAdmin$ | async) || (isHotline$ | async))) {
+                      <button
+                        class="badge badge--green badge--btn"
+                        (click)="$event.stopPropagation(); onMarkSent(s)"
+                        [title]="'SHIPMENTS.MARK_SENT' | translate"
+                      >
+                        <lucide-icon [img]="send" [size]="12" />{{
+                          'SHIPMENTS.MARK_SENT' | translate
+                        }}
+                      </button>
+                    }
+                    @if (isAdmin$ | async) {
+                      <button
+                        class="row-btn row-btn--danger"
+                        (click)="$event.stopPropagation(); onDeleteConfirm(s)"
+                        [title]="'SHIPMENTS.DELETE' | translate"
+                      >
+                        <lucide-icon [img]="trash2" [size]="14" />
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile cards -->
+      <div class="mobile-cards">
+        @for (s of paginatedItems(); track s._id) {
+          <div class="m-card" [class.m-card--sent]="s.sent" (click)="detailShipment.set(s)">
+            <div class="m-card__top">
+              @if (s.sent) {
+                <span class="badge badge--green">
+                  <lucide-icon [img]="check" [size]="12" />{{ 'SHIPMENTS.STATUS_SENT' | translate }}
+                </span>
+              } @else {
+                <span class="badge badge--red">
+                  <lucide-icon [img]="circleAlert" [size]="12" />{{
+                    'SHIPMENTS.STATUS_PENDING' | translate
+                  }}
+                </span>
+              }
+              <span class="m-card__creator">{{ s.createdByName }}</span>
+            </div>
+            <p class="m-card__name">{{ s.prenom }} {{ s.nom }}</p>
+            @if (s.societe || s.societeOuFonction) {
+              <p class="m-card__meta">
+                <lucide-icon [img]="building2" [size]="12" />
+                {{ s.societe }}{{ s.societeOuFonction ? ' · ' + s.societeOuFonction : '' }}
+              </p>
+            }
+            <p class="m-card__piece">
+              <lucide-icon [img]="packageIcon" [size]="12" />{{ s.piece }}
+            </p>
+            @if (s.adresse) {
+              <p class="m-card__meta">
+                <lucide-icon [img]="mapPin" [size]="12" />
+                {{ s.adresse }}, {{ s.codePostal }} {{ s.ville }}
+              </p>
+            }
+            @if (s.tel) {
+              <p class="m-card__meta">
+                <lucide-icon [img]="phone" [size]="12" />
+                {{ s.tel }}{{ s.tel2 ? ' / ' + s.tel2 : '' }}
+              </p>
+            }
+            @if (s.sentBy) {
+              <p class="m-card__meta">
+                <lucide-icon [img]="send" [size]="12" />
+                {{ 'SHIPMENTS.STATUS_SENT' | translate }} {{ s.sentBy }}
+              </p>
+            }
+            @if (!s.sent || (isAdmin$ | async)) {
+              <div class="m-card__actions">
+                @if (!s.sent && ((isAdmin$ | async) || (isHotline$ | async))) {
+                  <button
+                    class="badge badge--green badge--btn"
+                    (click)="$event.stopPropagation(); onMarkSent(s)"
+                    [title]="'SHIPMENTS.MARK_SENT' | translate"
+                  >
+                    <lucide-icon [img]="send" [size]="12" />{{ 'SHIPMENTS.MARK_SENT' | translate }}
+                  </button>
+                }
+                @if (isAdmin$ | async) {
+                  <button
+                    class="row-btn row-btn--danger"
+                    (click)="$event.stopPropagation(); onDeleteConfirm(s)"
+                    [title]="'SHIPMENTS.DELETE' | translate"
+                  >
+                    <lucide-icon [img]="trash2" [size]="14" />
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Pagination -->
+      @if (totalPages() > 1) {
+        <div class="pagination">
+          <button
+            class="btn-icon"
+            [disabled]="currentPage() === 1"
+            (click)="loadPage(currentPage() - 1)"
+            [title]="'COMMON.PREVIOUS' | translate"
+          >
+            <lucide-icon [img]="chevLeft" [size]="16" />
+          </button>
+          <span class="pagination__info">
+            {{ 'ARTICLES.PAGE' | translate }} {{ currentPage() }} {{ 'COMMON.OF' | translate }}
+            {{ totalPages() }} ({{ filtered().length }} {{ 'SHIPMENTS.TITLE' | translate }})
+          </span>
+          <button
+            class="btn-icon"
+            [disabled]="currentPage() === totalPages()"
+            (click)="loadPage(currentPage() + 1)"
+            [title]="'COMMON.NEXT' | translate"
+          >
+            <lucide-icon [img]="chevRight" [size]="16" />
+          </button>
+        </div>
+      }
+    }
+  }
+</div>
+
+@if (deletingShipment()) {
+  <app-confirm-dialog
+    [title]="'SHIPMENTS.CONFIRM_DELETE' | translate"
+    [message]="
+      'SHIPMENTS.CONFIRM_DELETE_PERSON'
+        | translate: { name: deletingShipment()!.prenom + ' ' + deletingShipment()!.nom }
+    "
+    [confirmLabel]="'SHIPMENTS.DELETE' | translate"
+    (confirmed)="confirmDelete()"
+    (cancelled)="deletingShipment.set(null)"
+  />
+}
+
+@if (showHistory()) {
+  <app-shipment-history-modal (closed)="showHistory.set(false)" (archived)="onArchived()" />
+}
+
+@if (showExportModal()) {
+  <app-shipment-export-modal
+    [shipments]="allShipments()"
+    (cancelled)="showExportModal.set(false)"
+  />
+}
+
+@if (detailShipment()) {
+  <div class="modal-overlay" (click)="detailShipment.set(null)">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-box__header">
+        <h3 class="modal-box__title">{{ 'SHIPMENTS.DETAIL' | translate }}</h3>
+        <button
+          class="btn-icon"
+          (click)="detailShipment.set(null)"
+          [title]="'COMMON.CLOSE' | translate"
+        >
+          <lucide-icon [img]="x" [size]="16" />
+        </button>
+      </div>
+      <div class="modal-box__body">
+        @let s = detailShipment()!;
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'COMMON.STATUS' | translate }}</span>
+          <span class="modal-detail-row__value">{{
+            s.sent
+              ? ('SHIPMENTS.STATUS_SENT' | translate)
+              : ('SHIPMENTS.STATUS_PENDING' | translate)
+          }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'COMMON.NAME' | translate }}</span>
+          <span class="modal-detail-row__value">{{ s.nom }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'COMMON.FIRST_NAME' | translate }}</span>
+          <span class="modal-detail-row__value">{{ s.prenom }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'SHIPMENTS.COMPANY' | translate }}</span>
+          <span class="modal-detail-row__value">{{ s.societe }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{
+            'SHIPMENTS.COMPANY_FUNCTION' | translate
+          }}</span>
+          <span class="modal-detail-row__value">{{ s.societeOuFonction || '-' }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'SHIPMENTS.PIECE' | translate }}</span>
+          <span class="modal-detail-row__value">{{ s.piece }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'COMMON.ADDRESS' | translate }}</span>
+          <span class="modal-detail-row__value">{{ s.adresse }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'COMMON.ZIP_CODE' | translate }}</span>
+          <span class="modal-detail-row__value">{{ s.codePostal }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'COMMON.CITY' | translate }}</span>
+          <span class="modal-detail-row__value">{{ s.ville }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'COMMON.PHONE' | translate }}</span>
+          <span class="modal-detail-row__value">{{ s.tel || '-' }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'COMMON.PHONE2' | translate }}</span>
+          <span class="modal-detail-row__value">{{ s.tel2 || '-' }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'COMMON.EMAIL' | translate }}</span>
+          <span class="modal-detail-row__value">{{ s.email || '-' }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'SHIPMENTS.SENT_BY' | translate }}</span>
+          <span class="modal-detail-row__value">{{ s.sentBy || '-' }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'SHIPMENTS.CREATED_BY' | translate }}</span>
+          <span class="modal-detail-row__value">{{ s.createdByName || '-' }}</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="modal-detail-row__label">{{ 'SHIPMENTS.CREATED_AT' | translate }}</span>
+          <span class="modal-detail-row__value">{{ formatDate(s.createdAt) }}</span>
+        </div>
+      </div>
+      <div class="modal-box__footer">
+        <button
+          class="btn-secondary"
+          (click)="detailShipment.set(null)"
+          [title]="'COMMON.CLOSE' | translate"
+        >
+          {{ 'COMMON.CLOSE' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

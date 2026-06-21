@@ -1,0 +1,17 @@
+<div class="hero">
+  <div class="hero__left">
+    <h1 class="hero__title">
+      @if (icon) {
+        <lucide-icon [img]="icon" [size]="iconSize" />
+      } @else if (iconName) {
+        <lucide-icon [name]="iconName" [size]="iconSize" />
+      }
+      {{ title }}
+    </h1>
+    @if (subtitle) {
+      <p class="hero__subtitle">{{ subtitle }}</p>
+    }
+    <ng-content select="[slot=subtitle]" />
+  </div>
+  <ng-content />
+</div>

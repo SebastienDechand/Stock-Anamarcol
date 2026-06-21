@@ -1,0 +1,40 @@
+@if (fluxCamera() !== undefined) {
+  <!-- Mode flux seul — ?flux=camera_id : affichage plein écran, sans chrome -->
+  @if (fluxCamera(); as camera) {
+    <div class="flux-mode">
+      <app-camera-card
+        [camera]="camera"
+        [showHeader]="false"
+        [showFooter]="false"
+        [fullHeight]="true"
+      />
+    </div>
+  } @else {
+    <div class="flux-mode flux-mode--not-found">
+      <p>{{ 'SURVEILLANCE.CAMERA_NOT_FOUND' | translate }}</p>
+    </div>
+  }
+} @else {
+  <div class="surveillance-page">
+    <app-page-hero
+      [title]="'SURVEILLANCE.TITLE' | translate"
+      [icon]="video"
+      [subtitle]="'SURVEILLANCE.SUBTITLE' | translate"
+    />
+
+    <div class="cameras-wrap">
+      @if (cameras.length > 0) {
+        <div class="cameras-grid">
+          @for (camera of cameras; track camera.id) {
+            <app-camera-card [camera]="camera" />
+          }
+        </div>
+      } @else {
+        <div class="empty-state">
+          <lucide-icon name="alert-circle" [size]="48" />
+          <p>{{ 'SURVEILLANCE.LOADING' | translate }}</p>
+        </div>
+      }
+    </div>
+  </div>
+}

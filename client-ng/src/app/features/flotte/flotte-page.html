@@ -1,0 +1,356 @@
+<div class="page-container">
+  <app-page-hero
+    [title]="'FLEET.TITLE' | translate"
+    [icon]="truck"
+    [subtitle]="'FLEET.SUBTITLE' | translate"
+  >
+    @if (isAdmin$ | async) {
+      <button class="btn-primary" (click)="openAdd()" [title]="'FLEET.ADD' | translate">
+        <lucide-icon [img]="plus" [size]="16" />
+        {{ 'FLEET.ADD' | translate }}
+      </button>
+    }
+  </app-page-hero>
+
+  <!-- ─── Filters ─── -->
+  <div class="filters-bar">
+    <div class="search-box">
+      <lucide-icon [img]="search" [size]="16" class="search-box__icon" />
+      <input
+        type="text"
+        class="search-box__input"
+        [placeholder]="'FLEET.SEARCH_PLACEHOLDER' | translate"
+        [value]="rawSearch()"
+        (input)="onSearch($any($event.target).value)"
+      />
+    </div>
+    <select class="filter-select" (change)="filterMarque.set($any($event.target).value)">
+      <option value="">{{ 'FLEET.ALL_BRANDS' | translate }}</option>
+      <option value="mercedes">{{ 'FLEET.BRAND_MERCEDES' | translate }}</option>
+      <option value="nissan">{{ 'FLEET.BRAND_NISSAN' | translate }}</option>
+    </select>
+  </div>
+
+  @if (isLoading$ | async) {
+    <div class="page-spinner"><app-spinner /></div>
+  } @else if (vehicles$ | async; as vehicles) {
+    <!-- ─── Desktop : table ─── -->
+    <div class="desktop-only">
+      <div class="vehicles-table-wrap">
+        @if (vehicles.length === 0) {
+          <div class="empty-state">
+            <lucide-icon [img]="truck" [size]="40" class="empty-state__icon" />
+            <p>{{ 'COMMON.EMPTY' | translate }}</p>
+          </div>
+        } @else {
+          <table class="vehicles-table">
+            <thead>
+              <tr>
+                <th class="col-type">{{ 'FLEET.TYPE' | translate }}</th>
+                <th class="col-plate">{{ 'FLEET.PLATE' | translate }}</th>
+                <th class="col-assigned">{{ 'FLEET.ASSIGNED' | translate }}</th>
+                <th class="col-date">{{ 'FLEET.REVISION' | translate }}</th>
+                <th class="col-date">{{ 'FLEET.CT_EXPIRATION' | translate }}</th>
+                <th class="col-date">{{ 'FLEET.ANTI_POLLUTION' | translate }}</th>
+                <th class="col-actions">{{ 'COMMON.ACTIONS' | translate }}</th>
+              </tr>
+            </thead>
+            @for (section of sections; track section.key) {
+              @let sv = vehiclesBySection(vehicles, section.key);
+              @if (sv.length) {
+                <tbody>
+                  <tr class="section-row" (click)="toggleSection(section.key)">
+                    <td colspan="7">
+                      <div class="section-row__inner">
+                        <lucide-icon
+                          [img]="chevronDown"
+                          [size]="14"
+                          [class.rotated]="isSectionCollapsed(section.key)"
+                        />
+                        {{ section.label | translate }}
+                        <span class="count-badge">{{ sv.length }}</span>
+                      </div>
+                    </td>
+                  </tr>
+                  @if (!isSectionCollapsed(section.key)) {
+                    @for (v of sv; track v._id) {
+                      <tr class="vehicle-row" (click)="openEdit(v)">
+                        <td>
+                          @let b = badge(v.format);
+                          <span [class]="b.css">
+                            <lucide-icon [img]="b.icon" [size]="11" />
+                            {{ b.label | translate }}
+                          </span>
+                        </td>
+                        <td class="col-plate-val">{{ v.immatriculation }}</td>
+                        <td class="col-assigned-val">{{ v.assignedToName || '-' }}</td>
+                        <td>
+                          <span
+                            [class.text-warning]="revisionStatus(v.dateRevision) === 'soon'"
+                            [class.text-danger]="revisionStatus(v.dateRevision) === 'expired'"
+                            >{{ formatDate(v.dateRevision) }}</span
+                          >
+                          @if (revisionStatus(v.dateRevision) === 'expired') {
+                            <div class="date-alert date-alert--warning">
+                              <lucide-icon [img]="alertCircle" [size]="11" />
+                              {{ 'FLEET.EXPIRED' | translate }}
+                            </div>
+                          }
+                          @if (revisionStatus(v.dateRevision) === 'soon') {
+                            <div class="date-alert date-alert--warning">
+                              <lucide-icon [img]="alertCircle" [size]="11" />
+                              {{ 'FLEET.SOON' | translate }}
+                            </div>
+                          }
+                        </td>
+                        <td>
+                          <span
+                            [class.text-warning]="dateStatus(v.dateCtExpiration) === 'soon'"
+                            [class.text-danger]="dateStatus(v.dateCtExpiration) === 'expired'"
+                            >{{ formatDate(v.dateCtExpiration) }}</span
+                          >
+                          @if (dateStatus(v.dateCtExpiration) === 'expired') {
+                            <div class="date-alert date-alert--danger">
+                              <lucide-icon [img]="alertCircle" [size]="11" />
+                              {{ 'FLEET.EXPIRED' | translate }}
+                            </div>
+                          }
+                          @if (dateStatus(v.dateCtExpiration) === 'soon') {
+                            <div class="date-alert date-alert--warning">
+                              <lucide-icon [img]="alertCircle" [size]="11" />
+                              {{ 'FLEET.SOON' | translate }}
+                            </div>
+                          }
+                        </td>
+                        <td>
+                          <span
+                            [class.text-warning]="
+                              dateStatus(v.dateControlAntiPollutionExpiration) === 'soon'
+                            "
+                            [class.text-danger]="
+                              dateStatus(v.dateControlAntiPollutionExpiration) === 'expired'
+                            "
+                            >{{ formatDate(v.dateControlAntiPollutionExpiration) }}</span
+                          >
+                          @if (dateStatus(v.dateControlAntiPollutionExpiration) === 'expired') {
+                            <div class="date-alert date-alert--danger">
+                              <lucide-icon [img]="alertCircle" [size]="11" />
+                              {{ 'FLEET.EXPIRED' | translate }}
+                            </div>
+                          }
+                          @if (dateStatus(v.dateControlAntiPollutionExpiration) === 'soon') {
+                            <div class="date-alert date-alert--warning">
+                              <lucide-icon [img]="alertCircle" [size]="11" />
+                              {{ 'FLEET.SOON' | translate }}
+                            </div>
+                          }
+                        </td>
+                        <td (click)="$event.stopPropagation()">
+                          <div class="row-actions">
+                            @if (isAdmin$ | async) {
+                              <button
+                                class="btn-icon"
+                                (click)="openEdit(v)"
+                                [title]="'FLEET.EDIT' | translate"
+                              >
+                                <lucide-icon [img]="edit2" [size]="16" />
+                              </button>
+                            }
+                            <button
+                              class="btn-icon doc-btn"
+                              (click)="openDocuments(v)"
+                              [title]="'FLEET.DOCUMENTS' | translate"
+                            >
+                              <lucide-icon [img]="fileText" [size]="16" />
+                              @if (v.documents.length) {
+                                <span class="doc-badge">{{ v.documents.length }}</span>
+                              }
+                            </button>
+                            @if (isAdmin$ | async) {
+                              <button
+                                class="btn-icon btn-icon--danger"
+                                (click)="openDeleteConfirm(v)"
+                                [title]="'FLEET.DELETE' | translate"
+                              >
+                                <lucide-icon [img]="trash2" [size]="16" />
+                              </button>
+                            }
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  }
+                </tbody>
+              }
+            }
+          </table>
+        }
+      </div>
+    </div>
+
+    <!-- ─── Mobile : compact rows ─── -->
+    <div class="mobile-only">
+      @if (vehicles.length === 0) {
+        <div class="empty-state">
+          <lucide-icon [img]="truck" [size]="40" class="empty-state__icon" />
+          <p>{{ 'COMMON.EMPTY' | translate }}</p>
+        </div>
+      } @else {
+        @for (section of sections; track section.key) {
+          @let sv = vehiclesBySection(vehicles, section.key);
+          @if (sv.length) {
+            <div class="mobile-section">
+              <button
+                type="button"
+                class="mobile-section__header"
+                (click)="toggleSection(section.key)"
+                [title]="
+                  'FLEET.TOGGLE_SECTION' | translate: { section: (section.label | translate) }
+                "
+              >
+                <lucide-icon
+                  [img]="chevronDown"
+                  [size]="14"
+                  [class.rotated]="isSectionCollapsed(section.key)"
+                />
+                <span>{{ section.label | translate }}</span>
+                <span class="count-badge">{{ sv.length }}</span>
+              </button>
+              @if (!isSectionCollapsed(section.key)) {
+                <div class="vehicle-list">
+                  @for (vehicle of sv; track vehicle._id) {
+                    <div class="vrm" (click)="openEdit(vehicle)">
+                      <div class="vrm__top">
+                        <div class="vrm__left">
+                          @let b = badge(vehicle.format);
+                          <span [class]="b.css">
+                            <lucide-icon [img]="b.icon" [size]="11" />
+                            {{ b.label | translate }}
+                          </span>
+                          <span class="vrm__plate">{{ vehicle.immatriculation }}</span>
+                        </div>
+                        <div class="vrm__actions" (click)="$event.stopPropagation()">
+                          @if (isAdmin$ | async) {
+                            <button
+                              class="btn-icon"
+                              (click)="openEdit(vehicle)"
+                              [title]="'FLEET.EDIT' | translate"
+                            >
+                              <lucide-icon [img]="edit2" [size]="16" />
+                            </button>
+                          }
+                          <button
+                            class="btn-icon doc-btn"
+                            (click)="openDocuments(vehicle)"
+                            [title]="'FLEET.DOCUMENTS' | translate"
+                          >
+                            <lucide-icon [img]="fileText" [size]="16" />
+                            @if (vehicle.documents.length) {
+                              <span class="doc-badge">{{ vehicle.documents.length }}</span>
+                            }
+                          </button>
+                          @if (isAdmin$ | async) {
+                            <button
+                              class="btn-icon btn-icon--danger"
+                              (click)="openDeleteConfirm(vehicle)"
+                              [title]="'FLEET.DELETE' | translate"
+                            >
+                              <lucide-icon [img]="trash2" [size]="16" />
+                            </button>
+                          }
+                        </div>
+                      </div>
+                      @if (vehicle.assignedToName) {
+                        <p class="vrm__assigned">{{ vehicle.assignedToName }}</p>
+                      }
+                      <div class="vrm__dates">
+                        <span class="vrm__date-chip"
+                          >{{ 'FLEET.REVISION_SHORT' | translate }}
+                          <span
+                            [class.vrm__date--warning]="
+                              revisionStatus(vehicle.dateRevision) === 'soon'
+                            "
+                            [class.vrm__date--danger]="
+                              revisionStatus(vehicle.dateRevision) === 'expired'
+                            "
+                            >{{ formatDate(vehicle.dateRevision) }}</span
+                          >
+                        </span>
+                        <span class="vrm__date-chip"
+                          >{{ 'FLEET.CT_SHORT' | translate }}
+                          <span
+                            [class.vrm__date--warning]="
+                              dateStatus(vehicle.dateCtExpiration) === 'soon'
+                            "
+                            [class.vrm__date--danger]="
+                              dateStatus(vehicle.dateCtExpiration) === 'expired'
+                            "
+                            >{{ formatDate(vehicle.dateCtExpiration) }}</span
+                          >
+                        </span>
+                        <span class="vrm__date-chip"
+                          >{{ 'FLEET.AP_SHORT' | translate }}
+                          <span
+                            [class.vrm__date--warning]="
+                              dateStatus(vehicle.dateControlAntiPollutionExpiration) === 'soon'
+                            "
+                            [class.vrm__date--danger]="
+                              dateStatus(vehicle.dateControlAntiPollutionExpiration) === 'expired'
+                            "
+                            >{{ formatDate(vehicle.dateControlAntiPollutionExpiration) }}</span
+                          >
+                        </span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        }
+      }
+    </div>
+  }
+</div>
+
+@if (showAddModal()) {
+  <app-vehicle-form-modal
+    [vehicle]="editingVehicle()"
+    (save)="onSave($event)"
+    (closed)="closeModal()"
+  />
+}
+
+@if (deletingVehicle()) {
+  <app-confirm-dialog
+    [title]="'FLEET.CONFIRM_DELETE' | translate"
+    [message]="
+      ('FLEET.CONFIRM_DELETE_MSG' | translate) + ' ' + deletingVehicle()!.immatriculation + ' ?'
+    "
+    [confirmLabel]="'COMMON.DELETE' | translate"
+    (confirmed)="confirmDelete()"
+    (cancelled)="deletingVehicle.set(null)"
+  />
+}
+
+@if (docVehicle()) {
+  <div class="overlay-backdrop" (click)="docVehicle.set(null)"></div>
+  <div class="doc-panel" role="dialog">
+    <div class="doc-panel__header">
+      <h2 class="doc-panel__title">
+        {{ 'FLEET.DOCUMENTS' | translate }} - {{ docVehicle()!.immatriculation }}
+      </h2>
+      <button class="btn-icon" (click)="docVehicle.set(null)" [title]="'COMMON.CLOSE' | translate">
+        ✕
+      </button>
+    </div>
+    <div class="doc-panel__body">
+      <app-vehicle-document-list
+        [vehicle]="docVehicle()!"
+        [isAdmin]="(isAdmin$ | async) ?? false"
+        (uploadDocument)="onUploadDocument($event)"
+        (deleteDocument)="onDeleteDocument($event)"
+      />
+    </div>
+  </div>
+}

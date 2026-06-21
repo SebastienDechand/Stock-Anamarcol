@@ -1,0 +1,57 @@
+@use '../../../../scss/mixins' as m;
+
+.confirm-backdrop {
+  @include m.overlay-backdrop;
+}
+
+.confirm-panel {
+  background: var(--bg-elevated);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: var(--space-8);
+  width: 90vw;
+  max-width: 400px;
+  text-align: center;
+}
+
+.confirm-icon {
+  @include m.flex-center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fee2e2;
+  color: var(--color-danger);
+  margin: 0 auto var(--space-4);
+}
+
+.confirm-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.confirm-message {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-6);
+  line-height: 1.6;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.confirm-btn {
+  @include m.btn-base;
+  padding: 0.625rem 1.5rem;
+
+  &--cancel {
+    @include m.btn-secondary;
+  }
+  &--danger {
+    @include m.btn-danger;
+  }
+}

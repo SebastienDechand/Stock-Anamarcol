@@ -1,9 +1,10 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Response } from "express";
 
-const mockCreate = jest.fn();
-const mockFind = jest.fn();
+const mockCreate = vi.fn();
+const mockFind = vi.fn();
 
-jest.mock("../models/audit.model", () => ({
+vi.mock("../models/audit.model", () => ({
   __esModule: true,
   default: {
     create: (...args: unknown[]) => mockCreate(...args),
@@ -15,12 +16,12 @@ import { logEvent, getRecentEvents } from "../utils/audit.utils";
 
 describe("audit.utils", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // ─── logEvent ──────────────────────────────────────────
@@ -70,9 +71,9 @@ describe("audit.utils", () => {
   // ─── getRecentEvents ──────────────────────────────────
   describe("getRecentEvents", () => {
     it("should query with default limit and empty filter", async () => {
-      const mockLean = jest.fn().mockResolvedValue([{ action: "login" }]);
-      const mockLimit = jest.fn().mockReturnValue({ lean: mockLean });
-      const mockSort = jest.fn().mockReturnValue({ limit: mockLimit });
+      const mockLean = vi.fn().mockResolvedValue([{ action: "login" }]);
+      const mockLimit = vi.fn().mockReturnValue({ lean: mockLean });
+      const mockSort = vi.fn().mockReturnValue({ limit: mockLimit });
       mockFind.mockReturnValue({ sort: mockSort });
 
       const result = await getRecentEvents();
@@ -84,9 +85,9 @@ describe("audit.utils", () => {
     });
 
     it("should apply custom limit and filter", async () => {
-      const mockLean = jest.fn().mockResolvedValue([]);
-      const mockLimit = jest.fn().mockReturnValue({ lean: mockLean });
-      const mockSort = jest.fn().mockReturnValue({ limit: mockLimit });
+      const mockLean = vi.fn().mockResolvedValue([]);
+      const mockLimit = vi.fn().mockReturnValue({ lean: mockLean });
+      const mockSort = vi.fn().mockReturnValue({ limit: mockLimit });
       mockFind.mockReturnValue({ sort: mockSort });
 
       await getRecentEvents(50, { entity: "item" });

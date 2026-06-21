@@ -1,0 +1,246 @@
+<div class="page-container">
+  <app-page-hero [title]="'CLIENT_FILES.TITLE' | translate" [icon]="clipboardList">
+    @if (clientFiles$ | async; as files) {
+      <p slot="subtitle">
+        {{ 'CLIENT_FILES.SUBTITLE' | translate }} - {{ files.length }} fiche{{
+          files.length !== 1 ? 's' : ''
+        }}
+      </p>
+    }
+    @if (isMonteur$ | async) {
+      <button
+        class="btn-primary hidden-mobile"
+        (click)="openCreate()"
+        [title]="'CLIENT_FILES.ADD' | translate"
+      >
+        <lucide-icon [img]="plus" [size]="16" />
+        {{ 'CLIENT_FILES.ADD' | translate }}
+      </button>
+    }
+  </app-page-hero>
+
+  <!-- Search + mobile add -->
+  <div class="search-row">
+    <div class="search-box">
+      <lucide-icon [img]="search" [size]="15" class="search-box__icon" />
+      <input
+        type="text"
+        class="search-box__input"
+        [placeholder]="'CLIENT_FILES.SEARCH_PLACEHOLDER' | translate"
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value); onSearchChange()"
+      />
+    </div>
+    @if (isMonteur$ | async) {
+      <button
+        class="btn-primary mobile-only"
+        (click)="openCreate()"
+        [title]="'CLIENT_FILES.ADD' | translate"
+      >
+        <lucide-icon [img]="plus" [size]="16" />
+        {{ 'CLIENT_FILES.ADD' | translate }}
+      </button>
+    }
+  </div>
+
+  <!-- Content -->
+  @if (isLoading$ | async) {
+    <div class="page-spinner"><app-spinner /></div>
+  } @else if (clientFiles$ | async; as files) {
+    @let filtered = filter(files);
+    @let pages = totalPages(filtered);
+    @let paged = paginate(filtered);
+
+    @if (!filtered.length) {
+      <div class="page-empty">
+        <lucide-icon [img]="clipboardList" [size]="40" class="page-empty__icon" />
+        <p>{{ 'CLIENT_FILES.EMPTY' | translate }}</p>
+      </div>
+    } @else {
+      <!-- Cards grid -->
+      <div class="files-grid">
+        @for (file of paged; track file._id) {
+          <div class="file-card" (click)="openDossier(file)">
+            <!-- Title -->
+            <div class="file-card__header">
+              <div class="file-card__title-wrap">
+                <h3 class="file-card__name">
+                  {{ file.nom.toUpperCase() }}{{ file.prenom ? ' ' + file.prenom : '' }}
+                </h3>
+                @if (file.societe) {
+                  <p class="file-card__company">
+                    <lucide-icon [img]="building2" [size]="11" />
+                    {{ file.societe }}
+                  </p>
+                }
+              </div>
+              @if (file.nomMagasin) {
+                <span class="file-card__magasin">{{ file.nomMagasin }}</span>
+              }
+            </div>
+
+            <!-- Details -->
+            <div class="file-card__details">
+              @if (file.adresse || file.cp || file.ville) {
+                <p class="file-card__detail">
+                  <lucide-icon [img]="mapPin" [size]="12" class="file-card__detail-icon" />
+                  <span>
+                    @if (file.adresse) {
+                      <span class="block">{{ file.adresse }}</span>
+                    }
+                    @if (file.cp || file.ville) {
+                      <span class="block">{{ file.cp }} {{ file.ville }}</span>
+                    }
+                  </span>
+                </p>
+              }
+              @if (file.mobile || file.tel) {
+                <p class="file-card__detail">
+                  <lucide-icon [img]="phone" [size]="12" class="file-card__detail-icon" />
+                  {{ file.mobile ?? file.tel }}
+                </p>
+              }
+              @if (file.email) {
+                <p class="file-card__detail file-card__detail--truncate">
+                  <lucide-icon [img]="mail" [size]="12" class="file-card__detail-icon" />
+                  {{ file.email }}
+                </p>
+              }
+            </div>
+
+            <!-- Equipment badges -->
+            <div class="file-card__badges">
+              @if (file.equipement.nbCaisses > 0) {
+                <span class="badge badge--green"
+                  >{{ file.equipement.nbCaisses }} Caisse{{
+                    file.equipement.nbCaisses > 1 ? 's' : ''
+                  }}</span
+                >
+              }
+              @if (file.equipement.nbBalancesCaisses > 0) {
+                <span class="badge badge--green"
+                  >{{ file.equipement.nbBalancesCaisses }} Caisse{{
+                    file.equipement.nbBalancesCaisses > 1 ? 's' : ''
+                  }}
+                  (Bal.)</span
+                >
+              }
+              @if (file.equipement.nbCashguard > 0) {
+                <span class="badge badge--blue">{{ file.equipement.nbCashguard }} CashGuard</span>
+              }
+              @if (file.equipement.nbFusion > 0) {
+                <span class="badge badge--cyan">{{ file.equipement.nbFusion }} Fusion</span>
+              }
+              @if (file.equipement.licencesTactis > 0) {
+                <span class="badge badge--purple">{{ file.equipement.licencesTactis }} TACTIS</span>
+              }
+              @if (file.equipement.pcBackoffice > 0) {
+                <span class="badge badge--gray">{{ file.equipement.pcBackoffice }} PC</span>
+              }
+              @if (file.visitePreinstallation) {
+                <span class="badge badge--yellow">{{
+                  'CLIENT_FILES.PREINSTALL_BADGE' | translate
+                }}</span>
+              }
+            </div>
+
+            @if (file.dateInstallationSouhaitee) {
+              <p class="file-card__date">
+                {{
+                  'CLIENT_FILES.INSTALL_LABEL' | translate: { date: file.dateInstallationSouhaitee }
+                }}
+              </p>
+            }
+
+            <!-- Actions -->
+            <div class="file-card__actions" (click)="$event.stopPropagation()">
+              <button
+                class="file-card__action file-card__action--primary"
+                (click)="openDossier(file)"
+                [title]="'CLIENT_FILES.VIEW' | translate"
+              >
+                <lucide-icon [img]="folderOpen" [size]="13" />
+                {{ 'CLIENT_FILES.VIEW' | translate }}
+              </button>
+              @if (isMonteur$ | async) {
+                <button
+                  class="file-card__action"
+                  (click)="openEdit(file, $event)"
+                  [title]="'CLIENT_FILES.EDIT' | translate"
+                >
+                  <lucide-icon [img]="pencil" [size]="13" />
+                  {{ 'CLIENT_FILES.EDIT' | translate }}
+                </button>
+              }
+              @if (isAdmin$ | async) {
+                <button
+                  class="file-card__action file-card__action--danger"
+                  (click)="deletingFile.set(file)"
+                  [title]="'CLIENT_FILES.DELETE' | translate"
+                >
+                  <lucide-icon [img]="trash2" [size]="13" />
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Pagination -->
+      @if (pages > 1) {
+        <div class="pagination">
+          <button
+            class="pagination__btn"
+            [disabled]="currentPage() === 1"
+            (click)="currentPage.update((p) => p - 1)"
+            [title]="'COMMON.PREVIOUS' | translate"
+          >
+            <lucide-icon [img]="chevLeft" [size]="16" />
+          </button>
+          @for (p of pageNumbers(pages); track $index) {
+            @if (p === '...') {
+              <span class="pagination__ellipsis">…</span>
+            } @else {
+              <button
+                class="pagination__page"
+                [class.pagination__page--active]="currentPage() === p"
+                (click)="currentPage.set(+p)"
+                [title]="'Page ' + p"
+              >
+                {{ p }}
+              </button>
+            }
+          }
+          <button
+            class="pagination__btn"
+            [disabled]="currentPage() === pages"
+            (click)="currentPage.update((p) => p + 1)"
+            [title]="'COMMON.NEXT' | translate"
+          >
+            <lucide-icon [img]="chevRight" [size]="16" />
+          </button>
+        </div>
+      }
+    }
+  }
+</div>
+
+<!-- Modal create/edit -->
+@if (modalOpen()) {
+  <app-client-file-modal
+    [file]="editTarget()"
+    (save)="onModalSave($event)"
+    (closed)="onModalClose()"
+  />
+}
+
+<!-- Delete confirm -->
+@if (deletingFile()) {
+  <app-confirm-dialog
+    [title]="'CLIENT_FILES.CONFIRM_DELETE' | translate"
+    [message]="'CLIENT_FILES.CONFIRM_DELETE_MSG' | translate"
+    [confirmLabel]="'CLIENT_FILES.DELETE' | translate"
+    (confirmed)="confirmDelete()"
+    (cancelled)="deletingFile.set(null)"
+  />
+}

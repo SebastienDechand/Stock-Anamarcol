@@ -1,0 +1,84 @@
+<div class="login">
+  <div class="login__wrapper">
+    <div class="login__card">
+      <div class="login__header">
+        <div class="login__icon-wrap">
+          <lucide-icon [img]="Package" [size]="28" class="login__icon" />
+        </div>
+        <h1 class="login__title">{{ 'LOGIN.TITLE' | translate }}</h1>
+        <p class="login__subtitle">ANAMARCOL</p>
+      </div>
+
+      <div class="login__body">
+        @if (authFacade.loginError$ | async; as error) {
+          <div class="login__error">{{ error }}</div>
+        }
+
+        <form class="login__form" (ngSubmit)="onSubmit()">
+          <div class="login__field">
+            <label class="login__label" for="email">{{ 'LOGIN.EMAIL' | translate }}</label>
+            <input
+              id="email"
+              name="email"
+              class="login__input"
+              type="email"
+              [ngModel]="email()"
+              (ngModelChange)="email.set($event)"
+              [placeholder]="'LOGIN.EMAIL_PLACEHOLDER' | translate"
+              autocomplete="email"
+              required
+            />
+          </div>
+
+          <div class="login__field">
+            <label class="login__label" for="password">{{ 'LOGIN.PASSWORD' | translate }}</label>
+            <div class="login__password-wrap">
+              <input
+                id="password"
+                name="password"
+                class="login__input"
+                [type]="showPassword() ? 'text' : 'password'"
+                [ngModel]="password()"
+                (ngModelChange)="password.set($event)"
+                [placeholder]="'LOGIN.PASSWORD_PLACEHOLDER' | translate"
+                autocomplete="current-password"
+                required
+              />
+              <button
+                class="login__toggle-password"
+                type="button"
+                (click)="togglePassword()"
+                [title]="
+                  showPassword()
+                    ? ('COMMON.HIDE_PASSWORD' | translate)
+                    : ('COMMON.SHOW_PASSWORD' | translate)
+                "
+              >
+                @if (showPassword()) {
+                  <lucide-icon [img]="EyeOff" [size]="18" />
+                } @else {
+                  <lucide-icon [img]="Eye" [size]="18" />
+                }
+              </button>
+            </div>
+          </div>
+
+          <button
+            class="login__submit"
+            type="submit"
+            [disabled]="(authFacade.isLoading$ | async) || !email() || !password()"
+          >
+            @if (authFacade.isLoading$ | async) {
+              <span class="login__spinner"></span>
+              {{ 'LOGIN.LOADING' | translate }}
+            } @else {
+              {{ 'LOGIN.SUBMIT' | translate }}
+            }
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <p class="login__footer">&copy; {{ year }} ANAMARCOL - Stock Manager</p>
+  </div>
+</div>

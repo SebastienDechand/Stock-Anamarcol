@@ -1,0 +1,146 @@
+@if (isSuperadmin$ | async) {
+  <div class="admin-roles-page">
+    <app-page-hero [title]="'ADMIN.ROLES_TITLE' | translate" iconName="shield-check">
+      @let total = users$ | async;
+      <p slot="subtitle">
+        {{ 'ADMIN.ROLES_SUBTITLE' | translate }}
+        @if (total?.length) {
+          - {{ total!.length }} membre{{ total!.length !== 1 ? 's' : '' }}
+        }
+      </p>
+      <div class="search-wrap">
+        <lucide-icon name="search" [size]="14" class="search-wrap__icon" />
+        <input
+          class="search-wrap__input"
+          type="search"
+          [placeholder]="'COMMON.SEARCH' | translate"
+          [value]="searchTerm()"
+          (input)="searchTerm.set($any($event.target).value)"
+        />
+      </div>
+    </app-page-hero>
+
+    @if (isLoading$ | async) {
+      <app-spinner [message]="'COMMON.LOADING' | translate" />
+    } @else {
+      @let allUsers = users$ | async;
+      @let filtered = filterUsers(allUsers ?? []);
+
+      <!-- Desktop table -->
+      <div class="roles-table-wrap">
+        <table class="roles-table">
+          <thead>
+            <tr>
+              <th class="roles-table__th roles-table__th--member">
+                {{ 'ADMIN.MEMBER' | translate }}
+              </th>
+              @for (col of roleColumns; track col.role) {
+                <th class="roles-table__th roles-table__th--role">
+                  {{ col.labelKey | translate }}
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of filtered; track user._id) {
+              <tr class="roles-table__row">
+                <td class="roles-table__td roles-table__td--member">
+                  <span class="member-name">{{ user.pseudo }}</span>
+                  @if (isSaving(user._id)) {
+                    <lucide-icon name="loader-circle" [size]="13" class="saving-icon" />
+                  }
+                  <span class="member-email">{{ user.email }}</span>
+                </td>
+                @for (col of roleColumns; track col.role) {
+                  @let checked = hasRole(user, col.role);
+                  @let isUser = col.role === roleUser;
+                  <td class="roles-table__td roles-table__td--checkbox">
+                    <label
+                      class="role-checkbox"
+                      [class.role-checkbox--disabled]="isUser || isSaving(user._id)"
+                    >
+                      <input
+                        type="checkbox"
+                        class="sr-only"
+                        [checked]="checked"
+                        [disabled]="isUser || isSaving(user._id)"
+                        (change)="toggleRole(user, col.role)"
+                      />
+                      <span
+                        class="role-checkbox__box"
+                        [class.role-checkbox__box--checked]="checked"
+                        [class.role-checkbox__box--locked]="isUser"
+                      >
+                        @if (checked) {
+                          <svg viewBox="0 0 10 8" class="role-checkbox__check">
+                            <polyline points="1,4 4,7 9,1" />
+                          </svg>
+                        }
+                      </span>
+                      <span
+                        class="role-badge role-badge--{{ col.role }}"
+                        [class.role-badge--dim]="isUser"
+                        >{{ col.labelKey | translate }}</span
+                      >
+                    </label>
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile cards -->
+      <div class="roles-mobile">
+        @for (user of filtered; track user._id) {
+          <div class="user-card">
+            <div class="user-card__head">
+              <div class="user-card__avatar">{{ user.pseudo | slice: 0 : 1 }}</div>
+              <div class="user-card__info">
+                <span class="user-card__name">{{ user.pseudo }}</span>
+                <span class="user-card__email">{{ user.email }}</span>
+              </div>
+              @if (isSaving(user._id)) {
+                <lucide-icon name="loader-circle" [size]="14" class="saving-icon" />
+              }
+            </div>
+            <div class="user-card__roles">
+              @for (col of roleColumns; track col.role) {
+                @let active = hasRole(user, col.role);
+                @let isUser = col.role === roleUser;
+                <button
+                  class="role-toggle role-toggle--{{ col.role }}"
+                  [class.role-toggle--active]="active"
+                  [disabled]="isUser || isSaving(user._id)"
+                  (click)="toggleRole(user, col.role)"
+                  [title]="
+                    active
+                      ? ('ADMIN.REMOVE_ROLE' | translate: { role: col.labelKey | translate })
+                      : ('ADMIN.ASSIGN_ROLE' | translate: { role: col.labelKey | translate })
+                  "
+                >
+                  @if (isUser) {
+                    <lucide-icon name="lock" [size]="11" />
+                  } @else if (active) {
+                    <lucide-icon name="check" [size]="11" />
+                  }
+                  {{ col.labelKey | translate }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (!filtered.length) {
+        <div class="empty-state">
+          <lucide-icon name="shield-check" [size]="36" />
+          <p>{{ 'COMMON.EMPTY' | translate }}</p>
+        </div>
+      }
+    }
+  </div>
+} @else {
+  <app-access-denied />
+}

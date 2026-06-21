@@ -1,0 +1,69 @@
+@use '../../../scss/mixins' as m;
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+.flux-mode {
+  width: 100%;
+  height: 100%;
+  background: #000;
+
+  app-camera-card {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  &--not-found {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+}
+
+.surveillance-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  padding: var(--space-4);
+
+  @include m.md {
+    padding: var(--space-6);
+  }
+}
+
+.cameras-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: var(--space-6);
+  @include m.scrollbar-thin;
+}
+
+.cameras-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+
+  @include m.lg {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  color: var(--surface-400);
+
+  p {
+    font-size: 0.9rem;
+  }
+}

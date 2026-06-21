@@ -1,13 +1,14 @@
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import { Request, Response } from "express";
 
-const mockItemModel: Record<string, jest.Mock> = {
-  aggregate: jest.fn(),
-  find: jest.fn(),
-  countDocuments: jest.fn(),
-  distinct: jest.fn(),
-};
+const mockItemModel: Record<string, Mock> = vi.hoisted(() => ({
+  aggregate: vi.fn(),
+  find: vi.fn(),
+  countDocuments: vi.fn(),
+  distinct: vi.fn(),
+}));
 
-jest.mock("../models/item.model", () => ({
+vi.mock("../models/item.model", () => ({
   __esModule: true,
   default: mockItemModel,
 }));
@@ -33,16 +34,16 @@ describe("Stats Controller", () => {
   beforeEach(() => {
     req = { params: {}, query: {} };
     res = {
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
     };
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
     // Always start with a fresh cache
     invalidateStatsCache();
   });
 
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   // ── Helper to set up aggregate / find mocks for getDashboardStats ──
   function setupDashboardMocks(overrides?: {
@@ -76,12 +77,12 @@ describe("Stats Controller", () => {
 
     // find is called 3 times (lowStock, cg, tpv)
     const chainLean = (data: unknown) => ({
-      sort: jest
+      sort: vi
         .fn()
-        .mockReturnValue({ lean: jest.fn().mockResolvedValue(data) }),
-      select: jest
+        .mockReturnValue({ lean: vi.fn().mockResolvedValue(data) }),
+      select: vi
         .fn()
-        .mockReturnValue({ lean: jest.fn().mockResolvedValue(data) }),
+        .mockReturnValue({ lean: vi.fn().mockResolvedValue(data) }),
     });
     mockItemModel.find
       .mockReturnValueOnce(chainLean(lowStockItems))
@@ -95,7 +96,7 @@ describe("Stats Controller", () => {
       setupDashboardMocks();
       await getDashboardStats(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
-      const payload = (res.json as jest.Mock).mock.calls[0][0];
+      const payload = (res.json as Mock).mock.calls[0][0];
       expect(payload.global.numberOfArticles).toBe(10);
       expect(payload.global.totalStock).toBe(150);
       expect(payload.global.numberOfSuppliers).toBe(2);
@@ -106,7 +107,7 @@ describe("Stats Controller", () => {
       setupDashboardMocks({ globalStats: [], cgItems: [], tpvItems: [] });
       await getDashboardStats(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
-      const payload = (res.json as jest.Mock).mock.calls[0][0];
+      const payload = (res.json as Mock).mock.calls[0][0];
       expect(payload.global.numberOfArticles).toBe(0);
       expect(payload.global.prepaCG).toBe(0);
       expect(payload.global.prepaTPV).toBe(0);
@@ -120,7 +121,7 @@ describe("Stats Controller", () => {
         ],
       });
       await getDashboardStats(req as Request, res as Response);
-      const payload = (res.json as jest.Mock).mock.calls[0][0];
+      const payload = (res.json as Mock).mock.calls[0][0];
       // Cassette: floor(9/4)=2, Joint: 5  → min = 2
       expect(payload.global.prepaCG).toBe(2);
     });
@@ -130,7 +131,7 @@ describe("Stats Controller", () => {
         tpvItems: [{ quantite: 8 }, { quantite: 3 }, { quantite: 12 }],
       });
       await getDashboardStats(req as Request, res as Response);
-      const payload = (res.json as jest.Mock).mock.calls[0][0];
+      const payload = (res.json as Mock).mock.calls[0][0];
       expect(payload.global.prepaTPV).toBe(3);
     });
 
@@ -140,7 +141,7 @@ describe("Stats Controller", () => {
       expect(mockItemModel.aggregate).toHaveBeenCalledTimes(3);
 
       // Second call — should not hit DB
-      jest.clearAllMocks();
+      vi.clearAllMocks();
       await getDashboardStats(req as Request, res as Response);
       expect(mockItemModel.aggregate).not.toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
@@ -152,7 +153,7 @@ describe("Stats Controller", () => {
       invalidateStatsCache();
 
       // Reset res.json to capture only the second call's payload
-      (res.json as jest.Mock).mockClear();
+      (res.json as Mock).mockClear();
 
       setupDashboardMocks({
         globalStats: [
@@ -166,7 +167,7 @@ describe("Stats Controller", () => {
         ],
       });
       await getDashboardStats(req as Request, res as Response);
-      const payload = (res.json as jest.Mock).mock.calls[0][0];
+      const payload = (res.json as Mock).mock.calls[0][0];
       expect(payload.global.numberOfArticles).toBe(20);
     });
 
@@ -190,7 +191,7 @@ describe("Stats Controller", () => {
         ],
       });
       await getDashboardStats(req as Request, res as Response);
-      const payload = (res.json as jest.Mock).mock.calls[0][0];
+      const payload = (res.json as Mock).mock.calls[0][0];
       expect(payload.fournisseurs).toEqual([
         {
           nom: "Alpha",
@@ -213,12 +214,12 @@ describe("Stats Controller", () => {
       // Mock find so it doesn't throw synchronously (which would orphan
       // the rejected aggregate promises and crash the worker).
       const chainLean = () => ({
-        sort: jest
+        sort: vi
           .fn()
-          .mockReturnValue({ lean: jest.fn().mockResolvedValue([]) }),
-        select: jest
+          .mockReturnValue({ lean: vi.fn().mockResolvedValue([]) }),
+        select: vi
           .fn()
-          .mockReturnValue({ lean: jest.fn().mockResolvedValue([]) }),
+          .mockReturnValue({ lean: vi.fn().mockResolvedValue([]) }),
       });
       mockItemModel.find
         .mockReturnValueOnce(chainLean())
@@ -299,9 +300,9 @@ describe("Stats Controller", () => {
     it("should return sorted low-stock items", async () => {
       const items = [{ _id: "i1", denomination: "Joint", quantite: 2 }];
       mockItemModel.find.mockReturnValue({
-        sort: jest
+        sort: vi
           .fn()
-          .mockReturnValue({ lean: jest.fn().mockResolvedValue(items) }),
+          .mockReturnValue({ lean: vi.fn().mockResolvedValue(items) }),
       });
       await getArticlesWithLowStock(req as Request, res as Response);
       expect(res.json).toHaveBeenCalledWith(items);
@@ -309,8 +310,8 @@ describe("Stats Controller", () => {
 
     it("should return 500 on error", async () => {
       mockItemModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          lean: jest.fn().mockRejectedValue(new Error("fail")),
+        sort: vi.fn().mockReturnValue({
+          lean: vi.fn().mockRejectedValue(new Error("fail")),
         }),
       });
       await getArticlesWithLowStock(req as Request, res as Response);

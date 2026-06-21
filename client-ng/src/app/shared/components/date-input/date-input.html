@@ -1,0 +1,83 @@
+<div
+  class="field"
+  [class.field--open]="isOpen()"
+  [class.field--disabled]="disabled"
+  (click)="toggle()"
+>
+  @if (displayValue) {
+    <span class="field__value">{{ displayValue }}</span>
+  } @else {
+    <span class="field__value field__value--empty">{{ effectivePlaceholder }}</span>
+  }
+
+  <div class="field__end">
+    @if (value) {
+      <button
+        class="clear-btn"
+        type="button"
+        (click)="clear($event)"
+        tabindex="-1"
+        [attr.aria-label]="'COMMON.CLEAR' | translate"
+        [title]="'COMMON.CLEAR_DATE' | translate"
+      >
+        <lucide-icon [img]="iconX" [size]="11" />
+      </button>
+    }
+    <lucide-icon [img]="iconCalendar" [size]="15" class="cal-icon" />
+  </div>
+</div>
+
+@if (isOpen()) {
+  <div class="picker-overlay" (click)="close()"></div>
+  <div
+    class="picker"
+    [style.top]="popupTop()"
+    [style.left]="popupLeft()"
+    [style.min-width]="popupMinWidth()"
+  >
+    <!-- Header -->
+    <div class="picker__head">
+      <button
+        type="button"
+        class="picker__nav"
+        (click)="prevMonth()"
+        [title]="'COMMON.PREV_MONTH' | translate"
+      >
+        <lucide-icon [img]="iconLeft" [size]="14" />
+      </button>
+      <span class="picker__month">{{ monthLabel }}</span>
+      <button
+        type="button"
+        class="picker__nav"
+        (click)="nextMonth()"
+        [title]="'COMMON.NEXT_MONTH' | translate"
+      >
+        <lucide-icon [img]="iconRight" [size]="14" />
+      </button>
+    </div>
+
+    <!-- Day name row -->
+    <div class="picker__day-names">
+      @for (dayLabelKey of DAY_LABEL_KEYS; track dayLabelKey) {
+        <span>{{ dayLabelKey | translate }}</span>
+      }
+    </div>
+
+    <!-- Day grid -->
+    <div class="picker__grid">
+      @for (cell of days; track cell.date.getTime()) {
+        <button
+          type="button"
+          class="picker__day"
+          [class.picker__day--other]="!cell.isCurrentMonth"
+          [class.picker__day--today]="cell.isToday"
+          [class.picker__day--selected]="cell.isSelected"
+          (click)="selectDay(cell)"
+          [title]="'COMMON.SELECT_DAY' | translate: { day: cell.day }"
+        >
+          {{ cell.day }}
+        </button>
+      }
+    </div>
+  </div>
+}

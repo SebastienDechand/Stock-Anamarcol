@@ -1,0 +1,15 @@
+@use '../../../../../scss/mixins' as m;
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+
+  @include m.lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include m.xl {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}

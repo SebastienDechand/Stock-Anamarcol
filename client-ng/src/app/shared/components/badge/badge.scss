@@ -1,0 +1,30 @@
+@use '../../../../scss/mixins' as m;
+
+.badge {
+  @include m.badge-base;
+
+  &--brand {
+    background: var(--brand-100);
+    color: var(--brand-700);
+  }
+  &--success {
+    background: #dcfce7;
+    color: #15803d;
+  }
+  &--warning {
+    background: #fef3c7;
+    color: #b45309;
+  }
+  &--danger {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+  &--info {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+  &--muted {
+    background: var(--surface-200);
+    color: var(--text-secondary);
+  }
+}

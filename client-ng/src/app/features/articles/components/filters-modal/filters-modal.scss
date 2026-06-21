@@ -1,0 +1,116 @@
+@use '../../../../../scss/mixins' as m;
+
+.modal-backdrop {
+  @include m.overlay-backdrop;
+  z-index: 300;
+}
+
+.filters-modal {
+  @include m.modal-panel;
+  width: min(480px, 95vw);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--surface-200);
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  &__body {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__footer {
+    display: flex;
+    gap: 8px;
+    padding: 14px 20px;
+    border-top: 1px solid var(--surface-200);
+  }
+}
+
+.filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
+
+.fchip {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-input);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.12s;
+  color: var(--text-primary);
+
+  &:hover {
+    border-color: var(--brand-500);
+  }
+
+  &--active {
+    background: var(--brand-600);
+    border-color: var(--brand-600);
+    color: #fff;
+  }
+
+  &--active-etat {
+    background: #059669;
+    border-color: #059669;
+    color: #fff;
+  }
+
+  &--active-prepa {
+    background: #7c3aed;
+    border-color: #7c3aed;
+    color: #fff;
+  }
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s;
+
+  &--apply {
+    @include m.btn-primary;
+  }
+
+  &--reset {
+    @include m.btn-ghost;
+  }
+
+  &--close {
+    @include m.btn-ghost;
+    margin-left: auto;
+  }
+}
+
+.icon-btn {
+  @include m.btn-icon;
+}

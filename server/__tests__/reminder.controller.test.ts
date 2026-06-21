@@ -1,8 +1,9 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Request, Response } from "express";
 
-const mockCheckAndSendVehicleReminders = jest.fn();
+const mockCheckAndSendVehicleReminders = vi.fn();
 
-jest.mock("../services/reminderVehicle.service", () => ({
+vi.mock("../services/reminderVehicle.service", () => ({
   checkAndSendVehicleReminders: (...args: unknown[]) =>
     mockCheckAndSendVehicleReminders(...args),
 }));
@@ -16,15 +17,15 @@ describe("Reminder Controller", () => {
   beforeEach(() => {
     req = { body: {} };
     res = {
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
     };
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // ─── sendVehicleReminders ──────────────────────────────

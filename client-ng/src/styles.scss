@@ -1,0 +1,464 @@
+@use 'scss/tokens';
+@use 'scss/reset';
+@use 'scss/typography';
+@use 'scss/scrollbar';
+
+// ngx-toastr
+@import 'ngx-toastr/toastr';
+
+// Utilitaires globaux légers
+
+// Subtitle dynamique projeté dans app-page-hero
+app-page-hero [slot='subtitle'] {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 4px 0 0;
+  display: block;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.divider {
+  height: 1px;
+  background: var(--border-default);
+  margin: var(--space-4) 0;
+}
+
+// Page transition — must be global to pierce Angular's component encapsulation
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.layout__main > *:not(router-outlet) {
+  animation: page-in 0.12s ease-out backwards;
+}
+
+// ─── Dark mode — overrides pour les backgrounds hardcodés #fff ───────────────
+// Spécificité (0,2,1) > encapsulation Angular (0,2,0) → pas besoin de !important
+
+html[data-theme='dark'] {
+  background: var(--bg-base);
+
+  // Custom properties héritées par tous les composants enfants
+  --row-hover-danger: rgb(239 68 68 / 0.07);
+  --row-hover-success: rgb(22 163 74 / 0.07);
+
+  // Layout
+  .topbar {
+    background: var(--bg-card);
+    border-bottom-color: var(--border-default);
+  }
+
+  // Cards pages — article-card a son propre background: #fff
+  .article-card {
+    background: var(--bg-card);
+    border-color: var(--border-default);
+  }
+
+  // Envois — classes locales (pas le shared kpi-card qui utilise le mixin)
+  .kpi-card {
+    background: var(--bg-card);
+    border-color: var(--border-default);
+  }
+  .mobile-cards {
+    background: var(--bg-card);
+    border-color: var(--border-default);
+  }
+  .table-wrap {
+    background: var(--bg-card);
+    border-color: var(--border-default);
+  }
+
+  // Fiches clients
+  .file-card {
+    background: var(--bg-card);
+    border-color: var(--border-default);
+  }
+  .pagination__btn,
+  .pagination__page {
+    background: var(--bg-card);
+    border-color: var(--border-default);
+  }
+  // Re-assert the active-page highlight — otherwise the rule above (same
+  // specificity as the component's own dark-mode-unaware .pagination__page
+  // selectors, but higher than the emulated-encapsulation attribute) wins
+  // and silently erases which page is active.
+  .pagination__page--active {
+    background: var(--primary-600);
+    border-color: var(--primary-600);
+
+    &:hover {
+      background: var(--primary-700);
+    }
+  }
+
+  // Dossier client
+  .btn-back {
+    background: var(--bg-card);
+    border-color: var(--border-default);
+  }
+  .card {
+    background: var(--bg-card);
+    border-color: var(--border-default);
+  }
+
+  // Flotte
+  .vehicles-table-wrap {
+    background: var(--bg-card);
+  }
+  .mobile-section {
+    background: var(--bg-card);
+  }
+  .filters-bar {
+    background: var(--bg-card);
+    border-color: var(--border-default);
+  }
+  .empty-state {
+    background: var(--bg-card);
+  }
+  .vrm:hover {
+    background: var(--surface-100);
+  }
+  .badge--blue {
+    background: rgb(37 99 235 / 0.15);
+    color: #93c5fd;
+  }
+  .badge--green {
+    background: rgb(22 163 74 / 0.15);
+    color: #4ade80;
+  }
+  .badge--orange {
+    background: rgb(234 88 12 / 0.15);
+    color: #fb923c;
+  }
+
+  // Historique
+  .event-row {
+    background: var(--bg-card);
+    box-shadow: var(--shadow-xs);
+  }
+  .user-dropdown {
+    background: var(--bg-elevated);
+    border-color: var(--border-default);
+  }
+
+  // Rapports
+  .rapport-card,
+  .rapports-card {
+    background: var(--bg-card);
+  }
+
+  // Modales (toutes pages — modal-box défini localement dans chaque page)
+  .modal-box {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+  }
+  .doc-panel {
+    background: var(--bg-elevated);
+  }
+  .confirm-dialog {
+    background: var(--bg-elevated);
+  }
+
+  // Dropdowns
+  .cf-dropdown {
+    background: var(--bg-elevated);
+    border-color: var(--border-default);
+  }
+
+  // Articles — overrides qui écrasent le mixin input-base
+  .search-wrap__input {
+    background: var(--bg-input);
+  }
+  .btn-icon-action {
+    background: var(--bg-card);
+    border-color: var(--border-default);
+  }
+  .btn-clear-filters {
+    background: var(--bg-card);
+    border-color: rgb(239 68 68 / 0.3);
+  }
+
+  // Home
+  .home__chart-toggle {
+    background: var(--surface-200);
+  }
+  .home__toggle-icon--active {
+    background: var(--bg-card);
+  }
+
+  // Tables — thead rows
+  thead tr {
+    background: var(--surface-100) !important;
+  }
+  .section-row {
+    background: var(--surface-100);
+  }
+  .section-row:hover {
+    background: var(--surface-200);
+  }
+
+  // Filtre onglets
+  .filter-tab:not(.filter-tab--active) {
+    background: var(--bg-card);
+    border-color: var(--border-default);
+    color: var(--text-secondary);
+  }
+
+  // Topbar logout hover
+  .topbar__logout:hover {
+    background: rgb(239 68 68 / 0.12);
+    color: #f87171;
+  }
+
+  // date input — passer en dark nativement
+  input[type='date'] {
+    color-scheme: dark;
+  }
+
+  // Home — toggle icon : couleurs manquantes (bg déjà couvert)
+  .home__toggle-icon {
+    color: var(--text-muted);
+    &:hover {
+      color: var(--text-secondary);
+    }
+    &--active {
+      color: var(--text-primary);
+    }
+  }
+
+  // Home — tableau fournisseurs (tout en hardcodé #111827 / #4b5563)
+  .home__th {
+    color: var(--text-muted);
+    border-bottom-color: var(--border-default);
+  }
+  .home__tr {
+    border-bottom-color: var(--border-light);
+    &:hover {
+      background: var(--surface-100);
+    }
+  }
+  .home__td {
+    color: var(--text-secondary);
+  }
+  .home__td--name {
+    color: var(--text-primary);
+  }
+  .home__badge {
+    background: var(--brand-100);
+    color: var(--brand-700);
+  }
+  .home__badge--danger {
+    background: rgb(239 68 68 / 0.15);
+    color: #f87171;
+  }
+
+  // Articles — chips de filtre (background: white hardcodé)
+  .chip {
+    background: var(--bg-input);
+    border-color: var(--border-default);
+
+    &.chip--active {
+      background: var(--brand-600);
+      border-color: var(--brand-600);
+      color: #fff;
+    }
+
+    &.chip--active-etat {
+      background: #059669;
+      border-color: #059669;
+      color: #fff;
+    }
+
+    &.chip--active-prepa {
+      background: #7c3aed;
+      border-color: #7c3aed;
+      color: #fff;
+    }
+  }
+
+  // Articles — barre prepa + raccourcis mobile (fond violet clair → translucide)
+  .prepa-batch,
+  .prepa-shortcuts {
+    background: rgb(124 58 237 / 0.12);
+    border-color: rgb(124 58 237 / 0.25);
+  }
+  .prepa-batch__label,
+  .prepa-shortcuts__label {
+    color: #a78bfa;
+  }
+  .prepa-batch__count {
+    background: var(--bg-input);
+    border-color: rgb(124 58 237 / 0.3);
+  }
+  .prepa-batch__btn--add {
+    background: transparent;
+    color: #a78bfa;
+  }
+  .prepa-shortcut {
+    background: transparent;
+    border-color: rgb(124 58 237 / 0.4);
+    color: #c4b5fd;
+
+    &:hover {
+      background: rgb(124 58 237 / 0.2);
+    }
+
+    &.prepa-shortcut--active {
+      background: #7c3aed;
+      border-color: #7c3aed;
+      color: #fff;
+    }
+  }
+  .prepa-shortcuts__clear {
+    color: #a78bfa;
+
+    &:hover {
+      background: rgb(124 58 237 / 0.2);
+      color: #c4b5fd;
+    }
+  }
+
+  // Admin Roles — role badges (fonds pastel → translucides)
+  .role-badge--user {
+    background: var(--surface-200);
+    color: var(--text-secondary);
+  }
+  .role-badge--hotline {
+    background: rgb(2 132 199 / 0.15);
+    color: #38bdf8;
+  }
+  .role-badge--monteur {
+    background: rgb(217 119 6 / 0.15);
+    color: #fbbf24;
+  }
+  .role-badge--admin {
+    background: rgb(124 58 237 / 0.15);
+    color: #a78bfa;
+  }
+  .role-badge--superadmin {
+    background: rgb(220 38 38 / 0.15);
+    color: #f87171;
+  }
+
+  // Export modal — boutons d'option (background: white hardcodé)
+  .export-btn {
+    background: var(--bg-input);
+    border-color: var(--border-default);
+    &:hover {
+      border-color: var(--primary-400);
+      background: var(--surface-200);
+    }
+  }
+
+  // Low stock table — onglets
+  .low-stock__tabs {
+    background: var(--surface-200);
+  }
+  .low-stock__tab {
+    color: var(--text-muted);
+    &:hover {
+      color: var(--text-secondary);
+    }
+    &--active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+    }
+  }
+
+  // Low stock — badges quantité (fonds jaune/rouge clairs → inutilisables en dark)
+  .low-stock__qty-badge--warning {
+    background: rgb(180 83 9 / 0.2);
+    color: #fbbf24;
+  }
+  .low-stock__qty-badge--critical {
+    background: rgb(185 28 28 / 0.2);
+    color: #f87171;
+  }
+
+  // Historique — filter pill actif utilise --text-primary comme bg (clair en dark)
+  .filter-pill--active {
+    background: var(--brand-600);
+  }
+
+  // Historique — dots d'événements (fonds pastel → translucides)
+  .event-row__dot--success {
+    background: rgb(22 163 74 / 0.2);
+    color: #4ade80;
+  }
+  .event-row__dot--info {
+    background: rgb(37 99 235 / 0.2);
+    color: #60a5fa;
+  }
+  .event-row__dot--danger {
+    background: rgb(220 38 38 / 0.2);
+    color: #f87171;
+  }
+  .event-row__dot--warning {
+    background: rgb(202 138 4 / 0.2);
+    color: #fbbf24;
+  }
+
+  // Envois — KPI icon backgrounds (fonds pastel → translucides)
+  .kpi-card__icon--blue {
+    background: rgb(37 99 235 / 0.18);
+    color: #60a5fa;
+  }
+  .kpi-card__icon--red {
+    background: rgb(220 38 38 / 0.18);
+    color: #f87171;
+  }
+  .kpi-card__icon--green {
+    background: rgb(22 163 74 / 0.18);
+    color: #4ade80;
+  }
+  .kpi-card__value--red {
+    color: #f87171;
+  }
+  .kpi-card__value--green {
+    color: #4ade80;
+  }
+
+  // Envois — badges statut
+  .badge--green {
+    background: rgb(22 163 74 / 0.18);
+    color: #4ade80;
+  }
+  .badge--red {
+    background: rgb(220 38 38 / 0.18);
+    color: #f87171;
+  }
+  .row-btn--danger:hover {
+    color: #f87171;
+    background: rgb(239 68 68 / 0.12);
+  }
+}
+
+// Toastr overrides
+.toast-top-right {
+  top: calc(var(--topbar-height) + var(--space-3)) !important;
+}
+
+.toast-container .ngx-toastr {
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+}

@@ -1,24 +1,25 @@
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import { Request, Response } from "express";
 
-const mockContactModel: Record<string, jest.Mock> = {
-  find: jest.fn(),
-  findById: jest.fn(),
-  create: jest.fn(),
-  deleteOne: jest.fn(),
-};
+const mockContactModel: Record<string, Mock> = vi.hoisted(() => ({
+  find: vi.fn(),
+  findById: vi.fn(),
+  create: vi.fn(),
+  deleteOne: vi.fn(),
+}));
 
-jest.mock("../models/contact.model", () => ({
+vi.mock("../models/contact.model", () => ({
   __esModule: true,
   default: mockContactModel,
   // IContact re-export so the controller import works
 }));
 
-jest.mock("../utils/audit.utils", () => ({
-  logEvent: jest.fn().mockResolvedValue(undefined),
+vi.mock("../utils/audit.utils", () => ({
+  logEvent: vi.fn().mockResolvedValue(undefined),
 }));
 
-jest.mock("../utils/validate.utils", () => ({
-  validateObjectId: jest.fn((id: string, res: Response) => {
+vi.mock("../utils/validate.utils", () => ({
+  validateObjectId: vi.fn((id: string, res: Response) => {
     if (!/^[0-9a-fA-F]{24}$/.test(id)) {
       res.status(400).json({ message: "ID invalide" });
       return false;
@@ -44,15 +45,15 @@ describe("Contacts Controller", () => {
     req = { params: {}, body: {} };
     res = {
       locals: { user: { pseudo: "admin" } },
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
-      send: jest.fn() as unknown as Response["send"],
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
+      send: vi.fn() as unknown as Response["send"],
     };
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   // ── getContacts ──
   describe("getContacts", () => {
@@ -76,7 +77,7 @@ describe("Contacts Controller", () => {
     it("should return 404 when contact not found", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       mockContactModel.findById.mockReturnValue({
-        lean: jest.fn().mockResolvedValue(null),
+        lean: vi.fn().mockResolvedValue(null),
       });
       await contactInfo(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(404);
@@ -86,7 +87,7 @@ describe("Contacts Controller", () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       const contact = { _id: "507f1f77bcf86cd799439011", nom: "Dupont" };
       mockContactModel.findById.mockReturnValue({
-        lean: jest.fn().mockResolvedValue(contact),
+        lean: vi.fn().mockResolvedValue(contact),
       });
       await contactInfo(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
@@ -96,7 +97,7 @@ describe("Contacts Controller", () => {
     it("should return 500 on DB error", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       mockContactModel.findById.mockReturnValue({
-        lean: jest.fn().mockRejectedValue(new Error("DB error")),
+        lean: vi.fn().mockRejectedValue(new Error("DB error")),
       });
       await contactInfo(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
@@ -154,12 +155,12 @@ describe("Contacts Controller", () => {
         _id: "507f1f77bcf86cd799439011",
         nom: "Dupont",
         email: "old@test.com",
-        toObject: jest.fn().mockReturnValue({
+        toObject: vi.fn().mockReturnValue({
           _id: "507f1f77bcf86cd799439011",
           nom: "Dupont",
           email: "old@test.com",
         }),
-        save: jest.fn().mockImplementation(function (
+        save: vi.fn().mockImplementation(function (
           this: Record<string, unknown>,
         ) {
           return Promise.resolve(this);
@@ -193,10 +194,10 @@ describe("Contacts Controller", () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       const contact = { _id: "507f1f77bcf86cd799439011", nom: "Dupont" };
       mockContactModel.findById.mockReturnValue({
-        lean: jest.fn().mockResolvedValue(contact),
+        lean: vi.fn().mockResolvedValue(contact),
       });
       mockContactModel.deleteOne.mockReturnValue({
-        exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
+        exec: vi.fn().mockResolvedValue({ deletedCount: 1 }),
       });
       await deleteContact(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
@@ -212,7 +213,7 @@ describe("Contacts Controller", () => {
     it("should return 500 on DB error", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       mockContactModel.findById.mockReturnValue({
-        lean: jest.fn().mockRejectedValue(new Error("DB error")),
+        lean: vi.fn().mockRejectedValue(new Error("DB error")),
       });
       await deleteContact(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);

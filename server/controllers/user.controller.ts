@@ -118,6 +118,19 @@ export const updateUser = async (
 ): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
 
+  const requester = res.locals.user;
+  const isSelf = requester?._id?.toString() === req.params.id;
+  const isAdmin =
+    !!requester?.roles?.includes(Role.ADMIN) ||
+    !!requester?.roles?.includes(Role.SUPERADMIN);
+
+  // Admins can update anyone; everyone else can only update their own record
+  // (and even then, only the self-service fields below — see isAdmin gates).
+  if (!isSelf && !isAdmin) {
+    res.status(403).json({ message: "Accès refusé - admin requis" });
+    return;
+  }
+
   try {
     const user = await UserModel.findById(req.params.id);
 
@@ -128,29 +141,36 @@ export const updateUser = async (
 
     const old =
       typeof user.toObject === "function" ? user.toObject() : { ...user };
-    if (req.body.email) user.email = req.body.email;
-    if (req.body.password) user.password = req.body.password;
-    if (req.body.poste) user.poste = req.body.poste;
+
+    // Self-service fields — allowed for the account owner and admins alike.
     if (req.body.numero) user.numero = req.body.numero;
-    if (req.body.pole !== undefined) {
-      user.pole = req.body.pole;
-      // Auto-assign/downgrade hotline role based on pole (do not override admins)
-      if (String(req.body.pole) === "Hotline") {
-        if (
-          !user.roles.includes(Role.ADMIN) &&
-          !user.roles.includes(Role.SUPERADMIN) &&
-          !user.roles.includes(Role.HOTLINE)
-        ) {
-          user.roles = [...user.roles, Role.HOTLINE];
-        }
-      } else {
-        if (user.roles.includes(Role.HOTLINE)) {
-          user.roles = user.roles.filter((r) => r !== Role.HOTLINE);
-          if (user.roles.length === 0) user.roles = [Role.USER];
+    if (req.body.picture) user.picture = req.body.picture;
+
+    // Admin-only fields — a non-admin editing their own record cannot touch
+    // these (email/password/poste/pole all affect access or role assignment).
+    if (isAdmin) {
+      if (req.body.email) user.email = req.body.email;
+      if (req.body.password) user.password = req.body.password;
+      if (req.body.poste) user.poste = req.body.poste;
+      if (req.body.pole !== undefined) {
+        user.pole = req.body.pole;
+        // Auto-assign/downgrade hotline role based on pole (do not override admins)
+        if (String(req.body.pole) === "Hotline") {
+          if (
+            !user.roles.includes(Role.ADMIN) &&
+            !user.roles.includes(Role.SUPERADMIN) &&
+            !user.roles.includes(Role.HOTLINE)
+          ) {
+            user.roles = [...user.roles, Role.HOTLINE];
+          }
+        } else {
+          if (user.roles.includes(Role.HOTLINE)) {
+            user.roles = user.roles.filter((r) => r !== Role.HOTLINE);
+            if (user.roles.length === 0) user.roles = [Role.USER];
+          }
         }
       }
     }
-    if (req.body.picture) user.picture = req.body.picture;
 
     const updatedUser = await user.save();
     try {

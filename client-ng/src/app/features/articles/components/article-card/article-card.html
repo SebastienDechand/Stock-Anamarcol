@@ -1,0 +1,49 @@
+<div class="article-card" (click)="cardClick.emit(item)">
+  <div class="article-card__img-wrap">
+    <span class="article-card__stock-badge article-card__stock-badge--{{ stockMod }}">
+      {{ stockLabel }}
+    </span>
+
+    @if (isAdmin) {
+      <button
+        class="article-card__delete-btn"
+        (click)="$event.stopPropagation(); delete.emit(item)"
+        [title]="'COMMON.DELETE' | translate"
+      >
+        <lucide-icon name="trash-2" [size]="12" />
+      </button>
+    }
+
+    @if (imageUrl) {
+      <img [src]="imageUrl" [alt]="item.denomination" class="article-card__img" />
+    } @else {
+      <div class="article-card__img-placeholder">
+        <lucide-icon name="package" [size]="28" />
+      </div>
+    }
+  </div>
+
+  <div class="article-card__body">
+    <h3 class="article-card__name">{{ item.denomination }}</h3>
+    <p class="article-card__meta">{{ item.fournisseur }} · {{ item.etat }}</p>
+
+    <div class="article-card__footer">
+      <button
+        class="qty-btn remove-btn"
+        (click)="$event.stopPropagation(); decrement.emit(item)"
+        [disabled]="!canDecrement"
+        [title]="'ARTICLES.DECREMENT' | translate"
+      >
+        <lucide-icon name="minus" [size]="13" [absoluteStrokeWidth]="true" />
+      </button>
+      <span class="qty-value qty-value--{{ stockMod }}">{{ item.quantite }}</span>
+      <button
+        class="qty-btn add-btn"
+        (click)="$event.stopPropagation(); increment.emit(item)"
+        [title]="'ARTICLES.INCREMENT' | translate"
+      >
+        <lucide-icon name="plus" [size]="13" [absoluteStrokeWidth]="true" />
+      </button>
+    </div>
+  </div>
+</div>

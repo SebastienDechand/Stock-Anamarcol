@@ -1,30 +1,31 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Request, Response } from "express";
 
-const mockItemModel = {
-  findById: jest.fn(),
-  find: jest.fn(),
-  countDocuments: jest.fn(),
-  create: jest.fn(),
-  deleteOne: jest.fn(),
-};
+const mockItemModel = vi.hoisted(() => ({
+  findById: vi.fn(),
+  find: vi.fn(),
+  countDocuments: vi.fn(),
+  create: vi.fn(),
+  deleteOne: vi.fn(),
+}));
 
-jest.mock("../models/item.model", () => ({
+vi.mock("../models/item.model", () => ({
   __esModule: true,
   default: mockItemModel,
 }));
 
-jest.mock("../utils/history.utils", () => ({
-  logItemCreate: jest.fn(),
-  logItemChanges: jest.fn(),
-  logItemDelete: jest.fn(),
+vi.mock("../utils/history.utils", () => ({
+  logItemCreate: vi.fn(),
+  logItemChanges: vi.fn(),
+  logItemDelete: vi.fn(),
 }));
 
-jest.mock("../utils/audit.utils", () => ({
-  logEvent: jest.fn().mockResolvedValue(undefined),
+vi.mock("../utils/audit.utils", () => ({
+  logEvent: vi.fn().mockResolvedValue(undefined),
 }));
 
-jest.mock("../controllers/stats.controller", () => ({
-  invalidateStatsCache: jest.fn(),
+vi.mock("../controllers/stats.controller", () => ({
+  invalidateStatsCache: vi.fn(),
 }));
 
 import {
@@ -48,16 +49,16 @@ describe("Item Controller", () => {
     };
     res = {
       locals: { user: { pseudo: "admin" } },
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
-      send: jest.fn() as unknown as Response["send"],
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
+      send: vi.fn() as unknown as Response["send"],
     };
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // ─── itemInfo ──────────────────────────────────────────
@@ -71,7 +72,7 @@ describe("Item Controller", () => {
     it("should return 404 when item does not exist", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       mockItemModel.findById.mockReturnValue({
-        lean: jest.fn().mockResolvedValue(null),
+        lean: vi.fn().mockResolvedValue(null),
       });
 
       await itemInfo(req as Request, res as Response);
@@ -88,7 +89,7 @@ describe("Item Controller", () => {
         etat: "Neuf",
       };
       mockItemModel.findById.mockReturnValue({
-        lean: jest.fn().mockResolvedValue(mockItem),
+        lean: vi.fn().mockResolvedValue(mockItem),
       });
 
       await itemInfo(req as Request, res as Response);
@@ -104,10 +105,10 @@ describe("Item Controller", () => {
       const mockItems = [{ denomination: "Test" }];
 
       mockItemModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          skip: jest.fn().mockReturnValue({
-            limit: jest.fn().mockReturnValue({
-              lean: jest.fn().mockResolvedValue(mockItems),
+        sort: vi.fn().mockReturnValue({
+          skip: vi.fn().mockReturnValue({
+            limit: vi.fn().mockReturnValue({
+              lean: vi.fn().mockResolvedValue(mockItems),
             }),
           }),
         }),
@@ -130,10 +131,10 @@ describe("Item Controller", () => {
       req.query = { search: "piece", page: "1", limit: "10" };
 
       mockItemModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          skip: jest.fn().mockReturnValue({
-            limit: jest.fn().mockReturnValue({
-              lean: jest.fn().mockResolvedValue([]),
+        sort: vi.fn().mockReturnValue({
+          skip: vi.fn().mockReturnValue({
+            limit: vi.fn().mockReturnValue({
+              lean: vi.fn().mockResolvedValue([]),
             }),
           }),
         }),
@@ -152,10 +153,10 @@ describe("Item Controller", () => {
       req.query = { lowStock: "true", page: "1", limit: "10" };
 
       mockItemModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          skip: jest.fn().mockReturnValue({
-            limit: jest.fn().mockReturnValue({
-              lean: jest.fn().mockResolvedValue([]),
+        sort: vi.fn().mockReturnValue({
+          skip: vi.fn().mockReturnValue({
+            limit: vi.fn().mockReturnValue({
+              lean: vi.fn().mockResolvedValue([]),
             }),
           }),
         }),
@@ -226,12 +227,12 @@ describe("Item Controller", () => {
         _id: "507f1f77bcf86cd799439011",
         denomination: "Original",
         quantite: 10,
-        toObject: jest.fn().mockReturnValue({
+        toObject: vi.fn().mockReturnValue({
           _id: "507f1f77bcf86cd799439011",
           denomination: "Original",
           quantite: 10,
         }),
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           denomination: "Updated",
           quantite: 15,
@@ -250,11 +251,11 @@ describe("Item Controller", () => {
       const mockItem = {
         _id: "507f1f77bcf86cd799439011",
         quantite: 10,
-        toObject: jest.fn().mockReturnValue({
+        toObject: vi.fn().mockReturnValue({
           _id: "507f1f77bcf86cd799439011",
           quantite: 10,
         }),
-        save: jest.fn().mockImplementation(function (this: {
+        save: vi.fn().mockImplementation(function (this: {
           quantite: number;
         }) {
           return Promise.resolve(this);
@@ -278,13 +279,13 @@ describe("Item Controller", () => {
     it("should delete an item successfully", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       mockItemModel.findById.mockReturnValue({
-        lean: jest.fn().mockResolvedValue({
+        lean: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           denomination: "Test",
         }),
       });
       mockItemModel.deleteOne.mockReturnValue({
-        exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
+        exec: vi.fn().mockResolvedValue({ deletedCount: 1 }),
       });
 
       await deleteItem(req as Request, res as Response);
@@ -319,8 +320,8 @@ describe("Item Controller", () => {
           _id: "item1",
           denomination: "Pièce A",
           quantite: 10,
-          toObject: jest.fn().mockReturnValue({ denomination: "Pièce A", quantite: 10 }),
-          save: jest.fn().mockResolvedValue(true),
+          toObject: vi.fn().mockReturnValue({ denomination: "Pièce A", quantite: 10 }),
+          save: vi.fn().mockResolvedValue(true),
         },
       ];
       mockItemModel.find.mockResolvedValue(mockItems);
@@ -343,8 +344,8 @@ describe("Item Controller", () => {
           _id: "item1",
           denomination: "Cassette HV",
           quantite: 10,
-          toObject: jest.fn().mockReturnValue({ denomination: "Cassette HV", quantite: 10 }),
-          save: jest.fn().mockResolvedValue(true),
+          toObject: vi.fn().mockReturnValue({ denomination: "Cassette HV", quantite: 10 }),
+          save: vi.fn().mockResolvedValue(true),
         },
       ];
       mockItemModel.find.mockResolvedValue(mockItems);
@@ -362,8 +363,8 @@ describe("Item Controller", () => {
           _id: "item1",
           denomination: "Pièce A",
           quantite: 0,
-          toObject: jest.fn().mockReturnValue({ denomination: "Pièce A", quantite: 0 }),
-          save: jest.fn().mockResolvedValue(true),
+          toObject: vi.fn().mockReturnValue({ denomination: "Pièce A", quantite: 0 }),
+          save: vi.fn().mockResolvedValue(true),
         },
       ];
       mockItemModel.find.mockResolvedValue(mockItems);
