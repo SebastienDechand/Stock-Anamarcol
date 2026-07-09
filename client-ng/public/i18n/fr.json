@@ -101,7 +101,7 @@
 
   "NAV": {
     "DASHBOARD": "Tableau de bord",
-    "ARTICLES": "Articles",
+    "ITEMS": "Articles",
     "MEMBERS": "Membres",
     "CONTACTS": "Contacts",
     "PROFILE": "Profil",
@@ -136,13 +136,13 @@
     "STOCK_BY_SUPPLIER": "Stock par fournisseur",
     "SUPPLIER_DETAILS": "Détails fournisseurs",
     "SUPPLIER": "Fournisseur",
-    "ARTICLES_COUNT": "Articles",
+    "ITEMS_COUNT": "Articles",
     "STOCK": "Stock",
     "LOW_STOCK": "Stock < 5",
     "CHART_PIE": "Camembert",
     "CHART_BAR": "Barres",
     "LOADING": "Chargement des statistiques...",
-    "KPI_ARTICLES": "Nombre d'articles",
+    "KPI_ITEMS_COUNT": "Nombre d'articles",
     "KPI_TOTAL_STOCK": "Stock total",
     "KPI_SUPPLIERS": "Fournisseurs",
     "KPI_LOW_STOCK": "Stock < 5",
@@ -153,7 +153,7 @@
     "UNKNOWN": "Inconnu"
   },
 
-  "ARTICLES": {
+  "ITEMS": {
     "TITLE": "Articles",
     "SUBTITLE": "Gestion du stock et des équipements",
     "ADD": "Ajouter un article",
@@ -604,7 +604,7 @@
     "CHANGE_PHOTO": "Changer la photo"
   },
 
-  "RAPPORTS": {
+  "INTERVENTION_REPORTS": {
     "TITLE": "Rapports d'intervention",
     "SUBTITLE": "Historique des interventions terrain"
   },
@@ -697,9 +697,6 @@
     "BDC_ERROR": "Erreur lors de la lecture du fichier XLSX",
     "MARKED_SENT": "Marqué comme envoyé",
     "MARK_SENT_ERROR": "Impossible de marquer comme envoyé",
-    "REPORT_CREATED": "Fiche technique créée",
-    "REPORT_UPDATED": "Fiche technique mise à jour",
-    "REPORT_ERROR": "Erreur lors de l'enregistrement",
     "PROFILE_UPDATE_ERROR": "Erreur lors de la mise à jour du profil",
     "SHIPMENT_CREATED": "Envoi créé",
     "SHIPMENT_SENT": "Envoi marqué comme expédié",
@@ -724,12 +721,12 @@
     "CONTACT_UPDATE_ERROR": "Erreur lors de la mise à jour",
     "CONTACT_PHOTO_UPDATED": "Photo mise à jour",
     "CONTACT_PHOTO_ERROR": "Erreur upload",
-    "RAPPORT_CREATED": "Rapport créé",
-    "RAPPORT_UPDATED": "Rapport mis à jour",
-    "RAPPORT_DELETED": "Rapport supprimé",
-    "RAPPORT_CREATE_ERROR": "Erreur lors de la création",
-    "RAPPORT_UPDATE_ERROR": "Erreur lors de la mise à jour",
-    "RAPPORT_DELETE_ERROR": "Erreur lors de la suppression",
+    "REPORT_CREATED": "Rapport créé",
+    "REPORT_UPDATED": "Rapport mis à jour",
+    "REPORT_DELETED": "Rapport supprimé",
+    "REPORT_CREATE_ERROR": "Erreur lors de la création",
+    "REPORT_UPDATE_ERROR": "Erreur lors de la mise à jour",
+    "REPORT_DELETE_ERROR": "Erreur lors de la suppression",
     "MEMBER_ADDED": "Membre ajouté",
     "MEMBER_DELETED": "Membre supprimé",
     "MEMBER_UPDATED": "Membre mis à jour",
@@ -738,16 +735,16 @@
     "MEMBER_DELETE_ERROR": "Erreur lors de la suppression",
     "MEMBER_UPDATE_ERROR": "Erreur lors de la mise à jour",
     "MEMBER_ROLES_UPDATE_ERROR": "Erreur lors de la mise à jour des rôles",
-    "ARTICLE_ADDED": "Article ajouté",
-    "ARTICLE_UPDATED": "Article mis à jour",
-    "ARTICLE_DELETED": "Article supprimé",
-    "ARTICLE_QTY_UPDATED": "Quantité mise à jour",
-    "ARTICLE_IMAGE_UPDATED": "Image mise à jour",
-    "ARTICLE_ADD_ERROR": "Erreur lors de l'ajout",
-    "ARTICLE_UPDATE_ERROR": "Erreur lors de la mise à jour",
-    "ARTICLE_DELETE_ERROR": "Erreur lors de la suppression",
-    "ARTICLE_IMAGE_ERROR": "Erreur upload image",
-    "ARTICLE_BATCH_ERROR": "Erreur prépa batch",
+    "ITEM_ADDED": "Article ajouté",
+    "ITEM_UPDATED": "Article mis à jour",
+    "ITEM_DELETED": "Article supprimé",
+    "ITEM_QTY_UPDATED": "Quantité mise à jour",
+    "ITEM_IMAGE_UPDATED": "Image mise à jour",
+    "ITEM_ADD_ERROR": "Erreur lors de l'ajout",
+    "ITEM_UPDATE_ERROR": "Erreur lors de la mise à jour",
+    "ITEM_DELETE_ERROR": "Erreur lors de la suppression",
+    "ITEM_IMAGE_ERROR": "Erreur upload image",
+    "ITEM_BATCH_ERROR": "Erreur prépa batch",
     "PROFIL_PHOTO_UPDATED": "Photo de profil mise à jour",
     "PROFIL_PHOTO_ERROR": "Erreur lors de l'upload de la photo"
   },

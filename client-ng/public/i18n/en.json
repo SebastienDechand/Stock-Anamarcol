@@ -101,7 +101,7 @@
 
   "NAV": {
     "DASHBOARD": "Dashboard",
-    "ARTICLES": "Items",
+    "ITEMS": "Items",
     "MEMBERS": "Members",
     "CONTACTS": "Contacts",
     "PROFILE": "Profile",
@@ -136,13 +136,13 @@
     "STOCK_BY_SUPPLIER": "Stock by supplier",
     "SUPPLIER_DETAILS": "Supplier details",
     "SUPPLIER": "Supplier",
-    "ARTICLES_COUNT": "Items",
+    "ITEMS_COUNT": "Items",
     "STOCK": "Stock",
     "LOW_STOCK": "Stock < 5",
     "CHART_PIE": "Pie chart",
     "CHART_BAR": "Bar chart",
     "LOADING": "Loading statistics...",
-    "KPI_ARTICLES": "Number of items",
+    "KPI_ITEMS_COUNT": "Number of items",
     "KPI_TOTAL_STOCK": "Total stock",
     "KPI_SUPPLIERS": "Suppliers",
     "KPI_LOW_STOCK": "Stock < 5",
@@ -153,7 +153,7 @@
     "UNKNOWN": "Unknown"
   },
 
-  "ARTICLES": {
+  "ITEMS": {
     "TITLE": "Items",
     "SUBTITLE": "Stock and equipment management",
     "ADD": "Add item",
@@ -604,7 +604,7 @@
     "CHANGE_PHOTO": "Change photo"
   },
 
-  "RAPPORTS": {
+  "INTERVENTION_REPORTS": {
     "TITLE": "Intervention Reports",
     "SUBTITLE": "History of field interventions"
   },
@@ -697,9 +697,6 @@
     "BDC_ERROR": "Error reading XLSX file",
     "MARKED_SENT": "Marked as sent",
     "MARK_SENT_ERROR": "Unable to mark as sent",
-    "REPORT_CREATED": "Technical sheet created",
-    "REPORT_UPDATED": "Technical sheet updated",
-    "REPORT_ERROR": "Error saving",
     "PROFILE_UPDATE_ERROR": "Error updating profile",
     "SHIPMENT_CREATED": "Shipment created",
     "SHIPMENT_SENT": "Shipment marked as sent",
@@ -724,12 +721,12 @@
     "CONTACT_UPDATE_ERROR": "Error updating contact",
     "CONTACT_PHOTO_UPDATED": "Photo updated",
     "CONTACT_PHOTO_ERROR": "Upload error",
-    "RAPPORT_CREATED": "Report created",
-    "RAPPORT_UPDATED": "Report updated",
-    "RAPPORT_DELETED": "Report deleted",
-    "RAPPORT_CREATE_ERROR": "Error creating report",
-    "RAPPORT_UPDATE_ERROR": "Error updating report",
-    "RAPPORT_DELETE_ERROR": "Error deleting report",
+    "REPORT_CREATED": "Report created",
+    "REPORT_UPDATED": "Report updated",
+    "REPORT_DELETED": "Report deleted",
+    "REPORT_CREATE_ERROR": "Error creating report",
+    "REPORT_UPDATE_ERROR": "Error updating report",
+    "REPORT_DELETE_ERROR": "Error deleting report",
     "MEMBER_ADDED": "Member added",
     "MEMBER_DELETED": "Member deleted",
     "MEMBER_UPDATED": "Member updated",
@@ -738,16 +735,16 @@
     "MEMBER_DELETE_ERROR": "Error deleting member",
     "MEMBER_UPDATE_ERROR": "Error updating member",
     "MEMBER_ROLES_UPDATE_ERROR": "Error updating roles",
-    "ARTICLE_ADDED": "Item added",
-    "ARTICLE_UPDATED": "Item updated",
-    "ARTICLE_DELETED": "Item deleted",
-    "ARTICLE_QTY_UPDATED": "Quantity updated",
-    "ARTICLE_IMAGE_UPDATED": "Image updated",
-    "ARTICLE_ADD_ERROR": "Error adding item",
-    "ARTICLE_UPDATE_ERROR": "Error updating item",
-    "ARTICLE_DELETE_ERROR": "Error deleting item",
-    "ARTICLE_IMAGE_ERROR": "Image upload error",
-    "ARTICLE_BATCH_ERROR": "Batch prep error",
+    "ITEM_ADDED": "Item added",
+    "ITEM_UPDATED": "Item updated",
+    "ITEM_DELETED": "Item deleted",
+    "ITEM_QTY_UPDATED": "Quantity updated",
+    "ITEM_IMAGE_UPDATED": "Image updated",
+    "ITEM_ADD_ERROR": "Error adding item",
+    "ITEM_UPDATE_ERROR": "Error updating item",
+    "ITEM_DELETE_ERROR": "Error deleting item",
+    "ITEM_IMAGE_ERROR": "Image upload error",
+    "ITEM_BATCH_ERROR": "Batch prep error",
     "PROFIL_PHOTO_UPDATED": "Profile photo updated",
     "PROFIL_PHOTO_ERROR": "Error uploading photo"
   },

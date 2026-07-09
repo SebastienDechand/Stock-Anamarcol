@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { UsersFacade } from '../membres/store/users.facade';
+import { UsersFacade } from '../members/store/users.facade';
 import { AuthFacade } from '../../store/auth/auth.facade';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { AccessDenied } from '../../shared/components/access-denied/access-denied';

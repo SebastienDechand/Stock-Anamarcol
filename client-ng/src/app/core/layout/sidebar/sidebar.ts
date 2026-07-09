@@ -32,19 +32,19 @@ export class Sidebar {
     map(([isAdmin, isHotline, isMonteur, isSuperadmin]) => {
       const items: { path: string; label: string; icon: string; show: boolean }[] = [
         { path: '/home', label: 'NAV.DASHBOARD', icon: 'layout-dashboard', show: true },
-        { path: '/articles', label: 'NAV.ARTICLES', icon: 'package', show: true },
-        { path: '/membres', label: 'NAV.MEMBERS', icon: 'users', show: true },
+        { path: '/items', label: 'NAV.ITEMS', icon: 'package', show: true },
+        { path: '/members', label: 'NAV.MEMBERS', icon: 'users', show: true },
         { path: '/contacts', label: 'NAV.CONTACTS', icon: 'book-user', show: true },
-        { path: '/profil', label: 'NAV.PROFILE', icon: 'user-circle', show: true },
-        { path: '/envois', label: 'NAV.SHIPMENTS', icon: 'send', show: isHotline },
+        { path: '/profile', label: 'NAV.PROFILE', icon: 'user-circle', show: true },
+        { path: '/shipments', label: 'NAV.SHIPMENTS', icon: 'send', show: isHotline },
         {
-          path: '/fiches-clients',
+          path: '/client-files',
           label: 'NAV.CLIENT_FILES',
           icon: 'clipboard-list',
           show: isMonteur,
         },
         { path: '/surveillance', label: 'NAV.SURVEILLANCE', icon: 'monitor', show: isAdmin },
-        { path: '/flotte', label: 'NAV.FLEET', icon: 'truck', show: isAdmin },
+        { path: '/fleet', label: 'NAV.FLEET', icon: 'truck', show: isAdmin },
         { path: '/history', label: 'NAV.HISTORY', icon: 'history', show: isAdmin },
         { path: '/admin/roles', label: 'NAV.ROLES', icon: 'shield-check', show: isSuperadmin },
       ];

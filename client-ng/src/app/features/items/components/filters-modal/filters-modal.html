@@ -1,0 +1,74 @@
+<div class="modal-backdrop" (click)="cancelled.emit()">
+  <div class="filters-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <div class="filters-modal__header">
+      <h2 class="filters-modal__title">{{ 'ITEMS.FILTERS_TITLE' | translate }}</h2>
+      <button class="icon-btn" (click)="cancelled.emit()" [title]="'COMMON.CLOSE' | translate">
+        <lucide-icon name="x" [size]="18" />
+      </button>
+    </div>
+
+    <div class="filters-modal__body">
+      <div class="filter-section">
+        <p class="filter-section__label">{{ 'ITEMS.SUPPLIERS_LABEL' | translate }}</p>
+        <div class="filter-section__chips">
+          @for (f of fournisseurs; track f) {
+            <button
+              class="fchip"
+              [class.fchip--active]="localFournisseurs().includes(f)"
+              (click)="toggleFournisseur(f)"
+            >
+              {{ f }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <p class="filter-section__label">{{ 'ITEMS.STATE' | translate }}</p>
+        <div class="filter-section__chips">
+          @for (e of etats; track e) {
+            <button
+              class="fchip"
+              [class.fchip--active-etat]="localEtats().includes(e)"
+              (click)="toggleEtat(e)"
+            >
+              {{ e }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <p class="filter-section__label">{{ 'ITEMS.PREPARATIONS' | translate }}</p>
+        <div class="filter-section__chips">
+          <button
+            class="fchip"
+            [class.fchip--active-prepa]="localPrepaCG()"
+            (click)="togglePrepa('CashGuard')"
+          >
+            CashGuard
+          </button>
+          <button
+            class="fchip"
+            [class.fchip--active-prepa]="localPrepaTPV()"
+            (click)="togglePrepa('Caisse TPV')"
+          >
+            Caisse TPV
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="filters-modal__footer">
+      <button class="filter-btn filter-btn--apply" (click)="apply()">
+        {{ 'COMMON.APPLY' | translate }}
+      </button>
+      <button class="filter-btn filter-btn--reset" (click)="reset()">
+        {{ 'COMMON.RESET' | translate }}
+      </button>
+      <button class="filter-btn filter-btn--close" (click)="cancelled.emit()">
+        {{ 'COMMON.CLOSE' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

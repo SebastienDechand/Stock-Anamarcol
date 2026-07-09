@@ -7,7 +7,7 @@ export const routes: Routes = [
   {
     path: '',
     canActivate: [guestGuard],
-    loadChildren: () => import('./features/login/login.routes').then((m) => m.loginRoutes),
+    loadComponent: () => import('./features/login/login-page').then((m) => m.LoginPage),
   },
   {
     path: '',
@@ -16,80 +16,87 @@ export const routes: Routes = [
     children: [
       {
         path: 'home',
-        loadChildren: () => import('./features/home/home.routes').then((m) => m.homeRoutes),
+        loadComponent: () => import('./features/home/home-page').then((m) => m.HomePage),
       },
       {
-        path: 'articles',
-        loadChildren: () =>
-          import('./features/articles/articles.routes').then((m) => m.articlesRoutes),
+        path: 'items',
+        loadComponent: () => import('./features/items/items-page').then((m) => m.ItemsPage),
       },
       {
-        path: 'membres',
-        loadChildren: () =>
-          import('./features/membres/membres.routes').then((m) => m.membresRoutes),
+        path: 'members',
+        loadComponent: () => import('./features/members/members-page').then((m) => m.MembersPage),
       },
       {
         path: 'contacts',
-        loadChildren: () =>
-          import('./features/contacts/contacts.routes').then((m) => m.contactsRoutes),
+        loadComponent: () =>
+          import('./features/contacts/contacts-page').then((m) => m.ContactsPage),
       },
       {
-        path: 'profil',
-        loadChildren: () => import('./features/profil/profil.routes').then((m) => m.profilRoutes),
+        path: 'profile',
+        loadComponent: () => import('./features/profile/profile-page').then((m) => m.ProfilePage),
       },
       {
-        path: 'envois',
+        path: 'shipments',
         canActivate: [roleGuard('hotline')],
-        loadChildren: () => import('./features/envois/envois.routes').then((m) => m.envoisRoutes),
+        loadComponent: () =>
+          import('./features/shipments/shipments-page').then((m) => m.ShipmentsPage),
       },
       {
-        path: 'fiches-clients',
+        path: 'client-files',
         canActivate: [roleGuard('monteur')],
-        loadChildren: () =>
-          import('./features/fiches-clients/fiches-clients.routes').then(
-            (m) => m.fichesClientsRoutes,
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/client-files/client-files-page').then((m) => m.ClientFilesPage),
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./features/client-files/client-file-detail-page').then(
+                (m) => m.ClientFileDetailPage,
+              ),
+          },
+        ],
+      },
+      {
+        path: 'intervention-reports',
+        canActivate: [roleGuard('monteur')],
+        loadComponent: () =>
+          import('./features/intervention-reports/intervention-reports-page').then(
+            (m) => m.InterventionReportsPage,
           ),
       },
       {
-        path: 'rapports-intervention',
-        canActivate: [roleGuard('monteur')],
-        loadChildren: () =>
-          import('./features/rapports-intervention/rapports-intervention.routes').then(
-            (m) => m.rapportsRoutes,
-          ),
-      },
-      {
-        path: 'flotte',
+        path: 'fleet',
         canActivate: [roleGuard('admin')],
-        loadChildren: () => import('./features/flotte/flotte.routes').then((m) => m.flotteRoutes),
+        loadComponent: () => import('./features/fleet/fleet-page').then((m) => m.FleetPage),
       },
       {
         path: 'surveillance',
         canActivate: [roleGuard('admin')],
-        loadChildren: () =>
-          import('./features/surveillance/surveillance.routes').then((m) => m.surveillanceRoutes),
+        loadComponent: () =>
+          import('./features/surveillance/surveillance-page').then((m) => m.SurveillancePage),
       },
       {
         path: 'history',
         canActivate: [roleGuard('admin')],
-        loadChildren: () =>
-          import('./features/history/history.routes').then((m) => m.historyRoutes),
+        loadComponent: () => import('./features/history/history-page').then((m) => m.HistoryPage),
       },
       {
         path: 'admin/roles',
         canActivate: [roleGuard('superadmin')],
-        loadChildren: () =>
-          import('./features/admin-roles/admin-roles.routes').then((m) => m.adminRolesRoutes),
+        loadComponent: () =>
+          import('./features/admin-roles/admin-roles-page').then((m) => m.AdminRolesPage),
       },
       {
         path: 'legal',
-        loadChildren: () => import('./features/legal/legal.routes').then((m) => m.legalRoutes),
+        loadComponent: () => import('./features/legal/legal-page').then((m) => m.LegalPage),
       },
     ],
   },
   {
     path: '**',
-    loadChildren: () =>
-      import('./features/not-found/not-found.routes').then((m) => m.notFoundRoutes),
+    loadComponent: () => import('./features/not-found/not-found').then((m) => m.NotFound),
   },
 ];

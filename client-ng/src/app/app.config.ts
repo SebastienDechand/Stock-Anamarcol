@@ -32,33 +32,33 @@ import { AuthEffects } from './store/auth/auth.effects';
 import { AuthActions } from './store/auth/auth.actions';
 import { selectAuthStatus } from './store/auth/auth.selectors';
 
-import { itemsReducer } from './features/articles/store/items.reducer';
-import { ItemsEffects } from './features/articles/store/items.effects';
-import { ItemsActions } from './features/articles/store/items.actions';
+import { itemsReducer } from './features/items/store/items.reducer';
+import { ItemsEffects } from './features/items/store/items.effects';
+import { ItemsActions } from './features/items/store/items.actions';
 
-import { usersReducer } from './features/membres/store/users.reducer';
-import { UsersEffects } from './features/membres/store/users.effects';
-import { UsersActions } from './features/membres/store/users.actions';
+import { usersReducer } from './features/members/store/users.reducer';
+import { UsersEffects } from './features/members/store/users.effects';
+import { UsersActions } from './features/members/store/users.actions';
 
 import { contactsReducer } from './features/contacts/store/contacts.reducer';
 import { ContactsEffects } from './features/contacts/store/contacts.effects';
 import { ContactsActions } from './features/contacts/store/contacts.actions';
 
-import { vehiclesReducer } from './features/flotte/store/vehicles.reducer';
-import { VehiclesEffects } from './features/flotte/store/vehicles.effects';
-import { VehiclesActions } from './features/flotte/store/vehicles.actions';
+import { vehiclesReducer } from './features/fleet/store/vehicles.reducer';
+import { VehiclesEffects } from './features/fleet/store/vehicles.effects';
+import { VehiclesActions } from './features/fleet/store/vehicles.actions';
 
-import { shipmentsReducer } from './features/envois/store/shipments.reducer';
-import { ShipmentsEffects } from './features/envois/store/shipments.effects';
-import { ShipmentsActions } from './features/envois/store/shipments.actions';
+import { shipmentsReducer } from './features/shipments/store/shipments.reducer';
+import { ShipmentsEffects } from './features/shipments/store/shipments.effects';
+import { ShipmentsActions } from './features/shipments/store/shipments.actions';
 
-import { clientFilesReducer } from './features/fiches-clients/store/client-files.reducer';
-import { ClientFilesEffects } from './features/fiches-clients/store/client-files.effects';
-import { ClientFilesActions } from './features/fiches-clients/store/client-files.actions';
+import { clientFilesReducer } from './features/client-files/store/client-files.reducer';
+import { ClientFilesEffects } from './features/client-files/store/client-files.effects';
+import { ClientFilesActions } from './features/client-files/store/client-files.actions';
 
-import { rapportsReducer } from './features/rapports-intervention/store/rapports.reducer';
-import { RapportsEffects } from './features/rapports-intervention/store/rapports.effects';
-import { RapportsActions } from './features/rapports-intervention/store/rapports.actions';
+import { interventionReportsReducer } from './features/intervention-reports/store/intervention-reports.reducer';
+import { InterventionReportsEffects } from './features/intervention-reports/store/intervention-reports.effects';
+import { InterventionReportsActions } from './features/intervention-reports/store/intervention-reports.actions';
 
 import { statisticsReducer } from './features/home/store/statistics.reducer';
 import { StatisticsEffects } from './features/home/store/statistics.effects';
@@ -81,7 +81,7 @@ export const appConfig: ApplicationConfig = {
       vehicles: vehiclesReducer,
       shipments: shipmentsReducer,
       clientFiles: clientFilesReducer,
-      rapports: rapportsReducer,
+      interventionReports: interventionReportsReducer,
       statistics: statisticsReducer,
     }),
     provideEffects(
@@ -92,7 +92,7 @@ export const appConfig: ApplicationConfig = {
       VehiclesEffects,
       ShipmentsEffects,
       ClientFilesEffects,
-      RapportsEffects,
+      InterventionReportsEffects,
       StatisticsEffects,
     ),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
@@ -140,7 +140,7 @@ export const appConfig: ApplicationConfig = {
             store.dispatch(ContactsActions.loadAll());
             store.dispatch(VehiclesActions.loadAll());
             store.dispatch(ClientFilesActions.loadAll());
-            store.dispatch(RapportsActions.loadAll());
+            store.dispatch(InterventionReportsActions.loadAll());
             store.dispatch(ShipmentsActions.fetchShipments({ params: { page: 1, limit: 200 } }));
           });
       },
