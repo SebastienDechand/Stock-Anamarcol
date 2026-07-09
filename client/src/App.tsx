@@ -35,7 +35,7 @@ export default function App() {
   }, [uid, dispatch]);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes />
     </BrowserRouter>
   );
