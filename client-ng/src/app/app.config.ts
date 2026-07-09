@@ -69,7 +69,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding(), withPreloading(PreloadAllModules)),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideTranslateService({ lang: 'fr', fallbackLang: 'fr' }),
-    ...provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
+    ...provideTranslateHttpLoader({ prefix: 'i18n/', suffix: '.json' }),
     provideAnimations(),
 
     provideStore({
