@@ -1,0 +1,230 @@
+@use '../../../../scss/tokens' as *;
+@use '../../../../scss/mixins' as m;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// ─── Input field ──────────────────────────────────────────────────────────────
+
+.field {
+  @include m.input-base;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+
+  &--open {
+    border-color: var(--brand-500);
+    box-shadow: 0 0 0 3px rgb(133 165 94 / 0.15);
+    background: #fff;
+  }
+
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  &:hover:not(&--disabled) .cal-icon {
+    opacity: 1;
+  }
+}
+
+.field__value {
+  flex: 1;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  line-height: 1;
+  min-height: 1.1em; // keeps field height consistent when empty with no placeholder
+
+  &--empty {
+    color: var(--text-muted);
+  }
+}
+
+.field__end {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.clear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: none;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    color 0.12s;
+
+  &:hover {
+    background: var(--surface-200);
+    color: var(--text-secondary);
+  }
+}
+
+.cal-icon {
+  color: var(--brand-600);
+  opacity: 0.6;
+  transition: opacity 0.12s;
+}
+
+// ─── Picker popup ─────────────────────────────────────────────────────────────
+
+.picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+}
+
+.picker {
+  position: fixed;
+  z-index: 9999;
+  background: #fff;
+  border: 1px solid var(--surface-200);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.07),
+    0 12px 32px -4px rgb(0 0 0 / 0.12);
+  padding: 14px;
+  animation: picker-in 0.14s ease-out backwards;
+}
+
+@keyframes picker-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// Header
+.picker__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.picker__month {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: capitalize;
+}
+
+.picker__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    color 0.12s;
+
+  &:hover {
+    background: var(--surface-100);
+    color: var(--text-primary);
+  }
+}
+
+// Day name labels
+.picker__day-names {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 0;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+// Day grid
+.picker__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+}
+
+.picker__day {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition:
+    background 0.1s,
+    color 0.1s;
+
+  &:hover:not(.picker__day--selected) {
+    background: var(--surface-100);
+  }
+
+  &--other {
+    color: var(--text-muted);
+    opacity: 0.4;
+  }
+
+  &--today:not(.picker__day--selected) {
+    color: var(--brand-600);
+    font-weight: 700;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--brand-600);
+    }
+  }
+
+  &--selected {
+    background: var(--brand-600);
+    color: #fff;
+    font-weight: 600;
+
+    &:hover {
+      background: var(--brand-700);
+    }
+  }
+}

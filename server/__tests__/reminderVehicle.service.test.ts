@@ -1,22 +1,24 @@
-const mockVehicleFind = jest.fn();
-const mockUserFind = jest.fn();
-const mockSendVehicleReminder = jest.fn();
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-jest.mock("../models/vehicle.model", () => ({
+const mockVehicleFind = vi.fn();
+const mockUserFind = vi.fn();
+const mockSendVehicleReminder = vi.fn();
+
+vi.mock("../models/vehicle.model", () => ({
   __esModule: true,
   default: {
     find: (...args: unknown[]) => mockVehicleFind(...args),
   },
 }));
 
-jest.mock("../models/user.model", () => ({
+vi.mock("../models/user.model", () => ({
   __esModule: true,
   default: {
     find: (...args: unknown[]) => mockUserFind(...args),
   },
 }));
 
-jest.mock("../utils/mailer", () => ({
+vi.mock("../utils/mailer", () => ({
   sendVehicleReminder: (...args: unknown[]) => mockSendVehicleReminder(...args),
 }));
 
@@ -26,23 +28,23 @@ describe("Reminder Vehicle Service", () => {
   const mockDate = new Date("2026-04-23");
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.useFakeTimers();
-    jest.setSystemTime(mockDate);
-    jest.spyOn(console, "error").mockImplementation(() => {});
-    jest.spyOn(console, "warn").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.useFakeTimers();
+    vi.setSystemTime(mockDate);
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "warn").mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
-    jest.useRealTimers();
+    vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   // ─── No superadmins ────────────────────────────────────
   describe("checkAndSendVehicleReminders", () => {
     it("should return empty array and warn when no superadmins found", async () => {
       mockUserFind.mockReturnValue({
-        lean: jest.fn().mockResolvedValue([]),
+        lean: vi.fn().mockResolvedValue([]),
       });
 
       const result = await checkAndSendVehicleReminders();
@@ -61,7 +63,7 @@ describe("Reminder Vehicle Service", () => {
       const lastRevisionDate = new Date("2025-05-23");
 
       mockUserFind.mockReturnValue({
-        lean: jest
+        lean: vi
           .fn()
           .mockResolvedValue([
             { _id: "admin1", email: "admin@test.com", pseudo: "admin" },
@@ -69,7 +71,7 @@ describe("Reminder Vehicle Service", () => {
       });
 
       mockVehicleFind.mockReturnValue({
-        lean: jest.fn().mockResolvedValue([
+        lean: vi.fn().mockResolvedValue([
           {
             _id: "v1",
             marque: "peugeot",
@@ -101,7 +103,7 @@ describe("Reminder Vehicle Service", () => {
       const ctDate = new Date("2026-04-30"); // 7 days from now
 
       mockUserFind.mockReturnValue({
-        lean: jest
+        lean: vi
           .fn()
           .mockResolvedValue([
             { _id: "admin1", email: "admin@test.com", pseudo: "admin" },
@@ -109,7 +111,7 @@ describe("Reminder Vehicle Service", () => {
       });
 
       mockVehicleFind.mockReturnValue({
-        lean: jest.fn().mockResolvedValue([
+        lean: vi.fn().mockResolvedValue([
           {
             _id: "v2",
             marque: "renault",
@@ -140,7 +142,7 @@ describe("Reminder Vehicle Service", () => {
       const todayDate = new Date("2026-04-23");
 
       mockUserFind.mockReturnValue({
-        lean: jest
+        lean: vi
           .fn()
           .mockResolvedValue([
             { _id: "admin1", email: "admin@test.com", pseudo: "admin" },
@@ -148,7 +150,7 @@ describe("Reminder Vehicle Service", () => {
       });
 
       mockVehicleFind.mockReturnValue({
-        lean: jest.fn().mockResolvedValue([
+        lean: vi.fn().mockResolvedValue([
           {
             _id: "v3",
             marque: "ford",
@@ -179,7 +181,7 @@ describe("Reminder Vehicle Service", () => {
       const notMatchDate = new Date("2026-04-25"); // 2 days later
 
       mockUserFind.mockReturnValue({
-        lean: jest
+        lean: vi
           .fn()
           .mockResolvedValue([
             { _id: "admin1", email: "admin@test.com", pseudo: "admin" },
@@ -187,7 +189,7 @@ describe("Reminder Vehicle Service", () => {
       });
 
       mockVehicleFind.mockReturnValue({
-        lean: jest.fn().mockResolvedValue([
+        lean: vi.fn().mockResolvedValue([
           {
             _id: "v4",
             marque: "citroen",
@@ -210,14 +212,14 @@ describe("Reminder Vehicle Service", () => {
       const ctDate = new Date("2026-04-30");
 
       mockUserFind.mockReturnValue({
-        lean: jest.fn().mockResolvedValue([
+        lean: vi.fn().mockResolvedValue([
           { _id: "admin1", email: "admin1@test.com", pseudo: "admin1" },
           { _id: "admin2", email: "admin2@test.com", pseudo: "admin2" },
         ]),
       });
 
       mockVehicleFind.mockReturnValue({
-        lean: jest.fn().mockResolvedValue([
+        lean: vi.fn().mockResolvedValue([
           {
             _id: "v5",
             marque: "tesla",
@@ -255,7 +257,7 @@ describe("Reminder Vehicle Service", () => {
       const ctDate = new Date("2026-04-30");
 
       mockUserFind.mockReturnValue({
-        lean: jest
+        lean: vi
           .fn()
           .mockResolvedValue([
             { _id: "admin1", email: "admin@test.com", pseudo: "admin" },
@@ -263,7 +265,7 @@ describe("Reminder Vehicle Service", () => {
       });
 
       mockVehicleFind.mockReturnValue({
-        lean: jest.fn().mockResolvedValue([
+        lean: vi.fn().mockResolvedValue([
           {
             _id: "v6",
             marque: "volvo",
@@ -296,7 +298,7 @@ describe("Reminder Vehicle Service", () => {
       const ctExpirationDate = new Date("2026-04-30");
 
       mockUserFind.mockReturnValue({
-        lean: jest
+        lean: vi
           .fn()
           .mockResolvedValue([
             { _id: "admin1", email: "admin@test.com", pseudo: "admin" },
@@ -304,7 +306,7 @@ describe("Reminder Vehicle Service", () => {
       });
 
       mockVehicleFind.mockReturnValue({
-        lean: jest.fn().mockResolvedValue([
+        lean: vi.fn().mockResolvedValue([
           {
             _id: "v7",
             marque: "audi",

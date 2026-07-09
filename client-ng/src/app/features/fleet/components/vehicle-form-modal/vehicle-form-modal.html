@@ -1,0 +1,118 @@
+<div class="overlay-backdrop" (click)="closed.emit()">
+  <div class="modal-panel" role="dialog" (click)="$event.stopPropagation()">
+    <div class="modal-panel__header">
+      <h2 class="modal-panel__title">
+        {{ isEdit ? ('FLEET.EDIT' | translate) : ('FLEET.ADD' | translate) }}
+      </h2>
+      <button class="btn-icon" (click)="closed.emit()" [title]="'COMMON.CLOSE' | translate">
+        <lucide-icon [img]="x" [size]="18" />
+      </button>
+    </div>
+
+    <div class="modal-panel__body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="label-base">{{ 'FLEET.BRAND' | translate }}</label>
+          <select class="input-base" [(ngModel)]="form.marque" (ngModelChange)="onMarqueChange()">
+            @for (opt of marqueOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="label-base">{{ 'FLEET.MODEL_LABEL' | translate }}</label>
+          <select class="input-base" [(ngModel)]="form.modele" (ngModelChange)="onModeleChange()">
+            @for (m of availableModeles; track m) {
+              <option [value]="m">{{ modeleLabels[m] }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="label-base">{{ 'FLEET.FORMAT' | translate }}</label>
+          <select class="input-base" [(ngModel)]="form.format">
+            @for (f of availableFormats; track f) {
+              <option [value]="f">{{ formatLabels[f] }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="label-base">{{ 'FLEET.PLATE' | translate }}</label>
+          <input
+            type="text"
+            class="input-base"
+            [(ngModel)]="form.immatriculation"
+            placeholder="AB-123-CD"
+          />
+        </div>
+
+        <div class="form-group form-group--full">
+          <label class="label-base">{{ 'FLEET.ASSIGNED' | translate }}</label>
+          <select class="input-base" [(ngModel)]="form.assignedTo">
+            <option [value]="''">{{ 'FLEET.NONE' | translate }}</option>
+            @for (u of users(); track u._id) {
+              <option [value]="u._id">{{ u.pseudo }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="label-base">{{ 'FLEET.CT_INSPECTION' | translate }}</label>
+          <app-date-input
+            [value]="form.dateCtInspection"
+            (valueChange)="onCtInspectionChange($event)"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="label-base">{{ 'FLEET.CT_EXPIRATION' | translate }}</label>
+          <app-date-input [(value)]="form.dateCtExpiration" />
+        </div>
+
+        <div class="form-group">
+          <label class="label-base">{{ 'FLEET.AP_INSPECTION' | translate }}</label>
+          <app-date-input
+            [value]="form.dateControlAntiPollutionInspection"
+            (valueChange)="onAntiPollutionInspectionChange($event)"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="label-base">{{ 'FLEET.AP_EXPIRATION' | translate }}</label>
+          <app-date-input [(value)]="form.dateControlAntiPollutionExpiration" />
+        </div>
+
+        <div class="form-group">
+          <label class="label-base">{{ 'FLEET.REVISION' | translate }}</label>
+          <app-date-input [(value)]="form.dateRevision" />
+        </div>
+
+        <div class="form-group form-group--full">
+          <label class="label-base">{{ 'FLEET.NOTES' | translate }}</label>
+          <textarea
+            class="input-base"
+            [(ngModel)]="form.notes"
+            rows="3"
+            [placeholder]="'FLEET.OBSERVATIONS_PLACEHOLDER' | translate"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-panel__footer">
+      <button class="btn-secondary" (click)="closed.emit()" [title]="'COMMON.CANCEL' | translate">
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+      <button
+        class="btn-primary"
+        [disabled]="!form.immatriculation.trim()"
+        (click)="submit()"
+        [title]="isEdit ? ('COMMON.SAVE' | translate) : ('FLEET.ADD' | translate)"
+      >
+        {{ isEdit ? ('COMMON.SAVE' | translate) : ('COMMON.ADD' | translate) }}
+      </button>
+    </div>
+  </div>
+</div>

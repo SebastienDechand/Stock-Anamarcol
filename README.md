@@ -7,6 +7,7 @@
 Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 
 ![React](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-21-DD0031?style=for-the-badge&logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-5.2-000000?style=for-the-badge&logo=express&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
@@ -17,6 +18,8 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 [![Deploy](https://github.com/SebastienDechand/Stock-Anamarcol/actions/workflows/deploy.yml/badge.svg)](https://github.com/SebastienDechand/Stock-Anamarcol/actions/workflows/deploy.yml)
 
 </div>
+
+> 🚧 **Migration en cours** : le frontend est en cours de réécriture en Angular 21 (`client-ng/`), en parallèle du frontend React (`client/`) actuellement déployé en production. Les deux couvrent les mêmes fonctionnalités et sont testés en CI ; seul `client/` est déployé sur o2switch pour le moment.
 
 ---
 
@@ -35,8 +38,10 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 | **Rapports d'intervention** | Création et suivi des rapports d'intervention terrain                                  |
 | **Contacts**                | Annuaire interne avec fiches détaillées et upload photo                                |
 | **Membres**                 | Gestion de l'équipe par pôles (Direction, Hotline, Entrepôt, Monteur, Gestion du site) |
+| **Flotte véhicules**        | Gestion et suivi des véhicules de l'entreprise (réservé admin)                         |
+| **Surveillance**            | Affichage en continu des caméras de l'entreprise (réservé admin)                       |
 | **Upload d'images**         | Photos d'articles, avatars profils et contacts via ImgBB                               |
-| **Authentification**        | JWT avec 3 rôles (superadmin / admin / user) et sessions sécurisées                    |
+| **Authentification**        | JWT avec 5 rôles cumulables (superadmin / admin / hotline / monteur / user)            |
 
 ---
 
@@ -89,28 +94,41 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 
 ```
 Stock-Anamarcol
-├── client/                     Application React (SPA)
+├── client/                     Application React (SPA) — déployée en production
 │   └── src/
 │       ├── actions/            Actions Redux (thunks)
 │       ├── components/         Composants réutilisables
 │       ├── constants/          Constantes applicatives
 │       ├── hooks/              Hooks personnalisés
 │       ├── pages/              Pages / vues
+│       │   ├── admin-roles/
 │       │   ├── articles/
 │       │   ├── contacts/
 │       │   ├── envois/
 │       │   ├── fiches-clients/
+│       │   ├── flotte/
 │       │   ├── history/
 │       │   ├── home/
+│       │   ├── login/
 │       │   ├── membres/
+│       │   ├── not-found/
 │       │   ├── profil/
-│       │   ├── rapports-intervention/
-│       │   └── admin-roles/
+│       │   └── surveillance/
 │       ├── reducers/           Reducers Redux
 │       └── types/              Types TypeScript
 │
+├── client-ng/                   Application Angular 21 (SPA) — en cours de migration
+│   └── src/app/
+│       ├── core/                Layout, guards, config
+│       ├── features/            Un dossier par domaine (articles, contacts, envois,
+│       │                        fiches-clients, flotte, history, home, membres,
+│       │                        profil, rapports-intervention, surveillance,
+│       │                        admin-roles, login, legal, not-found)
+│       │   └── */store/         State management NgRx (store + effects) par feature
+│       └── shared/              Composants, constantes, modèles partagés
+│
 ├── server/                     API REST Express
-│   ├── __tests__/              Tests unitaires (Jest)
+│   ├── __tests__/              Tests unitaires (Vitest)
 │   ├── config/                 Configuration (DB, Swagger)
 │   ├── controllers/            Logique métier
 │   ├── middleware/             Auth, validation, rôles
@@ -118,7 +136,7 @@ Stock-Anamarcol
 │   ├── routes/                 Définition des routes
 │   └── utils/                  Upload, validation, historique, audit
 │
-└── .github/workflows/          CI/CD (tests, deploy)
+└── .github/workflows/          CI/CD (tests backend + client + client-ng, deploy)
 ```
 
 ---
@@ -186,9 +204,9 @@ cd client && npm run dev
 
 <table>
 <tr>
-<td width="50%" valign="top">
+<td width="33%" valign="top">
 
-### Client
+### Client (React)
 
 | Commande             | Description                 |
 | -------------------- | --------------------------- |
@@ -199,7 +217,19 @@ cd client && npm run dev
 | `npm run test:watch` | Tests en watch              |
 
 </td>
-<td width="50%" valign="top">
+<td width="33%" valign="top">
+
+### Client (Angular)
+
+| Commande        | Description         |
+| --------------- | -------------------- |
+| `npm start`     | Serveur de dev Angular |
+| `npm run build` | Build production      |
+| `npm test`      | Tests Vitest           |
+| `npm run test:watch` | Tests en watch   |
+
+</td>
+<td width="34%" valign="top">
 
 ### Serveur
 
@@ -208,7 +238,7 @@ cd client && npm run dev
 | `npm run dev`     | nodemon + ts-node    |
 | `npm run build`   | Compile TS → `dist/` |
 | `npm start`       | Lance le build       |
-| `npm test`        | Tests Jest           |
+| `npm test`        | Tests Vitest         |
 | `npm run test:ci` | Tests + couverture   |
 
 </td>
@@ -226,49 +256,56 @@ Le projet utilise **GitHub Actions** avec deux workflows :
 > Déclenché sur push `main`/`develop` et PR vers `main`
 
 ```
-Tests backend (Jest) → Tests frontend (Vitest) → Build production
+Tests backend (Vitest) ⇉ Tests frontend React (Vitest) ⇉ Tests frontend Angular (Vitest)
 ```
+
+> Les 3 jobs tournent en parallèle (pas de build dans ce workflow).
 
 ### `deploy.yml` — Déploiement
 
 > Déclenché sur push `main` ou dispatch manuel
 
 ```
-Gate (CI) → Build + FTP client → Build TS + FTP server
+Gate (CI) → Build + FTP client (React) → Build TS + FTP server
 ```
 
-> Hébergement : **o2switch** (FTP)
+> Hébergement : **o2switch** (FTP) — `client-ng/` (Angular) n'est pas encore déployé.
 
 ---
 
 ## 🔐 Rôles & Permissions
 
-| Action                                      | User | Admin | Superadmin |
-| ------------------------------------------- | :--: | :---: | :--------: |
-| Voir les articles                           |  ✅  |  ✅   |     ✅     |
-| Modifier les quantités                      |  ✅  |  ✅   |     ✅     |
-| Exécuter les préparations batch             |  ✅  |  ✅   |     ✅     |
-| Export CSV / XLSX / PDF                     |  ✅  |  ✅   |     ✅     |
-| Gérer les envois                            |  ✅  |  ✅   |     ✅     |
-| Consulter les fiches clients                |  ✅  |  ✅   |     ✅     |
-| Consulter les rapports d'intervention       |  ✅  |  ✅   |     ✅     |
-| Ajouter / modifier un article               |  ❌  |  ✅   |     ✅     |
-| Supprimer un article                        |  ❌  |  ✅   |     ✅     |
-| Gérer les contacts                          |  ❌  |  ✅   |     ✅     |
-| Éditer les fiches membres                   |  ❌  |  ✅   |     ✅     |
-| Créer / modifier fiches clients et rapports |  ❌  |  ✅   |     ✅     |
-| Ajouter / supprimer un membre               |  ❌  |  ❌   |     ✅     |
-| Changer les rôles des utilisateurs          |  ❌  |  ❌   |     ✅     |
-| Purger l'historique et l'audit              |  ❌  |  ❌   |     ✅     |
+> Les rôles sont cumulables (un utilisateur peut être `hotline` **et** `monteur`, par ex.). `admin` et `superadmin` héritent toujours des permissions `hotline`/`monteur`.
+
+| Action                                       | User | Hotline | Monteur | Admin | Superadmin |
+| --------------------------------------------- | :--: | :-----: | :-----: | :---: | :--------: |
+| Voir les articles                             |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
+| Modifier les quantités                        |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
+| Exécuter les préparations batch               |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
+| Consulter les envois                          |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
+| Consulter les fiches clients / rapports       |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
+| Créer un envoi / le marquer envoyé            |  ❌  |   ✅    |   ❌    |  ✅   |     ✅     |
+| Créer / modifier fiches clients et rapports   |  ❌  |   ❌    |   ✅    |  ✅   |     ✅     |
+| Ajouter / modifier un article                 |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| Supprimer un article / envoi / fiche / rapport |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| Export CSV / XLSX / PDF                       |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| Gérer les contacts                            |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| Voir les rôles / éditer les fiches membres    |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| Accéder à Flotte véhicules / Surveillance     |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| Consulter l'historique et l'audit             |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| Ajouter / supprimer un membre                 |  ❌  |   ❌    |   ❌    |  ❌   |     ✅     |
+| Changer les rôles des utilisateurs            |  ❌  |   ❌    |   ❌    |  ❌   |     ✅     |
+| Purger l'historique et l'audit                |  ❌  |   ❌    |   ❌    |  ❌   |     ✅     |
 
 ---
 
 ## 📚 Documentation détaillée
 
-| Document                                  | Description                                      |
-| ----------------------------------------- | ------------------------------------------------ |
-| [**Client (Frontend)**](client/README.md) | Architecture React, Redux, routes, auth, styling |
-| [**Server (Backend)**](server/README.md)  | API endpoints, modèles, middleware, sécurité     |
+| Document                                          | Description                                          |
+| -------------------------------------------------- | ----------------------------------------------------- |
+| [**Client React (Frontend)**](client/README.md)   | Architecture React, Redux, routes, auth, styling      |
+| [**Client Angular (Frontend)**](client-ng/README.md) | Architecture Angular, NgRx, routes, guards, styling  |
+| [**Server (Backend)**](server/README.md)          | API endpoints, modèles, middleware, sécurité          |
 
 ---
 

@@ -87,11 +87,11 @@ export async function resolveMongoURI(): Promise<string> {
 
   try {
     await dnsPromises.resolveSrv(`_mongodb._tcp.${SRV_HOST}`);
-    console.log("DNS SRV resolution OK — using mongodb+srv://");
+    console.log("DNS SRV resolution OK - using mongodb+srv://");
     return `mongodb+srv://${process.env.DB_USER_PASS}@${SRV_HOST}/${DB_NAME}`;
   } catch {
     console.warn(
-      "DNS SRV resolution failed (VPN/tethering?) — resolving via DNS-over-HTTPS...",
+      "DNS SRV resolution failed (VPN/tethering?) - resolving via DNS-over-HTTPS...",
     );
     const uri = await resolveSrvViaDoH();
     console.log("Resolved MongoDB hosts via DoH successfully");
@@ -126,7 +126,7 @@ function connectWithRetry(attempt = 1): Promise<void> {
 
 // Log connection events (informational, never throws)
 mongoose.connection.on("disconnected", () => {
-  console.warn("MongoDB disconnected — will reconnect automatically");
+  console.warn("MongoDB disconnected - will reconnect automatically");
 });
 
 mongoose.connection.on("error", (err) => {

@@ -1,0 +1,33 @@
+@use '../../../scss/mixins' as m;
+
+.contacts-page {
+  @include m.page-container;
+}
+
+.contacts-section {
+  margin-bottom: 32px;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 14px;
+  }
+}
+
+.contacts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+
+  @include m.sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include m.lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

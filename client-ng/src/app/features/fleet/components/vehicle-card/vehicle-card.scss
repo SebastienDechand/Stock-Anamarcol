@@ -1,0 +1,150 @@
+@use '../../../../../scss/tokens' as *;
+@use '../../../../../scss/mixins' as *;
+
+.vehicle-card {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  &--alert {
+    border-left: 3px solid var(--color-warning);
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  &__plate {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-text);
+  }
+
+  &__assigned {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  &__dates {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 0;
+    border-top: 1px solid var(--surface-200);
+    border-bottom: 1px solid var(--surface-200);
+  }
+
+  &__date-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.8rem;
+  }
+
+  &__date-label {
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  &__date-value {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+
+    &.text-warning {
+      color: var(--color-warning);
+      font-weight: 500;
+    }
+    &.text-danger {
+      color: var(--color-danger);
+      font-weight: 500;
+    }
+  }
+
+  &__date-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.72rem;
+
+    &--danger {
+      color: var(--color-danger);
+    }
+    &--warning {
+      color: var(--color-warning);
+    }
+  }
+
+  &__notes {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 0;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+
+  &__doc-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--primary-500);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 600;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+  }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 500;
+
+  &--blue {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+  &--green {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  &--orange {
+    background: #ffedd5;
+    color: #c2410c;
+  }
+}
+
+.btn-icon {
+  @include btn-icon;
+  position: relative;
+}

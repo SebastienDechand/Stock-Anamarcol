@@ -1,23 +1,22 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { Role } from "../constants";
 
 // Mock the UserModel
-jest.mock("../models/user.model", () => {
-  const { Role } = require("../constants");
+vi.mock("../models/user.model", () => {
   const mockUser = {
     _id: "507f1f77bcf86cd799439011",
     pseudo: "testuser",
     email: "test@test.com",
-    roles: [Role.USER],
+    roles: ["user"],
     password: "hashedpassword",
-    save: jest.fn(),
+    save: vi.fn(),
   };
 
   const UserModel = {
-    findById: jest.fn().mockReturnValue({
-      select: jest.fn().mockReturnValue({
-        lean: jest.fn().mockResolvedValue(mockUser),
+    findById: vi.fn().mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        lean: vi.fn().mockResolvedValue(mockUser),
       }),
     }),
   };
@@ -43,11 +42,11 @@ describe("Auth Middleware", () => {
     req = { cookies: {} };
     res = {
       locals: {},
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
     };
-    next = jest.fn();
-    jest.clearAllMocks();
+    next = vi.fn();
+    vi.clearAllMocks();
   });
 
   // ─── checkUser ─────────────────────────────────────────

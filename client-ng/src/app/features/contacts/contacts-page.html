@@ -1,0 +1,60 @@
+<div class="contacts-page">
+  <app-page-hero
+    [title]="'CONTACTS.TITLE' | translate"
+    iconName="contact"
+    [subtitle]="'CONTACTS.SUBTITLE' | translate"
+  />
+
+  @if (isLoading$ | async) {
+    <app-spinner [message]="'COMMON.LOADING' | translate" />
+  } @else {
+    @let admin = isAdmin$ | async;
+    @let ext = exterieurs$ | async;
+    @let four = fournisseurs$ | async;
+
+    @if (ext?.length) {
+      <section class="contacts-section">
+        <h2 class="contacts-section__title">
+          <lucide-icon name="users" [size]="16" />
+          {{ 'CONTACTS.EXTERNAL' | translate }}
+        </h2>
+        <div class="contacts-grid">
+          @for (c of ext; track c._id) {
+            <app-contact-card
+              [contact]="c"
+              [clickable]="admin ?? false"
+              (selected)="openModal($event)"
+            />
+          }
+        </div>
+      </section>
+    }
+
+    @if (four?.length) {
+      <section class="contacts-section">
+        <h2 class="contacts-section__title">
+          <lucide-icon name="building-2" [size]="16" />
+          {{ 'CONTACTS.SUPPLIERS' | translate }}
+        </h2>
+        <div class="contacts-grid">
+          @for (c of four; track c._id) {
+            <app-contact-card
+              [contact]="c"
+              [clickable]="admin ?? false"
+              (selected)="openModal($event)"
+            />
+          }
+        </div>
+      </section>
+    }
+  }
+</div>
+
+@if (editingContact()) {
+  <app-contact-modal
+    [contact]="editingContact()!"
+    (saved)="onSave($event)"
+    (pictureUploaded)="onPictureUpload($event)"
+    (cancelled)="editingContact.set(null)"
+  />
+}

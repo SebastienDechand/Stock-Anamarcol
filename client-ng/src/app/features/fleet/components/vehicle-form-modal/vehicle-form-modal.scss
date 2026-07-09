@@ -1,0 +1,89 @@
+@use '../../../../../scss/tokens' as *;
+@use '../../../../../scss/mixins' as *;
+
+.overlay-backdrop {
+  @include overlay-backdrop;
+}
+
+.modal-panel {
+  @include modal-panel;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--surface-200);
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  &__body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+    @include scrollbar-thin;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 20px;
+    border-top: 1px solid var(--surface-200);
+    flex-shrink: 0;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+
+  @include md {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+}
+
+.label-base {
+  @include label-base;
+}
+
+.input-base {
+  @include input-base;
+
+  &[rows] {
+    resize: vertical;
+    min-height: 72px;
+  }
+}
+
+.btn-primary {
+  @include btn-primary;
+}
+.btn-secondary {
+  @include btn-secondary;
+}
+.btn-icon {
+  @include btn-icon;
+}

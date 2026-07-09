@@ -1,0 +1,139 @@
+<div class="profile-page">
+  <app-page-hero
+    [title]="'PROFILE.TITLE' | translate"
+    iconName="user-circle"
+    [subtitle]="'PROFILE.SUBTITLE' | translate"
+  />
+
+  @let currentUser = user();
+  @if (currentUser) {
+    <div class="profile-cols">
+      <!-- Colonne 1 : photo | séparateur | infos -->
+      <div class="profile-card">
+        <div class="profile-card__avatar">
+          <label class="avatar-wrap" [title]="'PROFILE.CHANGE_PHOTO' | translate">
+            @if (avatarUrl) {
+              <img [src]="avatarUrl" [alt]="currentUser.pseudo" class="avatar-img" />
+            } @else {
+              <span class="avatar-initials">{{ initials }}</span>
+            }
+            <span class="avatar-overlay">
+              <lucide-icon name="camera" [size]="22" />
+              <span>{{ 'PROFILE.EDIT_PHOTO' | translate }}</span>
+            </span>
+            <input type="file" accept="image/*" class="sr-only" (change)="onFileChange($event)" />
+          </label>
+          @if (uploadError()) {
+            <p class="upload-error">{{ uploadError() }}</p>
+          }
+        </div>
+
+        <div class="profile-card__divider"></div>
+
+        <div class="profile-card__info">
+          <h3 class="profile-section__title">
+            <lucide-icon name="user" [size]="15" />
+            {{ 'PROFILE.PERSONAL_INFO' | translate }}
+          </h3>
+          <div class="info-grid">
+            <div class="info-cell">
+              <p class="info-cell__label">{{ 'PROFILE.PSEUDO' | translate }}</p>
+              <p class="info-cell__value">{{ currentUser.pseudo }}</p>
+            </div>
+
+            <div class="info-cell">
+              <p class="info-cell__label">{{ 'PROFILE.EMAIL' | translate }}</p>
+              <p class="info-cell__value">{{ currentUser.email }}</p>
+            </div>
+
+            @if (currentUser.poste) {
+              <div class="info-cell">
+                <p class="info-cell__label">{{ 'PROFILE.ROLE' | translate }}</p>
+                <p class="info-cell__value">{{ currentUser.poste }}</p>
+              </div>
+            }
+
+            @if (currentUser.pole) {
+              <div class="info-cell">
+                <p class="info-cell__label">{{ 'PROFILE.POLE' | translate }}</p>
+                <p class="info-cell__value">{{ currentUser.pole }}</p>
+              </div>
+            }
+
+            <div class="info-cell">
+              <p class="info-cell__label">{{ 'PROFILE.PHONE' | translate }}</p>
+              @if (editingNumero()) {
+                <div class="inline-edit">
+                  <input
+                    class="inline-edit__input"
+                    [(ngModel)]="$any(numero)"
+                    [placeholder]="'PROFILE.PHONE_PLACEHOLDER' | translate"
+                  />
+                  <button
+                    class="inline-edit__save"
+                    (click)="saveNumero()"
+                    [title]="'PROFILE.SAVE_PHONE' | translate"
+                  >
+                    <lucide-icon name="check" [size]="14" />
+                  </button>
+                  <button
+                    class="inline-edit__cancel"
+                    (click)="editingNumero.set(false)"
+                    [title]="'PROFILE.CANCEL' | translate"
+                  >
+                    <lucide-icon name="x" [size]="14" />
+                  </button>
+                </div>
+              } @else {
+                <div class="info-cell__editable">
+                  <p class="info-cell__value">{{ currentUser.numero || '-' }}</p>
+                  <button
+                    class="edit-btn"
+                    (click)="editingNumero.set(true); numero.set(currentUser.numero || '')"
+                    [title]="'PROFILE.EDIT_PHONE' | translate"
+                  >
+                    <lucide-icon name="pencil" [size]="13" />
+                  </button>
+                </div>
+              }
+            </div>
+
+            @if (currentUser.createdAt) {
+              <div class="info-cell">
+                <p class="info-cell__label">{{ 'PROFILE.MEMBER_SINCE' | translate }}</p>
+                <p class="info-cell__value">{{ currentUser.createdAt | dateFr }}</p>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Colonne 2 : véhicule -->
+      <div class="profile-card">
+        <div class="profile-card__info profile-card__info--full">
+          <h3 class="profile-section__title">
+            <lucide-icon name="truck" [size]="15" />
+            {{ 'PROFILE.ASSIGNED_VEHICLE' | translate }}
+          </h3>
+          @if (assignedVehicle(); as vehicle) {
+            <div class="vehicle-detail">
+              <div class="vehicle-detail__icon">
+                <lucide-icon [name]="vehicleIcon(vehicle)" [size]="36" />
+              </div>
+              <p class="vehicle-detail__name">
+                {{ vehicle.marque | titlecase }} {{ vehicle.modele | titlecase }}
+              </p>
+              <p class="vehicle-detail__immat">{{ vehicle.immatriculation }}</p>
+              <span class="vehicle-detail__badge">{{ vehicle.format | titlecase }}</span>
+            </div>
+          } @else {
+            <div class="vehicle-empty">
+              <lucide-icon name="truck" [size]="40" />
+              <p>{{ 'PROFILE.NO_VEHICLE' | translate }}</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

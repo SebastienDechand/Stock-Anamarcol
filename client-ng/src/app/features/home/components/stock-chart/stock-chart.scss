@@ -1,0 +1,56 @@
+@use '../../../../../scss/mixins' as m;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.stock-chart {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-height: 0;
+  gap: var(--space-12);
+
+  &__canvas-wrapper {
+    position: relative;
+    flex: 1;
+    min-height: 160px;
+    max-height: 260px;
+    width: 100%;
+  }
+
+  &__empty {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    text-align: center;
+    padding: var(--space-8) 0;
+  }
+
+  &__legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 12px;
+  }
+
+  &__legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &__legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &__legend-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+}

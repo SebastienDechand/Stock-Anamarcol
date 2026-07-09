@@ -1,24 +1,27 @@
+import { describe, it, expect, vi, beforeAll } from "vitest";
 import { Request, Response } from "express";
 import mongoose from "mongoose";
+import { JWT_MAX_AGE, COOKIE_MAX_AGE } from "../constants";
+import { mongoSanitize } from "../middleware/sanitize";
 
-jest.mock("../models/user.model", () => ({
+vi.mock("../models/user.model", () => ({
   __esModule: true,
   default: {
-    create: jest.fn(),
-    login: jest.fn(),
-    find: jest
+    create: vi.fn(),
+    login: vi.fn(),
+    find: vi
       .fn()
-      .mockReturnValue({ select: jest.fn().mockResolvedValue([]) }),
-    findById: jest.fn().mockReturnValue({
-      select: jest.fn().mockReturnValue({
-        lean: jest.fn().mockResolvedValue(null),
+      .mockReturnValue({ select: vi.fn().mockResolvedValue([]) }),
+    findById: vi.fn().mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        lean: vi.fn().mockResolvedValue(null),
       }),
     }),
   },
 }));
 
-jest.mock("../utils/audit.utils", () => ({
-  logEvent: jest.fn().mockResolvedValue(undefined),
+vi.mock("../utils/audit.utils", () => ({
+  logEvent: vi.fn().mockResolvedValue(undefined),
 }));
 
 import request from "supertest";
@@ -32,7 +35,7 @@ beforeAll(() => {
   });
 });
 
-describe("Security — Route protection", () => {
+describe("Security - Route protection", () => {
   // ─── User routes require auth ────────────────────────
   describe("GET /api/user/ (list all users)", () => {
     it("should return 401 without JWT", async () => {
@@ -110,7 +113,7 @@ describe("Security — Route protection", () => {
   });
 });
 
-describe("Security — 503 when DB is down", () => {
+describe("Security - 503 when DB is down", () => {
   it("should return 503 when mongoose is disconnected", async () => {
     Object.defineProperty(mongoose.connection, "readyState", {
       get: () => 0,
@@ -129,71 +132,64 @@ describe("Security — 503 when DB is down", () => {
   });
 });
 
-describe("Security — JWT expiry constants", () => {
+describe("Security - JWT expiry constants", () => {
   it("JWT_MAX_AGE should be in seconds (1 hour = 3600)", () => {
-    const { JWT_MAX_AGE } = require("../constants");
     expect(JWT_MAX_AGE).toBe(3600);
   });
 
   it("COOKIE_MAX_AGE should be in milliseconds (1 hour = 3_600_000)", () => {
-    const { COOKIE_MAX_AGE } = require("../constants");
     expect(COOKIE_MAX_AGE).toBe(3_600_000);
   });
 
   it("JWT_MAX_AGE should NOT equal COOKIE_MAX_AGE (units differ)", () => {
-    const { JWT_MAX_AGE, COOKIE_MAX_AGE } = require("../constants");
     expect(JWT_MAX_AGE).not.toBe(COOKIE_MAX_AGE);
   });
 });
 
-describe("Security — NoSQL injection prevention", () => {
+describe("Security - NoSQL injection prevention", () => {
   it("should strip $gt operator from body", () => {
-    const { mongoSanitize } = require("../middleware/sanitize");
     const req = {
       body: { email: { $gt: "" } },
       params: {},
     } as unknown as Request;
     const res = {} as Response;
-    const next = jest.fn();
+    const next = vi.fn();
     mongoSanitize(req, res, next);
     expect(req.body.email).toEqual({});
     expect(next).toHaveBeenCalled();
   });
 
   it("should strip $ne operator from body", () => {
-    const { mongoSanitize } = require("../middleware/sanitize");
     const req = {
       body: { role: { $ne: "user" } },
       params: {},
     } as unknown as Request;
     const res = {} as Response;
-    const next = jest.fn();
+    const next = vi.fn();
     mongoSanitize(req, res, next);
     expect(req.body.role).toEqual({});
     expect(next).toHaveBeenCalled();
   });
 
   it("should strip nested $regex operators", () => {
-    const { mongoSanitize } = require("../middleware/sanitize");
     const req = {
       body: { search: { $regex: ".*", $options: "i" } },
       params: {},
     } as unknown as Request;
     const res = {} as Response;
-    const next = jest.fn();
+    const next = vi.fn();
     mongoSanitize(req, res, next);
     expect(req.body.search).toEqual({});
     expect(next).toHaveBeenCalled();
   });
 
   it("should leave clean data untouched", () => {
-    const { mongoSanitize } = require("../middleware/sanitize");
     const req = {
       body: { email: "user@test.com", password: "abc123" },
       params: {},
     } as unknown as Request;
     const res = {} as Response;
-    const next = jest.fn();
+    const next = vi.fn();
     mongoSanitize(req, res, next);
     expect(req.body).toEqual({ email: "user@test.com", password: "abc123" });
     expect(next).toHaveBeenCalled();

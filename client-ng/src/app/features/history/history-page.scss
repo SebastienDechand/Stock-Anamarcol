@@ -1,0 +1,360 @@
+@use '../../../scss/tokens' as *;
+@use '../../../scss/mixins' as *;
+
+.page-container {
+  @include page-container;
+}
+
+.page-search {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+
+  &__icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--surface-400);
+    pointer-events: none;
+  }
+
+  &__input {
+    @include input-base;
+    padding-left: 34px;
+    width: 100%;
+  }
+}
+
+// ─── Filters ───────────────────────────────────────────────
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 16px;
+
+  &__sep {
+    width: 1px;
+    height: 20px;
+    background: var(--surface-300);
+    margin: 0 4px;
+  }
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: none;
+  background: var(--surface-100);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  &:hover {
+    background: var(--surface-200);
+  }
+
+  &--active {
+    background: var(--text-primary);
+    color: #fff;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+}
+
+.filter-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--surface-400);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--surface-200);
+    color: var(--brand-700);
+  }
+}
+
+// ─── User filter dropdown ───────────────────────────────────
+.user-filter {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--surface-200);
+  padding: 4px 0;
+  z-index: 50;
+  min-width: 180px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.user-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--surface-50);
+  }
+
+  &__check {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    border: 1px solid var(--surface-300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #fff;
+
+    &--selected {
+      background: var(--brand-600);
+      border-color: var(--brand-600);
+    }
+  }
+}
+
+// ─── Events list ───────────────────────────────────────────
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.event-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  &__dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &--success {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+    &--info {
+      background: #dbeafe;
+      color: #2563eb;
+    }
+    &--danger {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    &--warning {
+      background: #fef9c3;
+      color: #ca8a04;
+    }
+    &--muted {
+      background: var(--surface-100);
+      color: var(--surface-400);
+    }
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__text {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+  }
+
+  &__user {
+    font-weight: 600;
+  }
+
+  &__desc {
+    color: var(--text-secondary);
+  }
+
+  &__date {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+// ─── Misc ──────────────────────────────────────────────────
+.page-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.page-empty {
+  text-align: center;
+  color: var(--surface-400);
+  padding: 48px 0;
+  font-size: 0.9rem;
+}
+
+.btn-purge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: none;
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    background: #b91c1c;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ─── Modal purge ───────────────────────────────────────────
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px 24px;
+  text-align: center;
+  width: 100%;
+
+  &--sm {
+    max-width: 380px;
+  }
+
+  &__icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+
+    &--danger {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+  }
+
+  &__body {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0 0 6px;
+  }
+
+  &__warning {
+    font-size: 0.78rem;
+    color: #dc2626;
+    font-weight: 500;
+    margin: 0 0 20px;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+}
+
+.btn-secondary {
+  @include btn-secondary;
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: none;
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: #b91c1c;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

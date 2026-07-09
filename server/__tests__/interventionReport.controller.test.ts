@@ -1,22 +1,23 @@
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import { Request, Response } from "express";
 
-const mockReportModel = {
-  find: jest.fn(),
-  findById: jest.fn(),
-  create: jest.fn(),
-  findByIdAndDelete: jest.fn(),
-};
+const mockReportModel = vi.hoisted(() => ({
+  find: vi.fn(),
+  findById: vi.fn(),
+  create: vi.fn(),
+  findByIdAndDelete: vi.fn(),
+}));
 
-jest.mock("../models/interventionReport.model", () => ({
+vi.mock("../models/interventionReport.model", () => ({
   __esModule: true,
   default: mockReportModel,
 }));
 
-jest.mock("../utils/validate.utils", () => ({
-  validateObjectId: jest.fn((id: string, res: Response) => {
+vi.mock("../utils/validate.utils", () => ({
+  validateObjectId: vi.fn((id: string, res: Response) => {
     const valid = /^[a-f\d]{24}$/i.test(id);
     if (!valid) {
-      (res.status as jest.Mock)(400).json({ error: "Invalid ObjectId" });
+      (res.status as Mock)(400).json({ error: "Invalid ObjectId" });
     }
     return valid;
   }),
@@ -52,7 +53,7 @@ const mockReport = {
   createdBy: "monteur1",
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
-  save: jest.fn(),
+  save: vi.fn(),
 };
 
 describe("InterventionReport Controller", () => {
@@ -63,15 +64,15 @@ describe("InterventionReport Controller", () => {
     req = { params: {}, body: {}, query: {} };
     res = {
       locals: { user: { pseudo: "monteur1" } },
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
     };
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // ─── getInterventionReports ────────────────────────────
@@ -79,9 +80,9 @@ describe("InterventionReport Controller", () => {
     it("should return all reports with 200", async () => {
       const reports = [mockReport];
       mockReportModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          populate: jest.fn().mockReturnValue({
-            lean: jest.fn().mockResolvedValue(reports),
+        sort: vi.fn().mockReturnValue({
+          populate: vi.fn().mockReturnValue({
+            lean: vi.fn().mockResolvedValue(reports),
           }),
         }),
       });
@@ -96,9 +97,9 @@ describe("InterventionReport Controller", () => {
     it("should filter by clientFileId when provided", async () => {
       req.query = { clientFileId: CLIENT_FILE_ID };
       mockReportModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          populate: jest.fn().mockReturnValue({
-            lean: jest.fn().mockResolvedValue([mockReport]),
+        sort: vi.fn().mockReturnValue({
+          populate: vi.fn().mockReturnValue({
+            lean: vi.fn().mockResolvedValue([mockReport]),
           }),
         }),
       });
@@ -112,9 +113,9 @@ describe("InterventionReport Controller", () => {
 
     it("should return 500 on error", async () => {
       mockReportModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          populate: jest.fn().mockReturnValue({
-            lean: jest.fn().mockRejectedValue(new Error("DB error")),
+        sort: vi.fn().mockReturnValue({
+          populate: vi.fn().mockReturnValue({
+            lean: vi.fn().mockRejectedValue(new Error("DB error")),
           }),
         }),
       });
@@ -136,8 +137,8 @@ describe("InterventionReport Controller", () => {
     it("should return 404 when report not found", async () => {
       req.params = { id: VALID_ID };
       mockReportModel.findById.mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          lean: jest.fn().mockResolvedValue(null),
+        populate: vi.fn().mockReturnValue({
+          lean: vi.fn().mockResolvedValue(null),
         }),
       });
 
@@ -152,8 +153,8 @@ describe("InterventionReport Controller", () => {
     it("should return the report with 200", async () => {
       req.params = { id: VALID_ID };
       mockReportModel.findById.mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          lean: jest.fn().mockResolvedValue(mockReport),
+        populate: vi.fn().mockReturnValue({
+          lean: vi.fn().mockResolvedValue(mockReport),
         }),
       });
 
@@ -224,7 +225,7 @@ describe("InterventionReport Controller", () => {
 
       const report = {
         ...mockReport,
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           ...mockReport,
           notes: "Updated notes",
         }),
@@ -244,7 +245,7 @@ describe("InterventionReport Controller", () => {
       const report = {
         ...mockReport,
         updatedBy: undefined as string | undefined,
-        save: jest.fn().mockResolvedValue(mockReport),
+        save: vi.fn().mockResolvedValue(mockReport),
       };
       mockReportModel.findById.mockResolvedValue(report);
 

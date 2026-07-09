@@ -1,7 +1,9 @@
-const mockCreate = jest.fn();
-const mockInsertMany = jest.fn();
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-jest.mock("../models/history.model", () => ({
+const mockCreate = vi.fn();
+const mockInsertMany = vi.fn();
+
+vi.mock("../models/history.model", () => ({
   __esModule: true,
   default: {
     create: (...args: unknown[]) => mockCreate(...args),
@@ -17,12 +19,12 @@ import {
 
 describe("history.utils", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // ─── logItemCreate ─────────────────────────────────────

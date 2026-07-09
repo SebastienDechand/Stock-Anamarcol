@@ -1,45 +1,46 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Request, Response } from "express";
 
-const mockAuditModel = {
-  deleteMany: jest.fn(),
-};
-const mockHistoryModel = {
-  find: jest.fn(),
-  deleteMany: jest.fn(),
-};
-const mockItemModel = {
-  find: jest.fn(),
-};
-const mockContactModel = {
-  find: jest.fn(),
-};
-const mockUserModel = {
-  find: jest.fn(),
-};
+const mockAuditModel = vi.hoisted(() => ({
+  deleteMany: vi.fn(),
+}));
+const mockHistoryModel = vi.hoisted(() => ({
+  find: vi.fn(),
+  deleteMany: vi.fn(),
+}));
+const mockItemModel = vi.hoisted(() => ({
+  find: vi.fn(),
+}));
+const mockContactModel = vi.hoisted(() => ({
+  find: vi.fn(),
+}));
+const mockUserModel = vi.hoisted(() => ({
+  find: vi.fn(),
+}));
 
-jest.mock("../models/audit.model", () => ({
+vi.mock("../models/audit.model", () => ({
   __esModule: true,
   default: mockAuditModel,
 }));
-jest.mock("../models/history.model", () => ({
+vi.mock("../models/history.model", () => ({
   __esModule: true,
   default: mockHistoryModel,
 }));
-jest.mock("../models/item.model", () => ({
+vi.mock("../models/item.model", () => ({
   __esModule: true,
   default: mockItemModel,
 }));
-jest.mock("../models/contact.model", () => ({
+vi.mock("../models/contact.model", () => ({
   __esModule: true,
   default: mockContactModel,
 }));
-jest.mock("../models/user.model", () => ({
+vi.mock("../models/user.model", () => ({
   __esModule: true,
   default: mockUserModel,
 }));
-jest.mock("../utils/audit.utils", () => ({
-  getRecentEvents: jest.fn().mockResolvedValue([]),
-  logEvent: jest.fn().mockResolvedValue(undefined),
+vi.mock("../utils/audit.utils", () => ({
+  getRecentEvents: vi.fn().mockResolvedValue([]),
+  logEvent: vi.fn().mockResolvedValue(undefined),
 }));
 
 import {
@@ -55,41 +56,41 @@ describe("Audit Controller", () => {
     req = { query: {}, body: {} };
     res = {
       locals: { user: { pseudo: "admin" } },
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
     };
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
-    jest.spyOn(console, "log").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "log").mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // ─── getHistory ──────────────────────────────────────
   describe("getHistory", () => {
     it("should return merged events with status 200", async () => {
       mockHistoryModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          limit: jest.fn().mockReturnValue({
-            lean: jest.fn().mockResolvedValue([]),
+        sort: vi.fn().mockReturnValue({
+          limit: vi.fn().mockReturnValue({
+            lean: vi.fn().mockResolvedValue([]),
           }),
         }),
       });
       mockItemModel.find.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          lean: jest.fn().mockResolvedValue([]),
+        select: vi.fn().mockReturnValue({
+          lean: vi.fn().mockResolvedValue([]),
         }),
       });
       mockContactModel.find.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          lean: jest.fn().mockResolvedValue([]),
+        select: vi.fn().mockReturnValue({
+          lean: vi.fn().mockResolvedValue([]),
         }),
       });
       mockUserModel.find.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          lean: jest.fn().mockResolvedValue([]),
+        select: vi.fn().mockReturnValue({
+          lean: vi.fn().mockResolvedValue([]),
         }),
       });
 
@@ -102,15 +103,15 @@ describe("Audit Controller", () => {
     it("should use custom limit from query", async () => {
       req.query = { limit: "50" };
       mockHistoryModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          limit: jest.fn().mockReturnValue({
-            lean: jest.fn().mockResolvedValue([]),
+        sort: vi.fn().mockReturnValue({
+          limit: vi.fn().mockReturnValue({
+            lean: vi.fn().mockResolvedValue([]),
           }),
         }),
       });
       mockItemModel.find.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          lean: jest.fn().mockResolvedValue([]),
+        select: vi.fn().mockReturnValue({
+          lean: vi.fn().mockResolvedValue([]),
         }),
       });
 

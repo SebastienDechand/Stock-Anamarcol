@@ -1,0 +1,86 @@
+<div class="low-stock">
+  <div class="low-stock__header">
+    <div class="low-stock__title-row">
+      <lucide-icon name="trending-down" [size]="18" class="low-stock__icon" />
+      <h3 class="low-stock__title">{{ 'ARTICLES.LOW_STOCK_TITLE' | translate }}</h3>
+    </div>
+    <div class="low-stock__tabs">
+      @for (tab of tabs; track tab.key) {
+        <button
+          class="low-stock__tab"
+          [class.low-stock__tab--active]="activeTab() === tab.key"
+          (click)="activeTab.set(tab.key)"
+          type="button"
+          [title]="
+            ('ARTICLES.STATE_FILTER' | translate) +
+            ' : ' +
+            (tab.key === 'all' ? ('COMMON.ALL' | translate) : tab.label)
+          "
+        >
+          {{ tab.key === 'all' ? ('COMMON.ALL' | translate) : tab.label }}
+          @if (tab.key !== 'all') {
+            <span class="low-stock__tab-count">({{ countByTab(tab.key) }})</span>
+          }
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (filteredItems.length === 0) {
+    <p class="low-stock__empty">
+      {{ 'ARTICLES.LOW_STOCK_SUBTITLE' | translate
+      }}{{ activeTab() !== 'all' ? ' (' + activeTab() + ')' : '' }}
+    </p>
+  } @else {
+    <!-- Mobile card view -->
+    <div class="low-stock__cards">
+      @for (item of filteredItems; track item._id) {
+        <div class="low-stock__card">
+          <div class="low-stock__card-info">
+            <p class="low-stock__card-denomination">{{ item.denomination }}</p>
+            <p class="low-stock__card-meta">{{ item.fournisseur }} · {{ item.etat }}</p>
+          </div>
+          <span
+            class="low-stock__qty-badge"
+            [class.low-stock__qty-badge--critical]="item.quantite < 2"
+            [class.low-stock__qty-badge--warning]="item.quantite >= 2 && item.quantite < 5"
+          >
+            {{ item.quantite }}
+          </span>
+        </div>
+      }
+    </div>
+
+    <!-- Desktop table -->
+    <div class="low-stock__table-wrap">
+      <table class="low-stock__table">
+        <thead>
+          <tr>
+            <th>{{ 'ARTICLES.DENOMINATION' | translate }}</th>
+            <th>{{ 'ARTICLES.SUPPLIER' | translate }}</th>
+            <th>{{ 'ARTICLES.STATE' | translate }}</th>
+            <th class="low-stock__qty-col">{{ 'ARTICLES.QUANTITY' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of filteredItems; track item._id) {
+            <tr>
+              <td class="low-stock__denomination">{{ item.denomination }}</td>
+              <td>{{ item.fournisseur }}</td>
+              <td>{{ item.etat }}</td>
+              <td class="low-stock__qty-col">
+                <span
+                  class="low-stock__qty-badge"
+                  [class.low-stock__qty-badge--critical]="item.quantite < 2"
+                  [class.low-stock__qty-badge--warning]="item.quantite >= 2 && item.quantite < 5"
+                >
+                  {{ item.quantite }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

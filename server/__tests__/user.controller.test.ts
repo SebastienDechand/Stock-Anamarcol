@@ -1,19 +1,20 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Request, Response } from "express";
 import { Role } from "../constants";
 
-const mockUserModel = {
-  find: jest.fn(),
-  findById: jest.fn(),
-  deleteOne: jest.fn(),
-};
+const mockUserModel = vi.hoisted(() => ({
+  find: vi.fn(),
+  findById: vi.fn(),
+  deleteOne: vi.fn(),
+}));
 
-jest.mock("../models/user.model", () => ({
+vi.mock("../models/user.model", () => ({
   __esModule: true,
   default: mockUserModel,
 }));
 
-jest.mock("../utils/audit.utils", () => ({
-  logEvent: jest.fn().mockResolvedValue(undefined),
+vi.mock("../utils/audit.utils", () => ({
+  logEvent: vi.fn().mockResolvedValue(undefined),
 }));
 
 import {
@@ -32,17 +33,17 @@ describe("User Controller", () => {
   beforeEach(() => {
     req = { params: {}, body: {} };
     res = {
-      locals: { user: { pseudo: "admin" } },
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
-      send: jest.fn() as unknown as Response["send"],
+      locals: { user: { _id: "admin-id", pseudo: "admin", roles: [Role.ADMIN] } },
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
+      send: vi.fn() as unknown as Response["send"],
     };
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // ─── getAllUsers ────────────────────────────────────────
@@ -53,7 +54,7 @@ describe("User Controller", () => {
         { _id: "2", pseudo: "user2" },
       ];
       mockUserModel.find.mockReturnValue({
-        select: jest.fn().mockResolvedValue(mockUsers),
+        select: vi.fn().mockResolvedValue(mockUsers),
       });
 
       await getAllUsers(req as Request, res as Response);
@@ -75,10 +76,10 @@ describe("User Controller", () => {
       const mockUser = { _id: "507f1f77bcf86cd799439011", pseudo: "test" };
 
       mockUserModel.findById.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          then: jest.fn().mockImplementation((cb: (user: unknown) => void) => {
+        select: vi.fn().mockReturnValue({
+          then: vi.fn().mockImplementation((cb: (user: unknown) => void) => {
             cb(mockUser);
-            return { catch: jest.fn() };
+            return { catch: vi.fn() };
           }),
         }),
       });
@@ -98,7 +99,7 @@ describe("User Controller", () => {
     it("should delete a user successfully", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       mockUserModel.deleteOne.mockReturnValue({
-        exec: jest.fn().mockResolvedValue({ deletedCount: 1 }),
+        exec: vi.fn().mockResolvedValue({ deletedCount: 1 }),
       });
 
       await deleteUser(req as Request, res as Response);
@@ -133,7 +134,7 @@ describe("User Controller", () => {
         _id: "507f1f77bcf86cd799439011",
         email: "old@test.com",
         poste: "",
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           email: "new@test.com",
           poste: "Dev",
@@ -157,7 +158,7 @@ describe("User Controller", () => {
         poste: "",
         pole: "",
         roles: [Role.USER],
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           pole: "Hotline",
           roles: [Role.USER, Role.HOTLINE],
@@ -180,7 +181,7 @@ describe("User Controller", () => {
         poste: "",
         pole: "Hotline",
         roles: [Role.USER, Role.HOTLINE],
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           pole: "Direction",
           roles: [Role.USER],
@@ -203,7 +204,7 @@ describe("User Controller", () => {
         poste: "",
         pole: "Direction",
         roles: [Role.ADMIN, Role.USER],
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           pole: "Hotline",
           roles: [Role.ADMIN, Role.USER],
@@ -227,7 +228,7 @@ describe("User Controller", () => {
         poste: "",
         pole: "Direction",
         roles: [Role.SUPERADMIN, Role.ADMIN, Role.USER],
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           pole: "Hotline",
           roles: [Role.SUPERADMIN, Role.ADMIN, Role.USER],
@@ -237,6 +238,62 @@ describe("User Controller", () => {
 
       await updateUser(req as Request, res as Response);
       expect(mockUser.roles).toContain(Role.SUPERADMIN);
+      expect(mockUser.roles).not.toContain(Role.HOTLINE);
+      expect(mockUser.save).toHaveBeenCalled();
+    });
+
+    it("should return 403 when a non-admin tries to update another user", async () => {
+      res.locals!.user = { _id: "user-id", pseudo: "regular", roles: [Role.USER] };
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { numero: "0102030405" };
+
+      await updateUser(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(mockUserModel.findById).not.toHaveBeenCalled();
+    });
+
+    it("should let a non-admin update their own numero and picture", async () => {
+      res.locals!.user = { _id: "507f1f77bcf86cd799439011", pseudo: "regular", roles: [Role.USER] };
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { numero: "0102030405", picture: "https://cdn.example.com/pic.jpg" };
+
+      const mockUser = {
+        _id: "507f1f77bcf86cd799439011",
+        numero: "",
+        picture: "",
+        save: vi.fn().mockResolvedValue({
+          _id: "507f1f77bcf86cd799439011",
+          numero: "0102030405",
+          picture: "https://cdn.example.com/pic.jpg",
+        }),
+      };
+      mockUserModel.findById.mockResolvedValue(mockUser);
+
+      await updateUser(req as Request, res as Response);
+      expect(mockUser.numero).toBe("0102030405");
+      expect(mockUser.picture).toBe("https://cdn.example.com/pic.jpg");
+      expect(mockUser.save).toHaveBeenCalled();
+    });
+
+    it("should silently ignore admin-only fields when a non-admin updates their own record", async () => {
+      res.locals!.user = { _id: "507f1f77bcf86cd799439011", pseudo: "regular", roles: [Role.USER] };
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { email: "hacked@test.com", poste: "Boss", pole: "Hotline" };
+
+      const mockUser = {
+        _id: "507f1f77bcf86cd799439011",
+        email: "old@test.com",
+        poste: "",
+        pole: "",
+        roles: [Role.USER],
+        save: vi.fn().mockResolvedValue({}),
+      };
+      mockUserModel.findById.mockResolvedValue(mockUser);
+
+      await updateUser(req as Request, res as Response);
+      expect(mockUser.email).toBe("old@test.com");
+      expect(mockUser.poste).toBe("");
+      expect(mockUser.pole).toBe("");
       expect(mockUser.roles).not.toContain(Role.HOTLINE);
       expect(mockUser.save).toHaveBeenCalled();
     });
@@ -274,7 +331,7 @@ describe("User Controller", () => {
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
         roles: [Role.USER],
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           roles: [Role.ADMIN, Role.USER],
         }),
@@ -293,7 +350,7 @@ describe("User Controller", () => {
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
         roles: [Role.USER],
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           roles: [Role.USER, Role.HOTLINE],
         }),
@@ -312,7 +369,7 @@ describe("User Controller", () => {
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
         roles: [Role.USER],
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           roles: [Role.SUPERADMIN, Role.ADMIN, Role.USER],
         }),
@@ -331,7 +388,7 @@ describe("User Controller", () => {
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
         roles: [Role.ADMIN, Role.USER],
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           roles: [Role.USER],
         }),
@@ -392,7 +449,7 @@ describe("User Controller", () => {
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
         roles: [Role.USER],
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           roles: [Role.ADMIN, Role.USER],
         }),
@@ -414,7 +471,7 @@ describe("User Controller", () => {
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
         roles: [Role.USER],
-        save: jest.fn().mockResolvedValue({
+        save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           roles: [Role.USER, Role.MONTEUR],
         }),

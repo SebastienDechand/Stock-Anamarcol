@@ -201,7 +201,7 @@ function toBool(v: string): boolean {
   );
 }
 
-/** Resolve a raw value to number — treats x/X/oui as 1 */
+/** Resolve a raw value to number - treats x/X/oui as 1 */
 function toNum(v: string): number {
   const vl = v.toLowerCase().trim();
   if (vl === "x" || vl === "oui" || vl === "yes") return 1;
@@ -375,7 +375,7 @@ async function parsePdfBDC(file: File): Promise<BDCPatch> {
         }
 
         if (keyLen === 0) {
-          // No key found — check for inline colon (e.g. "N° TVA INTRA : FR123…")
+          // No key found - check for inline colon (e.g. "N° TVA INTRA : FR123…")
           const colonIdx = item.indexOf(":");
           if (colonIdx > 0) {
             allEntries.push({
@@ -387,7 +387,7 @@ async function parsePdfBDC(file: File): Promise<BDCPatch> {
           continue;
         }
 
-        // Key found — skip standalone colon items, then take the next real item as value
+        // Key found - skip standalone colon items, then take the next real item as value
         let valueIdx = j + keyLen;
         while (
           valueIdx < lineItems.length &&
@@ -404,7 +404,7 @@ async function parsePdfBDC(file: File): Promise<BDCPatch> {
           allEntries.push({ label: rawLabel, value: nextRaw });
           j = valueIdx + 1;
         } else {
-          // No value after key — try inline colon on the first item
+          // No value after key - try inline colon on the first item
           const colonIdx = item.indexOf(":");
           if (colonIdx > 0) {
             allEntries.push({
@@ -694,7 +694,7 @@ function ClientFileModal({
                 </label>
               </div>
               <p className="text-[11px] text-gray-400 mt-1.5">
-                XLSX : libellés col. A — valeurs col. B.  PDF : texte digital
+                XLSX : libellés col. A - valeurs col. B.  PDF : texte digital
                 uniquement (pas de scan).
               </p>
             </div>
@@ -1327,18 +1327,21 @@ export default function FichesClients() {
               key={file._id}
               className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 flex flex-col gap-3"
             >
-              {/* Title */}
+              {/* Title - max 2 lignes, tronqué */}
               <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="font-semibold text-gray-900 text-sm leading-tight">
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2">
                     {file.nom.toUpperCase()}
                     {file.prenom ? ` ${file.prenom}` : ""}
                   </h3>
-                  {file.societe && (
-                    <p className="text-xs text-brand-600 mt-0.5 flex items-center gap-1">
-                      <Building2 size={11} />
-                      {file.societe}
+                  {/* Societe uniquement si différent du nom */}
+                  {file.societe && file.societe !== file.nom ? (
+                    <p className="text-xs text-brand-600 mt-0.5 flex items-center gap-1 min-w-0">
+                      <Building2 size={11} className="shrink-0" />
+                      <span className="truncate">{file.societe}</span>
                     </p>
+                  ) : (
+                    <div className="h-4" />
                   )}
                 </div>
                 {file.nomMagasin && (
@@ -1348,44 +1351,43 @@ export default function FichesClients() {
                 )}
               </div>
 
-              {/* Details */}
-              <div className="space-y-1">
-                {(file.adresse || file.cp || file.ville) && (
-                  <p className="text-xs text-gray-500 flex items-start gap-1.5">
-                    <MapPin
-                      size={12}
-                      className="text-gray-400 shrink-0 mt-0.5"
-                    />
-                    <span>
-                      {file.adresse && (
-                        <span className="block">{file.adresse}</span>
-                      )}
-                      {(file.cp || file.ville) && (
-                        <span className="block">
-                          {[file.cp, file.ville].filter(Boolean).join(" ")}
-                        </span>
-                      )}
+              {/* Details - toujours 3 lignes, placeholder si vide */}
+              <div className="space-y-1 flex-1">
+                <p className="text-xs flex items-start gap-1.5">
+                  <MapPin size={12} className="text-gray-400 shrink-0 mt-0.5" />
+                  <span className="min-w-0">
+                    <span
+                      className={`block truncate ${file.adresse ? "text-gray-500" : "text-gray-200"}`}
+                    >
+                      {file.adresse || "-"}
                     </span>
-                  </p>
-                )}
-                {(file.tel || file.mobile) && (
-                  <p className="text-xs text-gray-500 flex items-center gap-1.5">
-                    <Phone size={12} className="text-gray-400 shrink-0" />
-                    {file.mobile ? file.mobile : file.tel}
-                  </p>
-                )}
-                {file.email && (
-                  <p className="text-xs text-gray-500 flex items-center gap-1.5">
-                    <Mail size={12} className="text-gray-400 shrink-0" />
-                    <span className="truncate">
-                      {file.email ? file.email : "Email non renseigné"}
+                    <span
+                      className={`block truncate ${file.cp || file.ville ? "text-gray-500" : "text-gray-200"}`}
+                    >
+                      {[file.cp, file.ville].filter(Boolean).join(" ") || "-"}
                     </span>
-                  </p>
-                )}
+                  </span>
+                </p>
+                <p className="text-xs flex items-center gap-1.5">
+                  <Phone size={12} className="text-gray-400 shrink-0" />
+                  <span
+                    className={`truncate ${file.mobile || file.tel ? "text-gray-500" : "text-gray-200"}`}
+                  >
+                    {file.mobile || file.tel || "-"}
+                  </span>
+                </p>
+                <p className="text-xs flex items-center gap-1.5">
+                  <Mail size={12} className="text-gray-400 shrink-0" />
+                  <span
+                    className={`truncate ${file.email ? "text-gray-500" : "text-gray-200"}`}
+                  >
+                    {file.email || "-"}
+                  </span>
+                </p>
               </div>
 
-              {/* Equipment badges */}
-              <div className="flex flex-wrap gap-1.5">
+              {/* Equipment badges - zone fixe min-h */}
+              <div className="flex flex-wrap gap-1.5 min-h-[20px]">
                 {file.equipement.nbCaisses > 0 && (
                   <span className="text-[10px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
                     {file.equipement.nbCaisses} Caisse
@@ -1425,15 +1427,15 @@ export default function FichesClients() {
                 )}
               </div>
 
-              {/* Date souhaitée */}
-              {file.dateInstallationSouhaitee && (
-                <p className="text-xs text-gray-400">
-                  Installation : {file.dateInstallationSouhaitee}
-                </p>
-              )}
+              {/* Date souhaitée - toujours présente pour aligner les actions */}
+              <p className="text-xs text-gray-400 min-h-[16px]">
+                {file.dateInstallationSouhaitee
+                  ? `Installation : ${file.dateInstallationSouhaitee}`
+                  : ""}
+              </p>
 
               {/* Actions */}
-              <div className="flex gap-2 pt-2 border-t border-gray-50">
+              <div className="flex gap-2 pt-2 border-t border-gray-50 mt-auto">
                 <button
                   onClick={() => navigate(`/fiches-clients/${file._id}`)}
                   className="flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700 font-medium transition-colors"
@@ -1461,11 +1463,15 @@ export default function FichesClients() {
               </div>
             </div>
           ))}
+          {/* Cartes fantômes pour maintenir la hauteur de grille constante */}
+          {Array.from({ length: ITEMS_PER_PAGE - paginated.length }).map((_, i) => (
+            <div key={`filler-${i}`} className="invisible" aria-hidden="true" />
+          ))}
         </div>
       )}
 
       {/* Pagination */}
-      {filtered.length > 0 && (
+      {totalPageCount > 1 && (
         <div className="flex items-center justify-center gap-1.5 py-4 flex-wrap">
           <button
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}

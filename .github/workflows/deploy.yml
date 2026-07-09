@@ -53,6 +53,42 @@ jobs:
           server-dir: ${{ secrets.O2SWITCH_CLIENT_PATH }}
           dangerous-clean-slate: false
 
+  # ─── Deploy Frontend Angular (preview) ───────────────
+  deploy-client-ng:
+    name: Deploy Frontend Angular (o2switch preview)
+    runs-on: ubuntu-latest
+    needs: [tests]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: client-ng/package-lock.json
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+      - name: Install dependencies
+        working-directory: ./client-ng
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: ./client-ng
+        run: npm run build -- --base-href /ng-preview/
+
+      - name: Deploy to o2switch via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.O2SWITCH_FTP_HOST }}
+          username: ${{ secrets.O2SWITCH_FTP_USER }}
+          password: ${{ secrets.O2SWITCH_FTP_PASSWORD }}
+          local-dir: ./client-ng/dist/client-ng/browser/
+          server-dir: ${{ secrets.O2SWITCH_CLIENT_NG_PATH }}
+          dangerous-clean-slate: false
+
   # ─── Deploy Backend ──────────────────────────────────
   deploy-server:
     name: Deploy Backend (o2switch)
@@ -83,8 +119,6 @@ jobs:
         run: |
           mkdir -p deploy-server
           rsync -av --exclude='__tests__' \
-            --exclude='jest.config.js' \
-            --exclude='jest.setup.js' \
             --exclude='coverage' \
             --exclude='node_modules' \
             --exclude='.gitignore' \

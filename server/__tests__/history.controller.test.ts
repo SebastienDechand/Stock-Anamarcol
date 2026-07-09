@@ -1,10 +1,11 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Request, Response } from "express";
 
-const mockHistoryModel = {
-  find: jest.fn(),
-};
+const mockHistoryModel = vi.hoisted(() => ({
+  find: vi.fn(),
+}));
 
-jest.mock("../models/history.model", () => ({
+vi.mock("../models/history.model", () => ({
   __esModule: true,
   default: mockHistoryModel,
 }));
@@ -18,14 +19,14 @@ describe("History Controller", () => {
   beforeEach(() => {
     req = { params: {} };
     res = {
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
     };
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   describe("getItemHistory", () => {
     it("should return 400 for an invalid ObjectId", async () => {
@@ -42,9 +43,9 @@ describe("History Controller", () => {
         { _id: "h2", action: "create" },
       ];
       mockHistoryModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          limit: jest.fn().mockReturnValue({
-            lean: jest.fn().mockResolvedValue(entries),
+        sort: vi.fn().mockReturnValue({
+          limit: vi.fn().mockReturnValue({
+            lean: vi.fn().mockResolvedValue(entries),
           }),
         }),
       });
@@ -60,9 +61,9 @@ describe("History Controller", () => {
     it("should return an empty array when no history exists", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       mockHistoryModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          limit: jest.fn().mockReturnValue({
-            lean: jest.fn().mockResolvedValue([]),
+        sort: vi.fn().mockReturnValue({
+          limit: vi.fn().mockReturnValue({
+            lean: vi.fn().mockResolvedValue([]),
           }),
         }),
       });
@@ -75,9 +76,9 @@ describe("History Controller", () => {
     it("should return 500 on database error", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       mockHistoryModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          limit: jest.fn().mockReturnValue({
-            lean: jest.fn().mockRejectedValue(new Error("DB error")),
+        sort: vi.fn().mockReturnValue({
+          limit: vi.fn().mockReturnValue({
+            lean: vi.fn().mockRejectedValue(new Error("DB error")),
           }),
         }),
       });

@@ -55,7 +55,8 @@ client/
 │   │   ├── statistics.actions.ts
 │   │   ├── user.actions.ts          Profil utilisateur courant
 │   │   ├── userClient.actions.ts
-│   │   └── users.actions.ts         Liste de tous les utilisateurs
+│   │   ├── users.actions.ts         Liste de tous les utilisateurs
+│   │   └── vehicles.actions.ts      CRUD véhicules (flotte)
 │   │
 │   ├── assets/                      Images statiques
 │   │
@@ -85,14 +86,16 @@ client/
 │   │   ├── admin-roles/             Gestion des rôles (superadmin)
 │   │   ├── articles/                Grille articles, filtres, pagination, export CSV/XLSX/PDF, prépa batch
 │   │   ├── contacts/                Annuaire par catégorie
-│   │   ├── envois/                  Gestion des envois et expéditions
-│   │   ├── fiches-clients/          Fiches détaillées par client
+│   │   ├── envois/                  Gestion des envois et expéditions (hotline+)
+│   │   ├── fiches-clients/          Fiches détaillées par client + rapports d'intervention liés (monteur+)
+│   │   ├── flotte/                  Gestion des véhicules de l'entreprise (admin)
 │   │   ├── history/                 Journal historique & audit, filtres, purge superadmin
 │   │   ├── home/                    Dashboard / accueil
 │   │   ├── login/                   Page de connexion
 │   │   ├── membres/                 Équipe organisée par pôles
+│   │   ├── not-found/               Page 404
 │   │   ├── profil/                  Profil utilisateur (édition, avatar)
-│   │   └── rapports-intervention/   Rapports d'intervention terrain
+│   │   └── surveillance/            Caméras de l'entreprise en continu (admin)
 │   │
 │   ├── reducers/
 │   │   ├── __tests__/               Tests des reducers
@@ -105,7 +108,8 @@ client/
 │   │   ├── menu.reducer.ts          État sidebar
 │   │   ├── statistics.reducer.ts
 │   │   ├── user.reducer.ts          Utilisateur courant
-│   │   └── users.reducer.ts         Liste utilisateurs
+│   │   ├── users.reducer.ts         Liste utilisateurs
+│   │   └── vehicles.reducer.ts      Véhicules (flotte)
 │   │
 │   ├── types/
 │   │   ├── redux.ts                 RootState, AppDispatch, AppThunk, ReduxAction
@@ -137,21 +141,26 @@ client/
 
 ## 🧭 Routes
 
-| Chemin                   | Page                    |   Accès    | Description                                                |
-| ------------------------ | ----------------------- | :--------: | ---------------------------------------------------------- |
-| `/`                      | Login                   |   Public   | Connexion email + mot de passe                             |
-| `/home`                  | Dashboard               |    Auth    | Statistiques et vue d'ensemble                             |
-| `/articles`              | Articles                |    Auth    | Grille articles, filtres, prépa batch, export CSV/XLSX/PDF |
-| `/profil`                | Profil                  |    Auth    | Profil utilisateur, avatar, édition                        |
-| `/membres`               | Membres                 |    Auth    | Équipe organisée par pôles                                 |
-| `/contacts`              | Contacts                |    Auth    | Annuaire contacts par catégorie                            |
-| `/historique`            | Historique              |    Auth    | Journal des modifications et audit                         |
-| `/envois`                | Envois                  |    Auth    | Gestion des envois et expéditions                          |
-| `/fiches-clients`        | Fiches clients          |    Auth    | Fiches détaillées par client                               |
-| `/rapports-intervention` | Rapports d'intervention |    Auth    | Rapports d'intervention terrain                            |
-| `/admin/roles`           | Admin — Rôles           | Superadmin | Gestion des rôles utilisateurs                             |
+| Chemin                | Page               |   Accès    | Description                                                          |
+| --------------------- | ------------------ | :--------: | --------------------------------------------------------------------- |
+| `/`                   | Login              |   Public   | Connexion email + mot de passe                                        |
+| `/home`               | Dashboard          |    Auth    | Statistiques et vue d'ensemble                                        |
+| `/articles`           | Articles           |    Auth    | Grille articles, filtres, prépa batch, export CSV/XLSX/PDF (admin)    |
+| `/profil`             | Profil             |    Auth    | Profil utilisateur, avatar, édition                                   |
+| `/membres`            | Membres            |    Auth    | Équipe organisée par pôles                                            |
+| `/contacts`           | Contacts           |    Auth    | Annuaire contacts par catégorie                                       |
+| `/envois`             | Envois             |    Auth    | Gestion des envois (création/édition réservée hotline+)               |
+| `/fiches-clients`     | Fiches clients     |    Auth    | Liste des fiches (création/édition réservée monteur+)                 |
+| `/fiches-clients/:id` | Dossier client     |    Auth    | Détail fiche client + rapports d'intervention liés                    |
+| `/flotte`             | Flotte véhicules   |   Admin    | Gestion et suivi des véhicules de l'entreprise                        |
+| `/surveillance`       | Surveillance       |   Admin    | Affichage en continu des caméras de l'entreprise                      |
+| `/history`            | Historique         |   Admin    | Journal des modifications et audit                                    |
+| `/admin/roles`        | Admin — Rôles      | Superadmin | Gestion des rôles utilisateurs                                        |
+| `*`                   | Not Found          |    Auth    | Page 404                                                              |
 
-> Toutes les routes sauf `/` sont protégées par `<ProtectedRoute>` qui vérifie le JWT via `/jwtid`.
+> Toutes les routes sauf `/` sont protégées par `<ProtectedRoute>` qui vérifie le JWT via `/jwtid`. `/flotte`, `/surveillance`, `/history` et `/admin/roles` sont en plus protégées par `<AdminRoute>` (le mode `superAdminOnly` restreint `/admin/roles` au superadmin).
+>
+> Un dossier `pages/rapports-intervention/` existe encore dans le code mais n'est plus routé : la gestion des rapports d'intervention se fait désormais depuis `/fiches-clients/:id`.
 
 ---
 
@@ -173,7 +182,10 @@ Configuré avec `@reduxjs/toolkit` (`configureStore`), devTools désactivé en p
 | `clientFilesReducer`         | Fiches clients                                |
 | `interventionReportsReducer` | Rapports d'intervention                       |
 | `statisticsReducer`          | Stats globales, par fournisseur, par état     |
+| `vehiclesReducer`            | Véhicules de la flotte                        |
 | `menuReducer`                | État d'ouverture de la sidebar                |
+
+> Les envois (`/envois`) ne passent pas par Redux : la page appelle directement l'API via Axios et gère son état en local (`useState`).
 
 ### Pattern des actions
 
@@ -200,19 +212,23 @@ export const getUser = (uid: string) => {
 1. Login      POST /api/user/login (email + password)
 2. Cookie     Le serveur renvoie un cookie JWT httpOnly
 3. Vérif      AuthProvider appelle GET /jwtid au montage
-4. Contexte   UidContext fournit uid, role, isAdmin
-5. Guard      ProtectedRoute redirige vers / si non auth
+4. Contexte   UidContext fournit uid, roles[] et les flags dérivés (isAdmin, isSuperadmin, isHotline, isMonteur)
+5. Guard      ProtectedRoute (+ AdminRoute pour les pages admin) redirige si non autorisé
 6. Logout     GET /api/user/logout supprime le cookie
 ```
+
+> Les rôles sont cumulables (`roles: Role[]`) — un utilisateur peut être `hotline` et `monteur` en même temps. `isAdmin`/`isHotline`/`isMonteur` sont `true` dès que `admin` ou `superadmin` est présent (héritage des permissions).
 
 ### Contexte (`UidContext`)
 
 ```typescript
 interface AuthContextType {
   uid: string | null;
-  role: string | null;
-  isAdmin: boolean;
+  roles: Role[]; // ex: ["user"], ["hotline", "monteur"], ["admin"]...
+  isAdmin: boolean; // admin ou superadmin
   isSuperadmin: boolean;
+  isHotline: boolean; // hotline, admin ou superadmin
+  isMonteur: boolean; // monteur, admin ou superadmin
   isAuthLoading: boolean;
 }
 ```
@@ -233,7 +249,9 @@ interface User {
   poste?: string;
   numero?: string;
   pole?: string;
-  role?: string; // "user" | "admin" | "superadmin"
+  roles?: Role[]; // "superadmin" | "admin" | "hotline" | "monteur" | "user" (cumulables)
+  createdAt?: string;
+  updatedAt?: string;
 }
 ```
 

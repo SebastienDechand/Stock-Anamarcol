@@ -1,33 +1,34 @@
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import { Request, Response } from "express";
 
 // Mock fs so unlink does not touch the real filesystem
-jest.mock("fs", () => ({
-  ...jest.requireActual("fs"),
-  mkdirSync: jest.fn(),
-  unlink: jest.fn((_p: string, cb: (err: null) => void) => cb(null)),
+vi.mock("fs", async () => ({
+  ...(await vi.importActual<typeof import("fs")>("fs")),
+  mkdirSync: vi.fn(),
+  unlink: vi.fn((_p: string, cb: (err: null) => void) => cb(null)),
 }));
 
-const mockClientFileModel = {
-  find: jest.fn(),
-  findById: jest.fn(),
-  create: jest.fn(),
-  findByIdAndDelete: jest.fn(),
-};
+const mockClientFileModel = vi.hoisted(() => ({
+  find: vi.fn(),
+  findById: vi.fn(),
+  create: vi.fn(),
+  findByIdAndDelete: vi.fn(),
+}));
 
-jest.mock("../models/clientFile.model", () => ({
+vi.mock("../models/clientFile.model", () => ({
   __esModule: true,
   default: mockClientFileModel,
 }));
 
-jest.mock("../utils/audit.utils", () => ({
-  logEvent: jest.fn().mockResolvedValue(undefined),
+vi.mock("../utils/audit.utils", () => ({
+  logEvent: vi.fn().mockResolvedValue(undefined),
 }));
 
-jest.mock("../utils/validate.utils", () => ({
-  validateObjectId: jest.fn((id: string, res: Response) => {
+vi.mock("../utils/validate.utils", () => ({
+  validateObjectId: vi.fn((id: string, res: Response) => {
     const valid = /^[a-f\d]{24}$/i.test(id);
     if (!valid) {
-      (res.status as jest.Mock)(400).json({ error: "Invalid ObjectId" });
+      (res.status as Mock)(400).json({ error: "Invalid ObjectId" });
     }
     return valid;
   }),
@@ -61,7 +62,7 @@ const mockFile = {
   equipement: { nbCaisses: 2, nbCashguard: 1 },
   remarques: "",
   documents: [mockDoc],
-  save: jest.fn(),
+  save: vi.fn(),
 };
 
 describe("ClientFile Controller", () => {
@@ -72,15 +73,15 @@ describe("ClientFile Controller", () => {
     req = { params: {}, body: {}, query: {} };
     res = {
       locals: { user: { pseudo: "admin" } },
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
     };
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // ─── getClientFiles ────────────────────────────────────
@@ -88,9 +89,9 @@ describe("ClientFile Controller", () => {
     it("should return all client files with 200", async () => {
       const files = [mockFile];
       mockClientFileModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          populate: jest.fn().mockReturnValue({
-            lean: jest.fn().mockResolvedValue(files),
+        sort: vi.fn().mockReturnValue({
+          populate: vi.fn().mockReturnValue({
+            lean: vi.fn().mockResolvedValue(files),
           }),
         }),
       });
@@ -103,9 +104,9 @@ describe("ClientFile Controller", () => {
 
     it("should return 500 on error", async () => {
       mockClientFileModel.find.mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          populate: jest.fn().mockReturnValue({
-            lean: jest.fn().mockRejectedValue(new Error("DB error")),
+        sort: vi.fn().mockReturnValue({
+          populate: vi.fn().mockReturnValue({
+            lean: vi.fn().mockRejectedValue(new Error("DB error")),
           }),
         }),
       });
@@ -127,8 +128,8 @@ describe("ClientFile Controller", () => {
     it("should return 404 when file not found", async () => {
       req.params = { id: VALID_ID };
       mockClientFileModel.findById.mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          lean: jest.fn().mockResolvedValue(null),
+        populate: vi.fn().mockReturnValue({
+          lean: vi.fn().mockResolvedValue(null),
         }),
       });
 
@@ -143,8 +144,8 @@ describe("ClientFile Controller", () => {
     it("should return the file with 200", async () => {
       req.params = { id: VALID_ID };
       mockClientFileModel.findById.mockReturnValue({
-        populate: jest.fn().mockReturnValue({
-          lean: jest.fn().mockResolvedValue(mockFile),
+        populate: vi.fn().mockReturnValue({
+          lean: vi.fn().mockResolvedValue(mockFile),
         }),
       });
 
@@ -210,7 +211,7 @@ describe("ClientFile Controller", () => {
 
       const file = {
         ...mockFile,
-        save: jest.fn().mockResolvedValue({ ...mockFile, nom: "MARTIN" }),
+        save: vi.fn().mockResolvedValue({ ...mockFile, nom: "MARTIN" }),
       };
       mockClientFileModel.findById.mockResolvedValue(file);
 
@@ -229,7 +230,7 @@ describe("ClientFile Controller", () => {
         decoupePlanMenuiserie: false,
       };
 
-      const file = { ...mockFile, save: jest.fn().mockResolvedValue(mockFile) };
+      const file = { ...mockFile, save: vi.fn().mockResolvedValue(mockFile) };
       mockClientFileModel.findById.mockResolvedValue(file);
 
       await updateClientFile(req as Request, res as Response);
@@ -251,7 +252,7 @@ describe("ClientFile Controller", () => {
 
       const file = {
         ...mockFile,
-        save: jest.fn().mockRejectedValue(new Error("save failed")),
+        save: vi.fn().mockRejectedValue(new Error("save failed")),
       };
       mockClientFileModel.findById.mockResolvedValue(file);
 
@@ -333,8 +334,8 @@ describe("ClientFile Controller", () => {
 
       const file = {
         ...mockFile,
-        documents: { push: jest.fn() },
-        save: jest.fn().mockResolvedValue(mockFile),
+        documents: { push: vi.fn() },
+        save: vi.fn().mockResolvedValue(mockFile),
       };
       mockClientFileModel.findById.mockResolvedValue(file);
 
@@ -406,7 +407,7 @@ describe("ClientFile Controller", () => {
       const file = {
         ...mockFile,
         documents: [mockDoc],
-        save: jest.fn().mockResolvedValue(mockFile),
+        save: vi.fn().mockResolvedValue(mockFile),
       };
       mockClientFileModel.findById.mockResolvedValue(file);
 

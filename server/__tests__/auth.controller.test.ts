@@ -1,10 +1,11 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Request, Response } from "express";
 import { Role } from "../constants";
 
-const mockCreate = jest.fn();
-const mockLogin = jest.fn();
+const mockCreate = vi.fn();
+const mockLogin = vi.fn();
 
-jest.mock("../models/user.model", () => ({
+vi.mock("../models/user.model", () => ({
   __esModule: true,
   default: {
     create: (...args: unknown[]) => mockCreate(...args),
@@ -12,8 +13,8 @@ jest.mock("../models/user.model", () => ({
   },
 }));
 
-jest.mock("../utils/audit.utils", () => ({
-  logEvent: jest.fn().mockResolvedValue(undefined),
+vi.mock("../utils/audit.utils", () => ({
+  logEvent: vi.fn().mockResolvedValue(undefined),
 }));
 
 import { signUp, signIn, logout } from "../controllers/auth.controller";
@@ -26,16 +27,16 @@ describe("Auth Controller", () => {
     req = { body: {}, cookies: {} };
     res = {
       locals: {},
-      status: jest.fn().mockReturnThis() as unknown as Response["status"],
-      json: jest.fn() as unknown as Response["json"],
-      cookie: jest.fn() as unknown as Response["cookie"],
+      status: vi.fn().mockReturnThis() as unknown as Response["status"],
+      json: vi.fn() as unknown as Response["json"],
+      cookie: vi.fn() as unknown as Response["cookie"],
     };
-    jest.clearAllMocks();
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    vi.clearAllMocks();
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   // ─── signUp ────────────────────────────────────────────

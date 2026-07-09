@@ -1,0 +1,309 @@
+<div class="modal-overlay" (click)="closed.emit()">
+  <div class="modal-panel" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="modal-header">
+      <h3 class="modal-header__title">
+        {{ isEdit ? ('CLIENT_FILES.EDIT' | translate) : ('CLIENT_FILES.ADD' | translate) }}
+      </h3>
+      <button
+        class="modal-header__close"
+        (click)="closed.emit()"
+        [title]="'COMMON.CLOSE' | translate"
+      >
+        <lucide-icon [img]="x" [size]="18" />
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- BDC import -->
+      <div
+        class="bdc-panel"
+        [class.bdc-panel--dragging]="isDragging()"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave()"
+        (drop)="onDrop($event)"
+      >
+        <p class="bdc-panel__title">
+          <lucide-icon [img]="fileSpreadsheet" [size]="14" />
+          {{ 'CLIENT_FILES.UPLOAD_DOC' | translate }}
+        </p>
+        <div class="bdc-panel__buttons">
+          <label class="bdc-btn">
+            <lucide-icon
+              [img]="fileSpreadsheet"
+              [size]="15"
+              class="bdc-btn__icon bdc-btn__icon--xlsx"
+            />
+            <span>{{
+              xlsxImporting() ? ('COMMON.LOADING' | translate) : ('COMMON.UPLOAD' | translate)
+            }}</span>
+            <input
+              type="file"
+              accept=".xlsx,.xls"
+              class="sr-only"
+              [disabled]="xlsxImporting()"
+              (change)="onXlsxChange($event)"
+            />
+          </label>
+        </div>
+        <p class="bdc-panel__hint">{{ 'CLIENT_FILES.UPLOAD_HINT' | translate }}</p>
+      </div>
+
+      <!-- Identité -->
+      <div class="form-section">
+        <p class="form-section__title">{{ 'CLIENT_FILES.IDENTITY' | translate }}</p>
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label">{{ 'CLIENT_FILES.COMPANY_LABEL' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('societe')"
+              (input)="setStr('societe', $any($event.target).value)"
+              [placeholder]="'CLIENT_FILES.COMPANY_LABEL' | translate"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'CLIENT_FILES.LEGAL_STATUS' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('statutJuridique')"
+              (input)="setStr('statutJuridique', $any($event.target).value)"
+              [placeholder]="'CLIENT_FILES.LEGAL_STATUS_PLACEHOLDER' | translate"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'COMMON.NAME' | translate }} *</label>
+            <input
+              class="input-base"
+              [value]="getStr('nom')"
+              (input)="setStr('nom', $any($event.target).value)"
+              [placeholder]="'CLIENT_FILES.NAME_PLACEHOLDER' | translate"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'COMMON.FIRST_NAME' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('prenom')"
+              (input)="setStr('prenom', $any($event.target).value)"
+              [placeholder]="'CLIENT_FILES.FIRST_NAME_PLACEHOLDER' | translate"
+            />
+          </div>
+          <div class="form-field form-field--full">
+            <label class="form-label">{{ 'CLIENT_FILES.TRADE_NAME' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('raisonSociale')"
+              (input)="setStr('raisonSociale', $any($event.target).value)"
+            />
+          </div>
+          <div class="form-field form-field--full">
+            <label class="form-label">{{ 'CLIENT_FILES.STORE_NAME' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('nomMagasin')"
+              (input)="setStr('nomMagasin', $any($event.target).value)"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Coordonnées -->
+      <div class="form-section">
+        <p class="form-section__title">{{ 'CLIENT_FILES.COORDINATES' | translate }}</p>
+        <div class="form-grid">
+          <div class="form-field form-field--full">
+            <label class="form-label">{{ 'COMMON.ADDRESS' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('adresse')"
+              (input)="setStr('adresse', $any($event.target).value)"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'COMMON.ZIP_CODE' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('cp')"
+              (input)="setStr('cp', $any($event.target).value)"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'CLIENT_FILES.CITY' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('ville')"
+              (input)="setStr('ville', $any($event.target).value)"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'COMMON.PHONE' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('tel')"
+              (input)="setStr('tel', $any($event.target).value)"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'CLIENT_FILES.MOBILE' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('mobile')"
+              (input)="setStr('mobile', $any($event.target).value)"
+            />
+          </div>
+          <div class="form-field form-field--full">
+            <label class="form-label">{{ 'COMMON.EMAIL' | translate }}</label>
+            <input
+              class="input-base"
+              type="email"
+              [value]="getStr('email')"
+              (input)="setStr('email', $any($event.target).value)"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'CLIENT_FILES.SIRET' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('siret')"
+              (input)="setStr('siret', $any($event.target).value)"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'CLIENT_FILES.TVA' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('tvaIntra')"
+              (input)="setStr('tvaIntra', $any($event.target).value)"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'CLIENT_FILES.NAF_CODE' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('codeNaf')"
+              (input)="setStr('codeNaf', $any($event.target).value)"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'CLIENT_FILES.CLOSURE_DAYS' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('joursFermeture')"
+              (input)="setStr('joursFermeture', $any($event.target).value)"
+              [placeholder]="'CLIENT_FILES.CLOSURE_DAYS_PLACEHOLDER' | translate"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Planning -->
+      <div class="form-section">
+        <p class="form-section__title">{{ 'CLIENT_FILES.PLANNING' | translate }}</p>
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label">{{ 'CLIENT_FILES.INSTALL_DATE' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('dateInstallationSouhaitee')"
+              (input)="setStr('dateInstallationSouhaitee', $any($event.target).value)"
+              [placeholder]="'CLIENT_FILES.INSTALL_DATE_PLACEHOLDER' | translate"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'CLIENT_FILES.TRAINING_DATE' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('dateFormationSouhaitee')"
+              (input)="setStr('dateFormationSouhaitee', $any($event.target).value)"
+            />
+          </div>
+          <div class="form-field">
+            <label class="form-label">{{ 'CLIENT_FILES.OPENING_DATE' | translate }}</label>
+            <input
+              class="input-base"
+              [value]="getStr('ouverturePrevue')"
+              (input)="setStr('ouverturePrevue', $any($event.target).value)"
+            />
+          </div>
+        </div>
+        <div class="checkboxes">
+          @for (f of checkboxFields; track f.key) {
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [checked]="getBool(f.key)"
+                (change)="setBool(f.key, $any($event.target).checked)"
+              />
+              {{ f.label | translate }}
+            </label>
+          }
+        </div>
+      </div>
+
+      <!-- Équipements -->
+      <div class="form-section">
+        <p class="form-section__title">{{ 'CLIENT_FILES.ORDERED_EQUIP' | translate }}</p>
+        <div class="form-grid form-grid--3">
+          @for (f of equipNumFields; track f.key) {
+            <div class="form-field">
+              <label class="form-label">{{ f.label | translate }}</label>
+              <input
+                type="number"
+                min="0"
+                class="input-base"
+                [value]="getEquipNum(f.key)"
+                (input)="setEquipNum(f.key, $any($event.target).value)"
+              />
+            </div>
+          }
+        </div>
+        <div class="checkboxes">
+          @for (f of equipBoolFields; track f.key) {
+            <label class="checkbox-label">
+              <input
+                type="checkbox"
+                [checked]="getEquipBool(f.key)"
+                (change)="setEquipBool(f.key, $any($event.target).checked)"
+              />
+              {{ f.label | translate }}
+            </label>
+          }
+        </div>
+      </div>
+
+      <!-- Remarques -->
+      <div class="form-section">
+        <p class="form-section__title">{{ 'CLIENT_FILES.REMARKS' | translate }}</p>
+        <textarea
+          class="input-base textarea"
+          rows="3"
+          [value]="getStr('remarques')"
+          (input)="setStr('remarques', $any($event.target).value)"
+          [placeholder]="'CLIENT_FILES.REMARKS_PLACEHOLDER' | translate"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button
+        class="btn-secondary"
+        type="button"
+        (click)="closed.emit()"
+        [title]="'COMMON.CANCEL' | translate"
+      >
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+      <button
+        class="btn-primary"
+        type="button"
+        [disabled]="!form.nom.trim()"
+        (click)="submit()"
+        [title]="isEdit ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate)"
+      >
+        {{ isEdit ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate) }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,372 @@
+<div class="items-page">
+  @let canDecrementMap = canDecrement$ | async;
+  <!-- ─── Toolbar sticky ─────────────────────────────── -->
+  <div class="items-toolbar">
+    <div class="items-toolbar__top">
+      <div>
+        <h1 class="items-toolbar__title">
+          <lucide-icon name="package" [size]="20" />
+          {{ 'ITEMS.TITLE' | translate }}
+        </h1>
+        <p class="items-toolbar__subtitle">{{ 'ITEMS.SUBTITLE' | translate }}</p>
+      </div>
+
+      <div class="items-toolbar__actions">
+        <div class="search-wrap">
+          <lucide-icon name="search" [size]="15" class="search-wrap__icon" />
+          <input
+            class="search-wrap__input"
+            type="search"
+            [placeholder]="'ITEMS.SEARCH_PLACEHOLDER' | translate"
+            (input)="onSearchInput($event)"
+          />
+        </div>
+
+        <!-- Bouton filtres : mobile uniquement -->
+        <button
+          class="btn-icon-action btn-filter-mobile"
+          [class.btn-filter-mobile--active]="hasActiveFilters"
+          (click)="showFiltersModal.set(true)"
+          [title]="'ITEMS.FILTERS' | translate"
+        >
+          <lucide-icon name="sliders-horizontal" [size]="18" />
+          @if (hasActiveFilters) {
+            <span class="filter-dot"></span>
+          }
+        </button>
+
+        @if (isAdmin$ | async) {
+          <button
+            class="btn-icon-action"
+            (click)="showExportModal.set(true)"
+            [title]="'ITEMS.EXPORT' | translate"
+          >
+            <lucide-icon name="download" [size]="18" />
+          </button>
+
+          <button
+            class="btn-add"
+            (click)="showAddModal.set(true)"
+            [title]="'ITEMS.ADD_SHORT' | translate"
+          >
+            <lucide-icon name="plus-circle" [size]="16" />
+            <span class="btn-add__label">{{ 'ITEMS.ADD_SHORT' | translate }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Raccourcis Prépa : mobile uniquement -->
+    <div class="prepa-shortcuts">
+      <span class="prepa-shortcuts__label">{{ 'ITEMS.PREPA' | translate }}</span>
+      <button
+        class="prepa-shortcut"
+        [class.prepa-shortcut--active]="prepaCG()"
+        (click)="togglePrepa('CashGuard')"
+      >
+        CashGuard
+      </button>
+      <button
+        class="prepa-shortcut"
+        [class.prepa-shortcut--active]="prepaTPV()"
+        (click)="togglePrepa('Caisse TPV')"
+      >
+        Caisse TPV
+      </button>
+      @if (prepaCG() || prepaTPV()) {
+        <button
+          class="prepa-shortcuts__clear"
+          (click)="clearPrepa()"
+          [title]="'ITEMS.PREPA_CANCEL' | translate"
+        >
+          <lucide-icon name="x" [size]="14" />
+        </button>
+      }
+    </div>
+
+    <!-- Filter chips -->
+    <div class="items-toolbar__filters">
+      <div class="filter-row">
+        <span class="filter-row__label">{{ 'ITEMS.SUPPLIER_FILTER' | translate }}</span>
+        @for (f of fournisseurs; track f) {
+          <button
+            class="chip"
+            [class.chip--active]="isFournisseurActive(f)"
+            (click)="toggleFournisseur(f)"
+            [title]="('ITEMS.SUPPLIER_FILTER' | translate) + ' : ' + f"
+          >
+            {{ f }}
+          </button>
+        }
+      </div>
+      <div class="filter-row">
+        <span class="filter-row__label">{{ 'ITEMS.STATE_FILTER' | translate }}</span>
+        @for (e of etats; track e) {
+          <button
+            class="chip"
+            [class.chip--active-etat]="isEtatActive(e)"
+            (click)="toggleEtat(e)"
+            [title]="('ITEMS.STATE_FILTER' | translate) + ' : ' + e"
+          >
+            {{ e }}
+          </button>
+        }
+        <span class="filter-row__label filter-row__label--mid">{{
+          'ITEMS.PREPA' | translate
+        }}</span>
+        <button
+          class="chip"
+          [class.chip--active-prepa]="prepaCG()"
+          (click)="togglePrepa('CashGuard')"
+          [title]="('ITEMS.PREPA' | translate) + ' : CashGuard'"
+        >
+          CashGuard
+        </button>
+        <button
+          class="chip"
+          [class.chip--active-prepa]="prepaTPV()"
+          (click)="togglePrepa('Caisse TPV')"
+          [title]="('ITEMS.PREPA' | translate) + ' : Caisse TPV'"
+        >
+          Caisse TPV
+        </button>
+        @if (hasActiveFilters) {
+          <button
+            class="btn-clear-filters"
+            (click)="clearAllFilters()"
+            [title]="'ITEMS.CLEAR_FILTERS' | translate"
+          >
+            ✕ {{ 'ITEMS.CLEAR_FILTERS' | translate }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Prepa batch bars -->
+    @if (prepaCG()) {
+      <div class="prepa-batch">
+        <span class="prepa-batch__label">
+          <lucide-icon name="layers" [size]="13" />
+          {{ 'ITEMS.PREPA_BATCH_CG_LABEL' | translate }}
+        </span>
+        <div class="prepa-batch__cols">
+          <div class="prepa-batch__col">
+            <input
+              type="number"
+              class="prepa-batch__count prepa-batch__count--disabled"
+              value="1"
+              disabled
+            />
+            <span class="prepa-batch__hint">{{ 'ITEMS.ONE_AT_A_TIME' | translate }}</span>
+            <button
+              class="prepa-batch__btn prepa-batch__btn--sub"
+              (click)="onPrepaBatch('CashGuard', 'decrement')"
+              [disabled]="!(canDecrementMap?.['prepaCG'] ?? true)"
+              [title]="('ITEMS.DECREMENT' | translate) + ' (CashGuard)'"
+            >
+              <lucide-icon name="minus" [size]="12" />
+              <span class="prepa-batch__btn-label--mobile">{{
+                'ITEMS.DECREMENT' | translate
+              }}</span>
+              <span class="prepa-batch__btn-label--desktop">{{
+                'ITEMS.PREPA_REMOVE_STOCK' | translate
+              }}</span>
+            </button>
+          </div>
+          <div class="prepa-batch__col">
+            <input
+              type="number"
+              class="prepa-batch__count"
+              [value]="prepaCGCount()"
+              (input)="onPrepaCGCountChange($event)"
+              min="1"
+            />
+            <span class="prepa-batch__hint">{{ 'ITEMS.ENTER_QUANTITY' | translate }}</span>
+            <button
+              class="prepa-batch__btn prepa-batch__btn--add"
+              (click)="onPrepaBatch('CashGuard', 'increment')"
+              [title]="('ITEMS.INCREMENT' | translate) + ' (CashGuard)'"
+            >
+              <lucide-icon name="plus" [size]="12" />
+              <span class="prepa-batch__btn-label--mobile">{{
+                'ITEMS.INCREMENT' | translate
+              }}</span>
+              <span class="prepa-batch__btn-label--desktop">{{
+                'ITEMS.PREPA_ADD_STOCK' | translate
+              }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (prepaTPV()) {
+      <div class="prepa-batch">
+        <span class="prepa-batch__label">
+          <lucide-icon name="layers" [size]="13" />
+          {{ 'ITEMS.PREPA_BATCH_TPV_LABEL' | translate }}
+        </span>
+        <div class="prepa-batch__cols">
+          <div class="prepa-batch__col">
+            <input
+              type="number"
+              class="prepa-batch__count prepa-batch__count--disabled"
+              value="1"
+              disabled
+            />
+            <span class="prepa-batch__hint">{{ 'ITEMS.ONE_AT_A_TIME' | translate }}</span>
+            <button
+              class="prepa-batch__btn prepa-batch__btn--sub"
+              (click)="onPrepaBatch('Caisse TPV', 'decrement')"
+              [disabled]="!(canDecrementMap?.['prepaTPV'] ?? true)"
+              [title]="('ITEMS.DECREMENT' | translate) + ' (Caisse TPV)'"
+            >
+              <lucide-icon name="minus" [size]="12" />
+              <span class="prepa-batch__btn-label--mobile">{{
+                'ITEMS.DECREMENT' | translate
+              }}</span>
+              <span class="prepa-batch__btn-label--desktop">{{
+                'ITEMS.PREPA_REMOVE_STOCK' | translate
+              }}</span>
+            </button>
+          </div>
+          <div class="prepa-batch__col">
+            <input
+              type="number"
+              class="prepa-batch__count"
+              [value]="prepaTPVCount()"
+              (input)="onPrepaTPVCountChange($event)"
+              min="1"
+            />
+            <span class="prepa-batch__hint">{{ 'ITEMS.ENTER_QUANTITY' | translate }}</span>
+            <button
+              class="prepa-batch__btn prepa-batch__btn--add"
+              (click)="onPrepaBatch('Caisse TPV', 'increment')"
+              [title]="('ITEMS.INCREMENT' | translate) + ' (Caisse TPV)'"
+            >
+              <lucide-icon name="plus" [size]="12" />
+              <span class="prepa-batch__btn-label--mobile">{{
+                'ITEMS.INCREMENT' | translate
+              }}</span>
+              <span class="prepa-batch__btn-label--desktop">{{
+                'ITEMS.PREPA_ADD_STOCK' | translate
+              }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- ─── Content ─────────────────────────────────────── -->
+  @if (isLoading$ | async) {
+    <app-spinner [message]="'ITEMS.LOADING' | translate" />
+  } @else {
+    @let itemList = items$ | async;
+
+    @if (!itemList?.length) {
+      <div class="empty-state">
+        <lucide-icon name="package-x" [size]="48" />
+        <p>{{ 'ITEMS.EMPTY' | translate }}</p>
+      </div>
+    } @else {
+      @let admin = isAdmin$ | async;
+
+      <div class="items-grid">
+        @for (item of itemList; track item._id) {
+          <app-item-card
+            [item]="item"
+            [canDecrement]="item.quantite > 0"
+            [isAdmin]="admin ?? false"
+            (cardClick)="editingItem.set($event)"
+            (delete)="deletingItem.set($event)"
+            (increment)="onIncrement($event)"
+            (decrement)="onDecrement($event)"
+            (uploadPicture)="onUploadPicture($event)"
+          />
+        }
+      </div>
+    }
+
+    <!-- Pagination -->
+    @let tp = totalPages$ | async;
+    @let pg = page$ | async;
+    @let total = total$ | async;
+
+    @if (tp && tp > 1) {
+      <div class="pagination">
+        <button
+          class="page-btn"
+          [disabled]="pg === 1"
+          (click)="onPageChange((pg ?? 1) - 1)"
+          [title]="'COMMON.PREVIOUS' | translate"
+        >
+          <lucide-icon name="chevron-left" [size]="16" />
+        </button>
+
+        @for (p of pageRange(tp); track p) {
+          <button
+            class="page-btn"
+            [class.page-btn--active]="p === pg"
+            (click)="onPageChange(p)"
+            [title]="('ITEMS.PAGE' | translate) + ' ' + p"
+          >
+            {{ p }}
+          </button>
+        }
+
+        <button
+          class="page-btn"
+          [disabled]="pg === tp"
+          (click)="onPageChange((pg ?? 1) + 1)"
+          [title]="'COMMON.NEXT' | translate"
+        >
+          <lucide-icon name="chevron-right" [size]="16" />
+        </button>
+
+        <span class="pagination__count">{{ total }} {{ 'COMMON.TOTAL' | translate }}</span>
+      </div>
+    }
+  }
+</div>
+
+<!-- ─── Modals ────────────────────────────────────────── -->
+@if (showAddModal()) {
+  <app-add-item-modal
+    [posterId]="currentUserId()"
+    (submitted)="onAddSubmit($event)"
+    (cancelled)="showAddModal.set(false)"
+  />
+}
+
+@if (editingItem()) {
+  <app-edit-item-modal
+    [item]="editingItem()!"
+    (submitted)="onEditSubmit($event)"
+    (cancelled)="editingItem.set(null)"
+  />
+}
+
+@if (showExportModal()) {
+  <app-export-modal [items]="(allItems$ | async) ?? []" (cancelled)="showExportModal.set(false)" />
+}
+
+@if (showFiltersModal()) {
+  <app-filters-modal
+    [selectedFournisseurs]="selectedFournisseurs()"
+    [selectedEtats]="selectedEtats()"
+    [prepaCG]="prepaCG()"
+    [prepaTPV]="prepaTPV()"
+    (applied)="onFiltersApplied($event)"
+    (cancelled)="showFiltersModal.set(false)"
+  />
+}
+
+@if (deletingItem()) {
+  <app-confirm-dialog
+    [title]="'ITEMS.DELETE_CONFIRM' | translate"
+    [message]="('ITEMS.DELETE_MESSAGE' | translate) + ' « ' + deletingItem()!.denomination + ' »'"
+    (confirmed)="onDeleteConfirm()"
+    (cancelled)="deletingItem.set(null)"
+  />
+}

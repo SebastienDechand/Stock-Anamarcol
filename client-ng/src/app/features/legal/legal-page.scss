@@ -1,0 +1,130 @@
+@use '../../../scss/mixins' as m;
+
+.legal-page {
+  @include m.page-container;
+}
+
+.legal-container {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+.legal-header {
+  margin-bottom: 32px;
+}
+
+.legal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.legal-subtitle {
+  font-size: 0.875rem;
+  color: var(--color-muted);
+}
+
+// ─── Sections ─────────────────────────────────────────────────────────────────
+.legal-section {
+  margin-bottom: 36px;
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--brand-600);
+    display: inline-block;
+  }
+}
+
+// ─── Card (tableau de données société) ────────────────────────────────────────
+.legal-card {
+  @include m.card;
+  padding: 0;
+  overflow: hidden;
+}
+
+.legal-row {
+  display: flex;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--surface-200);
+  font-size: 0.875rem;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__label {
+    width: 180px;
+    flex-shrink: 0;
+    font-weight: 600;
+    color: var(--color-muted);
+  }
+
+  &__value {
+    color: var(--text-primary);
+
+    &--mono {
+      font-family: monospace;
+      letter-spacing: 0.04em;
+    }
+  }
+}
+
+// ─── Blocks RGPD ──────────────────────────────────────────────────────────────
+.legal-block {
+  margin-bottom: 24px;
+
+  &__title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  &__text {
+    font-size: 0.875rem;
+    color: var(--color-text);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+}
+
+.legal-list {
+  margin: 8px 0 0 20px;
+  padding: 0;
+  list-style: disc;
+
+  li {
+    font-size: 0.875rem;
+    color: var(--color-text);
+    line-height: 1.6;
+    margin-bottom: 4px;
+  }
+}
+
+.legal-link {
+  color: var(--brand-600);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.legal-footer-note {
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+  font-style: italic;
+  text-align: center;
+  margin-top: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--surface-200);
+}

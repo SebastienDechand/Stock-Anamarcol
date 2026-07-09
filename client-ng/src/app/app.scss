@@ -1,0 +1,38 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.app-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgb(255 255 255 / 0.85);
+  backdrop-filter: blur(4px);
+}
+
+.app-loader__spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgb(133 165 94 / 0.25);
+  border-top-color: #85a55e;
+  border-radius: 50%;
+  animation: app-spin 0.75s linear infinite;
+}
+
+.app-loader__text {
+  margin-top: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+@keyframes app-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

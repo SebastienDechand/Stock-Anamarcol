@@ -1,0 +1,194 @@
+<div class="members-page">
+  <app-page-hero
+    [title]="'MEMBERS.TITLE' | translate"
+    iconName="users"
+    [subtitle]="'MEMBERS.SUBTITLE' | translate"
+  >
+    @if (isSuperadmin()) {
+      <button
+        class="btn-primary"
+        (click)="showAddModal.set(true)"
+        [title]="'MEMBERS.ADD' | translate"
+      >
+        <lucide-icon name="user-plus" [size]="16" />
+        {{ 'MEMBERS.ADD' | translate }}
+      </button>
+    }
+  </app-page-hero>
+
+  @if (isLoading$ | async) {
+    <app-spinner [message]="'MEMBERS.LOADING' | translate" />
+  } @else {
+    @let allUsers = users$ | async;
+
+    @if (allUsers) {
+      <!-- Direction (centré) -->
+      <section class="pole-section pole-section--centered">
+        <div class="pole-header">
+          <lucide-icon
+            name="crown"
+            [size]="14"
+            class="pole-header__icon pole-header__icon--direction"
+          />
+          <span class="pole-header__label">{{ 'MEMBERS.POLE_DIRECTION' | translate }}</span>
+        </div>
+        <div class="member-list member-list--single">
+          @let directionUsers = byPole(allUsers, poleDirection);
+          @for (member of directionUsers; track member._id) {
+            <app-member-card
+              [user]="member"
+              [showRoles]="showRoles()"
+              [canDelete]="isSuperadmin()"
+              [clickable]="canEdit(member)"
+              (selected)="openEditModal($event)"
+              (deleteRequested)="deletingUser.set($event)"
+            />
+          }
+          @if (!directionUsers.length) {
+            <p class="empty-pole">{{ 'MEMBERS.EMPTY' | translate }}</p>
+          }
+        </div>
+      </section>
+
+      <!-- Grille opérationnelle -->
+      <div class="poles-grid">
+        <!-- Hotline + Entrepôt -->
+        <div>
+          <section class="pole-section">
+            <div class="pole-header">
+              <lucide-icon
+                name="headphones"
+                [size]="14"
+                class="pole-header__icon pole-header__icon--hotline"
+              />
+              <span class="pole-header__label">{{ 'MEMBERS.POLE_HOTLINE' | translate }}</span>
+            </div>
+            <div class="member-list">
+              @let hotlineUsers = byPole(allUsers, 'Hotline');
+              @for (member of hotlineUsers; track member._id) {
+                <app-member-card
+                  [user]="member"
+                  [showRoles]="showRoles()"
+                  [canDelete]="isSuperadmin()"
+                  [clickable]="canEdit(member)"
+                  (selected)="openEditModal($event)"
+                  (deleteRequested)="deletingUser.set($event)"
+                />
+              }
+              @if (!hotlineUsers.length) {
+                <p class="empty-pole">{{ 'MEMBERS.EMPTY' | translate }}</p>
+              }
+            </div>
+          </section>
+
+          <section class="pole-section">
+            <div class="pole-header">
+              <lucide-icon
+                name="warehouse"
+                [size]="14"
+                class="pole-header__icon pole-header__icon--entrepot"
+              />
+              <span class="pole-header__label">{{ 'MEMBERS.POLE_WAREHOUSE' | translate }}</span>
+            </div>
+            <div class="member-list">
+              @let entrepotUsers = byPole(allUsers, poleEntrepot);
+              @for (member of entrepotUsers; track member._id) {
+                <app-member-card
+                  [user]="member"
+                  [showRoles]="showRoles()"
+                  [canDelete]="isSuperadmin()"
+                  [clickable]="canEdit(member)"
+                  (selected)="openEditModal($event)"
+                  (deleteRequested)="deletingUser.set($event)"
+                />
+              }
+              @if (!entrepotUsers.length) {
+                <p class="empty-pole">{{ 'MEMBERS.EMPTY' | translate }}</p>
+              }
+            </div>
+          </section>
+        </div>
+
+        <!-- Monteur -->
+        <section class="pole-section">
+          <div class="pole-header">
+            <lucide-icon
+              name="wrench"
+              [size]="14"
+              class="pole-header__icon pole-header__icon--monteur"
+            />
+            <span class="pole-header__label">{{ 'MEMBERS.POLE_TECHNICIAN' | translate }}</span>
+          </div>
+          <div class="member-list">
+            @let monteurUsers = byPole(allUsers, 'Monteur');
+            @for (member of monteurUsers; track member._id) {
+              <app-member-card
+                [user]="member"
+                [showRoles]="showRoles()"
+                [canDelete]="isSuperadmin()"
+                [clickable]="canEdit(member)"
+                (selected)="openEditModal($event)"
+                (deleteRequested)="deletingUser.set($event)"
+              />
+            }
+            @if (!monteurUsers.length) {
+              <p class="empty-pole">{{ 'MEMBERS.EMPTY' | translate }}</p>
+            }
+          </div>
+        </section>
+
+        <!-- Gestion du site -->
+        <section class="pole-section">
+          <div class="pole-header">
+            <lucide-icon
+              name="settings"
+              [size]="14"
+              class="pole-header__icon pole-header__icon--gestion"
+            />
+            <span class="pole-header__label">{{ 'MEMBERS.POLE_MANAGEMENT' | translate }}</span>
+          </div>
+          <div class="member-list">
+            @let gestionUsers = byPole(allUsers, poleGestion);
+            @for (member of gestionUsers; track member._id) {
+              <app-member-card
+                [user]="member"
+                [showRoles]="showRoles()"
+                [canDelete]="isSuperadmin()"
+                [clickable]="canEdit(member)"
+                (selected)="openEditModal($event)"
+                (deleteRequested)="deletingUser.set($event)"
+              />
+            }
+            @if (!gestionUsers.length) {
+              <p class="empty-pole">{{ 'MEMBERS.EMPTY' | translate }}</p>
+            }
+          </div>
+        </section>
+      </div>
+    }
+  }
+</div>
+
+@if (showAddModal()) {
+  <app-add-member-modal (submitted)="onAdd($event)" (cancelled)="showAddModal.set(false)" />
+}
+
+@if (editingUser()) {
+  <app-edit-member-modal
+    [user]="editingUser()!"
+    [isSuperadmin]="isSuperadmin()"
+    (saved)="onSave($event)"
+    (pictureUploaded)="onPictureUpload($event)"
+    (cancelled)="editingUser.set(null)"
+  />
+}
+
+@if (deletingUser()) {
+  <app-confirm-dialog
+    [title]="'MEMBERS.CONFIRM_DELETE' | translate"
+    [message]="'MEMBERS.CONFIRM_DELETE_MSG' | translate: { name: deletingUser()!.pseudo }"
+    [confirmLabel]="'MEMBERS.DELETE' | translate"
+    (confirmed)="onDeleteConfirm()"
+    (cancelled)="deletingUser.set(null)"
+  />
+}

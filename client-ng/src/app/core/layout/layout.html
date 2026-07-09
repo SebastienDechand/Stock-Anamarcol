@@ -1,0 +1,9 @@
+<div class="layout" [class.layout--sidebar-open]="uiFacade.sidebarOpen$ | async">
+  <app-sidebar />
+  <div class="layout__body">
+    <app-topbar />
+    <main class="layout__main">
+      <router-outlet />
+    </main>
+  </div>
+</div>

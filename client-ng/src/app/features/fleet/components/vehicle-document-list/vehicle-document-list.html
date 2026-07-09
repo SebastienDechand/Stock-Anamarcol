@@ -1,0 +1,78 @@
+<div class="doc-list">
+  <h3 class="doc-list__title">
+    <lucide-icon [img]="fileText" [size]="16" />
+    {{ 'FLEET.DOCUMENTS' | translate }} ({{ vehicle.documents.length }})
+  </h3>
+
+  @if (!vehicle.documents.length) {
+    <p class="doc-list__empty">{{ 'COMMON.EMPTY' | translate }}</p>
+  } @else {
+    <ul class="doc-list__items">
+      @for (doc of vehicle.documents; track doc._id) {
+        <li class="doc-list__item">
+          <div class="doc-list__item-info">
+            <span class="doc-list__item-name">{{ doc.name }}</span>
+            <span class="doc-list__item-meta"
+              >{{ getLabelKey(doc.type) | translate }} · {{ formatDate(doc.uploadedAt) }}</span
+            >
+          </div>
+          <a
+            class="btn-icon"
+            [href]="fileUrl(doc)"
+            target="_blank"
+            rel="noopener"
+            [title]="'COMMON.VIEW' | translate"
+          >
+            <lucide-icon [img]="fileText" [size]="14" />
+          </a>
+          @if (isAdmin) {
+            <button
+              class="btn-icon btn-icon--danger"
+              (click)="onDelete(doc)"
+              [title]="'FLEET.DELETE' | translate"
+            >
+              <lucide-icon [img]="trash2" [size]="14" />
+            </button>
+          }
+        </li>
+      }
+    </ul>
+  }
+
+  @if (isAdmin) {
+    <div class="doc-list__upload">
+      <h4 class="doc-list__upload-title">{{ 'FLEET.ADD_DOC' | translate }}</h4>
+      <div class="doc-list__upload-form">
+        <input
+          type="text"
+          class="input-base"
+          [placeholder]="'FLEET.DOC_NAME_PLACEHOLDER' | translate"
+          [(ngModel)]="selectedDocName"
+        />
+        <select class="input-base" [(ngModel)]="selectedDocType">
+          @for (opt of docTypeOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.labelKey | translate }}</option>
+          }
+        </select>
+        <label class="doc-list__file-label">
+          <lucide-icon [img]="upload" [size]="14" />
+          {{ selectedFile ? selectedFile.name : ('COMMON.UPLOAD' | translate) }}
+          <input
+            type="file"
+            class="sr-only"
+            (change)="onFileChange($event)"
+            accept=".pdf,.doc,.docx,.xlsx,.xls,.jpg,.jpeg,.png"
+          />
+        </label>
+        <button
+          class="btn-primary"
+          [disabled]="!selectedFile || !selectedDocName.trim()"
+          (click)="submitUpload()"
+          [title]="'FLEET.ADD_DOC' | translate"
+        >
+          {{ 'COMMON.ADD' | translate }}
+        </button>
+      </div>
+    </div>
+  }
+</div>

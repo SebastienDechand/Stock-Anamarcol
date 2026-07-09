@@ -1,0 +1,171 @@
+<div class="page-container">
+  <app-page-hero [title]="'HISTORY.TITLE' | translate" [icon]="clockIcon">
+    <p slot="subtitle">{{ filteredEvents.length }} {{ 'HISTORY.SUBTITLE' | translate }}</p>
+    @if (isSuperadmin$ | async) {
+      <button
+        class="btn-purge"
+        (click)="showPurgeModal.set(true)"
+        [disabled]="isPurging()"
+        [title]="'HISTORY.PURGE' | translate"
+      >
+        <lucide-icon [img]="trash2" [size]="14" />
+        {{ 'HISTORY.PURGE' | translate }}
+      </button>
+    }
+  </app-page-hero>
+
+  <!-- Filtres par action -->
+  <div class="filters">
+    <button
+      class="filter-pill"
+      [class.filter-pill--active]="activeFilter() === 'all'"
+      (click)="activeFilter.set('all')"
+      [title]="'HISTORY.ALL' | translate"
+    >
+      {{ 'HISTORY.ALL' | translate }}
+    </button>
+    @for (key of actionKeys; track key) {
+      <button
+        class="filter-pill"
+        [class.filter-pill--active]="activeFilter() === key"
+        (click)="activeFilter.set(key)"
+        [title]="filterTitle(key)"
+      >
+        {{ actionLabel(key) | translate }}
+      </button>
+    }
+
+    <!-- Filtre utilisateurs -->
+    @if (users().length > 0) {
+      <span class="filters__sep"></span>
+      <div class="user-filter" #userDropdownEl>
+        <button
+          class="filter-pill"
+          [class.filter-pill--active]="selectedUsers().length > 0"
+          (click)="userDropdownOpen.update((v) => !v)"
+          [title]="'HISTORY.USERS' | translate"
+        >
+          {{
+            selectedUsers().length > 0
+              ? ('HISTORY.USERS_SELECTED' | translate: { count: selectedUsers().length })
+              : ('HISTORY.USERS' | translate)
+          }}
+          <lucide-icon [img]="chevDown" [size]="12" />
+        </button>
+        @if (selectedUsers().length > 0) {
+          <button class="filter-clear" (click)="clearUsers()" [title]="'HISTORY.USERS' | translate">
+            <lucide-icon [img]="xIcon" [size]="12" />
+          </button>
+        }
+        @if (userDropdownOpen()) {
+          <div class="user-dropdown">
+            @for (u of users(); track u._id) {
+              <button
+                class="user-option"
+                (click)="toggleUser(u.pseudo)"
+                [title]="'Filtrer par : ' + u.pseudo"
+              >
+                <span
+                  class="user-option__check"
+                  [class.user-option__check--selected]="selectedUsers().includes(u.pseudo)"
+                >
+                  @if (selectedUsers().includes(u.pseudo)) {
+                    <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
+                      <path
+                        d="M2 5L4.5 7.5L8 2.5"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  }
+                </span>
+                {{ u.pseudo }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Recherche -->
+  <div class="page-search">
+    <div class="search-box">
+      <lucide-icon [img]="search" [size]="16" class="search-box__icon" />
+      <input
+        type="text"
+        class="search-box__input"
+        [placeholder]="'HISTORY.SEARCH_PLACEHOLDER' | translate"
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="page-spinner"><app-spinner /></div>
+  } @else {
+    @if (!filteredEvents.length) {
+      <div class="page-empty">{{ 'HISTORY.EMPTY' | translate }}</div>
+    } @else {
+      <div class="events-list">
+        @for (ev of filteredEvents; track ev._id) {
+          <div class="event-row">
+            <div
+              class="event-row__dot event-row__dot--{{ actionMap[ev.action]?.color ?? 'muted' }}"
+            >
+              <lucide-icon
+                [img]="$any(actionIconMap[ev.action] ?? defaultActionIcon)"
+                [size]="14"
+              />
+            </div>
+            <div class="event-row__body">
+              <p class="event-row__text">
+                <span class="event-row__user">{{ ev.userName }}</span>
+                <span class="event-row__desc"> {{ describe(ev) }}</span>
+              </p>
+            </div>
+            <span class="event-row__date">{{ formatDate(ev.createdAt) }}</span>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
+
+<!-- Modale purge -->
+@if (showPurgeModal()) {
+  <div class="modal-overlay" (click)="!isPurging() && showPurgeModal.set(false)">
+    <div class="modal-box modal-box--sm" (click)="$event.stopPropagation()">
+      <div class="modal-box__icon-wrap modal-box__icon-wrap--danger">
+        <lucide-icon [img]="alertTriangle" [size]="24" />
+      </div>
+      <h3 class="modal-box__title">{{ 'HISTORY.PURGE_TITLE' | translate }}</h3>
+      <p class="modal-box__body">{{ 'HISTORY.PURGE_MSG' | translate }}</p>
+      <p class="modal-box__warning">{{ 'HISTORY.PURGE_WARNING' | translate }}</p>
+      <div class="modal-box__actions">
+        <button
+          class="btn-secondary"
+          [disabled]="isPurging()"
+          (click)="showPurgeModal.set(false)"
+          [title]="'HISTORY.CANCEL_PURGE' | translate"
+        >
+          {{ 'HISTORY.CANCEL_PURGE' | translate }}
+        </button>
+        <button
+          class="btn-danger"
+          [disabled]="isPurging()"
+          (click)="purge()"
+          [title]="'HISTORY.CONFIRM_PURGE' | translate"
+        >
+          <lucide-icon [img]="trash2" [size]="14" />
+          {{
+            isPurging() ? ('HISTORY.PURGING' | translate) : ('HISTORY.CONFIRM_PURGE' | translate)
+          }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

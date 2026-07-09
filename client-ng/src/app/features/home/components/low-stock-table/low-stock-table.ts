@@ -1,0 +1,36 @@
+import { Component, Input, signal, computed } from '@angular/core';
+import { LucideAngularModule } from 'lucide-angular';
+import { TranslatePipe } from '@ngx-translate/core';
+import { LowStockItem } from '../../../../shared/models/statistics.model';
+
+type StockTab = 'all' | 'SAV' | 'Neuf';
+
+@Component({
+  selector: 'app-low-stock-table',
+  standalone: true,
+  imports: [LucideAngularModule, TranslatePipe],
+  templateUrl: './low-stock-table.html',
+  styleUrl: './low-stock-table.scss',
+})
+export class LowStockTable {
+  @Input({ required: true }) items!: LowStockItem[];
+
+  activeTab = signal<StockTab>('all');
+
+  readonly tabs: { key: StockTab; label: string }[] = [
+    { key: 'all', label: 'Tous' },
+    { key: 'SAV', label: 'SAV' },
+    { key: 'Neuf', label: 'Neuf' },
+  ];
+
+  get filteredItems(): LowStockItem[] {
+    const tab = this.activeTab();
+    return tab === 'all' ? this.items : this.items.filter((item) => item.etat === tab);
+  }
+
+  countByTab(key: StockTab): number {
+    return key === 'all'
+      ? this.items.length
+      : this.items.filter((item) => item.etat === key).length;
+  }
+}
