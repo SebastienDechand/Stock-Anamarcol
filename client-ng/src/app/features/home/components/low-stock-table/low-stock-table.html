@@ -2,7 +2,7 @@
   <div class="low-stock__header">
     <div class="low-stock__title-row">
       <lucide-icon name="trending-down" [size]="18" class="low-stock__icon" />
-      <h3 class="low-stock__title">{{ 'ARTICLES.LOW_STOCK_TITLE' | translate }}</h3>
+      <h3 class="low-stock__title">{{ 'ITEMS.LOW_STOCK_TITLE' | translate }}</h3>
     </div>
     <div class="low-stock__tabs">
       @for (tab of tabs; track tab.key) {
@@ -12,7 +12,7 @@
           (click)="activeTab.set(tab.key)"
           type="button"
           [title]="
-            ('ARTICLES.STATE_FILTER' | translate) +
+            ('ITEMS.STATE_FILTER' | translate) +
             ' : ' +
             (tab.key === 'all' ? ('COMMON.ALL' | translate) : tab.label)
           "
@@ -28,7 +28,7 @@
 
   @if (filteredItems.length === 0) {
     <p class="low-stock__empty">
-      {{ 'ARTICLES.LOW_STOCK_SUBTITLE' | translate
+      {{ 'ITEMS.LOW_STOCK_SUBTITLE' | translate
       }}{{ activeTab() !== 'all' ? ' (' + activeTab() + ')' : '' }}
     </p>
   } @else {
@@ -56,10 +56,10 @@
       <table class="low-stock__table">
         <thead>
           <tr>
-            <th>{{ 'ARTICLES.DENOMINATION' | translate }}</th>
-            <th>{{ 'ARTICLES.SUPPLIER' | translate }}</th>
-            <th>{{ 'ARTICLES.STATE' | translate }}</th>
-            <th class="low-stock__qty-col">{{ 'ARTICLES.QUANTITY' | translate }}</th>
+            <th>{{ 'ITEMS.DENOMINATION' | translate }}</th>
+            <th>{{ 'ITEMS.SUPPLIER' | translate }}</th>
+            <th>{{ 'ITEMS.STATE' | translate }}</th>
+            <th class="low-stock__qty-col">{{ 'ITEMS.QUANTITY' | translate }}</th>
           </tr>
         </thead>
         <tbody>

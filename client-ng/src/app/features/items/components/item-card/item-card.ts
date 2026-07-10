@@ -31,9 +31,9 @@ export class ItemCard {
 
   get stockLabel(): string {
     const quantite = this.item.quantite;
-    if (quantite <= 2) return 'Urgent';
-    if (quantite < 5) return 'Limite';
-    return 'OK';
+    if (quantite <= 2) return 'ITEMS.STOCK_CRITICAL';
+    if (quantite < 5) return 'ITEMS.STOCK_LOW';
+    return 'ITEMS.STOCK_OK';
   }
 
   get stockMod(): string {

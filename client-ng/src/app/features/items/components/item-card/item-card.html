@@ -1,7 +1,7 @@
 <div class="item-card" (click)="cardClick.emit(item)">
   <div class="item-card__img-wrap">
     <span class="item-card__stock-badge item-card__stock-badge--{{ stockMod }}">
-      {{ stockLabel }}
+      {{ stockLabel | translate }}
     </span>
 
     @if (isAdmin) {
