@@ -3,13 +3,13 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 export interface IItem extends Document {
   posterId?: string;
   modifierName?: string;
-  denomination: string;
-  quantite: number;
-  fournisseur: string;
+  name: string;
+  quantity: number;
+  supplier: string;
   image?: string;
-  etat: string;
-  prepaCG?: boolean;
-  prepaTPV?: boolean;
+  status: string;
+  cgKit?: boolean;
+  tpvKit?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,19 +23,19 @@ const ItemSchema = new Schema<IItem>(
       type: String,
       default: "",
     },
-    denomination: {
+    name: {
       type: String,
       trim: true,
       required: true,
       index: true,
     },
-    quantite: {
+    quantity: {
       type: Number,
       required: true,
       default: 0,
       min: 0,
     },
-    fournisseur: {
+    supplier: {
       type: String,
       required: true,
       index: true,
@@ -44,16 +44,16 @@ const ItemSchema = new Schema<IItem>(
       type: String,
       default: "./logo_small.jpg",
     },
-    etat: {
+    status: {
       type: String,
       required: true,
       index: true,
     },
-    prepaCG: {
+    cgKit: {
       type: Boolean,
       default: false,
     },
-    prepaTPV: {
+    tpvKit: {
       type: Boolean,
       default: false,
     },
@@ -64,9 +64,9 @@ const ItemSchema = new Schema<IItem>(
 );
 
 // Compound index for frequent filters
-ItemSchema.index({ fournisseur: 1, etat: 1, denomination: 1 });
+ItemSchema.index({ supplier: 1, status: 1, name: 1 });
 // Index for low-stock queries
-ItemSchema.index({ quantite: 1 });
+ItemSchema.index({ quantity: 1 });
 
 const ItemModel: Model<IItem> = mongoose.model<IItem>("item", ItemSchema);
 

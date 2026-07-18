@@ -4,10 +4,10 @@ import { FiltersModal } from '../filters-modal';
 describe('FiltersModal — togglePrepa()', () => {
   function build(): FiltersModal {
     const modal = new FiltersModal();
-    modal.selectedFournisseurs = [];
-    modal.selectedEtats = [];
-    modal.prepaCG = false;
-    modal.prepaTPV = false;
+    modal.selectedSuppliers = [];
+    modal.selectedStatuses = [];
+    modal.cgKit = false;
+    modal.tpvKit = false;
     modal.ngOnInit();
     return modal;
   }
@@ -15,38 +15,38 @@ describe('FiltersModal — togglePrepa()', () => {
   it('should activate CashGuard when neither is active', () => {
     const modal = build();
     modal.togglePrepa('CashGuard');
-    expect(modal.localPrepaCG()).toBe(true);
-    expect(modal.localPrepaTPV()).toBe(false);
+    expect(modal.localCgKit()).toBe(true);
+    expect(modal.localTpvKit()).toBe(false);
   });
 
   it('should activate Caisse TPV when neither is active', () => {
     const modal = build();
     modal.togglePrepa('Caisse TPV');
-    expect(modal.localPrepaCG()).toBe(false);
-    expect(modal.localPrepaTPV()).toBe(true);
+    expect(modal.localCgKit()).toBe(false);
+    expect(modal.localTpvKit()).toBe(true);
   });
 
   it('should deactivate CashGuard when already active', () => {
     const modal = build();
     modal.togglePrepa('CashGuard');
     modal.togglePrepa('CashGuard');
-    expect(modal.localPrepaCG()).toBe(false);
-    expect(modal.localPrepaTPV()).toBe(false);
+    expect(modal.localCgKit()).toBe(false);
+    expect(modal.localTpvKit()).toBe(false);
   });
 
   it('should switch from CashGuard to Caisse TPV exclusively', () => {
     const modal = build();
     modal.togglePrepa('CashGuard');
     modal.togglePrepa('Caisse TPV');
-    expect(modal.localPrepaCG()).toBe(false);
-    expect(modal.localPrepaTPV()).toBe(true);
+    expect(modal.localCgKit()).toBe(false);
+    expect(modal.localTpvKit()).toBe(true);
   });
 
   it('should switch from Caisse TPV to CashGuard exclusively', () => {
     const modal = build();
     modal.togglePrepa('Caisse TPV');
     modal.togglePrepa('CashGuard');
-    expect(modal.localPrepaCG()).toBe(true);
-    expect(modal.localPrepaTPV()).toBe(false);
+    expect(modal.localCgKit()).toBe(true);
+    expect(modal.localTpvKit()).toBe(false);
   });
 });

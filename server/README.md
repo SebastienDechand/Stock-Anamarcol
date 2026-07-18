@@ -2,7 +2,7 @@
 
 # ⚙️ Stock Anamarcol - Backend
 
-**API REST pour la gestion de stock Anamarcol**
+**REST API for Anamarcol stock management**
 
 Express 5 • TypeScript • MongoDB Atlas • JWT
 
@@ -16,24 +16,24 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 
 ---
 
-## 📦 Stack technique
+## 📦 Tech stack
 
-| Technologie   | Version | Rôle                                |
-| ------------- | ------- | ----------------------------------- |
+| Technology    | Version | Role                                |
+| ------------- | ------- | ------------------------------------ |
 | Node.js       | `20.x`  | Runtime                             |
-| Express       | `5.2`   | Framework HTTP                      |
-| TypeScript    | `5.9`   | Typage statique                     |
-| MongoDB Atlas | `-`     | Base de données                     |
+| Express       | `5.2`   | HTTP framework                      |
+| TypeScript    | `5.9`   | Static typing                       |
+| MongoDB Atlas | `-`     | Database                            |
 | Mongoose      | `9.2`   | ODM (Object Document Mapper)        |
-| JWT           | `9.0`   | Authentification par token          |
-| Bcrypt        | `6.0`   | Hashage des mots de passe           |
-| Multer        | `2.0`   | Upload de fichiers (memory storage) |
-| ImgBB API     | `-`     | Hébergement d'images                |
-| Helmet        | `8.1`   | En-têtes de sécurité HTTP           |
-| Compression   | `1.8`   | Compression Gzip                    |
-| CORS          | `2.8`   | Politique cross-origin              |
-| Cookie Parser | `1.4`   | Lecture des cookies JWT             |
-| Validator     | `13.15` | Validation des emails               |
+| JWT           | `9.0`   | Token-based authentication          |
+| Bcrypt        | `6.0`   | Password hashing                    |
+| Multer        | `2.0`   | File uploads (memory storage)       |
+| ImgBB API     | `-`     | Image hosting                       |
+| Helmet        | `8.1`   | HTTP security headers               |
+| Compression   | `1.8`   | Gzip compression                    |
+| CORS          | `2.8`   | Cross-origin policy                 |
+| Cookie Parser | `1.4`   | JWT cookie parsing                  |
+| Validator     | `13.15` | Email validation                    |
 
 ---
 
@@ -41,8 +41,8 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 
 ```
 server/
-├── __tests__/                        Tests unitaires
-│   ├── audit.controller.test.ts         Historique & purge
+├── __tests__/                        Unit tests
+│   ├── audit.controller.test.ts         History & purge
 │   ├── audit.utils.test.ts
 │   ├── auth.controller.test.ts
 │   ├── auth.middleware.test.ts          Auth + requireSuperAdmin
@@ -61,25 +61,25 @@ server/
 │   └── validate.utils.test.ts
 │
 ├── config/
-│   ├── db.ts                             Connexion MongoDB Atlas
-│   └── swagger.ts                        Configuration Swagger (dev only)
+│   ├── db.ts                             MongoDB Atlas connection
+│   └── swagger.ts                        Swagger configuration (dev only)
 │
-├── constants/index.ts                 Constantes partagées
+├── constants/index.ts                 Shared constants
 │
 ├── controllers/
-│   ├── audit.controller.ts               Historique global & purge
+│   ├── audit.controller.ts               Global history & purge
 │   ├── auth.controller.ts                Register, login, logout
-│   ├── clientFile.controller.ts          CRUD fiches clients
-│   ├── contacts.controller.ts            CRUD contacts
+│   ├── clientFile.controller.ts          Client file CRUD
+│   ├── contacts.controller.ts            Contact CRUD
 │   ├── history.controller.ts
-│   ├── interventionReport.controller.ts  CRUD rapports d'intervention
-│   ├── item.controller.ts                CRUD articles + prepaBatch
-│   ├── shipments.controller.ts           CRUD envois
-│   ├── stats.controller.ts               Statistiques & dashboard
-│   ├── upload.controller.ts              Upload avatar profil
-│   ├── uploadContact.controller.ts       Upload photo contact
-│   ├── uploadItem.controller.ts          Upload image article
-│   └── user.controller.ts                CRUD users + setRole
+│   ├── interventionReport.controller.ts  Intervention report CRUD
+│   ├── item.controller.ts                Item CRUD + prepaBatch
+│   ├── shipments.controller.ts           Shipment CRUD
+│   ├── stats.controller.ts               Statistics & dashboard
+│   ├── upload.controller.ts              Profile avatar upload
+│   ├── uploadContact.controller.ts       Contact photo upload
+│   ├── uploadItem.controller.ts          Item image upload
+│   └── user.controller.ts                User CRUD + setRole
 │
 ├── middleware/
 │   ├── auth.middleware.ts                checkUser, requireAuth, requireAdmin, requireSuperAdmin
@@ -87,20 +87,20 @@ server/
 │   └── sanitize.ts
 │
 ├── models/
-│   ├── audit.model.ts                    Schéma Audit (TTL 30 jours)
-│   ├── clientFile.model.ts               Schéma Fiche client
-│   ├── contact.model.ts                  Schéma Contact
-│   ├── history.model.ts                  Schéma History (TTL 30 jours)
-│   ├── interventionReport.model.ts       Schéma Rapport d'intervention
-│   ├── item.model.ts                     Schéma Item
-│   ├── shipment.model.ts                 Schéma Envoi
-│   ├── shipmentArchive.model.ts          Schéma Archive envoi
-│   └── user.model.ts                     Schéma User
+│   ├── audit.model.ts                    Audit schema (30-day TTL)
+│   ├── clientFile.model.ts               Client file schema
+│   ├── contact.model.ts                  Contact schema
+│   ├── history.model.ts                  History schema (30-day TTL)
+│   ├── interventionReport.model.ts       Intervention report schema
+│   ├── item.model.ts                     Item schema
+│   ├── shipment.model.ts                 Shipment schema
+│   ├── shipmentArchive.model.ts          Shipment archive schema
+│   └── user.model.ts                     User schema
 │
 ├── routes/
 │   ├── clientFile.routes.ts
 │   ├── contacts.routes.ts
-│   ├── history.routes.ts                 Historique global + purge
+│   ├── history.routes.ts                 Global history + purge
 │   ├── interventionReport.routes.ts
 │   ├── item.routes.ts
 │   ├── shipments.routes.ts
@@ -108,158 +108,158 @@ server/
 │   └── user.routes.ts
 │
 ├── utils/
-│   ├── audit.utils.ts                    Journal d'audit (logEvent, getRecentEvents)
-│   ├── history.utils.ts                  Historique articles (logItemCreate, logItemChanges, logItemDelete)
-│   ├── upload.utils.ts                   Validation fichier + upload ImgBB
-│   └── validate.utils.ts                 Validation ObjectId MongoDB
+│   ├── audit.utils.ts                    Audit log (logEvent, getRecentEvents)
+│   ├── history.utils.ts                  Item history (logItemCreate, logItemChanges, logItemDelete)
+│   ├── upload.utils.ts                   File validation + ImgBB upload
+│   └── validate.utils.ts                 MongoDB ObjectId validation
 │
-├── app.ts                             Config Express (middleware, routes)
-├── errors.utils.ts                    Formatage des erreurs
-├── index.ts                           Point d'entrée (dotenv, DB, listen)
+├── app.ts                             Express config (middleware, routes)
+├── errors.utils.ts                    Error formatting
+├── index.ts                           Entry point (dotenv, DB, listen)
 └── package.json
 ```
 
 ---
 
-## 🔌 Endpoints API
+## 🔌 API Endpoints
 
-> Base URL : `/api`
+> Base URL: `/api`
 
-### Authentification - `/api/user`
+### Authentication - `/api/user`
 
-| Méthode | Route       |  Auth  | Description                                          |
-| ------- | ----------- | :----: | ------------------------------------------------------ |
-| `POST`  | `/register` | Admin  | Création d'un compte (pseudo, email, password)         |
-| `POST`  | `/login`    | Public | Connexion → cookie JWT                                 |
-| `GET`   | `/logout`   | Public | Déconnexion (suppression cookie)                       |
+| Method | Route       |  Auth  | Description                                          |
+| ------ | ----------- | :----: | ------------------------------------------------------ |
+| `POST` | `/register` | Admin  | Account creation (pseudo, email, password)              |
+| `POST` | `/login`    | Public | Login → JWT cookie                                      |
+| `GET`  | `/logout`   | Public | Logout (cookie removal)                                 |
 
-> `/register` n'est pas de l'auto-inscription : seul un admin peut créer un compte (mêmes handler et route que `POST /api/user`, voir ci-dessous).
+> `/register` is not self-service sign-up: only an admin can create an account (same handler and route as `POST /api/user`, see below).
 
-### Utilisateurs - `/api/user`
+### Users - `/api/user`
 
-| Méthode  | Route        | Auth  | Description                                                  |
-| -------- | ------------- | :---: | --------------------------------------------------------------- |
-| `GET`    | `/`           |  🔒   | Liste de tous les utilisateurs                                  |
-| `GET`    | `/:id`        |  🔒   | Détail d'un utilisateur                                          |
-| `POST`   | `/`           | Admin | Création d'un utilisateur                                       |
-| `PUT`    | `/:id`        |  🔒   | Mise à jour d'un utilisateur (soi-même, ou n'importe qui si admin) |
-| `DELETE` | `/:id`        | Admin | Suppression d'un utilisateur                                     |
-| `PUT`    | `/:id/role`   | Admin | Changer le rôle unique d'un utilisateur (legacy)                 |
-| `PUT`    | `/:id/roles`  | Admin | Remplacer le tableau `roles[]` d'un utilisateur                  |
-| `POST`   | `/upload`     |  🔒   | Upload d'avatar                                                  |
+| Method   | Route        | Auth  | Description                                                     |
+| -------- | ------------- | :---: | ----------------------------------------------------------------- |
+| `GET`    | `/`           |  🔒   | List of all users                                                  |
+| `GET`    | `/:id`        |  🔒   | User details                                                       |
+| `POST`   | `/`           | Admin | Create a user                                                     |
+| `PUT`    | `/:id`        |  🔒   | Update a user (self, or anyone if admin)                          |
+| `DELETE` | `/:id`        | Admin | Delete a user                                                     |
+| `PUT`    | `/:id/role`   | Admin | Change a user's single role (legacy)                              |
+| `PUT`    | `/:id/roles`  | Admin | Replace a user's `roles[]` array                                  |
+| `POST`   | `/upload`     |  🔒   | Upload avatar                                                     |
 
-> `PUT /:id` accepte un utilisateur non-admin modifiant son propre profil ; les champs modifiables hors admin sont restreints côté contrôleur (`user.controller.ts`), pas au niveau de la route.
+> `PUT /:id` allows a non-admin user to update their own profile; the fields editable outside of admin are restricted at the controller level (`user.controller.ts`), not at the route level.
 
-### Articles - `/api/item`
+### Items - `/api/item`
 
-| Méthode  | Route          |    Auth     | Description                                                           |
-| -------- | -------------- | :---------: | --------------------------------------------------------------------- |
-| `GET`    | `/`            |     🔒      | Liste paginée + filtres (search, fournisseur, etat, lowStock, sort)   |
-| `GET`    | `/:id`         |     🔒      | Détail d'un article                                                   |
-| `POST`   | `/`            |     🔒      | Création d'un article                                                 |
-| `PUT`    | `/:id`         |     🔒      | Mise à jour (denomination, fournisseur, etat, quantite, modifierName) |
-| `DELETE` | `/:id`         |    Admin    | Suppression d'un article                                              |
-| `GET`    | `/history/:id` |     🔒      | Historique des modifications d'un article                             |
-| `POST`   | `/prepa-batch` |     🔒      | Décrémentation/incrémentation groupée par préparation                 |
-| `POST`   | `/upload`      | 🔒 + Multer | Upload d'image article                                                |
+| Method   | Route          |    Auth     | Description                                                            |
+| -------- | -------------- | :---------: | ----------------------------------------------------------------------- |
+| `GET`    | `/`            |     🔒      | Paginated list + filters (search, supplier, status, lowStock, sort)     |
+| `GET`    | `/:id`         |     🔒      | Item details                                                            |
+| `POST`   | `/`            |     🔒      | Create an item                                                          |
+| `PUT`    | `/:id`         |     🔒      | Update (name, supplier, status, quantity, modifierName)                 |
+| `DELETE` | `/:id`         |    Admin    | Delete an item                                                          |
+| `GET`    | `/history/:id` |     🔒      | Change history of an item                                               |
+| `POST`   | `/prepa-batch` |     🔒      | Batch decrement/increment for prep operations                          |
+| `POST`   | `/upload`      | 🔒 + Multer | Upload item image                                                       |
 
-### Historique - `/api/history`
+### History - `/api/history`
 
-| Méthode | Route    |    Auth    | Description                                          |
-| ------- | -------- | :--------: | ---------------------------------------------------- |
-| `GET`   | `/`      |     🔒     | Journal des modifications et audit (limité 30 jours) |
-| `POST`  | `/purge` | Superadmin | Purge complète historique + audit                    |
+| Method | Route    |    Auth    | Description                                             |
+| ------ | -------- | :--------: | --------------------------------------------------------- |
+| `GET`  | `/`      |     🔒     | Log of changes and audit events (limited to 30 days)      |
+| `POST` | `/purge` | Superadmin | Full purge of history + audit                             |
 
 ### Contacts - `/api/contacts`
 
-| Méthode  | Route     |      Auth      | Description                |
-| -------- | --------- | :------------: | -------------------------- |
-| `GET`    | `/`       |       🔒       | Liste de tous les contacts |
-| `GET`    | `/:id`    |       🔒       | Détail d'un contact        |
-| `POST`   | `/`       |     Admin      | Création d'un contact      |
-| `PUT`    | `/:id`    |     Admin      | Mise à jour d'un contact   |
-| `DELETE` | `/:id`    |     Admin      | Suppression d'un contact   |
-| `POST`   | `/upload` | Admin + Multer | Upload photo contact       |
+| Method   | Route     |      Auth      | Description             |
+| -------- | --------- | :------------: | ------------------------- |
+| `GET`    | `/`       |       🔒       | List of all contacts      |
+| `GET`    | `/:id`    |       🔒       | Contact details           |
+| `POST`   | `/`       |     Admin      | Create a contact          |
+| `PUT`    | `/:id`    |     Admin      | Update a contact          |
+| `DELETE` | `/:id`    |     Admin      | Delete a contact          |
+| `POST`   | `/upload` | Admin + Multer | Upload contact photo      |
 
-### Envois - `/api/shipments`
+### Shipments - `/api/shipments`
 
-| Méthode  | Route                      |  Auth   | Description                             |
-| -------- | --------------------------- | :-----: | ---------------------------------------- |
-| `GET`    | `/`                          |   🔒    | Liste des envois                         |
-| `GET`    | `/archives`                  |  Admin  | Liste des envois archivés                |
-| `GET`    | `/archives/:id/download`     |  Admin  | Téléchargement d'une archive              |
-| `POST`   | `/`                          | Hotline | Création d'un envoi                      |
-| `POST`   | `/archive`                   |  Admin  | Archivage d'un envoi                     |
-| `PUT`    | `/:id/sent`                  | Hotline | Marquer un envoi comme envoyé            |
-| `DELETE` | `/:id`                       |  Admin  | Suppression d'un envoi                   |
+| Method   | Route                     |  Auth   | Description                        |
+| -------- | -------------------------- | :-----: | ------------------------------------ |
+| `GET`    | `/`                         |   🔒    | List of shipments                    |
+| `GET`    | `/archives`                 |  Admin  | List of archived shipments           |
+| `GET`    | `/archives/:id/download`    |  Admin  | Download an archive                  |
+| `POST`   | `/`                         | Hotline | Create a shipment                    |
+| `POST`   | `/archive`                  |  Admin  | Archive a shipment                   |
+| `PUT`    | `/:id/sent`                 | Hotline | Mark a shipment as sent              |
+| `DELETE` | `/:id`                      |  Admin  | Delete a shipment                    |
 
-### Fiches clients - `/api/client-files`
+### Client files - `/api/client-files`
 
-| Méthode  | Route                        |  Auth   | Description                    |
-| -------- | ----------------------------- | :-----: | ------------------------------- |
-| `GET`    | `/`                            |   🔒    | Liste des fiches clients        |
-| `GET`    | `/:id`                         |   🔒    | Détail d'une fiche client       |
-| `POST`   | `/`                            | Monteur | Création d'une fiche client     |
-| `PUT`    | `/:id`                         | Monteur | Mise à jour d'une fiche client  |
-| `POST`   | `/:id/documents`               | Monteur | Upload d'un document lié        |
-| `DELETE` | `/:id/documents/:docId`        | Monteur | Suppression d'un document       |
-| `DELETE` | `/:id`                         |  Admin  | Suppression d'une fiche client  |
+| Method   | Route                       |  Auth   | Description                 |
+| -------- | ----------------------------- | :-----: | ----------------------------- |
+| `GET`    | `/`                            |   🔒    | List of client files          |
+| `GET`    | `/:id`                         |   🔒    | Client file details           |
+| `POST`   | `/`                            | Monteur | Create a client file          |
+| `PUT`    | `/:id`                         | Monteur | Update a client file          |
+| `POST`   | `/:id/documents`               | Monteur | Upload a linked document      |
+| `DELETE` | `/:id/documents/:docId`        | Monteur | Delete a document              |
+| `DELETE` | `/:id`                         |  Admin  | Delete a client file           |
 
-### Rapports d'intervention - `/api/intervention-reports`
+### Intervention reports - `/api/intervention-reports`
 
-| Méthode  | Route  |  Auth   | Description              |
-| -------- | ------ | :-----: | ------------------------- |
-| `GET`    | `/`    |   🔒    | Liste des rapports        |
-| `GET`    | `/:id` |   🔒    | Détail d'un rapport       |
-| `POST`   | `/`    | Monteur | Création d'un rapport     |
-| `PUT`    | `/:id` | Monteur | Mise à jour d'un rapport  |
-| `DELETE` | `/:id` |  Admin  | Suppression d'un rapport  |
+| Method   | Route  |  Auth   | Description            |
+| -------- | ------ | :-----: | ------------------------ |
+| `GET`    | `/`    |   🔒    | List of reports          |
+| `GET`    | `/:id` |   🔒    | Report details           |
+| `POST`   | `/`    | Monteur | Create a report          |
+| `PUT`    | `/:id` | Monteur | Update a report          |
+| `DELETE` | `/:id` |  Admin  | Delete a report          |
 
-### Statistiques - `/api/statistics`
+### Statistics - `/api/statistics`
 
-| Méthode | Route                        | Auth | Description                                        |
-| ------- | ---------------------------- | :--: | -------------------------------------------------- |
-| `GET`   | `/dashboard`                 |  🔒  | Dashboard unifié (toutes les stats, **cache 30s**) |
-| `GET`   | `/articles`                  |  🔒  | Nombre total d'articles                            |
-| `GET`   | `/stock`                     |  🔒  | Stock total                                        |
-| `GET`   | `/fournisseurs`              |  🔒  | Nombre de fournisseurs                             |
-| `GET`   | `/articles/stockinf5`        |  🔒  | Nombre d'articles en stock bas                     |
-| `GET`   | `/articles/low-stock`        |  🔒  | Liste des articles en stock bas                    |
-| `GET`   | `/fournisseurs/list`         |  🔒  | Liste des fournisseurs                             |
-| `GET`   | `/fournisseurs/:fournisseur` |  🔒  | Stats par fournisseur                              |
-| `GET`   | `/etats/list`                |  🔒  | Liste des états                                    |
-| `GET`   | `/etats/:etat`               |  🔒  | Stats par état                                     |
+| Method | Route                        | Auth | Description                                     |
+| ------ | ----------------------------- | :--: | -------------------------------------------------- |
+| `GET`  | `/dashboard`                 |  🔒  | Unified dashboard (all stats, **30s cache**)       |
+| `GET`  | `/articles`                  |  🔒  | Total number of items                              |
+| `GET`  | `/stock`                     |  🔒  | Total stock                                        |
+| `GET`  | `/suppliers`               |  🔒  | Number of suppliers                                |
+| `GET`  | `/articles/stockinf5`        |  🔒  | Number of items with low stock                     |
+| `GET`  | `/articles/low-stock`        |  🔒  | List of low-stock items                            |
+| `GET`  | `/suppliers/list`         |  🔒  | List of suppliers                                  |
+| `GET`  | `/suppliers/:supplier`  |  🔒  | Stats by supplier                                  |
+| `GET`  | `/statuses/list`                 |  🔒  | List of statuses                                   |
+| `GET`  | `/statuses/:status`                |  🔒  | Stats by status                                    |
 
 ### JWT - `/jwtid`
 
-| Méthode | Route    | Auth | Description                                   |
-| ------- | -------- | :--: | --------------------------------------------- |
-| `GET`   | `/jwtid` |  🔒  | Retourne `{ _id, role }` depuis le cookie JWT |
+| Method | Route    | Auth | Description                                    |
+| ------ | -------- | :--: | -------------------------------------------- |
+| `GET`  | `/jwtid` |  🔒  | Returns `{ _id, role }` from the JWT cookie   |
 
-> **Légende :** Public • 🔒 `requireAuth` • Hotline `requireHotline` • Monteur `requireMonteur` • Admin `requireAdmin` • Superadmin `requireSuperAdmin` • Multer (upload)
+> **Legend:** Public • 🔒 `requireAuth` • Hotline `requireHotline` • Monteur `requireMonteur` • Admin `requireAdmin` • Superadmin `requireSuperAdmin` • Multer (upload)
 
 ---
 
-## 📐 Modèles Mongoose
+## 📐 Mongoose models
 
 <details>
 <summary><strong>User</strong></summary>
 
 ```typescript
 {
-  pseudo: string; // requis, unique, 3-30 caractères
-  email: string; // requis, unique, validé par validator
-  password: string; // requis, 6-1024 chars, hashé bcrypt (salt=10)
-  picture: string; // défaut: "./uploads/profil/random-user.png"
-  poste: string; // max 1024 caractères
+  pseudo: string; // required, unique, 3-30 characters
+  email: string; // required, unique, validated with validator
+  password: string; // required, 6-1024 chars, bcrypt hashed (salt=10)
+  picture: string; // default: "./uploads/profil/random-user.png"
+  poste: string; // max 1024 characters
   numero: string;
-  pole: string; // enum: Direction, Hotline, Entrepôt, Monteur, Gestion du site, "" (défaut: "")
-  roles: string[]; // enum cumulable: superadmin, admin, hotline, monteur, user (défaut: [])
+  pole: string; // enum: Direction, Hotline, Entrepôt, Monteur, Gestion du site, "" (default: "")
+  roles: string[]; // stackable enum: superadmin, admin, hotline, monteur, user (default: [])
   timestamps: true; // createdAt, updatedAt
 }
 
-// Hook pre-save : hashage automatique du mot de passe
-// Méthode statique : login(email, password) → User
+// Pre-save hook: automatic password hashing
+// Static method: login(email, password) → User
 ```
 
 </details>
@@ -270,20 +270,20 @@ server/
 ```typescript
 {
   posterId: string;
-  modifierName: string; // défaut: ""
-  denomination: string; // requis, indexé
-  quantite: number; // requis, défaut: 0, min: 0
-  fournisseur: string; // requis, indexé
-  image: string; // défaut: "./logo_small.jpg"
-  etat: string; // requis, indexé
-  prepaCG: boolean; // Fait partie de la prépa CashGuard
-  prepaCaisse: boolean; // Fait partie de la prépa Caisse
-  prepaTPV: boolean; // Fait partie de la prépa TPV
+  modifierName: string; // default: ""
+  name: string; // required, indexed
+  quantity: number; // required, default: 0, min: 0
+  supplier: string; // required, indexed
+  image: string; // default: "./logo_small.jpg"
+  status: string; // required, indexed
+  cgKit: boolean; // Part of the CashGuard prep
+  prepaCaisse: boolean; // Part of the Caisse prep
+  tpvKit: boolean; // Part of the TPV prep
   timestamps: true;
 }
 
-// Index composé : { fournisseur, etat, denomination }
-// Index simple  : { quantite }
+// Compound index: { supplier, status, name }
+// Single index : { quantity }
 ```
 
 </details>
@@ -293,11 +293,11 @@ server/
 
 ```typescript
 {
-  nom: string; // requis
+  nom: string; // required
   email: string; // lowercase, trimmed
   lien: string;
-  picture: string; // défaut: "./uploads/profil/random-user.png"
-  poste: string; // max 1024 caractères
+  picture: string; // default: "./uploads/profil/random-user.png"
+  poste: string; // max 1024 characters
   tel: string;
   timestamps: true;
 }
@@ -307,84 +307,84 @@ server/
 
 ---
 
-## 🛡️ Middleware d'authentification
+## 🛡️ Authentication middleware
 
-| Middleware          | Type                | Comportement                                                              |
-| -------------------- | -------------------- | --------------------------------------------------------------------------- |
-| `checkUser`          | Non-bloquant         | Vérifie le JWT, peuple `res.locals.user`, continue même sans token          |
-| `requireAuth`        | 🔒 Bloquant          | Exige un JWT valide → `401` sinon                                          |
-| `requireHotline`     | Hotline Bloquant     | Exige `roles` incluant `hotline`, `admin` ou `superadmin` → `401`/`403`     |
-| `requireMonteur`     | Monteur Bloquant     | Exige `roles` incluant `monteur`, `admin` ou `superadmin` → `401`/`403`     |
-| `requireAdmin`       | Admin Bloquant       | Exige `roles` incluant `admin` ou `superadmin` → `401`/`403` sinon          |
-| `requireSuperAdmin`  | Superadmin Bloquant  | Exige `roles` incluant `superadmin` → `401`/`403` sinon                     |
+| Middleware          | Type                | Behavior                                                                     |
+| -------------------- | -------------------- | ------------------------------------------------------------------------------ |
+| `checkUser`          | Non-blocking         | Verifies the JWT, populates `res.locals.user`, continues even without a token  |
+| `requireAuth`        | 🔒 Blocking          | Requires a valid JWT → `401` otherwise                                        |
+| `requireHotline`     | Hotline Blocking     | Requires `roles` to include `hotline`, `admin`, or `superadmin` → `401`/`403`  |
+| `requireMonteur`     | Monteur Blocking     | Requires `roles` to include `monteur`, `admin`, or `superadmin` → `401`/`403`  |
+| `requireAdmin`       | Admin Blocking       | Requires `roles` to include `admin` or `superadmin` → `401`/`403` otherwise    |
+| `requireSuperAdmin`  | Superadmin Blocking  | Requires `roles` to include `superadmin` → `401`/`403` otherwise               |
 
-> Tous les middlewares lisent le token depuis le cookie `jwt`, vérifient avec `TOKEN_SECRET`, puis chargent `user.roles` (tableau cumulable) en base.
-> Si l'email du compte correspond à `SUPERADMIN_EMAIL`, `roles` est forcé à `["superadmin"]` à la volée (voir `resolveUser` dans `auth.middleware.ts`), sans persister ce rôle en base.
+> All middleware read the token from the `jwt` cookie, verify it with `TOKEN_SECRET`, then load `user.roles` (a stackable array) from the database.
+> If the account's email matches `SUPERADMIN_EMAIL`, `roles` is forced to `["superadmin"]` on the fly (see `resolveUser` in `auth.middleware.ts`), without persisting that role to the database.
 
 ---
 
-## 🖼️ Système d'upload
+## 🖼️ Upload system
 
-### Flux
+### Flow
 
 ```
 📱 Client (FormData + file)
   ↓
 📁 Multer (memory storage, buffer)
   ↓
-✅ Validation (type MIME + taille < 2.5 Mo)
+✅ Validation (MIME type + size < 2.5 MB)
   ↓
-☁️ Upload vers ImgBB (base64)
+☁️ Upload to ImgBB (base64)
   ↓
-💾 URL publique sauvée en BDD
+💾 Public URL saved to the database
 ```
 
-### Contraintes
+### Constraints
 
-| Règle             | Valeur                                 |
-| ----------------- | -------------------------------------- |
-| 🖼️ Types acceptés | `image/jpg`, `image/jpeg`, `image/png` |
-| 📏 Taille max     | 2.5 Mo                                 |
-| ☁️ Stockage       | Aucun fichier local - tout sur ImgBB   |
+| Rule              | Value                                  |
+| ------------------ | --------------------------------------- |
+| 🖼️ Accepted types  | `image/jpg`, `image/jpeg`, `image/png`  |
+| 📏 Max size        | 2.5 MB                                  |
+| ☁️ Storage         | No local files - everything on ImgBB    |
 
 ### Controllers
 
-| Controller                    | Route                       | Modèle            |
-| ----------------------------- | --------------------------- | ----------------- |
-| `upload.controller.ts`        | `POST /api/user/upload`     | `User.picture`    |
-| `uploadItem.controller.ts`    | `POST /api/item/upload`     | `Item.image`      |
-| `uploadContact.controller.ts` | `POST /api/contacts/upload` | `Contact.picture` |
+| Controller                    | Route                        | Model              |
+| ----------------------------- | ---------------------------- | ------------------ |
+| `upload.controller.ts`        | `POST /api/user/upload`      | `User.picture`     |
+| `uploadItem.controller.ts`    | `POST /api/item/upload`      | `Item.image`       |
+| `uploadContact.controller.ts` | `POST /api/contacts/upload`  | `Contact.picture`  |
 
 ---
 
-## ❌ Gestion des erreurs
+## ❌ Error handling
 
-`errors.utils.ts` fournit des fonctions de formatage structuré :
+`errors.utils.ts` provides structured formatting functions:
 
-| Fonction                        | Retour                                          | Cas d'usage                         |
-| ------------------------------- | ----------------------------------------------- | ----------------------------------- |
-| `signUpErrors(err)`             | `{ pseudo, email, password }`                   | Inscription (validation + doublons) |
-| `signInErrors(err)`             | `{ email, password }`                           | Connexion                           |
-| `createItemErrors(err)`         | `{ denomination, fournisseur, etat, quantite }` | Création d'article                  |
-| `uploadErrors(err, mime, name)` | `{ format, maxSize }`                           | Upload de fichier                   |
-
----
-
-## 🔒 Sécurité
-
-| Couche            | Implémentation                                         |
-| ----------------- | ------------------------------------------------------ |
-| **En-têtes HTTP** | Helmet (CSP désactivé pour compatibilité)              |
-| **CORS**          | Origine restreinte à `CLIENT_URL`, credentials activés |
-| **Mots de passe** | Bcrypt avec salt factor 10                             |
-| **Auth**          | JWT httpOnly cookie (maxAge: 1h)                       |
-| **Autorisation**  | Middleware role-based (`requireAuth`, `requireAdmin`)  |
-| **Validation**    | ObjectId MongoDB vérifié, email validé                 |
-| **Compression**   | Gzip activé sur toutes les réponses                    |
+| Function                        | Returns                                         | Use case                            |
+| -------------------------------- | ----------------------------------------------- | ------------------------------------ |
+| `signUpErrors(err)`              | `{ pseudo, email, password }`                   | Registration (validation + duplicates) |
+| `signInErrors(err)`              | `{ email, password }`                           | Login                                |
+| `createItemErrors(err)`          | `{ name, supplier, status, quantity }`          | Item creation                        |
+| `uploadErrors(err, mime, name)`  | `{ format, maxSize }`                           | File upload                          |
 
 ---
 
-## 🌐 Configuration CORS
+## 🔒 Security
+
+| Layer              | Implementation                                          |
+| ------------------- | --------------------------------------------------------- |
+| **HTTP headers**    | Helmet (CSP disabled for compatibility)                    |
+| **CORS**            | Origin restricted to `CLIENT_URL`, credentials enabled     |
+| **Passwords**       | Bcrypt with salt factor 10                                 |
+| **Auth**            | JWT httpOnly cookie (maxAge: 1h)                            |
+| **Authorization**   | Role-based middleware (`requireAuth`, `requireAdmin`)      |
+| **Validation**      | MongoDB ObjectId checked, email validated                  |
+| **Compression**     | Gzip enabled on all responses                               |
+
+---
+
+## 🌐 CORS configuration
 
 ```typescript
 {
@@ -399,73 +399,73 @@ server/
 
 ---
 
-## 🔧 Variables d'environnement
+## 🔧 Environment variables
 
-> Fichier : `config/.env`
+> File: `config/.env`
 
-| Variable           | Description                | Exemple                 |
-| ------------------ | -------------------------- | ----------------------- |
-| `PORT`             | Port d'écoute              | `4000`                  |
-| `DB_USER_PASS`     | Credentials MongoDB Atlas  | `user:password`         |
-| `CLIENT_URL`       | URL du frontend (CORS)     | `http://localhost:3000` |
-| `TOKEN_SECRET`     | Secret pour signer les JWT | `mon_secret_jwt`        |
-| `IMGBB_API_KEY`    | Clé API ImgBB              | `abc123...`             |
-| `SUPERADMIN_EMAIL` | Email du superadmin        | `admin@example.com`     |
+| Variable            | Description                | Example                  |
+| ------------------- | --------------------------- | ------------------------- |
+| `PORT`              | Listening port              | `4000`                    |
+| `DB_USER_PASS`      | MongoDB Atlas credentials   | `user:password`           |
+| `CLIENT_URL`        | Frontend URL (CORS)         | `http://localhost:3000`   |
+| `TOKEN_SECRET`      | Secret for signing JWTs     | `mon_secret_jwt`          |
+| `IMGBB_API_KEY`     | ImgBB API key                | `abc123...`                |
+| `SUPERADMIN_EMAIL`  | Superadmin email             | `admin@example.com`        |
 
-> En production (o2switch), les variables sont définies directement sur l'hébergeur. Le `.env` n'est chargé que si `CLIENT_URL` n'est pas déjà définie.
+> In production (o2switch), the variables are set directly on the host. The `.env` file is only loaded if `CLIENT_URL` is not already defined.
 
 ---
 
-## 🌿 Base de données
+## 🌿 Database
 
-|              | Détail                                                               |
-| ------------ | -------------------------------------------------------------------- |
-| **Service**  | MongoDB Atlas                                                        |
-| **Cluster**  | `&lt;cluster&gt;.mongodb.net`                                        |
-| **Database** | `Anamarcol`                                                          |
-| **URI**      | `mongodb+srv://<DB_USER_PASS>@&lt;cluster&gt;.mongodb.net/Anamarcol` |
+|              | Detail                                                                |
+| ------------ | ----------------------------------------------------------------------- |
+| **Service**  | MongoDB Atlas                                                          |
+| **Cluster**  | `&lt;cluster&gt;.mongodb.net`                                          |
+| **Database** | `Anamarcol`                                                            |
+| **URI**      | `mongodb+srv://<DB_USER_PASS>@&lt;cluster&gt;.mongodb.net/Anamarcol`   |
 
 ---
 
 ## 📜 Scripts
 
 ```bash
-npm run dev         # Développement (nodemon + ts-node)
-npm run build       # Compilation TypeScript → dist/
-npm start           # Lancement du build (dist/index.js)
-npm test            # Tests Vitest
-npm run test:ci     # Tests + couverture (CI)
+npm run dev         # Development (nodemon + ts-node)
+npm run build       # TypeScript compilation → dist/
+npm start           # Run the build (dist/index.js)
+npm test            # Vitest tests
+npm run test:ci     # Tests + coverage (CI)
 ```
 
 ---
 
 ## 🧪 Tests
 
-|                 | Détail                         |
-| --------------- | ------------------------------ |
-| **Framework**   | Vitest                         |
-| **HTTP**        | Supertest                      |
-| **Emplacement** | `__tests__/`                   |
-| **Couverture**  | Controllers, middleware, utils |
+|                 | Detail                          |
+| --------------- | --------------------------------- |
+| **Framework**   | Vitest                            |
+| **HTTP**        | Supertest                         |
+| **Location**    | `__tests__/`                      |
+| **Coverage**    | Controllers, middleware, utils    |
 
-### Fichiers de test
+### Test files
 
-| Fichier                                 | Couverture                                                      |
-| --------------------------------------- | --------------------------------------------------------------- |
-| `audit.controller.test.ts`              | `getHistory`, `purgeAllHistoryAndAudit`                         |
-| `audit.utils.test.ts`                   | Fonctions d'audit                                               |
-| `auth.controller.test.ts`               | Register, login, logout                                         |
-| `auth.middleware.test.ts`               | `checkUser`, `requireAuth`, `requireAdmin`, `requireSuperAdmin` |
-| `clientFile.controller.test.ts`         | CRUD fiches clients                                             |
-| `constants.test.ts`                     | Constantes partagées                                            |
-| `contacts.controller.test.ts`           | CRUD contacts                                                   |
-| `errors.utils.test.ts`                  | Fonctions de formatage d'erreurs                                |
-| `history.controller.test.ts`            | Historique global                                               |
-| `history.utils.test.ts`                 | Fonctions d'historique                                          |
-| `interventionReport.controller.test.ts` | CRUD rapports d'intervention                                    |
-| `item.controller.test.ts`               | CRUD articles + `prepaBatch`                                    |
-| `security.test.ts`                      | Headers Helmet, rate limiting                                   |
-| `shipments.controller.test.ts`          | CRUD envois                                                     |
-| `stats.controller.test.ts`              | Dashboard et statistiques                                       |
-| `user.controller.test.ts`               | CRUD utilisateurs + `setRole`                                   |
-| `validate.utils.test.ts`                | Validation ObjectId                                             |
+| File                                     | Coverage                                                         |
+| ----------------------------------------- | ------------------------------------------------------------------ |
+| `audit.controller.test.ts`               | `getHistory`, `purgeAllHistoryAndAudit`                            |
+| `audit.utils.test.ts`                    | Audit functions                                                     |
+| `auth.controller.test.ts`                | Register, login, logout                                             |
+| `auth.middleware.test.ts`                | `checkUser`, `requireAuth`, `requireAdmin`, `requireSuperAdmin`     |
+| `clientFile.controller.test.ts`          | Client file CRUD                                                     |
+| `constants.test.ts`                      | Shared constants                                                     |
+| `contacts.controller.test.ts`            | Contact CRUD                                                         |
+| `errors.utils.test.ts`                   | Error formatting functions                                          |
+| `history.controller.test.ts`             | Global history                                                       |
+| `history.utils.test.ts`                  | History functions                                                    |
+| `interventionReport.controller.test.ts`  | Intervention report CRUD                                             |
+| `item.controller.test.ts`                | Item CRUD + `prepaBatch`                                             |
+| `security.test.ts`                       | Helmet headers, rate limiting                                        |
+| `shipments.controller.test.ts`           | Shipment CRUD                                                        |
+| `stats.controller.test.ts`               | Dashboard and statistics                                             |
+| `user.controller.test.ts`                | User CRUD + `setRole`                                                |
+| `validate.utils.test.ts`                 | ObjectId validation                                                  |

@@ -4,18 +4,18 @@ import type { AppDispatch, Item, ReduxAction, NewItem } from "../types";
 import { getAllItems } from "./items.actions";
 import {
   fetchArticlesWithLowStock,
-  fetchStatisticsForEtat,
-  fetchStatisticsForFournisseur,
+  fetchStatisticsForStatus,
+  fetchStatisticsForSupplier,
 } from "./statistics.actions";
 
 export const ADD_ITEM_SUCCESS = "ADD_ITEM_SUCCESS";
 export const ADD_ITEM_FAILURE = "ADD_ITEM_FAILURE";
 export const DELETE_ITEM_SUCCESS = "DELETE_ITEM_SUCCESS";
 export const DELETE_ITEM_FAILURE = "DELETE_ITEM_FAILURE";
-export const SET_SELECTED_ITEM_QUANTITE = "SET_SELECTED_ITEM_QUANTITE";
+export const SET_SELECTED_ITEM_QUANTITY = "SET_SELECTED_ITEM_QUANTITY";
 export const SET_SELECTED_ITEM_INFO = "SET_SELECTED_ITEM_INFO";
-export const UPDATE_QUANTITE = "UPDATE_QUANTITE";
-export const UPDATE_QUANTITE_SUCCESS = "UPDATE_QUANTITE_SUCCESS";
+export const UPDATE_QUANTITY = "UPDATE_QUANTITY";
+export const UPDATE_QUANTITY_SUCCESS = "UPDATE_QUANTITY_SUCCESS";
 export const UPDATE_ITEM_SUCCESS = "UPDATE_ITEM_SUCCESS";
 export const SET_MODIFIER_NAME = "SET_MODIFIER_NAME";
 export const SET_SELECTED_ITEM_ID = "SET_SELECTED_ITEM_ID";
@@ -42,10 +42,10 @@ export const addItem = (newItem: NewItem) => {
         message?: string;
       };
       const message =
-        error.response?.data?.errors?.denomination ||
-        error.response?.data?.errors?.fournisseur ||
-        error.response?.data?.errors?.etat ||
-        error.response?.data?.errors?.quantite ||
+        error.response?.data?.errors?.name ||
+        error.response?.data?.errors?.supplier ||
+        error.response?.data?.errors?.status ||
+        error.response?.data?.errors?.quantity ||
         "Erreur lors de l'ajout.";
       dispatch({ type: ADD_ITEM_FAILURE, payload: message });
       throw new Error(message);
@@ -53,11 +53,11 @@ export const addItem = (newItem: NewItem) => {
   };
 };
 
-export const setSelectedItemQuantite = (
-  quantite: number | null,
+export const setSelectedItemQuantity = (
+  quantity: number | null,
 ): ReduxAction => ({
-  type: SET_SELECTED_ITEM_QUANTITE,
-  payload: quantite,
+  type: SET_SELECTED_ITEM_QUANTITY,
+  payload: quantity,
 });
 
 export const setSelectedItemInfo = (itemInfo: Item | null): ReduxAction => ({
@@ -65,27 +65,27 @@ export const setSelectedItemInfo = (itemInfo: Item | null): ReduxAction => ({
   payload: itemInfo,
 });
 
-export const updateQuantite = (
+export const updateQuantity = (
   itemId: string,
-  newQuantite: number | string,
+  newQuantity: number | string,
   modifierName: string,
   operation?: string,
 ) => {
   return (dispatch: AppDispatch) => {
-    const numericQuantite = parseInt(String(newQuantite), 10);
+    const numericQuantity = parseInt(String(newQuantity), 10);
 
     return axios({
       method: "put",
       url: `${import.meta.env.VITE_API_URL}api/item/${itemId}`,
-      data: { quantite: numericQuantite, modifierName, operation },
+      data: { quantity: numericQuantity, modifierName, operation },
       withCredentials: true,
     })
       .then(() => {
         dispatch({
-          type: UPDATE_QUANTITE_SUCCESS,
+          type: UPDATE_QUANTITY_SUCCESS,
           payload: {
             updatedItemId: itemId,
-            updatedQuantite: numericQuantite,
+            updatedQuantity: numericQuantity,
             modifierName,
             operation,
           },
@@ -93,7 +93,7 @@ export const updateQuantite = (
 
         dispatch(fetchArticlesWithLowStock());
         dispatch(getAllItems());
-        toast.success(`Quantité mise à jour (${numericQuantite})`);
+        toast.success(`Quantité mise à jour (${numericQuantity})`);
       })
       .catch((err) => {
         console.error(err);
@@ -105,10 +105,10 @@ export const updateQuantite = (
 export const updateItem = (
   itemId: string,
   fields: {
-    denomination?: string;
-    fournisseur?: string;
-    etat?: string;
-    quantite?: number;
+    name?: string;
+    supplier?: string;
+    status?: string;
+    quantity?: number;
     modifierName?: string;
   },
 ) => {
@@ -138,14 +138,14 @@ export const setModifierName = (modifierName: string): ReduxAction => ({
   payload: modifierName,
 });
 
-export const updateQuantiteSuccess = (
+export const updateQuantitySuccess = (
   updatedItemId: string,
-  updatedQuantite: number | string,
+  updatedQuantity: number | string,
   modifierName: string,
   operation?: string,
 ): ReduxAction => ({
-  type: UPDATE_QUANTITE_SUCCESS,
-  payload: { updatedItemId, updatedQuantite, modifierName, operation },
+  type: UPDATE_QUANTITY_SUCCESS,
+  payload: { updatedItemId, updatedQuantity, modifierName, operation },
 });
 
 export const setSelectedItemId = (itemId: string | null) => {
@@ -210,8 +210,8 @@ export const fetchItemHistory = (itemId: string) => {
 
 export const deleteItem = (
   itemId: string,
-  fournisseur: string,
-  etat: string,
+  supplier: string,
+  status: string,
 ) => {
   return async (dispatch: AppDispatch) => {
     try {
@@ -223,8 +223,8 @@ export const deleteItem = (
         type: DELETE_ITEM_SUCCESS,
         payload: { itemId },
       });
-      dispatch(fetchStatisticsForFournisseur(fournisseur));
-      dispatch(fetchStatisticsForEtat(etat));
+      dispatch(fetchStatisticsForSupplier(supplier));
+      dispatch(fetchStatisticsForStatus(status));
       dispatch(fetchArticlesWithLowStock());
       dispatch(getAllItems());
       toast.success("Article supprimé");
@@ -255,7 +255,7 @@ export const prepaBatch = (
         { withCredentials: true },
       );
       dispatch(getAllItems());
-      const label = prepa === "prepaCG" ? "CashGuard" : "Caisse TPV";
+      const label = prepa === "cgKit" ? "CashGuard" : "Caisse TPV";
       const op =
         operation === "increment" ? "remis en stock" : "retiré du stock";
       toast.success(`${label} : ${res.data.updated} articles ${op}`);

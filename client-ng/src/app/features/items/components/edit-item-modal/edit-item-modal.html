@@ -42,7 +42,7 @@
             @if (imagePreview() || displayItem.image) {
               <img
                 [src]="imagePreview() || displayItem.image"
-                [alt]="displayItem.denomination"
+                [alt]="displayItem.name"
                 class="img-pane__img"
               />
             } @else {
@@ -84,9 +84,9 @@
           <div class="field">
             <p class="field__label">{{ 'ITEMS.DENOMINATION' | translate }}</p>
             @if (editing) {
-              <input class="field__input" [(ngModel)]="form.denomination" name="denomination" />
+              <input class="field__input" [(ngModel)]="form.name" name="name" />
             } @else {
-              <p class="field__value">{{ displayItem.denomination || '–' }}</p>
+              <p class="field__value">{{ displayItem.name || '–' }}</p>
             }
           </div>
 
@@ -94,14 +94,14 @@
           <div class="field">
             <p class="field__label">{{ 'ITEMS.SUPPLIER' | translate }}</p>
             @if (editing) {
-              <select class="field__input" [(ngModel)]="form.fournisseur" name="fournisseur">
+              <select class="field__input" [(ngModel)]="form.supplier" name="supplier">
                 <option value="">{{ 'COMMON.SELECT' | translate }}</option>
-                @for (f of fournisseurs; track f) {
+                @for (f of suppliers; track f) {
                   <option [value]="f">{{ f }}</option>
                 }
               </select>
             } @else {
-              <p class="field__value">{{ displayItem.fournisseur || '–' }}</p>
+              <p class="field__value">{{ displayItem.supplier || '–' }}</p>
             }
           </div>
 
@@ -109,14 +109,14 @@
           <div class="field">
             <p class="field__label">{{ 'ITEMS.STATE' | translate }}</p>
             @if (editing) {
-              <select class="field__input" [(ngModel)]="form.etat" name="etat">
+              <select class="field__input" [(ngModel)]="form.status" name="status">
                 <option value="">{{ 'COMMON.SELECT' | translate }}</option>
-                @for (e of etats; track e) {
+                @for (e of statuses; track e) {
                   <option [value]="e">{{ e }}</option>
                 }
               </select>
             } @else {
-              <p class="field__value">{{ displayItem.etat || '–' }}</p>
+              <p class="field__value">{{ displayItem.status || '–' }}</p>
             }
           </div>
 
@@ -128,15 +128,15 @@
                 class="field__input"
                 type="number"
                 min="0"
-                [(ngModel)]="form.quantite"
-                name="quantite"
+                [(ngModel)]="form.quantity"
+                name="quantity"
               />
             } @else {
               <span
                 class="field__value field__value--qty"
-                [class.field__value--low]="displayItem.quantite < 5"
+                [class.field__value--low]="displayItem.quantity < 5"
               >
-                {{ displayItem.quantite }}
+                {{ displayItem.quantity }}
               </span>
             }
           </div>

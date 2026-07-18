@@ -23,18 +23,18 @@
     icon="alert-triangle"
     accent="red"
   />
-  @if (stats.prepaCG !== undefined) {
+  @if (stats.cgKit !== undefined) {
     <app-kpi-card
       [label]="'HOME.KPI_PRECA_CG' | translate"
-      [value]="stats.prepaCG"
+      [value]="stats.cgKit"
       icon="monitor"
       accent="violet"
     />
   }
-  @if (stats.prepaTPV !== undefined) {
+  @if (stats.tpvKit !== undefined) {
     <app-kpi-card
       [label]="'HOME.KPI_PRECA_TPV' | translate"
-      [value]="stats.prepaTPV"
+      [value]="stats.tpvKit"
       icon="credit-card"
       accent="violet"
     />

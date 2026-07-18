@@ -34,22 +34,22 @@ const sampleItems: Item[] = [
   {
     _id: "1",
     posterId: "u1",
-    denomination: "Joint Hooper",
-    quantite: 10,
-    fournisseur: "Alpha",
-    etat: "Neuf",
-    prepaCG: true,
-    prepaTPV: false,
+    name: "Joint Hooper",
+    quantity: 10,
+    supplier: "Alpha",
+    status: "Neuf",
+    cgKit: true,
+    tpvKit: false,
   },
   {
     _id: "2",
     posterId: "u1",
-    denomination: 'With "Quotes"',
-    quantite: 5,
-    fournisseur: "Beta",
-    etat: "Reconditionné",
-    prepaCG: false,
-    prepaTPV: true,
+    name: 'With "Quotes"',
+    quantity: 5,
+    supplier: "Beta",
+    status: "Reconditionné",
+    cgKit: false,
+    tpvKit: true,
   },
 ];
 
@@ -87,7 +87,7 @@ describe("exportItemsToCSV", () => {
     // Data rows
     expect(lines[1]).toContain("Joint Hooper");
     expect(lines[1]).toContain("Alpha");
-    expect(lines[1]).toContain("Oui"); // prepaCG
+    expect(lines[1]).toContain("Oui"); // cgKit
 
     // Quotes are escaped
     expect(lines[2]).toContain('""Quotes""');

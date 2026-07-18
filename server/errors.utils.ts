@@ -62,20 +62,20 @@ export const uploadErrors = (
 // Item creation validation errors
 export const createItemErrors = (err: Error): CreateItemError => {
   const errors: CreateItemError = {
-    denomination: "",
-    fournisseur: "",
-    etat: "",
-    quantite: "",
+    name: "",
+    supplier: "",
+    status: "",
+    quantity: "",
   };
 
-  if (err.message.includes("denomination"))
-    errors.denomination = "Dénomination incorrect ou déjà prise";
-  if (err.message.includes("fournisseur"))
-    errors.fournisseur = "Nommez un fournisseur valide";
-  if (err.message.includes("etat"))
-    errors.etat = "L'état de la pièce doit être Neuf ou SAV";
-  if (err.message.includes("quantite"))
-    errors.quantite = "La quantité attendue est un nombre";
+  if (err.message.includes("name"))
+    errors.name = "Dénomination incorrect ou déjà prise";
+  if (err.message.includes("supplier"))
+    errors.supplier = "Nommez un fournisseur valide";
+  if (err.message.includes("status"))
+    errors.status = "L'état de la pièce doit être NEW ou RMA";
+  if (err.message.includes("quantity"))
+    errors.quantity = "La quantité attendue est un nombre";
 
   console.error(err);
   return errors;

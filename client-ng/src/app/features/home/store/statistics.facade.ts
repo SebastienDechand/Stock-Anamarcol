@@ -4,7 +4,7 @@ import { combineLatest, map } from 'rxjs';
 import { StatisticsActions } from './statistics.actions';
 import {
   selectDashboard,
-  selectFournisseurStats,
+  selectSupplierStats,
   selectGlobalStats,
   selectLowStockItems,
   selectStatisticsLoading,
@@ -16,7 +16,7 @@ export class StatisticsFacade {
 
   dashboard$ = this.store.select(selectDashboard);
   globalStats$ = this.store.select(selectGlobalStats);
-  fournisseurStats$ = this.store.select(selectFournisseurStats);
+  supplierStats$ = this.store.select(selectSupplierStats);
   lowStockItems$ = this.store.select(selectLowStockItems);
   isLoading$ = combineLatest([
     this.store.select(selectStatisticsLoading),

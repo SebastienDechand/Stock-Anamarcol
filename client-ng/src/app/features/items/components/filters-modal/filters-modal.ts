@@ -6,10 +6,10 @@ import { FOURNISSEURS, ETATS } from '../../../../shared/constants';
 import { togglePrepaFilter } from '../../../../shared/utils/prepa-filter.utils';
 
 export interface FiltersApplied {
-  fournisseurs: string[];
-  etats: string[];
-  prepaCG: boolean;
-  prepaTPV: boolean;
+  suppliers: string[];
+  statuses: string[];
+  cgKit: boolean;
+  tpvKit: boolean;
 }
 
 @Component({
@@ -20,70 +20,70 @@ export interface FiltersApplied {
   styleUrl: './filters-modal.scss',
 })
 export class FiltersModal implements OnInit {
-  @Input() selectedFournisseurs: string[] = [];
-  @Input() selectedEtats: string[] = [];
-  @Input() prepaCG = false;
-  @Input() prepaTPV = false;
+  @Input() selectedSuppliers: string[] = [];
+  @Input() selectedStatuses: string[] = [];
+  @Input() cgKit = false;
+  @Input() tpvKit = false;
 
   @Output() applied = new EventEmitter<FiltersApplied>();
   @Output() cancelled = new EventEmitter<void>();
 
-  readonly fournisseurs = FOURNISSEURS;
-  readonly etats = ETATS;
+  readonly suppliers = FOURNISSEURS;
+  readonly statuses = ETATS;
 
   // ─── Local State ────────────────────────────────────
-  localFournisseurs = signal<string[]>([]);
-  localEtats = signal<string[]>([]);
-  localPrepaCG = signal(false);
-  localPrepaTPV = signal(false);
+  localSuppliers = signal<string[]>([]);
+  localStatuses = signal<string[]>([]);
+  localCgKit = signal(false);
+  localTpvKit = signal(false);
 
   // ─── Side Effects ────────────────────────────────────
   ngOnInit() {
-    this.localFournisseurs.set([...this.selectedFournisseurs]);
-    this.localEtats.set([...this.selectedEtats]);
-    this.localPrepaCG.set(this.prepaCG);
-    this.localPrepaTPV.set(this.prepaTPV);
+    this.localSuppliers.set([...this.selectedSuppliers]);
+    this.localStatuses.set([...this.selectedStatuses]);
+    this.localCgKit.set(this.cgKit);
+    this.localTpvKit.set(this.tpvKit);
   }
 
   // ─── Handlers ────────────────────────────────────────
-  toggleFournisseur(fournisseur: string) {
-    const current = this.localFournisseurs();
-    this.localFournisseurs.set(
-      current.includes(fournisseur)
-        ? current.filter((item) => item !== fournisseur)
-        : [...current, fournisseur],
+  toggleSupplier(supplier: string) {
+    const current = this.localSuppliers();
+    this.localSuppliers.set(
+      current.includes(supplier)
+        ? current.filter((item) => item !== supplier)
+        : [...current, supplier],
     );
   }
 
-  toggleEtat(etat: string) {
-    const current = this.localEtats();
-    this.localEtats.set(
-      current.includes(etat) ? current.filter((item) => item !== etat) : [...current, etat],
+  toggleStatus(status: string) {
+    const current = this.localStatuses();
+    this.localStatuses.set(
+      current.includes(status) ? current.filter((item) => item !== status) : [...current, status],
     );
   }
 
   togglePrepa(prepa: 'CashGuard' | 'Caisse TPV') {
     const next = togglePrepaFilter(
-      { prepaCG: this.localPrepaCG(), prepaTPV: this.localPrepaTPV() },
+      { cgKit: this.localCgKit(), tpvKit: this.localTpvKit() },
       prepa,
     );
-    this.localPrepaCG.set(next.prepaCG);
-    this.localPrepaTPV.set(next.prepaTPV);
+    this.localCgKit.set(next.cgKit);
+    this.localTpvKit.set(next.tpvKit);
   }
 
   reset() {
-    this.localFournisseurs.set([]);
-    this.localEtats.set([]);
-    this.localPrepaCG.set(false);
-    this.localPrepaTPV.set(false);
+    this.localSuppliers.set([]);
+    this.localStatuses.set([]);
+    this.localCgKit.set(false);
+    this.localTpvKit.set(false);
   }
 
   apply() {
     this.applied.emit({
-      fournisseurs: this.localFournisseurs(),
-      etats: this.localEtats(),
-      prepaCG: this.localPrepaCG(),
-      prepaTPV: this.localPrepaTPV(),
+      suppliers: this.localSuppliers(),
+      statuses: this.localStatuses(),
+      cgKit: this.localCgKit(),
+      tpvKit: this.localTpvKit(),
     });
   }
 }

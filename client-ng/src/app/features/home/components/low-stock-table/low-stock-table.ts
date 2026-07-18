@@ -25,12 +25,12 @@ export class LowStockTable {
 
   get filteredItems(): LowStockItem[] {
     const tab = this.activeTab();
-    return tab === 'all' ? this.items : this.items.filter((item) => item.etat === tab);
+    return tab === 'all' ? this.items : this.items.filter((item) => item.status === tab);
   }
 
   countByTab(key: StockTab): number {
     return key === 'all'
       ? this.items.length
-      : this.items.filter((item) => item.etat === key).length;
+      : this.items.filter((item) => item.status === key).length;
   }
 }

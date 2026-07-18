@@ -1,15 +1,15 @@
 import {
   SET_GLOBAL_STATISTICS,
   SET_ARTICLES_WITH_LOW_STOCK,
-  SET_FOURNISSEUR_STATISTICS,
-  SET_ETAT_STATISTICS,
-  SET_FOURNISSEURS_LIST,
-  SET_ETATS_LIST,
+  SET_SUPPLIER_STATISTICS,
+  SET_STATUS_STATISTICS,
+  SET_SUPPLIERS_LIST,
+  SET_STATUSES_LIST,
 } from "../actions/statistics.actions";
 import type {
   StatisticsState,
   ReduxAction,
-  FournisseurStats,
+  SupplierStats,
   Item,
 } from "../types";
 
@@ -21,10 +21,10 @@ const initialState: StatisticsState = {
     numberOfLowStockArticles: 0,
   },
   articlesWithLowStock: [],
-  fournisseursStats: {},
-  etatsStats: {},
-  fournisseursList: [],
-  etatsList: [],
+  suppliersStats: {},
+  statusesStats: {},
+  suppliersList: [],
+  statusesList: [],
 };
 
 const statisticsReducer = (
@@ -45,41 +45,41 @@ const statisticsReducer = (
         ...state,
         articlesWithLowStock: action.payload as Item[],
       };
-    case SET_FOURNISSEUR_STATISTICS: {
+    case SET_SUPPLIER_STATISTICS: {
       const payload = action.payload as {
-        fournisseur: string;
-        statistics: FournisseurStats;
+        supplier: string;
+        statistics: SupplierStats;
       };
       return {
         ...state,
-        fournisseursStats: {
-          ...state.fournisseursStats,
-          [payload.fournisseur]: payload.statistics,
+        suppliersStats: {
+          ...state.suppliersStats,
+          [payload.supplier]: payload.statistics,
         },
       };
     }
-    case SET_ETAT_STATISTICS: {
+    case SET_STATUS_STATISTICS: {
       const payload = action.payload as {
-        etat: string;
-        statistics: FournisseurStats;
+        status: string;
+        statistics: SupplierStats;
       };
       return {
         ...state,
-        etatsStats: {
-          ...state.etatsStats,
-          [payload.etat]: payload.statistics,
+        statusesStats: {
+          ...state.statusesStats,
+          [payload.status]: payload.statistics,
         },
       };
     }
-    case SET_FOURNISSEURS_LIST:
+    case SET_SUPPLIERS_LIST:
       return {
         ...state,
-        fournisseursList: action.payload as string[],
+        suppliersList: action.payload as string[],
       };
-    case SET_ETATS_LIST:
+    case SET_STATUSES_LIST:
       return {
         ...state,
-        etatsList: action.payload as string[],
+        statusesList: action.payload as string[],
       };
     default:
       return state;

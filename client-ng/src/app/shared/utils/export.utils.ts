@@ -4,12 +4,12 @@ import { downloadBlob } from './download.utils';
 export function exportItemsToCSV(items: Item[]): void {
   const headers = ['Dénomination', 'Fournisseur', 'État', 'Quantité', 'Prépa CG', 'Prépa TPV'];
   const rows = items.map((item) => [
-    item.denomination,
-    item.fournisseur,
-    item.etat,
-    String(item.quantite),
-    item.prepaCG ? 'Oui' : 'Non',
-    item.prepaTPV ? 'Oui' : 'Non',
+    item.name,
+    item.supplier,
+    item.status,
+    String(item.quantity),
+    item.cgKit ? 'Oui' : 'Non',
+    item.tpvKit ? 'Oui' : 'Non',
   ]);
 
   const csvContent =
@@ -25,12 +25,12 @@ export function exportItemsToCSV(items: Item[]): void {
 export async function exportItemsToXLSX(items: Item[]): Promise<void> {
   const { utils, writeFile } = await import('@e965/xlsx');
   const data = items.map((item) => ({
-    Dénomination: item.denomination,
-    Fournisseur: item.fournisseur,
-    État: item.etat,
-    Quantité: item.quantite,
-    'Prépa CG': item.prepaCG ? 'Oui' : 'Non',
-    'Prépa TPV': item.prepaTPV ? 'Oui' : 'Non',
+    Dénomination: item.name,
+    Fournisseur: item.supplier,
+    État: item.status,
+    Quantité: item.quantity,
+    'Prépa CG': item.cgKit ? 'Oui' : 'Non',
+    'Prépa TPV': item.tpvKit ? 'Oui' : 'Non',
   }));
   const ws = utils.json_to_sheet(data);
   const wb = utils.book_new();
@@ -52,12 +52,12 @@ export async function exportItemsToPDF(items: Item[]): Promise<void> {
     startY: 28,
     head: [['Dénomination', 'Fournisseur', 'État', 'Quantité', 'Prépa CG', 'Prépa TPV']],
     body: items.map((item) => [
-      item.denomination,
-      item.fournisseur,
-      item.etat,
-      item.quantite,
-      item.prepaCG ? 'Oui' : 'Non',
-      item.prepaTPV ? 'Oui' : 'Non',
+      item.name,
+      item.supplier,
+      item.status,
+      item.quantity,
+      item.cgKit ? 'Oui' : 'Non',
+      item.tpvKit ? 'Oui' : 'Non',
     ]),
     styles: { fontSize: 9 },
     headStyles: { fillColor: [59, 74, 42] },

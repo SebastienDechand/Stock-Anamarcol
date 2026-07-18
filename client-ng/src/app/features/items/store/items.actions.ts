@@ -30,14 +30,14 @@ export const ItemsActions = createActionGroup({
     'Delete Item Success': props<{ id: string }>(),
     'Delete Item Failure': props<{ error: string }>(),
 
-    'Update Quantite': props<{
+    'Update Quantity': props<{
       id: string;
-      quantite: number;
+      quantity: number;
       modifierName: string;
       operation: 'add' | 'subtract';
     }>(),
-    'Update Quantite Success': props<{ id: string; quantite: number }>(),
-    'Update Quantite Failure': props<{ error: string }>(),
+    'Update Quantity Success': props<{ id: string; quantity: number }>(),
+    'Update Quantity Failure': props<{ error: string }>(),
 
     'Upload Item Picture': props<{ id: string; formData: FormData }>(),
     'Upload Item Picture Success': props<{ item: Item }>(),

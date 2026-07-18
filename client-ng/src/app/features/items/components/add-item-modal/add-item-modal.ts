@@ -18,37 +18,37 @@ export class AddItemModal {
   @Output() submitted = new EventEmitter<NewItem>();
   @Output() cancelled = new EventEmitter<void>();
 
-  fournisseurs = FOURNISSEURS;
-  etats = ETATS;
+  suppliers = FOURNISSEURS;
+  statuses = ETATS;
 
   form = {
-    denomination: '',
-    fournisseur: '',
-    etat: '',
-    quantite: 0,
-    prepaCG: false,
-    prepaTPV: false,
+    name: '',
+    supplier: '',
+    status: '',
+    quantity: 0,
+    cgKit: false,
+    tpvKit: false,
   };
 
   get isFormValid(): boolean {
     return (
-      !!this.form.denomination.trim() &&
-      !!this.form.fournisseur &&
-      !!this.form.etat &&
-      this.form.quantite > 0
+      !!this.form.name.trim() &&
+      !!this.form.supplier &&
+      !!this.form.status &&
+      this.form.quantity > 0
     );
   }
 
   submit() {
     if (!this.isFormValid) return;
     this.submitted.emit({
-      denomination: this.form.denomination,
-      fournisseur: this.form.fournisseur,
-      etat: this.form.etat,
-      quantite: this.form.quantite,
+      name: this.form.name,
+      supplier: this.form.supplier,
+      status: this.form.status,
+      quantity: this.form.quantity,
       posterId: this.posterId,
-      prepaCG: this.form.prepaCG,
-      prepaTPV: this.form.prepaTPV,
+      cgKit: this.form.cgKit,
+      tpvKit: this.form.tpvKit,
     });
   }
 }

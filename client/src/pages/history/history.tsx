@@ -26,7 +26,7 @@ function formatDate(date: string): string {
 }
 
 function entityLabel(e: AuditEvent): string {
-  const name = e.details?.entityName || e.details?.denomination;
+  const name = e.details?.entityName || e.details?.name;
   return name ? ` "${name}"` : "";
 }
 
@@ -37,7 +37,7 @@ function describeEvent(e: AuditEvent): string {
   if (e.action === "create") return `a ajouté ${entity}${entityLabel(e)}`;
   if (e.action === "delete") {
     const name =
-      e.details?.entityName || e.details?.oldValue || e.details?.denomination;
+      e.details?.entityName || e.details?.oldValue || e.details?.name;
     return name ? `a supprimé ${entity} "${name}"` : `a supprimé un ${entity}`;
   }
   if (e.action === "upload") return `a uploadé une photo${entityLabel(e)}`;
@@ -116,7 +116,7 @@ export default function HistoryPage() {
     // Case where the change is described with a single field
     if (e.details?.field) {
       const f = String(e.details.field).toLowerCase();
-      if (f === "quantity" || f === "quantite") return false;
+      if (f === "quantity") return false;
     }
     // Case where the change contains a 'changes' object
     if (e.details?.changes && typeof e.details.changes === "object") {
@@ -125,7 +125,7 @@ export default function HistoryPage() {
         fields.length > 0 &&
         fields.every((k) => {
           const key = String(k).toLowerCase();
-          return key === "quantity" || key === "quantite";
+          return key === "quantity";
         })
       ) {
         return false;

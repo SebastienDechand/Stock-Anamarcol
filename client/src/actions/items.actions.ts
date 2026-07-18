@@ -30,11 +30,11 @@ export const fetchItems = (params: FetchItemsParams = {}) => {
       if (params.page) q.append("page", params.page.toString());
       if (params.limit) q.append("limit", params.limit.toString());
       if (params.search) q.append("search", params.search);
-      if (params.fournisseur?.length)
-        q.append("fournisseur", params.fournisseur.join(","));
-      if (params.etat?.length) q.append("etat", params.etat.join(","));
-      if (params.prepaCG) q.append("prepaCG", "true");
-      if (params.prepaTPV) q.append("prepaTPV", "true");
+      if (params.supplier?.length)
+        q.append("supplier", params.supplier.join(","));
+      if (params.status?.length) q.append("status", params.status.join(","));
+      if (params.cgKit) q.append("cgKit", "true");
+      if (params.tpvKit) q.append("tpvKit", "true");
       if (params.sortBy) q.append("sortBy", params.sortBy);
       if (params.sortOrder) q.append("sortOrder", params.sortOrder);
 

@@ -61,19 +61,19 @@
       <span class="prepa-shortcuts__label">{{ 'ITEMS.PREPA' | translate }}</span>
       <button
         class="prepa-shortcut"
-        [class.prepa-shortcut--active]="prepaCG()"
+        [class.prepa-shortcut--active]="cgKit()"
         (click)="togglePrepa('CashGuard')"
       >
         CashGuard
       </button>
       <button
         class="prepa-shortcut"
-        [class.prepa-shortcut--active]="prepaTPV()"
+        [class.prepa-shortcut--active]="tpvKit()"
         (click)="togglePrepa('Caisse TPV')"
       >
         Caisse TPV
       </button>
-      @if (prepaCG() || prepaTPV()) {
+      @if (cgKit() || tpvKit()) {
         <button
           class="prepa-shortcuts__clear"
           (click)="clearPrepa()"
@@ -88,11 +88,11 @@
     <div class="items-toolbar__filters">
       <div class="filter-row">
         <span class="filter-row__label">{{ 'ITEMS.SUPPLIER_FILTER' | translate }}</span>
-        @for (f of fournisseurs; track f) {
+        @for (f of suppliers; track f) {
           <button
             class="chip"
-            [class.chip--active]="isFournisseurActive(f)"
-            (click)="toggleFournisseur(f)"
+            [class.chip--active]="isSupplierActive(f)"
+            (click)="toggleSupplier(f)"
             [title]="('ITEMS.SUPPLIER_FILTER' | translate) + ' : ' + f"
           >
             {{ f }}
@@ -101,11 +101,11 @@
       </div>
       <div class="filter-row">
         <span class="filter-row__label">{{ 'ITEMS.STATE_FILTER' | translate }}</span>
-        @for (e of etats; track e) {
+        @for (e of statuses; track e) {
           <button
             class="chip"
-            [class.chip--active-etat]="isEtatActive(e)"
-            (click)="toggleEtat(e)"
+            [class.chip--active-etat]="isStatusActive(e)"
+            (click)="toggleStatus(e)"
             [title]="('ITEMS.STATE_FILTER' | translate) + ' : ' + e"
           >
             {{ e }}
@@ -116,7 +116,7 @@
         }}</span>
         <button
           class="chip"
-          [class.chip--active-prepa]="prepaCG()"
+          [class.chip--active-prepa]="cgKit()"
           (click)="togglePrepa('CashGuard')"
           [title]="('ITEMS.PREPA' | translate) + ' : CashGuard'"
         >
@@ -124,7 +124,7 @@
         </button>
         <button
           class="chip"
-          [class.chip--active-prepa]="prepaTPV()"
+          [class.chip--active-prepa]="tpvKit()"
           (click)="togglePrepa('Caisse TPV')"
           [title]="('ITEMS.PREPA' | translate) + ' : Caisse TPV'"
         >
@@ -143,7 +143,7 @@
     </div>
 
     <!-- Prepa batch bars -->
-    @if (prepaCG()) {
+    @if (cgKit()) {
       <div class="prepa-batch">
         <span class="prepa-batch__label">
           <lucide-icon name="layers" [size]="13" />
@@ -161,7 +161,7 @@
             <button
               class="prepa-batch__btn prepa-batch__btn--sub"
               (click)="onPrepaBatch('CashGuard', 'decrement')"
-              [disabled]="!(canDecrementMap?.['prepaCG'] ?? true)"
+              [disabled]="!(canDecrementMap?.['cgKit'] ?? true)"
               [title]="('ITEMS.DECREMENT' | translate) + ' (CashGuard)'"
             >
               <lucide-icon name="minus" [size]="12" />
@@ -177,8 +177,8 @@
             <input
               type="number"
               class="prepa-batch__count"
-              [value]="prepaCGCount()"
-              (input)="onPrepaCGCountChange($event)"
+              [value]="cgKitCount()"
+              (input)="onCgKitCountChange($event)"
               min="1"
             />
             <span class="prepa-batch__hint">{{ 'ITEMS.ENTER_QUANTITY' | translate }}</span>
@@ -200,7 +200,7 @@
       </div>
     }
 
-    @if (prepaTPV()) {
+    @if (tpvKit()) {
       <div class="prepa-batch">
         <span class="prepa-batch__label">
           <lucide-icon name="layers" [size]="13" />
@@ -218,7 +218,7 @@
             <button
               class="prepa-batch__btn prepa-batch__btn--sub"
               (click)="onPrepaBatch('Caisse TPV', 'decrement')"
-              [disabled]="!(canDecrementMap?.['prepaTPV'] ?? true)"
+              [disabled]="!(canDecrementMap?.['tpvKit'] ?? true)"
               [title]="('ITEMS.DECREMENT' | translate) + ' (Caisse TPV)'"
             >
               <lucide-icon name="minus" [size]="12" />
@@ -234,8 +234,8 @@
             <input
               type="number"
               class="prepa-batch__count"
-              [value]="prepaTPVCount()"
-              (input)="onPrepaTPVCountChange($event)"
+              [value]="tpvKitCount()"
+              (input)="onTpvKitCountChange($event)"
               min="1"
             />
             <span class="prepa-batch__hint">{{ 'ITEMS.ENTER_QUANTITY' | translate }}</span>
@@ -276,7 +276,7 @@
         @for (item of itemList; track item._id) {
           <app-item-card
             [item]="item"
-            [canDecrement]="item.quantite > 0"
+            [canDecrement]="item.quantity > 0"
             [isAdmin]="admin ?? false"
             (cardClick)="editingItem.set($event)"
             (delete)="deletingItem.set($event)"
@@ -353,10 +353,10 @@
 
 @if (showFiltersModal()) {
   <app-filters-modal
-    [selectedFournisseurs]="selectedFournisseurs()"
-    [selectedEtats]="selectedEtats()"
-    [prepaCG]="prepaCG()"
-    [prepaTPV]="prepaTPV()"
+    [selectedSuppliers]="selectedSuppliers()"
+    [selectedStatuses]="selectedStatuses()"
+    [cgKit]="cgKit()"
+    [tpvKit]="tpvKit()"
     (applied)="onFiltersApplied($event)"
     (cancelled)="showFiltersModal.set(false)"
   />
@@ -365,7 +365,7 @@
 @if (deletingItem()) {
   <app-confirm-dialog
     [title]="'ITEMS.DELETE_CONFIRM' | translate"
-    [message]="('ITEMS.DELETE_MESSAGE' | translate) + ' « ' + deletingItem()!.denomination + ' »'"
+    [message]="('ITEMS.DELETE_MESSAGE' | translate) + ' « ' + deletingItem()!.name + ' »'"
     (confirmed)="onDeleteConfirm()"
     (cancelled)="deletingItem.set(null)"
   />

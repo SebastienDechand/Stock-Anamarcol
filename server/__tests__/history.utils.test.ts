@@ -59,7 +59,7 @@ describe("history.utils", () => {
       expect(mockCreate).toHaveBeenCalledWith({
         itemId: "item456",
         action: "delete",
-        field: "denomination",
+        field: "name",
         oldValue: "Clavier Logitech",
         userName: "admin",
       });
@@ -81,8 +81,8 @@ describe("history.utils", () => {
 
       await logItemChanges(
         "item789",
-        { quantite: 10 },
-        { quantite: 5 },
+        { quantity: 10 },
+        { quantity: 5 },
         "admin",
       );
 
@@ -90,7 +90,7 @@ describe("history.utils", () => {
         {
           itemId: "item789",
           action: "quantity_change",
-          field: "quantite",
+          field: "quantity",
           oldValue: "10",
           newValue: "5",
           userName: "admin",
@@ -103,8 +103,8 @@ describe("history.utils", () => {
 
       await logItemChanges(
         "item789",
-        { denomination: "Old Name", fournisseur: "Amazon" },
-        { denomination: "New Name" },
+        { name: "Old Name", supplier: "Amazon" },
+        { name: "New Name" },
         "admin",
       );
 
@@ -112,7 +112,7 @@ describe("history.utils", () => {
         {
           itemId: "item789",
           action: "update",
-          field: "denomination",
+          field: "name",
           oldValue: "Old Name",
           newValue: "New Name",
           userName: "admin",
@@ -125,8 +125,8 @@ describe("history.utils", () => {
 
       await logItemChanges(
         "item789",
-        { quantite: 3, etat: "Neuf" },
-        { quantite: 8, etat: "SAV" },
+        { quantity: 3, status: "Neuf" },
+        { quantity: 8, status: "SAV" },
         "admin",
       );
 
@@ -134,9 +134,9 @@ describe("history.utils", () => {
         expect.arrayContaining([
           expect.objectContaining({
             action: "quantity_change",
-            field: "quantite",
+            field: "quantity",
           }),
-          expect.objectContaining({ action: "update", field: "etat" }),
+          expect.objectContaining({ action: "update", field: "status" }),
         ]),
       );
     });
@@ -144,8 +144,8 @@ describe("history.utils", () => {
     it("should not insert anything when no changes detected", async () => {
       await logItemChanges(
         "item789",
-        { quantite: 5, denomination: "Same" },
-        { quantite: 5, denomination: "Same" },
+        { quantity: 5, name: "Same" },
+        { quantity: 5, name: "Same" },
         "admin",
       );
 
@@ -167,7 +167,7 @@ describe("history.utils", () => {
       mockInsertMany.mockRejectedValue(new Error("DB error"));
 
       await expect(
-        logItemChanges("item789", { quantite: 1 }, { quantite: 2 }, "admin"),
+        logItemChanges("item789", { quantity: 1 }, { quantity: 2 }, "admin"),
       ).resolves.toBeUndefined();
       expect(console.error).toHaveBeenCalled();
     });

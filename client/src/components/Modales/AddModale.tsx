@@ -11,10 +11,10 @@ interface AddModalProps {
 }
 
 const AddModal = ({ onClose, posterId, modifierId }: AddModalProps) => {
-  const [denomination, setDenomination] = useState("");
-  const [fournisseur, setFournisseur] = useState("");
-  const [quantite, setQuantite] = useState("");
-  const [etat, setEtat] = useState("");
+  const [name, setName] = useState("");
+  const [supplier, setSupplier] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -22,7 +22,7 @@ const AddModal = ({ onClose, posterId, modifierId }: AddModalProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useAppDispatch();
-  const isFormValid = denomination && fournisseur && quantite && etat;
+  const isFormValid = name && supplier && quantity && status;
 
   useEffect(() => {
     return () => {
@@ -56,10 +56,10 @@ const AddModal = ({ onClose, posterId, modifierId }: AddModalProps) => {
     try {
       const newItem = await dispatch(
         addItem({
-          denomination,
-          fournisseur,
-          quantite: Number(quantite),
-          etat,
+          name,
+          supplier,
+          quantity: Number(quantity),
+          status,
           posterId,
           modifierId,
         }),
@@ -67,9 +67,9 @@ const AddModal = ({ onClose, posterId, modifierId }: AddModalProps) => {
 
       if (file && newItem?._id) {
         const data = new FormData();
-        data.append("denomination", denomination);
-        data.append("fournisseur", fournisseur);
-        data.append("etat", etat);
+        data.append("name", name);
+        data.append("supplier", supplier);
+        data.append("status", status);
         data.append("itemId", newItem._id);
         data.append("file", file);
         await dispatch(uploadItemPicture(data, newItem._id, modifierId));
@@ -109,27 +109,27 @@ const AddModal = ({ onClose, posterId, modifierId }: AddModalProps) => {
 
         <form onSubmit={handleAdd} className="px-6 py-5 space-y-4">
           <div>
-            <label htmlFor="denomination" className={labelClass}>
+            <label htmlFor="name" className={labelClass}>
               Dénomination
             </label>
             <input
               type="text"
-              id="denomination"
-              value={denomination}
-              onChange={(e) => setDenomination(e.target.value)}
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className={selectClass}
               placeholder="Nom de l'article"
             />
           </div>
 
           <div>
-            <label htmlFor="fournisseur" className={labelClass}>
+            <label htmlFor="supplier" className={labelClass}>
               Fournisseur
             </label>
             <select
-              id="fournisseur"
-              value={fournisseur}
-              onChange={(e) => setFournisseur(e.target.value)}
+              id="supplier"
+              value={supplier}
+              onChange={(e) => setSupplier(e.target.value)}
               className={selectClass}
             >
               <option value="">-- Sélectionner --</option>
@@ -142,13 +142,13 @@ const AddModal = ({ onClose, posterId, modifierId }: AddModalProps) => {
           </div>
 
           <div>
-            <label htmlFor="etat" className={labelClass}>
+            <label htmlFor="status" className={labelClass}>
               État
             </label>
             <select
-              id="etat"
-              value={etat}
-              onChange={(e) => setEtat(e.target.value)}
+              id="status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
               className={selectClass}
             >
               <option value="">-- Sélectionner --</option>
@@ -161,14 +161,14 @@ const AddModal = ({ onClose, posterId, modifierId }: AddModalProps) => {
           </div>
 
           <div>
-            <label htmlFor="quantite" className={labelClass}>
+            <label htmlFor="quantity" className={labelClass}>
               Quantité
             </label>
             <input
               type="number"
-              id="quantite"
-              value={quantite}
-              onChange={(e) => setQuantite(e.target.value)}
+              id="quantity"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
               min="0"
               step="1"
               required

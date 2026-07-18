@@ -21,10 +21,10 @@ import {
   getNumberOfSuppliers,
   getNumberOfArticlesWithStockBelow5,
   getArticlesWithLowStock,
-  getFournisseursList,
-  getStatisticsForFournisseur,
-  getEtatsList,
-  getStatisticsForEtat,
+  getSuppliersList,
+  getStatisticsForSupplier,
+  getStatusesList,
+  getStatisticsForStatus,
 } from "../controllers/stats.controller";
 
 describe("Stats Controller", () => {
@@ -48,8 +48,8 @@ describe("Stats Controller", () => {
   // ── Helper to set up aggregate / find mocks for getDashboardStats ──
   function setupDashboardMocks(overrides?: {
     globalStats?: Record<string, unknown>[];
-    fournisseursStats?: Record<string, unknown>[];
-    etatsStats?: Record<string, unknown>[];
+    suppliersStats?: Record<string, unknown>[];
+    statusesStats?: Record<string, unknown>[];
     lowStockItems?: unknown[];
     cgItems?: unknown[];
     tpvItems?: unknown[];
@@ -60,20 +60,20 @@ describe("Stats Controller", () => {
         numberOfArticles: 10,
         totalStock: 150,
         numberOfLowStockArticles: 2,
-        fournisseurs: ["FournisseurA", "FournisseurB"],
+        suppliers: ["SupplierA", "SupplierB"],
       },
     ];
-    const fournisseursStats = overrides?.fournisseursStats ?? [];
-    const etatsStats = overrides?.etatsStats ?? [];
+    const suppliersStats = overrides?.suppliersStats ?? [];
+    const statusesStats = overrides?.statusesStats ?? [];
     const lowStockItems = overrides?.lowStockItems ?? [];
     const cgItems = overrides?.cgItems ?? [];
     const tpvItems = overrides?.tpvItems ?? [];
 
-    // aggregate is called 3 times (global, fournisseurs, etats)
+    // aggregate is called 3 times (global, suppliers, statuses)
     mockItemModel.aggregate
       .mockResolvedValueOnce(globalStats)
-      .mockResolvedValueOnce(fournisseursStats)
-      .mockResolvedValueOnce(etatsStats);
+      .mockResolvedValueOnce(suppliersStats)
+      .mockResolvedValueOnce(statusesStats);
 
     // find is called 3 times (lowStock, cg, tpv)
     const chainLean = (data: unknown) => ({
@@ -109,30 +109,30 @@ describe("Stats Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       const payload = (res.json as Mock).mock.calls[0][0];
       expect(payload.global.numberOfArticles).toBe(0);
-      expect(payload.global.prepaCG).toBe(0);
-      expect(payload.global.prepaTPV).toBe(0);
+      expect(payload.global.cgKit).toBe(0);
+      expect(payload.global.tpvKit).toBe(0);
     });
 
     it("should compute CG with cassette /4 logic", async () => {
       setupDashboardMocks({
         cgItems: [
-          { denomination: "Cassette Hooper", quantite: 9 },
-          { denomination: "Joint", quantite: 5 },
+          { name: "Cassette Hooper", quantity: 9 },
+          { name: "Joint", quantity: 5 },
         ],
       });
       await getDashboardStats(req as Request, res as Response);
       const payload = (res.json as Mock).mock.calls[0][0];
       // Cassette: floor(9/4)=2, Joint: 5  → min = 2
-      expect(payload.global.prepaCG).toBe(2);
+      expect(payload.global.cgKit).toBe(2);
     });
 
     it("should compute TPV as min of quantities", async () => {
       setupDashboardMocks({
-        tpvItems: [{ quantite: 8 }, { quantite: 3 }, { quantite: 12 }],
+        tpvItems: [{ quantity: 8 }, { quantity: 3 }, { quantity: 12 }],
       });
       await getDashboardStats(req as Request, res as Response);
       const payload = (res.json as Mock).mock.calls[0][0];
-      expect(payload.global.prepaTPV).toBe(3);
+      expect(payload.global.tpvKit).toBe(3);
     });
 
     it("should serve from cache on second call within TTL", async () => {
@@ -162,7 +162,7 @@ describe("Stats Controller", () => {
             numberOfArticles: 20,
             totalStock: 300,
             numberOfLowStockArticles: 5,
-            fournisseurs: ["X"],
+            suppliers: ["X"],
           },
         ],
       });
@@ -171,9 +171,9 @@ describe("Stats Controller", () => {
       expect(payload.global.numberOfArticles).toBe(20);
     });
 
-    it("should map fournisseurs and etats stats", async () => {
+    it("should map suppliers and statuses stats", async () => {
       setupDashboardMocks({
-        fournisseursStats: [
+        suppliersStats: [
           {
             _id: "Alpha",
             numberOfArticles: 5,
@@ -181,7 +181,7 @@ describe("Stats Controller", () => {
             numberOfLowStockArticles: 1,
           },
         ],
-        etatsStats: [
+        statusesStats: [
           {
             _id: "Neuf",
             numberOfArticles: 3,
@@ -192,17 +192,17 @@ describe("Stats Controller", () => {
       });
       await getDashboardStats(req as Request, res as Response);
       const payload = (res.json as Mock).mock.calls[0][0];
-      expect(payload.fournisseurs).toEqual([
+      expect(payload.suppliers).toEqual([
         {
-          nom: "Alpha",
+          name: "Alpha",
           numberOfArticles: 5,
           totalStock: 50,
           numberOfLowStockArticles: 1,
         },
       ]);
-      expect(payload.etats).toEqual([
+      expect(payload.statuses).toEqual([
         {
-          nom: "Neuf",
+          name: "Neuf",
           numberOfArticles: 3,
           totalStock: 30,
           numberOfLowStockArticles: 0,
@@ -298,7 +298,7 @@ describe("Stats Controller", () => {
 
   describe("getArticlesWithLowStock", () => {
     it("should return sorted low-stock items", async () => {
-      const items = [{ _id: "i1", denomination: "Joint", quantite: 2 }];
+      const items = [{ _id: "i1", name: "Joint", quantity: 2 }];
       mockItemModel.find.mockReturnValue({
         sort: vi
           .fn()
@@ -319,30 +319,30 @@ describe("Stats Controller", () => {
     });
   });
 
-  describe("getFournisseursList", () => {
-    it("should return list of fournisseurs", async () => {
+  describe("getSuppliersList", () => {
+    it("should return list of suppliers", async () => {
       mockItemModel.distinct.mockResolvedValue(["Alpha", "Beta"]);
-      await getFournisseursList(req as Request, res as Response);
+      await getSuppliersList(req as Request, res as Response);
       expect(res.json).toHaveBeenCalledWith({
-        fournisseursList: ["Alpha", "Beta"],
+        suppliersList: ["Alpha", "Beta"],
       });
     });
 
     it("should return 500 on error", async () => {
       mockItemModel.distinct.mockRejectedValue(new Error("fail"));
-      await getFournisseursList(req as Request, res as Response);
+      await getSuppliersList(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
 
-  describe("getStatisticsForFournisseur", () => {
-    it("should return stats for a specific fournisseur", async () => {
-      req.params = { fournisseur: "Alpha" };
+  describe("getStatisticsForSupplier", () => {
+    it("should return stats for a specific supplier", async () => {
+      req.params = { supplier: "Alpha" };
       mockItemModel.countDocuments.mockResolvedValue(4);
       mockItemModel.aggregate.mockResolvedValue([
         { totalStock: 60, numberOfLowStockArticles: 1 },
       ]);
-      await getStatisticsForFournisseur(req as Request, res as Response);
+      await getStatisticsForSupplier(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         numberOfArticles: 4,
@@ -351,11 +351,11 @@ describe("Stats Controller", () => {
       });
     });
 
-    it("should default to 0 when no items for fournisseur", async () => {
-      req.params = { fournisseur: "Unknown" };
+    it("should default to 0 when no items for supplier", async () => {
+      req.params = { supplier: "Unknown" };
       mockItemModel.countDocuments.mockResolvedValue(0);
       mockItemModel.aggregate.mockResolvedValue([]);
-      await getStatisticsForFournisseur(req as Request, res as Response);
+      await getStatisticsForSupplier(req as Request, res as Response);
       expect(res.json).toHaveBeenCalledWith({
         numberOfArticles: 0,
         totalStock: 0,
@@ -364,37 +364,37 @@ describe("Stats Controller", () => {
     });
 
     it("should return 500 on error", async () => {
-      req.params = { fournisseur: "Alpha" };
+      req.params = { supplier: "Alpha" };
       mockItemModel.countDocuments.mockRejectedValue(new Error("fail"));
-      await getStatisticsForFournisseur(req as Request, res as Response);
+      await getStatisticsForSupplier(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
 
-  describe("getEtatsList", () => {
-    it("should return list of etats", async () => {
+  describe("getStatusesList", () => {
+    it("should return list of statuses", async () => {
       mockItemModel.distinct.mockResolvedValue(["Neuf", "Reconditionné"]);
-      await getEtatsList(req as Request, res as Response);
+      await getStatusesList(req as Request, res as Response);
       expect(res.json).toHaveBeenCalledWith({
-        etatsList: ["Neuf", "Reconditionné"],
+        statusesList: ["Neuf", "Reconditionné"],
       });
     });
 
     it("should return 500 on error", async () => {
       mockItemModel.distinct.mockRejectedValue(new Error("fail"));
-      await getEtatsList(req as Request, res as Response);
+      await getStatusesList(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
 
-  describe("getStatisticsForEtat", () => {
-    it("should return stats for a specific etat", async () => {
-      req.params = { etat: "Neuf" };
+  describe("getStatisticsForStatus", () => {
+    it("should return stats for a specific status", async () => {
+      req.params = { status: "Neuf" };
       mockItemModel.countDocuments.mockResolvedValue(6);
       mockItemModel.aggregate.mockResolvedValue([
         { totalStock: 80, numberOfLowStockArticles: 0 },
       ]);
-      await getStatisticsForEtat(req as Request, res as Response);
+      await getStatisticsForStatus(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         numberOfArticles: 6,
@@ -403,11 +403,11 @@ describe("Stats Controller", () => {
       });
     });
 
-    it("should default to 0 when no items for etat", async () => {
-      req.params = { etat: "Unknown" };
+    it("should default to 0 when no items for status", async () => {
+      req.params = { status: "Unknown" };
       mockItemModel.countDocuments.mockResolvedValue(0);
       mockItemModel.aggregate.mockResolvedValue([]);
-      await getStatisticsForEtat(req as Request, res as Response);
+      await getStatisticsForStatus(req as Request, res as Response);
       expect(res.json).toHaveBeenCalledWith({
         numberOfArticles: 0,
         totalStock: 0,
@@ -416,9 +416,9 @@ describe("Stats Controller", () => {
     });
 
     it("should return 500 on error", async () => {
-      req.params = { etat: "Neuf" };
+      req.params = { status: "Neuf" };
       mockItemModel.countDocuments.mockRejectedValue(new Error("fail"));
-      await getStatisticsForEtat(req as Request, res as Response);
+      await getStatisticsForStatus(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });

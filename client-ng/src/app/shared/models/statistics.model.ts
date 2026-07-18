@@ -3,27 +3,27 @@ export interface GlobalStatistics {
   totalStock: number;
   numberOfSuppliers: number;
   numberOfLowStockArticles: number;
-  prepaCG?: number;
-  prepaTPV?: number;
+  cgKit?: number;
+  tpvKit?: number;
 }
 
-export interface FournisseurStats {
+export interface SupplierStats {
   numberOfArticles: number;
   totalStock: number;
   numberOfLowStockArticles: number;
-  nom?: string;
+  name?: string;
 }
 
 export interface LowStockItem {
   _id: string;
-  denomination: string;
-  fournisseur: string;
-  etat: string;
-  quantite: number;
+  name: string;
+  supplier: string;
+  status: string;
+  quantity: number;
 }
 
 export interface DashboardStats {
   global: GlobalStatistics;
-  fournisseurs: FournisseurStats[];
+  suppliers: SupplierStats[];
   lowStockItems: LowStockItem[];
 }

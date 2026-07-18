@@ -8,11 +8,11 @@ function build(): AddItemModal {
 }
 
 describe('AddItemModal — submit()', () => {
-  it('does not emit when denomination is blank', () => {
+  it('does not emit when name is blank', () => {
     const modal = build();
     const spy = vi.fn();
     modal.submitted.subscribe(spy);
-    modal.form.denomination = '   ';
+    modal.form.name = '   ';
     modal.submit();
     expect(spy).not.toHaveBeenCalled();
   });
@@ -22,34 +22,34 @@ describe('AddItemModal — submit()', () => {
     const spy = vi.fn();
     modal.submitted.subscribe(spy);
     modal.form = {
-      denomination: 'Stylo bleu',
-      fournisseur: 'Bureau Vallée',
-      etat: 'Neuf',
-      quantite: 10,
-      prepaCG: false,
-      prepaTPV: false,
+      name: 'Stylo bleu',
+      supplier: 'Bureau Vallée',
+      status: 'Neuf',
+      quantity: 10,
+      cgKit: false,
+      tpvKit: false,
     };
     modal.submit();
 
     expect(spy).toHaveBeenCalledWith({
-      denomination: 'Stylo bleu',
-      fournisseur: 'Bureau Vallée',
-      etat: 'Neuf',
-      quantite: 10,
+      name: 'Stylo bleu',
+      supplier: 'Bureau Vallée',
+      status: 'Neuf',
+      quantity: 10,
       posterId: 'user-001',
-      prepaCG: false,
-      prepaTPV: false,
+      cgKit: false,
+      tpvKit: false,
     });
   });
 
-  it('does not emit when fournisseur, état or quantité are missing', () => {
+  it('does not emit when supplier, status or quantity are missing', () => {
     const modal = build();
     const spy = vi.fn();
     modal.submitted.subscribe(spy);
-    modal.form.denomination = 'Crayon';
-    modal.form.fournisseur = '';
-    modal.form.etat = '';
-    modal.form.quantite = 0;
+    modal.form.name = 'Crayon';
+    modal.form.supplier = '';
+    modal.form.status = '';
+    modal.form.quantity = 0;
     modal.submit();
     expect(spy).not.toHaveBeenCalled();
   });

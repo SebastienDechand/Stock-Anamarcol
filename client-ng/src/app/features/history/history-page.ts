@@ -45,16 +45,13 @@ function isQuantityOnlyUpdate(event: AuditEvent): boolean {
   if (event.action !== 'update') return false;
   if (event.details?.['field']) {
     const field = String(event.details['field']).toLowerCase();
-    return field === 'quantity' || field === 'quantite';
+    return field === 'quantity';
   }
   if (event.details?.['changes'] && typeof event.details['changes'] === 'object') {
     const fields = Object.keys(event.details['changes'] as Record<string, unknown>);
     return (
       fields.length > 0 &&
-      fields.every((fieldName) => {
-        const key = String(fieldName).toLowerCase();
-        return key === 'quantity' || key === 'quantite';
-      })
+      fields.every((fieldName) => String(fieldName).toLowerCase() === 'quantity')
     );
   }
   return false;
@@ -260,7 +257,7 @@ export class HistoryPage implements OnInit {
     const entity = entityKey ? this.translate.instant(entityKey).toLowerCase() : event.entity;
     const entityName =
       (event.details?.['entityName'] as string | undefined) ??
-      (event.details?.['denomination'] as string | undefined);
+      (event.details?.['name'] as string | undefined);
     const name = entityName ? ` "${entityName}"` : '';
 
     if (event.action === 'login') return this.translate.instant('HISTORY.DESC_LOGIN');

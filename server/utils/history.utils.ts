@@ -3,11 +3,11 @@ import HistoryModel from "../models/history.model";
 type ItemSnapshot = Record<string, unknown>;
 
 const TRACKED_FIELDS = [
-  "denomination",
-  "fournisseur",
-  "etat",
-  "prepaCG",
-  "prepaTPV",
+  "name",
+  "supplier",
+  "status",
+  "cgKit",
+  "tpvKit",
   "image",
 ] as const;
 
@@ -28,15 +28,15 @@ export async function logItemCreate(
 
 export async function logItemDelete(
   itemId: string,
-  denomination: string,
+  name: string,
   userName: string,
 ): Promise<void> {
   try {
     await HistoryModel.create({
       itemId,
       action: "delete",
-      field: "denomination",
-      oldValue: denomination,
+      field: "name",
+      oldValue: name,
       userName,
     });
   } catch (err) {
@@ -62,15 +62,15 @@ export async function logItemChanges(
 
     // Check quantity change separately
     if (
-      Object.prototype.hasOwnProperty.call(newData, "quantite") &&
-      Number(newData.quantite) !== Number(oldItem.quantite)
+      Object.prototype.hasOwnProperty.call(newData, "quantity") &&
+      Number(newData.quantity) !== Number(oldItem.quantity)
     ) {
       entries.push({
         itemId,
         action: "quantity_change",
-        field: "quantite",
-        oldValue: String(oldItem.quantite),
-        newValue: String(newData.quantite),
+        field: "quantity",
+        oldValue: String(oldItem.quantity),
+        newValue: String(newData.quantity),
         userName,
       });
     }

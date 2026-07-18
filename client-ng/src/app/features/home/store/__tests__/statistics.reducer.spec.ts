@@ -10,37 +10,37 @@ const sampleDashboard: DashboardStats = {
     totalStock: 3450,
     numberOfSuppliers: 8,
     numberOfLowStockArticles: 5,
-    prepaCG: 12,
-    prepaTPV: 7,
+    cgKit: 12,
+    tpvKit: 7,
   },
-  fournisseurs: [
+  suppliers: [
     {
       numberOfArticles: 40,
       totalStock: 1200,
       numberOfLowStockArticles: 2,
-      nom: 'Alpha',
+      name: 'Alpha',
     },
     {
       numberOfArticles: 80,
       totalStock: 2250,
       numberOfLowStockArticles: 3,
-      nom: 'Beta',
+      name: 'Beta',
     },
   ],
   lowStockItems: [
     {
       _id: 'i1',
-      denomination: 'Écran tactile 15"',
-      fournisseur: 'Alpha',
-      etat: 'Neuf',
-      quantite: 1,
+      name: 'Écran tactile 15"',
+      supplier: 'Alpha',
+      status: 'Neuf',
+      quantity: 1,
     },
     {
       _id: 'i2',
-      denomination: 'Tiroir caisse USB',
-      fournisseur: 'Beta',
-      etat: 'Reconditionné',
-      quantite: 2,
+      name: 'Tiroir caisse USB',
+      supplier: 'Beta',
+      status: 'Reconditionné',
+      quantity: 2,
     },
   ],
 };
@@ -74,7 +74,7 @@ describe('statisticsReducer', () => {
     );
     expect(state.dashboard?.global.numberOfArticles).toBe(120);
     expect(state.dashboard?.global.numberOfLowStockArticles).toBe(5);
-    expect(state.dashboard?.fournisseurs).toHaveLength(2);
+    expect(state.dashboard?.suppliers).toHaveLength(2);
     expect(state.dashboard?.lowStockItems).toHaveLength(2);
   });
 

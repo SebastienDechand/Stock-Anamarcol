@@ -37,15 +37,15 @@
       @for (item of filteredItems; track item._id) {
         <div class="low-stock__card">
           <div class="low-stock__card-info">
-            <p class="low-stock__card-denomination">{{ item.denomination }}</p>
-            <p class="low-stock__card-meta">{{ item.fournisseur }} · {{ item.etat }}</p>
+            <p class="low-stock__card-denomination">{{ item.name }}</p>
+            <p class="low-stock__card-meta">{{ item.supplier }} · {{ item.status }}</p>
           </div>
           <span
             class="low-stock__qty-badge"
-            [class.low-stock__qty-badge--critical]="item.quantite < 2"
-            [class.low-stock__qty-badge--warning]="item.quantite >= 2 && item.quantite < 5"
+            [class.low-stock__qty-badge--critical]="item.quantity < 2"
+            [class.low-stock__qty-badge--warning]="item.quantity >= 2 && item.quantity < 5"
           >
-            {{ item.quantite }}
+            {{ item.quantity }}
           </span>
         </div>
       }
@@ -65,16 +65,16 @@
         <tbody>
           @for (item of filteredItems; track item._id) {
             <tr>
-              <td class="low-stock__denomination">{{ item.denomination }}</td>
-              <td>{{ item.fournisseur }}</td>
-              <td>{{ item.etat }}</td>
+              <td class="low-stock__denomination">{{ item.name }}</td>
+              <td>{{ item.supplier }}</td>
+              <td>{{ item.status }}</td>
               <td class="low-stock__qty-col">
                 <span
                   class="low-stock__qty-badge"
-                  [class.low-stock__qty-badge--critical]="item.quantite < 2"
-                  [class.low-stock__qty-badge--warning]="item.quantite >= 2 && item.quantite < 5"
+                  [class.low-stock__qty-badge--critical]="item.quantity < 2"
+                  [class.low-stock__qty-badge--warning]="item.quantity >= 2 && item.quantity < 5"
                 >
-                  {{ item.quantite }}
+                  {{ item.quantity }}
                 </span>
               </td>
             </tr>

@@ -3,11 +3,11 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks/redux";
 import {
-  fetchFournisseursList,
-  setFournisseurStatistics,
+  fetchSuppliersList,
+  setSupplierStatistics,
 } from "../../actions/statistics.actions";
 import "./Statistics.css";
-import type { StatisticsState, FournisseurStats } from "../../types";
+import type { StatisticsState, SupplierStats } from "../../types";
 
 const Statistiques = () => {
   const dispatch = useAppDispatch();
@@ -15,13 +15,13 @@ const Statistiques = () => {
   const statistics = useSelector(
     (state: { statisticsReducer: StatisticsState }) => state.statisticsReducer,
   );
-  const fournisseursList = statistics?.fournisseursList || [];
-  const fournisseursStats = statistics?.fournisseursStats || {};
+  const suppliersList = statistics?.suppliersList || [];
+  const suppliersStats = statistics?.suppliersStats || {};
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await dispatch(fetchFournisseursList());
+        await dispatch(fetchSuppliersList());
       } catch (error) {
         console.error("Error fetching suppliers list:", error);
       }
@@ -32,23 +32,23 @@ const Statistiques = () => {
 
   useEffect(() => {
     const fetchStatistics = async () => {
-      for (const fournisseur of fournisseursList) {
+      for (const supplier of suppliersList) {
         try {
-          const responseFournisseur = await axios.get(
-            `${import.meta.env.VITE_API_URL}api/statistics/fournisseurs/${fournisseur}`,
+          const responseSupplier = await axios.get(
+            `${import.meta.env.VITE_API_URL}api/statistics/suppliers/${supplier}`,
           );
-          const dataFournisseur = responseFournisseur.data as FournisseurStats;
-          dispatch(setFournisseurStatistics(dataFournisseur, fournisseur));
+          const dataSupplier = responseSupplier.data as SupplierStats;
+          dispatch(setSupplierStatistics(dataSupplier, supplier));
         } catch (error) {
-          console.error(`Error fetching statistics for ${fournisseur}:`, error);
+          console.error(`Error fetching statistics for ${supplier}:`, error);
         }
       }
     };
 
-    if (fournisseursList.length > 0) {
+    if (suppliersList.length > 0) {
       fetchStatistics();
     }
-  }, [dispatch, fournisseursList]);
+  }, [dispatch, suppliersList]);
 
   return (
     <div className="stats-container">
@@ -65,17 +65,17 @@ const Statistiques = () => {
               </tr>
             </thead>
             <tbody>
-              {fournisseursList.map((fournisseur: string, index: number) => (
+              {suppliersList.map((supplier: string, index: number) => (
                 <tr key={index} className="tr-supplier">
-                  <td className="td-supplier">{fournisseur}</td>
+                  <td className="td-supplier">{supplier}</td>
                   <td className="td-number">
-                    {fournisseursStats[fournisseur]?.numberOfArticles || 0}
+                    {suppliersStats[supplier]?.numberOfArticles || 0}
                   </td>
                   <td className="td-number">
-                    {fournisseursStats[fournisseur]?.totalStock || 0}
+                    {suppliersStats[supplier]?.totalStock || 0}
                   </td>
                   <td className="td-number critical">
-                    {fournisseursStats[fournisseur]?.numberOfLowStockArticles ||
+                    {suppliersStats[supplier]?.numberOfLowStockArticles ||
                       0}
                   </td>
                 </tr>

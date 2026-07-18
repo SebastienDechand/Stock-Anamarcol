@@ -1,10 +1,10 @@
 import {
   ADD_ITEM_SUCCESS,
   DELETE_ITEM_SUCCESS,
-  SET_SELECTED_ITEM_QUANTITE,
+  SET_SELECTED_ITEM_QUANTITY,
   SET_SELECTED_ITEM_INFO,
-  UPDATE_QUANTITE,
-  UPDATE_QUANTITE_SUCCESS,
+  UPDATE_QUANTITY,
+  UPDATE_QUANTITY_SUCCESS,
   SET_MODIFIER_NAME,
   SET_SELECTED_ITEM_ID,
   UPLOAD_ITEM_PICTURE,
@@ -17,7 +17,7 @@ import type { History, Item, ItemState, ReduxAction } from "../types";
 const initialState: ItemState = {
   selectedItemId: null,
   items: [],
-  selectedItemQuantite: null,
+  selectedItemQuantity: null,
   selectedItemInfo: null,
   history: [],
   isLoadingHistory: false,
@@ -66,10 +66,10 @@ export default function itemReducer(
       };
     }
 
-    case SET_SELECTED_ITEM_QUANTITE:
+    case SET_SELECTED_ITEM_QUANTITY:
       return {
         ...state,
-        selectedItemQuantite: action.payload as number | null,
+        selectedItemQuantity: action.payload as number | null,
       };
 
     case SET_MODIFIER_NAME:
@@ -89,38 +89,38 @@ export default function itemReducer(
         selectedItemInfo: action.payload as Item | null,
       };
 
-    case UPDATE_QUANTITE: {
-      const { itemId: uid, quantite } = action.payload as {
+    case UPDATE_QUANTITY: {
+      const { itemId: uid, quantity } = action.payload as {
         itemId: string;
-        quantite: number;
+        quantity: number;
       };
       return {
         ...state,
         items: state.items.map((item) => {
           if (item._id === uid) {
-            return { ...item, quantite };
+            return { ...item, quantity };
           }
           return item;
         }),
-        selectedItemQuantite:
-          state.selectedItemId === uid ? quantite : state.selectedItemQuantite,
+        selectedItemQuantity:
+          state.selectedItemId === uid ? quantity : state.selectedItemQuantity,
         selectedItemInfo: state.selectedItemInfo
           ? {
               ...state.selectedItemInfo,
-              quantite:
+              quantity:
                 state.selectedItemId === uid
-                  ? quantite
-                  : state.selectedItemInfo.quantite,
+                  ? quantity
+                  : state.selectedItemInfo.quantity,
             }
           : null,
       };
     }
 
-    case UPDATE_QUANTITE_SUCCESS: {
-      const { updatedItemId, updatedQuantite, modifierName, operation } =
+    case UPDATE_QUANTITY_SUCCESS: {
+      const { updatedItemId, updatedQuantity, modifierName, operation } =
         action.payload as {
           updatedItemId: string;
-          updatedQuantite: number;
+          updatedQuantity: number;
           modifierName: string;
           operation: string;
         };
@@ -130,20 +130,20 @@ export default function itemReducer(
           if (item._id === updatedItemId) {
             return {
               ...item,
-              quantite:
+              quantity:
                 operation === "increment"
-                  ? item.quantite + 1
-                  : item.quantite - 1,
+                  ? item.quantity + 1
+                  : item.quantity - 1,
               modifierName,
             };
           }
           return item;
         }),
-        selectedItemQuantite: updatedQuantite,
+        selectedItemQuantity: updatedQuantity,
         selectedItemInfo: state.selectedItemInfo
           ? {
               ...state.selectedItemInfo,
-              quantite: updatedQuantite,
+              quantity: updatedQuantity,
               modifierName,
             }
           : null,

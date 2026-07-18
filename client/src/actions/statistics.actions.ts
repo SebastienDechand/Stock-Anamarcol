@@ -3,10 +3,10 @@ import type { AppDispatch, ReduxAction } from "../types";
 
 export const SET_GLOBAL_STATISTICS = "SET_GLOBAL_STATISTICS";
 export const SET_ARTICLES_WITH_LOW_STOCK = "SET_ARTICLES_WITH_LOW_STOCK";
-export const SET_FOURNISSEUR_STATISTICS = "SET_FOURNISSEUR_STATISTICS";
-export const SET_ETAT_STATISTICS = "SET_ETAT_STATISTICS";
-export const SET_ETATS_LIST = "SET_ETATS_LIST";
-export const SET_FOURNISSEURS_LIST = "SET_FOURNISSEURS_LIST";
+export const SET_SUPPLIER_STATISTICS = "SET_SUPPLIER_STATISTICS";
+export const SET_STATUS_STATISTICS = "SET_STATUS_STATISTICS";
+export const SET_STATUSES_LIST = "SET_STATUSES_LIST";
+export const SET_SUPPLIERS_LIST = "SET_SUPPLIERS_LIST";
 
 // Global Statistics
 export const setGlobalStatistics = (statistics: unknown): ReduxAction => ({
@@ -44,7 +44,7 @@ export const fetchNumberOfSuppliers = () => {
   return async (dispatch: AppDispatch) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}api/statistics/fournisseurs`,
+        `${import.meta.env.VITE_API_URL}api/statistics/suppliers`,
       );
       dispatch(setGlobalStatistics(response.data));
     } catch (error) {
@@ -83,86 +83,84 @@ export const fetchArticlesWithLowStock = () => {
 };
 
 // Suppliers
-export const setFournisseursList = (
-  fournisseursList: string[],
-): ReduxAction => ({
-  type: SET_FOURNISSEURS_LIST,
-  payload: fournisseursList,
+export const setSuppliersList = (suppliersList: string[]): ReduxAction => ({
+  type: SET_SUPPLIERS_LIST,
+  payload: suppliersList,
 });
 
-export const fetchFournisseursList = () => {
+export const fetchSuppliersList = () => {
   return async (dispatch: AppDispatch) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}api/statistics/fournisseurs/list`,
+        `${import.meta.env.VITE_API_URL}api/statistics/suppliers/list`,
       );
-      dispatch(setFournisseursList(response.data.fournisseursList));
+      dispatch(setSuppliersList(response.data.suppliersList));
     } catch (error) {
       console.error("Error fetching suppliers list:", error);
     }
   };
 };
 
-export const setFournisseurStatistics = (
+export const setSupplierStatistics = (
   statistics: unknown,
-  fournisseur: string,
+  supplier: string,
 ): ReduxAction => ({
-  type: SET_FOURNISSEUR_STATISTICS,
-  payload: { statistics, fournisseur },
+  type: SET_SUPPLIER_STATISTICS,
+  payload: { statistics, supplier },
 });
 
-export const fetchStatisticsForFournisseur = (fournisseur: string) => {
+export const fetchStatisticsForSupplier = (supplier: string) => {
   return async (dispatch: AppDispatch) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}api/statistics/fournisseurs/${fournisseur}`,
+        `${import.meta.env.VITE_API_URL}api/statistics/suppliers/${supplier}`,
       );
-      dispatch(setFournisseurStatistics(response.data, fournisseur));
+      dispatch(setSupplierStatistics(response.data, supplier));
     } catch (error) {
       console.error(
-        `Error fetching statistics for supplier ${fournisseur}:`,
+        `Error fetching statistics for supplier ${supplier}:`,
         error,
       );
     }
   };
 };
 
-// States
-export const setEtatsList = (etatsList: string[]): ReduxAction => ({
-  type: SET_ETATS_LIST,
-  payload: etatsList,
+// Statuses
+export const setStatusesList = (statusesList: string[]): ReduxAction => ({
+  type: SET_STATUSES_LIST,
+  payload: statusesList,
 });
 
-export const fetchEtatsList = () => {
+export const fetchStatusesList = () => {
   return async (dispatch: AppDispatch) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}api/statistics/etats/list`,
+        `${import.meta.env.VITE_API_URL}api/statistics/statuses/list`,
       );
-      dispatch(setEtatsList(response.data.etatsList));
+      dispatch(setStatusesList(response.data.statusesList));
     } catch (error) {
       console.error("Error fetching states list:", error);
     }
   };
 };
 
-export const setEtatStatistics = (
+export const setStatusStatistics = (
   statistics: unknown,
-  etat: string,
+  status: string,
 ): ReduxAction => ({
-  type: SET_ETAT_STATISTICS,
-  payload: { statistics, etat },
+  type: SET_STATUS_STATISTICS,
+  payload: { statistics, status },
 });
 
-export const fetchStatisticsForEtat = (etat: string) => {
+export const fetchStatisticsForStatus = (status: string) => {
   return async (dispatch: AppDispatch) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}api/statistics/etats/${etat}`,
+        `${import.meta.env.VITE_API_URL}api/statistics/statuses/${status}`,
       );
-      dispatch(setEtatStatistics(response.data, etat));
+      dispatch(setStatusStatistics(response.data, status));
     } catch (error) {
-      console.error(`Error fetching statistics for state ${etat}:`, error);
+      console.error(`Error fetching statistics for status ${status}:`, error);
     }
   };
 };

@@ -132,6 +132,55 @@ describe("Audit Controller", () => {
         message: "Erreur interne du serveur",
       });
     });
+
+    it("should include item name in itemEvents response", async () => {
+      const itemId = "507f1f77bcf86cd799439011";
+      const historyEntry = {
+        _id: "h1",
+        action: "update",
+        field: "quantity",
+        oldValue: "10",
+        newValue: "20",
+        itemId,
+        userName: "testuser",
+        createdAt: "2026-07-18T00:00:00Z",
+      };
+      const itemData = {
+        _id: itemId,
+        name: "Test Item",
+      };
+
+      mockHistoryModel.find.mockReturnValue({
+        sort: vi.fn().mockReturnValue({
+          limit: vi.fn().mockReturnValue({
+            lean: vi.fn().mockResolvedValue([historyEntry]),
+          }),
+        }),
+      });
+      mockItemModel.find.mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          lean: vi.fn().mockResolvedValue([itemData]),
+        }),
+      });
+      mockContactModel.find.mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          lean: vi.fn().mockResolvedValue([]),
+        }),
+      });
+      mockUserModel.find.mockReturnValue({
+        select: vi.fn().mockReturnValue({
+          lean: vi.fn().mockResolvedValue([]),
+        }),
+      });
+
+      await getHistory(req as Request, res as Response);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      const responseData = (res.json as any).mock.calls[0][0];
+      expect(responseData).toHaveLength(1);
+      expect(responseData[0].details.name).toBe("Test Item");
+      expect(responseData[0].details.entityName).toBe("Test Item");
+    });
   });
 
   // ─── purgeAllHistoryAndAudit ─────────────────────────

@@ -46,10 +46,10 @@ export class ItemsEffects {
         if (params.page) queryParams['page'] = String(params.page);
         if (params.limit) queryParams['limit'] = String(params.limit);
         if (params.search) queryParams['search'] = params.search;
-        if (params.fournisseur?.length) queryParams['fournisseur'] = params.fournisseur.join(',');
-        if (params.etat?.length) queryParams['etat'] = params.etat.join(',');
-        if (params.prepaCG) queryParams['prepaCG'] = 'true';
-        if (params.prepaTPV) queryParams['prepaTPV'] = 'true';
+        if (params.supplier?.length) queryParams['supplier'] = params.supplier.join(',');
+        if (params.status?.length) queryParams['status'] = params.status.join(',');
+        if (params.cgKit) queryParams['cgKit'] = 'true';
+        if (params.tpvKit) queryParams['tpvKit'] = 'true';
         if (params.sortBy) queryParams['sortBy'] = params.sortBy;
         if (params.sortOrder) queryParams['sortOrder'] = params.sortOrder;
 
@@ -125,17 +125,17 @@ export class ItemsEffects {
     ),
   );
 
-  updateQuantite$ = createEffect(() =>
+  updateQuantity$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(ItemsActions.updateQuantite),
-      exhaustMap(({ id, quantite, modifierName, operation }) =>
-        this.api.put<{ item: Item }>(`api/item/${id}`, { quantite, modifierName, operation }).pipe(
+      ofType(ItemsActions.updateQuantity),
+      exhaustMap(({ id, quantity, modifierName, operation }) =>
+        this.api.put<{ item: Item }>(`api/item/${id}`, { quantity, modifierName, operation }).pipe(
           map((response) => {
             this.toast.success('TOAST.ITEM_QTY_UPDATED');
-            return ItemsActions.updateQuantiteSuccess({ id, quantite: response.item.quantite });
+            return ItemsActions.updateQuantitySuccess({ id, quantity: response.item.quantity });
           }),
           catchError((error) =>
-            of(ItemsActions.updateQuantiteFailure({ error: error?.message ?? 'Erreur' })),
+            of(ItemsActions.updateQuantityFailure({ error: error?.message ?? 'Erreur' })),
           ),
         ),
       ),
@@ -174,7 +174,7 @@ export class ItemsEffects {
           .pipe(
             switchMap((response) => {
               const key =
-                field === 'prepaCG'
+                field === 'cgKit'
                   ? operation === 'increment'
                     ? 'ITEMS.PREPA_BATCH_CG_INCREMENTED'
                     : 'ITEMS.PREPA_BATCH_CG_DECREMENTED'

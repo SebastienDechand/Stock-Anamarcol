@@ -4,7 +4,7 @@ export type { Item, History, NewItem, FetchItemsParams } from "./item";
 export type { Contact } from "./contact";
 export type {
   GlobalStatistics,
-  FournisseurStats,
+  SupplierStats,
   StatisticsState,
   LowStockItem,
   DashboardStats,

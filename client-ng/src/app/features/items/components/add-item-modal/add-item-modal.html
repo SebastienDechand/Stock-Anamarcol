@@ -9,14 +9,12 @@
 
     <form class="modal-panel__body" (ngSubmit)="submit()">
       <div class="form-row">
-        <label class="form-label" for="denomination"
-          >{{ 'ITEMS.DENOMINATION' | translate }} *</label
-        >
+        <label class="form-label" for="name">{{ 'ITEMS.DENOMINATION' | translate }} *</label>
         <input
-          id="denomination"
+          id="name"
           class="form-input"
-          [(ngModel)]="form.denomination"
-          name="denomination"
+          [(ngModel)]="form.name"
+          name="name"
           required
           [placeholder]="'ITEMS.DENOMINATION' | translate"
         />
@@ -24,25 +22,20 @@
 
       <div class="form-grid">
         <div class="form-row">
-          <label class="form-label" for="fournisseur">{{ 'ITEMS.SUPPLIER' | translate }}</label>
-          <select
-            id="fournisseur"
-            class="form-input"
-            [(ngModel)]="form.fournisseur"
-            name="fournisseur"
-          >
+          <label class="form-label" for="supplier">{{ 'ITEMS.SUPPLIER' | translate }}</label>
+          <select id="supplier" class="form-input" [(ngModel)]="form.supplier" name="supplier">
             <option value="">{{ 'COMMON.SELECT' | translate }}</option>
-            @for (f of fournisseurs; track f) {
+            @for (f of suppliers; track f) {
               <option [value]="f">{{ f }}</option>
             }
           </select>
         </div>
 
         <div class="form-row">
-          <label class="form-label" for="etat">{{ 'ITEMS.STATE' | translate }}</label>
-          <select id="etat" class="form-input" [(ngModel)]="form.etat" name="etat">
+          <label class="form-label" for="status">{{ 'ITEMS.STATE' | translate }}</label>
+          <select id="status" class="form-input" [(ngModel)]="form.status" name="status">
             <option value="">{{ 'COMMON.SELECT' | translate }}</option>
-            @for (e of etats; track e) {
+            @for (e of statuses; track e) {
               <option [value]="e">{{ e }}</option>
             }
           </select>
@@ -56,18 +49,18 @@
           class="form-input"
           type="number"
           min="0"
-          [(ngModel)]="form.quantite"
-          name="quantite"
+          [(ngModel)]="form.quantity"
+          name="quantity"
         />
       </div>
 
       <div class="form-row form-row--inline">
         <label class="toggle-label">
-          <input type="checkbox" [(ngModel)]="form.prepaCG" name="prepaCG" />
+          <input type="checkbox" [(ngModel)]="form.cgKit" name="cgKit" />
           <span>{{ 'ITEMS.PREPA_CG' | translate }}</span>
         </label>
         <label class="toggle-label">
-          <input type="checkbox" [(ngModel)]="form.prepaTPV" name="prepaTPV" />
+          <input type="checkbox" [(ngModel)]="form.tpvKit" name="tpvKit" />
           <span>{{ 'ITEMS.PREPA_TPV' | translate }}</span>
         </label>
       </div>

@@ -53,13 +53,13 @@ export const itemsReducer = createReducer(
     total: state.total - 1,
   })),
 
-  on(ItemsActions.updateQuantiteSuccess, (state, { id, quantite }) => ({
+  on(ItemsActions.updateQuantitySuccess, (state, { id, quantity }) => ({
     ...state,
     items: state.items.map((existing) =>
-      existing._id === id ? { ...existing, quantite } : existing,
+      existing._id === id ? { ...existing, quantity } : existing,
     ),
     allItems: state.allItems.map((existing) =>
-      existing._id === id ? { ...existing, quantite } : existing,
+      existing._id === id ? { ...existing, quantity } : existing,
     ),
   })),
 

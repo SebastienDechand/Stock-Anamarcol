@@ -15,10 +15,10 @@ export interface UploadError {
 }
 
 export interface CreateItemError {
-  denomination: string;
-  fournisseur: string;
-  etat: string;
-  quantite: string;
+  name: string;
+  supplier: string;
+  status: string;
+  quantity: string;
 }
 
 export interface MongoError extends Error {

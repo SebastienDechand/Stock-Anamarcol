@@ -27,8 +27,8 @@ export const getDashboardStats = async (
 
     const [
       globalStats,
-      fournisseursStats,
-      etatsStats,
+      suppliersStats,
+      statusesStats,
       lowStockItems,
       cgItems,
       tpvItems,
@@ -38,22 +38,22 @@ export const getDashboardStats = async (
           $group: {
             _id: null,
             numberOfArticles: { $sum: 1 },
-            totalStock: { $sum: "$quantite" },
+            totalStock: { $sum: "$quantity" },
             numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
+              $sum: { $cond: [{ $lt: ["$quantity", 5] }, 1, 0] },
             },
-            fournisseurs: { $addToSet: "$fournisseur" },
+            suppliers: { $addToSet: "$supplier" },
           },
         },
       ]),
       ItemModel.aggregate([
         {
           $group: {
-            _id: "$fournisseur",
+            _id: "$supplier",
             numberOfArticles: { $sum: 1 },
-            totalStock: { $sum: "$quantite" },
+            totalStock: { $sum: "$quantity" },
             numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
+              $sum: { $cond: [{ $lt: ["$quantity", 5] }, 1, 0] },
             },
           },
         },
@@ -62,71 +62,71 @@ export const getDashboardStats = async (
       ItemModel.aggregate([
         {
           $group: {
-            _id: "$etat",
+            _id: "$status",
             numberOfArticles: { $sum: 1 },
-            totalStock: { $sum: "$quantite" },
+            totalStock: { $sum: "$quantity" },
             numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
+              $sum: { $cond: [{ $lt: ["$quantity", 5] }, 1, 0] },
             },
           },
         },
         { $sort: { _id: 1 } },
       ]),
-      ItemModel.find({ quantite: { $lt: 5 } })
-        .sort({ quantite: 1, denomination: 1 })
+      ItemModel.find({ quantity: { $lt: 5 } })
+        .sort({ quantity: 1, name: 1 })
         .lean(),
-      ItemModel.find({ prepaCG: true }).select("denomination quantite").lean(),
-      ItemModel.find({ prepaTPV: true }).select("quantite").lean(),
+      ItemModel.find({ cgKit: true }).select("name quantity").lean(),
+      ItemModel.find({ tpvKit: true }).select("quantity").lean(),
     ]);
 
     const global = globalStats[0] || {
       numberOfArticles: 0,
       totalStock: 0,
       numberOfLowStockArticles: 0,
-      fournisseurs: [],
+      suppliers: [],
     };
 
     // Complete CG prepa = min(qty) of each item, cassettes count qty/4
     const typedCgItems = cgItems as {
-      denomination: string;
-      quantite: number;
+      name: string;
+      quantity: number;
     }[];
     const completeCG =
       typedCgItems.length > 0
         ? Math.min(
             ...typedCgItems.map((item) => {
-              const isCassette = item.denomination
+              const isCassette = item.name
                 .toLowerCase()
                 .includes("cassette");
-              return isCassette ? Math.floor(item.quantite / 4) : item.quantite;
+              return isCassette ? Math.floor(item.quantity / 4) : item.quantity;
             }),
           )
         : 0;
 
     // Complete TPV prepa = min(qty) of each item (1 of each)
-    const typedTpvItems = tpvItems as { quantite: number }[];
+    const typedTpvItems = tpvItems as { quantity: number }[];
     const completeTPV =
       typedTpvItems.length > 0
-        ? Math.min(...typedTpvItems.map((item) => item.quantite))
+        ? Math.min(...typedTpvItems.map((item) => item.quantity))
         : 0;
 
     const result: DashboardResult = {
       global: {
         numberOfArticles: global.numberOfArticles,
         totalStock: global.totalStock,
-        numberOfSuppliers: global.fournisseurs.length,
+        numberOfSuppliers: global.suppliers.length,
         numberOfLowStockArticles: global.numberOfLowStockArticles,
-        prepaCG: completeCG,
-        prepaTPV: completeTPV,
+        cgKit: completeCG,
+        tpvKit: completeTPV,
       },
-      fournisseurs: fournisseursStats.map((f: Record<string, unknown>) => ({
-        nom: String(f._id),
+      suppliers: suppliersStats.map((f: Record<string, unknown>) => ({
+        name: String(f._id),
         numberOfArticles: Number(f.numberOfArticles),
         totalStock: Number(f.totalStock),
         numberOfLowStockArticles: Number(f.numberOfLowStockArticles),
       })),
-      etats: etatsStats.map((e: Record<string, unknown>) => ({
-        nom: String(e._id),
+      statuses: statusesStats.map((e: Record<string, unknown>) => ({
+        name: String(e._id),
         numberOfArticles: Number(e.numberOfArticles),
         totalStock: Number(e.totalStock),
         numberOfLowStockArticles: Number(e.numberOfLowStockArticles),
@@ -166,7 +166,7 @@ export const getTotalStock = async (
 ): Promise<void> => {
   try {
     const result = await ItemModel.aggregate([
-      { $group: { _id: null, totalStock: { $sum: "$quantite" } } },
+      { $group: { _id: null, totalStock: { $sum: "$quantity" } } },
     ]);
     res.status(200).json({ totalStock: result[0]?.totalStock || 0 });
   } catch (error) {
@@ -179,7 +179,7 @@ export const getNumberOfSuppliers = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const list = await ItemModel.distinct("fournisseur");
+    const list = await ItemModel.distinct("supplier");
     res.status(200).json({ numberOfSuppliers: list.length });
   } catch (error) {
     res.status(500).json({ message: "Erreur interne du serveur" });
@@ -191,7 +191,7 @@ export const getNumberOfArticlesWithStockBelow5 = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const count = await ItemModel.countDocuments({ quantite: { $lt: 5 } });
+    const count = await ItemModel.countDocuments({ quantity: { $lt: 5 } });
     res.status(200).json({ numberOfLowStockArticles: count });
   } catch (error) {
     res.status(500).json({ message: "Erreur interne du serveur" });
@@ -203,8 +203,8 @@ export const getArticlesWithLowStock = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const articles = await ItemModel.find({ quantite: { $lt: 5 } })
-      .sort({ quantite: 1, denomination: 1 })
+    const articles = await ItemModel.find({ quantity: { $lt: 5 } })
+      .sort({ quantity: 1, name: 1 })
       .lean();
     res.json(articles);
   } catch (error) {
@@ -212,34 +212,34 @@ export const getArticlesWithLowStock = async (
   }
 };
 
-export const getFournisseursList = async (
+export const getSuppliersList = async (
   _req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const fournisseursList = await ItemModel.distinct("fournisseur");
-    res.status(200).json({ fournisseursList });
+    const suppliersList = await ItemModel.distinct("supplier");
+    res.status(200).json({ suppliersList });
   } catch (error) {
     res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
 
-export const getStatisticsForFournisseur = async (
+export const getStatisticsForSupplier = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const fournisseur = req.params.fournisseur;
+    const supplier = req.params.supplier;
     const [count, stats] = await Promise.all([
-      ItemModel.countDocuments({ fournisseur }),
+      ItemModel.countDocuments({ supplier }),
       ItemModel.aggregate([
-        { $match: { fournisseur } },
+        { $match: { supplier } },
         {
           $group: {
             _id: null,
-            totalStock: { $sum: "$quantite" },
+            totalStock: { $sum: "$quantity" },
             numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
+              $sum: { $cond: [{ $lt: ["$quantity", 5] }, 1, 0] },
             },
           },
         },
@@ -252,34 +252,34 @@ export const getStatisticsForFournisseur = async (
   }
 };
 
-export const getEtatsList = async (
+export const getStatusesList = async (
   _req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const etatsList = await ItemModel.distinct("etat");
-    res.status(200).json({ etatsList });
+    const statusesList = await ItemModel.distinct("status");
+    res.status(200).json({ statusesList });
   } catch (error) {
     res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
 
-export const getStatisticsForEtat = async (
+export const getStatisticsForStatus = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const etat = req.params.etat;
+    const status = req.params.status;
     const [count, stats] = await Promise.all([
-      ItemModel.countDocuments({ etat }),
+      ItemModel.countDocuments({ status }),
       ItemModel.aggregate([
-        { $match: { etat } },
+        { $match: { status } },
         {
           $group: {
             _id: null,
-            totalStock: { $sum: "$quantite" },
+            totalStock: { $sum: "$quantity" },
             numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantite", 5] }, 1, 0] },
+              $sum: { $cond: [{ $lt: ["$quantity", 5] }, 1, 0] },
             },
           },
         },

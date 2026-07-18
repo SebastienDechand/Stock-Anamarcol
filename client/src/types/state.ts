@@ -15,7 +15,7 @@ export interface ContactsState {
 export interface ItemState {
   selectedItemId: string | null;
   items: Item[];
-  selectedItemQuantite: number | null;
+  selectedItemQuantity: number | null;
   selectedItemInfo: Item | null;
   history: History[];
   isLoadingHistory: boolean;

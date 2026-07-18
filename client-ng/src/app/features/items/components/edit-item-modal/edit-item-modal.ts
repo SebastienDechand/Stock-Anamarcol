@@ -43,8 +43,8 @@ export class EditItemModal implements OnInit, OnDestroy {
   private authFacade = inject(AuthFacade);
   private translate = inject(TranslateService);
 
-  fournisseurs = FOURNISSEURS;
-  etats = ETATS;
+  suppliers = FOURNISSEURS;
+  statuses = ETATS;
 
   readonly isAdmin = toSignal(this.authFacade.isAdmin$, { initialValue: false });
   readonly currentUser = toSignal(this.authFacade.user$, { initialValue: null });
@@ -64,12 +64,12 @@ export class EditItemModal implements OnInit, OnDestroy {
   fileError = '';
 
   form = {
-    denomination: '',
-    fournisseur: '',
-    etat: '',
-    quantite: 0,
-    prepaCG: false,
-    prepaTPV: false,
+    name: '',
+    supplier: '',
+    status: '',
+    quantity: 0,
+    cgKit: false,
+    tpvKit: false,
   };
 
   ngOnInit() {
@@ -94,12 +94,12 @@ export class EditItemModal implements OnInit, OnDestroy {
   resetForm() {
     const currentItem = this.displayItem;
     this.form = {
-      denomination: currentItem.denomination,
-      fournisseur: currentItem.fournisseur ?? '',
-      etat: currentItem.etat ?? '',
-      quantite: currentItem.quantite,
-      prepaCG: currentItem.prepaCG ?? false,
-      prepaTPV: currentItem.prepaTPV ?? false,
+      name: currentItem.name,
+      supplier: currentItem.supplier ?? '',
+      status: currentItem.status ?? '',
+      quantity: currentItem.quantity,
+      cgKit: currentItem.cgKit ?? false,
+      tpvKit: currentItem.tpvKit ?? false,
     };
   }
 
@@ -125,7 +125,7 @@ export class EditItemModal implements OnInit, OnDestroy {
   }
 
   submit() {
-    if (!this.form.denomination.trim() || !this.form.fournisseur || !this.form.etat) {
+    if (!this.form.name.trim() || !this.form.supplier || !this.form.status) {
       this.error = this.translate.instant('ITEMS.REQUIRED_FIELDS');
       return;
     }
@@ -135,11 +135,11 @@ export class EditItemModal implements OnInit, OnDestroy {
   }
 
   submitQty() {
-    const newQty = Math.max(0, this.form.quantite);
-    const current = this.displayItem.quantite;
+    const newQty = Math.max(0, this.form.quantity);
+    const current = this.displayItem.quantity;
     const name = this.currentUser()?.pseudo ?? '';
     const operation = newQty >= current ? 'add' : 'subtract';
-    this.facade.updateQuantite(this.item._id, newQty, name, operation);
+    this.facade.updateQuantity(this.item._id, newQty, name, operation);
     this.editingQty = false;
   }
 
@@ -187,12 +187,12 @@ export class EditItemModal implements OnInit, OnDestroy {
     quantity_change: 'qty',
   };
   readonly FIELD_LABEL_KEYS: Record<string, string> = {
-    denomination: 'ITEMS.DENOMINATION',
-    fournisseur: 'ITEMS.SUPPLIER',
-    etat: 'ITEMS.STATE',
-    quantite: 'ITEMS.QUANTITY',
-    prepaCG: 'ITEMS.PREPA_CG',
-    prepaTPV: 'ITEMS.PREPA_TPV',
+    name: 'ITEMS.DENOMINATION',
+    supplier: 'ITEMS.SUPPLIER',
+    status: 'ITEMS.STATE',
+    quantity: 'ITEMS.QUANTITY',
+    cgKit: 'ITEMS.PREPA_CG',
+    tpvKit: 'ITEMS.PREPA_TPV',
     image: 'ITEMS.IMAGE',
   };
 }

@@ -111,37 +111,37 @@ describe("errors.utils", () => {
 
   // ─── createItemErrors ──────────────────────────────────
   describe("createItemErrors", () => {
-    it("should detect a denomination error", () => {
-      const err = new Error("denomination required");
+    it("should detect a name error", () => {
+      const err = new Error("name required");
       const result = createItemErrors(err);
-      expect(result.denomination).toBe("Dénomination incorrect ou déjà prise");
+      expect(result.name).toBe("Dénomination incorrect ou déjà prise");
     });
 
     it("should detect a supplier error", () => {
-      const err = new Error("fournisseur required");
+      const err = new Error("supplier required");
       const result = createItemErrors(err);
-      expect(result.fournisseur).toBe("Nommez un fournisseur valide");
+      expect(result.supplier).toBe("Nommez un fournisseur valide");
     });
 
-    it("should detect a state error", () => {
-      const err = new Error("etat required");
+    it("should detect a status error", () => {
+      const err = new Error("status required");
       const result = createItemErrors(err);
-      expect(result.etat).toBe("L'état de la pièce doit être Neuf ou SAV");
+      expect(result.status).toBe("L'état de la pièce doit être NEW ou RMA");
     });
 
     it("should detect a quantity error", () => {
-      const err = new Error("quantite invalid");
+      const err = new Error("quantity invalid");
       const result = createItemErrors(err);
-      expect(result.quantite).toBe("La quantité attendue est un nombre");
+      expect(result.quantity).toBe("La quantité attendue est un nombre");
     });
 
     it("should return empty fields when no matching errors", () => {
       const err = new Error("unknown error");
       const result = createItemErrors(err);
-      expect(result.denomination).toBe("");
-      expect(result.fournisseur).toBe("");
-      expect(result.etat).toBe("");
-      expect(result.quantite).toBe("");
+      expect(result.name).toBe("");
+      expect(result.supplier).toBe("");
+      expect(result.status).toBe("");
+      expect(result.quantity).toBe("");
     });
   });
 });

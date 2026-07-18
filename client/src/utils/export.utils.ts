@@ -13,13 +13,13 @@ export async function exportToXLSX(items: Item[], filename?: string) {
   ];
 
   const data = items.map((item) => ({
-    Dénomination: item.denomination,
-    Fournisseur: item.fournisseur,
-    État: item.etat,
-    Quantité: Number(item.quantite),
-    "Prépa CG": item.prepaCG ? "Oui" : "Non",
+    Dénomination: item.name,
+    Fournisseur: item.supplier,
+    État: item.status,
+    Quantité: Number(item.quantity),
+    "Prépa CG": item.cgKit ? "Oui" : "Non",
 
-    "Prépa TPV": item.prepaTPV ? "Oui" : "Non",
+    "Prépa TPV": item.tpvKit ? "Oui" : "Non",
   }));
 
   const ws = XLSX.utils.json_to_sheet(data, { header: headers });
@@ -49,13 +49,13 @@ export async function exportToPDF(items: Item[], filename?: string) {
   ];
 
   const rows = items.map((item) => [
-    item.denomination,
-    item.fournisseur,
-    item.etat,
-    String(item.quantite),
-    item.prepaCG ? "Oui" : "Non",
+    item.name,
+    item.supplier,
+    item.status,
+    String(item.quantity),
+    item.cgKit ? "Oui" : "Non",
 
-    item.prepaTPV ? "Oui" : "Non",
+    item.tpvKit ? "Oui" : "Non",
   ]);
 
   const doc = new jsPDF();

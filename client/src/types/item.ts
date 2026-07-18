@@ -2,23 +2,23 @@ export interface Item {
   _id: string;
   posterId: string;
   modifierName?: string;
-  denomination: string;
-  quantite: number;
-  fournisseur: string;
+  name: string;
+  quantity: number;
+  supplier: string;
   image?: string;
-  etat: string;
-  prepaCG?: boolean;
-  prepaTPV?: boolean;
+  status: string;
+  cgKit?: boolean;
+  tpvKit?: boolean;
   preparation?: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
 export interface NewItem {
-  denomination: string;
-  fournisseur: string;
-  quantite: number;
-  etat: string;
+  name: string;
+  supplier: string;
+  quantity: number;
+  status: string;
   posterId: string;
   modifierId?: string;
   modifierName?: string;
@@ -28,10 +28,10 @@ export interface FetchItemsParams {
   page?: number;
   limit?: number;
   search?: string;
-  fournisseur?: string[];
-  etat?: string[];
-  prepaCG?: boolean;
-  prepaTPV?: boolean;
+  supplier?: string[];
+  status?: string[];
+  cgKit?: boolean;
+  tpvKit?: boolean;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }

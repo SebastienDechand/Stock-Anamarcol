@@ -1,5 +1,5 @@
 export interface SupplierOrStateStats {
-  nom: string;
+  name: string;
   numberOfArticles: number;
   totalStock: number;
   numberOfLowStockArticles: number;
@@ -10,21 +10,21 @@ export interface DashboardGlobalStats {
   totalStock: number;
   numberOfSuppliers: number;
   numberOfLowStockArticles: number;
-  prepaCG: number;
-  prepaTPV: number;
+  cgKit: number;
+  tpvKit: number;
 }
 
 export interface LowStockItemResult {
   _id: string;
-  denomination: string;
-  fournisseur: string;
-  etat: string;
-  quantite: number;
+  name: string;
+  supplier: string;
+  status: string;
+  quantity: number;
 }
 
 export interface DashboardResult {
   global: DashboardGlobalStats;
-  fournisseurs: SupplierOrStateStats[];
-  etats: SupplierOrStateStats[];
+  suppliers: SupplierOrStateStats[];
+  statuses: SupplierOrStateStats[];
   lowStockItems: LowStockItemResult[];
 }

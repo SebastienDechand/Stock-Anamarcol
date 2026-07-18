@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   selectDashboard,
   selectGlobalStats,
-  selectFournisseurStats,
+  selectSupplierStats,
   selectLowStockItems,
   selectStatisticsLoading,
 } from '../statistics.selectors';
@@ -10,7 +10,7 @@ import { initialStatisticsState } from '../statistics.state';
 import type {
   DashboardStats,
   GlobalStatistics,
-  FournisseurStats,
+  SupplierStats,
   LowStockItem,
 } from '../../../../shared/models/statistics.model';
 
@@ -19,12 +19,12 @@ const sampleGlobal: GlobalStatistics = {
   totalStock: 850,
   numberOfSuppliers: 5,
   numberOfLowStockArticles: 3,
-  prepaCG: 10,
-  prepaTPV: 7,
+  cgKit: 10,
+  tpvKit: 7,
 };
 
-const sampleFournisseur: FournisseurStats = {
-  nom: 'Fournisseur A',
+const sampleSupplier: SupplierStats = {
+  name: 'Fournisseur A',
   numberOfArticles: 40,
   totalStock: 300,
   numberOfLowStockArticles: 1,
@@ -32,15 +32,15 @@ const sampleFournisseur: FournisseurStats = {
 
 const sampleLowStockItem: LowStockItem = {
   _id: 'item-low-1',
-  denomination: 'Article critique',
-  fournisseur: 'Fournisseur B',
-  etat: 'occasion',
-  quantite: 1,
+  name: 'Article critique',
+  supplier: 'Fournisseur B',
+  status: 'occasion',
+  quantity: 1,
 };
 
 const sampleDashboard: DashboardStats = {
   global: sampleGlobal,
-  fournisseurs: [sampleFournisseur],
+  suppliers: [sampleSupplier],
   lowStockItems: [sampleLowStockItem],
 };
 
@@ -69,15 +69,15 @@ describe('Statistics Selectors', () => {
     });
   });
 
-  describe('selectFournisseurStats', () => {
+  describe('selectSupplierStats', () => {
     it('should return empty array from initial state (no dashboard)', () => {
       const state = { statistics: initialStatisticsState };
-      expect(selectFournisseurStats(state)).toEqual([]);
+      expect(selectSupplierStats(state)).toEqual([]);
     });
 
-    it('should return fournisseur stats when dashboard is set', () => {
+    it('should return supplier stats when dashboard is set', () => {
       const state = { statistics: { ...initialStatisticsState, dashboard: sampleDashboard } };
-      expect(selectFournisseurStats(state)).toEqual([sampleFournisseur]);
+      expect(selectSupplierStats(state)).toEqual([sampleSupplier]);
     });
   });
 

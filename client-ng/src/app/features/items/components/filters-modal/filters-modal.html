@@ -11,11 +11,11 @@
       <div class="filter-section">
         <p class="filter-section__label">{{ 'ITEMS.SUPPLIERS_LABEL' | translate }}</p>
         <div class="filter-section__chips">
-          @for (f of fournisseurs; track f) {
+          @for (f of suppliers; track f) {
             <button
               class="fchip"
-              [class.fchip--active]="localFournisseurs().includes(f)"
-              (click)="toggleFournisseur(f)"
+              [class.fchip--active]="localSuppliers().includes(f)"
+              (click)="toggleSupplier(f)"
             >
               {{ f }}
             </button>
@@ -26,11 +26,11 @@
       <div class="filter-section">
         <p class="filter-section__label">{{ 'ITEMS.STATE' | translate }}</p>
         <div class="filter-section__chips">
-          @for (e of etats; track e) {
+          @for (e of statuses; track e) {
             <button
               class="fchip"
-              [class.fchip--active-etat]="localEtats().includes(e)"
-              (click)="toggleEtat(e)"
+              [class.fchip--active-etat]="localStatuses().includes(e)"
+              (click)="toggleStatus(e)"
             >
               {{ e }}
             </button>
@@ -43,14 +43,14 @@
         <div class="filter-section__chips">
           <button
             class="fchip"
-            [class.fchip--active-prepa]="localPrepaCG()"
+            [class.fchip--active-prepa]="localCgKit()"
             (click)="togglePrepa('CashGuard')"
           >
             CashGuard
           </button>
           <button
             class="fchip"
-            [class.fchip--active-prepa]="localPrepaTPV()"
+            [class.fchip--active-prepa]="localTpvKit()"
             (click)="togglePrepa('Caisse TPV')"
           >
             Caisse TPV

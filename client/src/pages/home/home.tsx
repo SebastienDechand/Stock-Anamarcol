@@ -26,7 +26,7 @@ import {
 } from "recharts";
 import type {
   DashboardStats,
-  FournisseurStats,
+  SupplierStats,
   GlobalStatistics,
   LowStockItem,
 } from "../../types";
@@ -111,12 +111,12 @@ export default function Home() {
   }
 
   const g: Partial<GlobalStatistics> = stats?.global ?? {};
-  const fournisseurs = stats?.fournisseurs || [];
+  const suppliers = stats?.suppliers || [];
   const lowStockItems = stats?.lowStockItems || [];
   const filteredLowStock =
     stockTab === "all"
       ? lowStockItems
-      : lowStockItems.filter((i) => i.etat === stockTab);
+      : lowStockItems.filter((i) => i.status === stockTab);
 
   // Shared pie label renderer
   const renderPieLabel = ({
@@ -200,13 +200,13 @@ export default function Home() {
         <KpiCard
           icon={Monitor}
           label="Prépa CashGuard"
-          value={g.prepaCG}
+          value={g.cgKit}
           accent="violet"
         />
         <KpiCard
           icon={CreditCard}
           label="Prépa Caisse TPV"
-          value={g.prepaTPV}
+          value={g.tpvKit}
           accent="violet"
         />
       </div>
@@ -244,16 +244,16 @@ export default function Home() {
               </button>
             </div>
           </div>
-          {fournisseurs.length > 0 ? (
+          {suppliers.length > 0 ? (
             <>
               {/* Mobile: always pie */}
               <div className="md:hidden">
                 <ResponsiveContainer width="100%" height={280}>
                   <PieChart>
                     <Pie
-                      data={fournisseurs}
+                      data={suppliers}
                       dataKey="totalStock"
-                      nameKey="nom"
+                      nameKey="name"
                       cx="50%"
                       cy="50%"
                       innerRadius={55}
@@ -262,7 +262,7 @@ export default function Home() {
                       label={renderPieLabel}
                       labelLine={false}
                     >
-                      {fournisseurs.map((_: FournisseurStats, i: number) => (
+                      {suppliers.map((_: SupplierStats, i: number) => (
                         <Cell key={i} fill={COLORS[i % COLORS.length]} />
                       ))}
                     </Pie>
@@ -280,9 +280,9 @@ export default function Home() {
                   <ResponsiveContainer width="100%" height={280}>
                     <PieChart>
                       <Pie
-                        data={fournisseurs}
+                        data={suppliers}
                         dataKey="totalStock"
-                        nameKey="nom"
+                        nameKey="name"
                         cx="50%"
                         cy="50%"
                         innerRadius={55}
@@ -291,7 +291,7 @@ export default function Home() {
                         label={renderPieLabel}
                         labelLine={false}
                       >
-                        {fournisseurs.map((_: FournisseurStats, i: number) => (
+                        {suppliers.map((_: SupplierStats, i: number) => (
                           <Cell key={i} fill={COLORS[i % COLORS.length]} />
                         ))}
                       </Pie>
@@ -304,12 +304,12 @@ export default function Home() {
                 ) : (
                   <ResponsiveContainer width="100%" height={280}>
                     <BarChart
-                      data={fournisseurs}
+                      data={suppliers}
                       margin={{ top: 5, right: 10, left: -10, bottom: 5 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                       <XAxis
-                        dataKey="nom"
+                        dataKey="name"
                         tick={{ fontSize: 11, fill: "#6b7280" }}
                         tickLine={false}
                         axisLine={{ stroke: "#e5e7eb" }}
@@ -328,7 +328,7 @@ export default function Home() {
                         contentStyle={tooltipStyle}
                       />
                       <Bar dataKey="totalStock" radius={[4, 4, 0, 0]}>
-                        {fournisseurs.map((_: FournisseurStats, i: number) => (
+                        {suppliers.map((_: SupplierStats, i: number) => (
                           <Cell key={i} fill={COLORS[i % COLORS.length]} />
                         ))}
                       </Bar>
@@ -338,15 +338,15 @@ export default function Home() {
               </div>
 
               <div className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 mt-2">
-                {fournisseurs.map((f: FournisseurStats, i: number) => (
-                  <div key={f.nom} className="flex items-center gap-1.5">
+                {suppliers.map((f: SupplierStats, i: number) => (
+                  <div key={f.name} className="flex items-center gap-1.5">
                     <div
                       className="w-2.5 h-2.5 rounded-full shrink-0"
                       style={{
                         backgroundColor: COLORS[i % COLORS.length],
                       }}
                     />
-                    <span className="text-xs text-gray-600">{f.nom}</span>
+                    <span className="text-xs text-gray-600">{f.name}</span>
                   </div>
                 ))}
               </div>
@@ -363,11 +363,11 @@ export default function Home() {
           </h2>
           {/* Mobile card view */}
           <div className="md:hidden space-y-2">
-            {fournisseurs.map((f: FournisseurStats) => (
-              <div key={f.nom} className="bg-gray-50/80 rounded-lg px-3 py-2.5">
+            {suppliers.map((f: SupplierStats) => (
+              <div key={f.name} className="bg-gray-50/80 rounded-lg px-3 py-2.5">
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-medium text-gray-800 text-sm">
-                    {f.nom}
+                    {f.name}
                   </span>
                   <span
                     className={`inline-block min-w-[20px] text-center font-semibold rounded-full px-1.5 py-0.5 text-xs ${
@@ -406,13 +406,13 @@ export default function Home() {
                 </tr>
               </thead>
               <tbody>
-                {fournisseurs.map((f: FournisseurStats) => (
+                {suppliers.map((f: SupplierStats) => (
                   <tr
-                    key={f.nom}
+                    key={f.name}
                     className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors"
                   >
                     <td className="py-2.5 pl-2 font-medium text-gray-800">
-                      {f.nom}
+                      {f.name}
                     </td>
                     <td className="py-2.5 text-right text-gray-600">
                       {f.numberOfArticles}
@@ -466,7 +466,7 @@ export default function Home() {
                 {tab.label}
                 {tab.key !== "all" && (
                   <span className="ml-1 text-[10px] opacity-60">
-                    ({lowStockItems.filter((i) => i.etat === tab.key).length})
+                    ({lowStockItems.filter((i) => i.status === tab.key).length})
                   </span>
                 )}
               </button>
@@ -484,20 +484,20 @@ export default function Home() {
                 >
                   <div className="min-w-0 flex-1 mr-3">
                     <p className="text-sm font-medium text-gray-800 truncate">
-                      {item.denomination}
+                      {item.name}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {item.fournisseur} · {item.etat}
+                      {item.supplier} · {item.status}
                     </p>
                   </div>
                   <span
                     className={`inline-block min-w-[24px] text-center rounded-full px-2 py-0.5 text-xs font-bold shrink-0 ${
-                      item.quantite < 2
+                      item.quantity < 2
                         ? "bg-red-100 text-red-700"
                         : "bg-amber-100 text-amber-700"
                     }`}
                   >
-                    {item.quantite}
+                    {item.quantity}
                   </span>
                 </div>
               ))}
@@ -528,21 +528,21 @@ export default function Home() {
                       className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors"
                     >
                       <td className="py-2.5 pl-2 font-medium text-gray-800">
-                        {item.denomination}
+                        {item.name}
                       </td>
                       <td className="py-2.5 text-gray-600">
-                        {item.fournisseur}
+                        {item.supplier}
                       </td>
-                      <td className="py-2.5 text-gray-600">{item.etat}</td>
+                      <td className="py-2.5 text-gray-600">{item.status}</td>
                       <td className="py-2.5 text-right pr-2">
                         <span
                           className={`inline-block min-w-[24px] text-center rounded-full px-2 py-0.5 text-xs font-bold ${
-                            item.quantite < 2
+                            item.quantity < 2
                               ? "bg-red-100 text-red-700"
                               : "bg-amber-100 text-amber-700"
                           }`}
                         >
-                          {item.quantite}
+                          {item.quantity}
                         </span>
                       </td>
                     </tr>
