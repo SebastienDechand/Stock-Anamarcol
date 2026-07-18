@@ -6,7 +6,7 @@ const options: swaggerJsdoc.Options = {
     info: {
       title: "Stock Anamarcol API",
       version: "1.0.0",
-      description: "API de gestion de stock Anamarcol",
+      description: "Anamarcol stock management API",
     },
     servers: [{ url: "http://localhost:4000", description: "Local" }],
     components: {
@@ -24,14 +24,14 @@ const options: swaggerJsdoc.Options = {
             _id: { type: "string" },
             posterId: { type: "string" },
             modifierName: { type: "string" },
-            denomination: { type: "string" },
-            quantite: { type: "number" },
-            fournisseur: { type: "string" },
-            etat: { type: "string" },
+            name: { type: "string" },
+            quantity: { type: "number" },
+            supplier: { type: "string" },
+            status: { type: "string" },
             image: { type: "string" },
-            prepaCG: { type: "boolean" },
+            cgKit: { type: "boolean" },
 
-            prepaTPV: { type: "boolean" },
+            tpvKit: { type: "boolean" },
             createdAt: { type: "string", format: "date-time" },
             updatedAt: { type: "string", format: "date-time" },
           },
@@ -101,8 +101,8 @@ const options: swaggerJsdoc.Options = {
             },
           },
           responses: {
-            201: { description: "Utilisateur créé" },
-            400: { description: "Erreur de validation" },
+            201: { description: "User created" },
+            400: { description: "Validation error" },
           },
         },
       },
@@ -125,8 +125,8 @@ const options: swaggerJsdoc.Options = {
             },
           },
           responses: {
-            200: { description: "Connexion réussie" },
-            400: { description: "Identifiants invalides" },
+            200: { description: "Login successful" },
+            400: { description: "Invalid credentials" },
           },
         },
       },
@@ -134,7 +134,7 @@ const options: swaggerJsdoc.Options = {
         get: {
           tags: ["Auth"],
           summary: "Déconnexion",
-          responses: { 200: { description: "Déconnecté" } },
+          responses: { 200: { description: "Logged out" } },
         },
       },
       "/jwtid": {
@@ -143,7 +143,7 @@ const options: swaggerJsdoc.Options = {
           summary: "Vérifier le JWT (retourne id + rôle)",
           responses: {
             200: { description: "OK" },
-            401: { description: "Non authentifié" },
+            401: { description: "Not authenticated" },
           },
         },
       },
@@ -185,8 +185,8 @@ const options: swaggerJsdoc.Options = {
             },
           },
           responses: {
-            201: { description: "Utilisateur créé" },
-            403: { description: "Accès refusé - admin requis" },
+            201: { description: "User created" },
+            403: { description: "Access denied - admin required" },
           },
         },
       },
@@ -278,7 +278,7 @@ const options: swaggerJsdoc.Options = {
           },
           responses: {
             200: { description: "OK" },
-            403: { description: "Accès refusé" },
+            403: { description: "Access denied" },
           },
         },
       },
@@ -300,19 +300,19 @@ const options: swaggerJsdoc.Options = {
             },
             { name: "search", in: "query", schema: { type: "string" } },
             {
-              name: "fournisseur",
+              name: "supplier",
               in: "query",
               schema: { type: "string" },
-              description: "Virgule-séparé",
+              description: "Comma-separated",
             },
             {
-              name: "etat",
+              name: "status",
               in: "query",
               schema: { type: "string" },
-              description: "Virgule-séparé",
+              description: "Comma-separated",
             },
-            { name: "prepaCG", in: "query", schema: { type: "boolean" } },
-            { name: "prepaTPV", in: "query", schema: { type: "boolean" } },
+            { name: "cgKit", in: "query", schema: { type: "boolean" } },
+            { name: "tpvKit", in: "query", schema: { type: "boolean" } },
             { name: "sortBy", in: "query", schema: { type: "string" } },
             {
               name: "sortOrder",
@@ -352,7 +352,7 @@ const options: swaggerJsdoc.Options = {
               },
             },
           },
-          responses: { 201: { description: "Créé" } },
+          responses: { 201: { description: "Created" } },
         },
       },
       "/api/item/{id}": {
@@ -446,7 +446,7 @@ const options: swaggerJsdoc.Options = {
       "/api/item/prepa-batch": {
         post: {
           tags: ["Items"],
-          summary: "Opérations prepa en lot (prepaCG / prepaTPV)",
+          summary: "Opérations prepa en lot (cgKit / tpvKit)",
           requestBody: {
             content: {
               "application/json": {
@@ -454,7 +454,7 @@ const options: swaggerJsdoc.Options = {
                   type: "object",
                   properties: {
                     ids: { type: "array", items: { type: "string" } },
-                    field: { type: "string", enum: ["prepaCG", "prepaTPV"] },
+                    field: { type: "string", enum: ["cgKit", "tpvKit"] },
                     value: { type: "boolean" },
                   },
                   required: ["ids", "field", "value"],
@@ -464,7 +464,7 @@ const options: swaggerJsdoc.Options = {
           },
           responses: {
             200: { description: "OK" },
-            401: { description: "Non authentifié" },
+            401: { description: "Not authenticated" },
           },
         },
       },
@@ -490,7 +490,7 @@ const options: swaggerJsdoc.Options = {
         post: {
           tags: ["Contacts"],
           summary: "Créer un contact (admin)",
-          responses: { 201: { description: "Créé" } },
+          responses: { 201: { description: "Created" } },
         },
       },
       "/api/contacts/upload": {
@@ -512,7 +512,7 @@ const options: swaggerJsdoc.Options = {
           },
           responses: {
             200: { description: "OK" },
-            403: { description: "Accès refusé" },
+            403: { description: "Access denied" },
           },
         },
       },
@@ -571,8 +571,8 @@ const options: swaggerJsdoc.Options = {
           ],
           responses: {
             200: { description: "OK" },
-            401: { description: "Non authentifié" },
-            403: { description: "Accès refusé - admin requis" },
+            401: { description: "Not authenticated" },
+            403: { description: "Access denied - admin required" },
           },
         },
       },
@@ -583,8 +583,8 @@ const options: swaggerJsdoc.Options = {
           summary: "Liste des envois (Hotline + admin)",
           responses: {
             200: { description: "OK" },
-            401: { description: "Non authentifié" },
-            403: { description: "Accès refusé" },
+            401: { description: "Not authenticated" },
+            403: { description: "Access denied" },
           },
         },
         post: {
@@ -608,9 +608,9 @@ const options: swaggerJsdoc.Options = {
             },
           },
           responses: {
-            201: { description: "Créé" },
-            401: { description: "Non authentifié" },
-            403: { description: "Accès refusé" },
+            201: { description: "Created" },
+            401: { description: "Not authenticated" },
+            403: { description: "Access denied" },
           },
         },
       },
@@ -628,8 +628,8 @@ const options: swaggerJsdoc.Options = {
           ],
           responses: {
             200: { description: "OK" },
-            401: { description: "Non authentifié" },
-            403: { description: "Accès refusé" },
+            401: { description: "Not authenticated" },
+            403: { description: "Access denied" },
           },
         },
       },
@@ -647,8 +647,8 @@ const options: swaggerJsdoc.Options = {
           ],
           responses: {
             200: { description: "OK" },
-            401: { description: "Non authentifié" },
-            403: { description: "Accès refusé - admin requis" },
+            401: { description: "Not authenticated" },
+            403: { description: "Access denied - admin required" },
           },
         },
       },
@@ -671,7 +671,7 @@ const options: swaggerJsdoc.Options = {
                 },
               },
             },
-            403: { description: "Accès refusé - superadmin requis" },
+            403: { description: "Access denied - superadmin required" },
           },
         },
       },
@@ -697,7 +697,7 @@ const options: swaggerJsdoc.Options = {
           responses: { 200: { description: "OK" } },
         },
       },
-      "/api/statistics/fournisseurs": {
+      "/api/statistics/suppliers": {
         get: {
           tags: ["Statistics"],
           summary: "Nombre de fournisseurs",
@@ -718,20 +718,20 @@ const options: swaggerJsdoc.Options = {
           responses: { 200: { description: "OK" } },
         },
       },
-      "/api/statistics/fournisseurs/list": {
+      "/api/statistics/suppliers/list": {
         get: {
           tags: ["Statistics"],
           summary: "Liste des fournisseurs",
           responses: { 200: { description: "OK" } },
         },
       },
-      "/api/statistics/fournisseurs/{fournisseur}": {
+      "/api/statistics/suppliers/{supplier}": {
         get: {
           tags: ["Statistics"],
           summary: "Stats par fournisseur",
           parameters: [
             {
-              name: "fournisseur",
+              name: "supplier",
               in: "path",
               required: true,
               schema: { type: "string" },
@@ -740,20 +740,20 @@ const options: swaggerJsdoc.Options = {
           responses: { 200: { description: "OK" } },
         },
       },
-      "/api/statistics/etats/list": {
+      "/api/statistics/statuses/list": {
         get: {
           tags: ["Statistics"],
           summary: "Liste des états",
           responses: { 200: { description: "OK" } },
         },
       },
-      "/api/statistics/etats/{etat}": {
+      "/api/statistics/statuses/{status}": {
         get: {
           tags: ["Statistics"],
           summary: "Stats par état",
           parameters: [
             {
-              name: "etat",
+              name: "status",
               in: "path",
               required: true,
               schema: { type: "string" },

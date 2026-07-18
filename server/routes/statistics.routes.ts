@@ -13,7 +13,7 @@ router.get("/dashboard", statisticsController.getDashboardStats);
 // General statistics (backward compatibility)
 router.get("/articles", statisticsController.getNumberOfArticles);
 router.get("/stock", statisticsController.getTotalStock);
-router.get("/fournisseurs", statisticsController.getNumberOfSuppliers);
+router.get("/suppliers", statisticsController.getNumberOfSuppliers);
 router.get(
   "/articles/stockinf5",
   statisticsController.getNumberOfArticlesWithStockBelow5,
@@ -21,14 +21,14 @@ router.get(
 router.get("/articles/low-stock", statisticsController.getArticlesWithLowStock);
 
 // Suppliers
-router.get("/fournisseurs/list", statisticsController.getFournisseursList);
+router.get("/suppliers/list", statisticsController.getSuppliersList);
 router.get(
-  "/fournisseurs/:fournisseur",
-  statisticsController.getStatisticsForFournisseur,
+  "/suppliers/:supplier",
+  statisticsController.getStatisticsForSupplier,
 );
 
-// State
-router.get("/etats/list", statisticsController.getEtatsList);
-router.get("/etats/:etat", statisticsController.getStatisticsForEtat);
+// Status
+router.get("/statuses/list", statisticsController.getStatusesList);
+router.get("/statuses/:status", statisticsController.getStatisticsForStatus);
 
 export default router;

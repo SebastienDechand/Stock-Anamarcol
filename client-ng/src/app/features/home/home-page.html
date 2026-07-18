@@ -38,8 +38,8 @@
             </button>
           </div>
         </div>
-        @if (facade.fournisseurStats$ | async; as fournisseurs) {
-          <app-stock-chart [stats]="fournisseurs" [chartType]="chartType()" />
+        @if (facade.supplierStats$ | async; as suppliers) {
+          <app-stock-chart [stats]="suppliers" [chartType]="chartType()" />
         }
       </div>
 
@@ -48,13 +48,13 @@
         <h2 class="home__section-title home__section-title--mb">
           {{ 'HOME.SUPPLIER_DETAILS' | translate }}
         </h2>
-        @if (facade.fournisseurStats$ | async; as fournisseurs) {
+        @if (facade.supplierStats$ | async; as suppliers) {
           <!-- Mobile card view -->
           <div class="home__supplier-cards">
-            @for (f of fournisseurs; track f.nom) {
+            @for (f of suppliers; track f.name) {
               <div class="home__supplier-card">
                 <div class="home__supplier-card-top">
-                  <span class="home__supplier-card-name">{{ f.nom }}</span>
+                  <span class="home__supplier-card-name">{{ f.name }}</span>
                   <span
                     class="home__badge"
                     [class.home__badge--danger]="f.numberOfLowStockArticles > 0"
@@ -82,9 +82,9 @@
                 </tr>
               </thead>
               <tbody>
-                @for (f of fournisseurs; track f.nom) {
+                @for (f of suppliers; track f.name) {
                   <tr class="home__tr">
-                    <td class="home__td home__td--name">{{ f.nom }}</td>
+                    <td class="home__td home__td--name">{{ f.name }}</td>
                     <td class="home__td home__td--right">{{ f.numberOfArticles }}</td>
                     <td class="home__td home__td--right">{{ f.totalStock }}</td>
                     <td class="home__td home__td--right">

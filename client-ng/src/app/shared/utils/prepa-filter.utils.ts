@@ -1,6 +1,6 @@
 export interface PrepaFilterState {
-  prepaCG: boolean;
-  prepaTPV: boolean;
+  cgKit: boolean;
+  tpvKit: boolean;
 }
 
 export function togglePrepaFilter(
@@ -8,9 +8,9 @@ export function togglePrepaFilter(
   prepa: 'CashGuard' | 'Caisse TPV',
 ): PrepaFilterState {
   const isCashGuard = prepa === 'CashGuard';
-  const wasActive = isCashGuard ? current.prepaCG : current.prepaTPV;
+  const wasActive = isCashGuard ? current.cgKit : current.tpvKit;
   return {
-    prepaCG: isCashGuard ? !wasActive : false,
-    prepaTPV: isCashGuard ? false : !wasActive,
+    cgKit: isCashGuard ? !wasActive : false,
+    tpvKit: isCashGuard ? false : !wasActive,
   };
 }

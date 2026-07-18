@@ -21,7 +21,7 @@ import {
   DoughnutController,
   BarController,
 } from 'chart.js';
-import { FournisseurStats } from '../../../../shared/models/statistics.model';
+import { SupplierStats } from '../../../../shared/models/statistics.model';
 
 Chart.register(
   ArcElement,
@@ -55,7 +55,7 @@ const PALETTE = [
   styleUrl: './stock-chart.scss',
 })
 export class StockChart implements OnChanges, AfterViewChecked {
-  @Input({ required: true }) stats!: FournisseurStats[];
+  @Input({ required: true }) stats!: SupplierStats[];
   @Input() chartType: 'pie' | 'bar' = 'pie';
 
   private readonly translate = inject(TranslateService);
@@ -100,7 +100,7 @@ export class StockChart implements OnChanges, AfterViewChecked {
 
   ngOnChanges() {
     this.needsResize = true;
-    const labels = this.stats.map((stat) => stat.nom ?? this.translate.instant('HOME.UNKNOWN'));
+    const labels = this.stats.map((stat) => stat.name ?? this.translate.instant('HOME.UNKNOWN'));
     const data = this.stats.map((stat) => stat.totalStock);
     const colors = this.palette;
 

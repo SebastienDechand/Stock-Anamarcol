@@ -5,7 +5,7 @@ import {
   FETCH_ITEMS_FAILURE,
 } from "../actions/items.actions";
 import {
-  UPDATE_QUANTITE_SUCCESS,
+  UPDATE_QUANTITY_SUCCESS,
   DELETE_ITEM_SUCCESS,
 } from "../actions/item.actions";
 import type { Item, ItemsState, ReduxAction } from "../types";
@@ -61,16 +61,16 @@ export default function itemsReducer(
         isLoading: false,
       };
 
-    case UPDATE_QUANTITE_SUCCESS: {
-      const { updatedItemId, updatedQuantite } = action.payload as {
+    case UPDATE_QUANTITY_SUCCESS: {
+      const { updatedItemId, updatedQuantity } = action.payload as {
         updatedItemId: string;
-        updatedQuantite: number;
+        updatedQuantity: number;
       };
       return {
         ...state,
         items: state.items.map((item) =>
           item._id === updatedItemId
-            ? { ...item, quantite: updatedQuantite }
+            ? { ...item, quantity: updatedQuantity }
             : item,
         ),
       };

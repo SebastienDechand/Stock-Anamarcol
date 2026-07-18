@@ -8,9 +8,9 @@ export const selectGlobalStats = createSelector(
   selectStatisticsState,
   (state) => state.dashboard?.global ?? null,
 );
-export const selectFournisseurStats = createSelector(
+export const selectSupplierStats = createSelector(
   selectStatisticsState,
-  (state) => state.dashboard?.fournisseurs ?? [],
+  (state) => state.dashboard?.suppliers ?? [],
 );
 export const selectLowStockItems = createSelector(
   selectStatisticsState,

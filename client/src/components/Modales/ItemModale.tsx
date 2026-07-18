@@ -4,7 +4,7 @@ import { useAppDispatch } from "../../hooks/redux";
 import {
   setSelectedItemId,
   updateItem,
-  updateQuantite,
+  updateQuantity,
   uploadItemPicture,
   fetchItemHistory,
 } from "../../actions/item.actions";
@@ -25,12 +25,12 @@ interface ItemModaleProps {
 }
 
 const FIELD_LABELS: Record<string, string> = {
-  denomination: "Dénomination",
-  fournisseur: "Fournisseur",
-  etat: "État",
-  quantite: "Quantité",
-  prepaCG: "Prépa CG",
-  prepaTPV: "Prépa TPV",
+  name: "Dénomination",
+  supplier: "Fournisseur",
+  status: "État",
+  quantity: "Quantité",
+  cgKit: "Prépa CG",
+  tpvKit: "Prépa TPV",
   image: "Image",
 };
 
@@ -52,7 +52,7 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
   const dispatch = useAppDispatch();
   const authContext = useContext(UidContext);
   const isAdmin = authContext?.isAdmin;
-  const { selectedItemInfo, selectedItemQuantite, history, isLoadingHistory } =
+  const { selectedItemInfo, selectedItemQuantity, history, isLoadingHistory } =
     useSelector((state: { itemReducer: ItemState }) => state.itemReducer);
   const modifierName = useSelector(
     (state: { userReducer: Partial<User> }) => state.userReducer.pseudo,
@@ -76,10 +76,10 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
   // Edit mode state
   const [editing, setEditing] = useState(false);
   const [editingQty, setEditingQty] = useState(false);
-  const [denomination, setDenomination] = useState("");
-  const [fournisseur, setFournisseur] = useState("");
-  const [etat, setEtat] = useState("");
-  const [quantite, setQuantite] = useState<number | string>("");
+  const [name, setName] = useState("");
+  const [supplier, setSupplier] = useState("");
+  const [status, setStatus] = useState("");
+  const [quantity, setQuantity] = useState<number | string>("");
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -92,12 +92,12 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
   // Sync form fields when item info changes
   useEffect(() => {
     if (selectedItemInfo) {
-      setDenomination(selectedItemInfo.denomination || "");
-      setFournisseur(selectedItemInfo.fournisseur || "");
-      setEtat(selectedItemInfo.etat || "");
-      setQuantite(selectedItemInfo.quantite ?? selectedItemQuantite ?? "");
+      setName(selectedItemInfo.name || "");
+      setSupplier(selectedItemInfo.supplier || "");
+      setStatus(selectedItemInfo.status || "");
+      setQuantity(selectedItemInfo.quantity ?? selectedItemQuantity ?? "");
     }
-  }, [selectedItemInfo, selectedItemQuantite]);
+  }, [selectedItemInfo, selectedItemQuantity]);
 
   useEffect(() => {
     return () => {
@@ -121,10 +121,10 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
 
   const cancelEditing = () => {
     if (selectedItemInfo) {
-      setDenomination(selectedItemInfo.denomination || "");
-      setFournisseur(selectedItemInfo.fournisseur || "");
-      setEtat(selectedItemInfo.etat || "");
-      setQuantite(selectedItemInfo.quantite ?? "");
+      setName(selectedItemInfo.name || "");
+      setSupplier(selectedItemInfo.supplier || "");
+      setStatus(selectedItemInfo.status || "");
+      setQuantity(selectedItemInfo.quantity ?? "");
     }
     setEditing(false);
     setEditingQty(false);
@@ -133,7 +133,7 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
 
   const handleSave = async () => {
     if (!selectedItemInfo?._id || !modifierName) return;
-    if (!denomination.trim() || !fournisseur || !etat) {
+    if (!name.trim() || !supplier || !status) {
       setError("Tous les champs sont obligatoires.");
       return;
     }
@@ -144,10 +144,10 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
     try {
       await dispatch(
         updateItem(selectedItemInfo._id, {
-          denomination: denomination.trim(),
-          fournisseur,
-          etat,
-          quantite: Math.max(0, parseInt(String(quantite), 10) || 0),
+          name: name.trim(),
+          supplier,
+          status,
+          quantity: Math.max(0, parseInt(String(quantity), 10) || 0),
           modifierName,
         }),
       );
@@ -163,12 +163,12 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
 
   const handleSaveQty = async () => {
     if (!selectedItemInfo?._id || !modifierName) return;
-    const newQty = Math.max(0, parseInt(String(quantite), 10) || 0);
+    const newQty = Math.max(0, parseInt(String(quantity), 10) || 0);
     setIsSaving(true);
     setError("");
     try {
       await dispatch(
-        updateQuantite(selectedItemInfo._id, newQty, modifierName),
+        updateQuantity(selectedItemInfo._id, newQty, modifierName),
       );
       await dispatch(setSelectedItemId(selectedItemInfo._id));
       setEditingQty(false);
@@ -203,9 +203,9 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
 
     try {
       const data = new FormData();
-      data.append("denomination", selectedItemInfo.denomination);
-      data.append("fournisseur", selectedItemInfo.fournisseur);
-      data.append("etat", selectedItemInfo.etat);
+      data.append("name", selectedItemInfo.name);
+      data.append("supplier", selectedItemInfo.supplier);
+      data.append("status", selectedItemInfo.status);
       data.append("itemId", selectedItemInfo._id);
       data.append("file", selectedFile);
       await dispatch(uploadItemPicture(data, selectedItemInfo._id, userId));
@@ -335,13 +335,13 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
                 {editing ? (
                   <input
                     type="text"
-                    value={denomination}
-                    onChange={(e) => setDenomination(e.target.value)}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className={inputClass}
                   />
                 ) : (
                   <p className="text-sm text-gray-800">
-                    {selectedItemInfo?.denomination || "–"}
+                    {selectedItemInfo?.name || "–"}
                   </p>
                 )}
               </div>
@@ -351,8 +351,8 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
                 <p className={labelClass}>Fournisseur</p>
                 {editing ? (
                   <select
-                    value={fournisseur}
-                    onChange={(e) => setFournisseur(e.target.value)}
+                    value={supplier}
+                    onChange={(e) => setSupplier(e.target.value)}
                     className={inputClass}
                   >
                     <option value="">-- Sélectionner --</option>
@@ -364,7 +364,7 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
                   </select>
                 ) : (
                   <p className="text-sm text-gray-800">
-                    {selectedItemInfo?.fournisseur || "–"}
+                    {selectedItemInfo?.supplier || "–"}
                   </p>
                 )}
               </div>
@@ -374,8 +374,8 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
                 <p className={labelClass}>État</p>
                 {editing ? (
                   <select
-                    value={etat}
-                    onChange={(e) => setEtat(e.target.value)}
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
                     className={inputClass}
                   >
                     <option value="">-- Sélectionner --</option>
@@ -387,7 +387,7 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
                   </select>
                 ) : (
                   <p className="text-sm text-gray-800">
-                    {selectedItemInfo?.etat || "–"}
+                    {selectedItemInfo?.status || "–"}
                   </p>
                 )}
               </div>
@@ -399,19 +399,19 @@ const ItemModale = ({ onClose }: ItemModaleProps) => {
                   <input
                     type="number"
                     min="0"
-                    value={quantite}
-                    onChange={(e) => setQuantite(e.target.value)}
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
                     className={inputClass}
                   />
                 ) : (
                   <span
                     className={`text-sm font-bold ${
-                      Number(selectedItemInfo?.quantite) < 5
+                      Number(selectedItemInfo?.quantity) < 5
                         ? "text-red-600"
                         : "text-gray-800"
                     }`}
                   >
-                    {selectedItemInfo?.quantite ?? "–"}
+                    {selectedItemInfo?.quantity ?? "–"}
                   </span>
                 )}
               </div>

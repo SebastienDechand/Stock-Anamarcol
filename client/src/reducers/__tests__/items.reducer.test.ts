@@ -23,8 +23,8 @@ describe("itemsReducer", () => {
 
   it("should handle GET_ALL_ITEMS (updates allItems, not items)", () => {
     const items = [
-      { _id: "1", denomination: "Pièce A", quantite: 10 },
-      { _id: "2", denomination: "Pièce B", quantite: 3 },
+      { _id: "1", name: "Pièce A", quantity: 10 },
+      { _id: "2", name: "Pièce B", quantity: 3 },
     ];
     const state = itemsReducer(initialState, {
       type: GET_ALL_ITEMS,
@@ -44,7 +44,7 @@ describe("itemsReducer", () => {
 
   it("should handle FETCH_ITEMS_SUCCESS", () => {
     const payload = {
-      items: [{ _id: "1", denomination: "Pièce A", quantite: 10 }],
+      items: [{ _id: "1", name: "Pièce A", quantity: 10 }],
       total: 50,
       page: 2,
       totalPages: 5,

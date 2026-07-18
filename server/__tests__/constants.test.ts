@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Role, ROLES, FOURNISSEURS, ETATS } from "../constants";
+import { Role, ROLES, SUPPLIERS, STATUSES } from "../constants";
 
 describe("Constants", () => {
   // ─── Role enum ───────────────────────────────────────
@@ -34,23 +34,23 @@ describe("Constants", () => {
     });
   });
 
-  // ─── FOURNISSEURS ────────────────────────────────────
-  describe("FOURNISSEURS", () => {
+  // ─── SUPPLIERS ───────────────────────────────────────
+  describe("SUPPLIERS", () => {
     it("should be a non-empty readonly array", () => {
-      expect(FOURNISSEURS.length).toBeGreaterThan(0);
+      expect(SUPPLIERS.length).toBeGreaterThan(0);
     });
 
     it("should include known suppliers", () => {
-      expect(FOURNISSEURS).toContain("Amazon");
-      expect(FOURNISSEURS).toContain("CashGuard");
-      expect(FOURNISSEURS).toContain("LDLC");
+      expect(SUPPLIERS).toContain("Amazon");
+      expect(SUPPLIERS).toContain("CashGuard");
+      expect(SUPPLIERS).toContain("LDLC");
     });
   });
 
-  // ─── ETATS ───────────────────────────────────────────
-  describe("ETATS", () => {
-    it("should contain Neuf and SAV", () => {
-      expect(ETATS).toEqual(["Neuf", "SAV"]);
+  // ─── STATUSES ────────────────────────────────────────
+  describe("STATUSES", () => {
+    it("should contain NEW and RMA", () => {
+      expect(STATUSES).toEqual(["NEW", "RMA"]);
     });
   });
 });

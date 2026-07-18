@@ -25,12 +25,12 @@ export const getHistory = async (
         .lean(),
     ]);
 
-    // Fetch item denominations for referenced items
+    // Fetch item names for referenced items
     const itemIds = [...new Set(itemHistory.map((h) => String(h.itemId)))];
     const items = await ItemModel.find({ _id: { $in: itemIds } })
-      .select("denomination")
+      .select("name")
       .lean();
-    const denomMap = new Map(items.map((i) => [String(i._id), i.denomination]));
+    const nameMap = new Map(items.map((i) => [String(i._id), i.name]));
 
     // Fetch names for contacts and users referenced in audit events
     const contactIds = auditEvents
@@ -60,7 +60,7 @@ export const getHistory = async (
         : [],
       auditItemIds.length > 0
         ? ItemModel.find({ _id: { $in: [...new Set(auditItemIds)] } })
-            .select("denomination")
+            .select("name")
             .lean()
         : [],
       actionUserNames.length > 0
@@ -73,7 +73,7 @@ export const getHistory = async (
     const contactNameMap = new Map(contacts.map((c) => [String(c._id), c.nom]));
     const userNameMap = new Map(users.map((u) => [String(u._id), u.pseudo]));
     const auditItemNameMap = new Map(
-      auditItems.map((i) => [String(i._id), i.denomination]),
+      auditItems.map((i) => [String(i._id), i.name]),
     );
 
     const superadminMap = new Map(
@@ -109,7 +109,7 @@ export const getHistory = async (
         } else if (e.entity === "item") {
           entityName =
             auditItemNameMap.get(String(e.entityId)) ||
-            (details.denomination as string) ||
+            (details.name as string) ||
             undefined;
         }
 
@@ -130,8 +130,8 @@ export const getHistory = async (
         field: h.field,
         oldValue: h.oldValue,
         newValue: h.newValue,
-        denomination: denomMap.get(String(h.itemId)) || h.oldValue || undefined,
-        entityName: denomMap.get(String(h.itemId)) || undefined,
+        name: nameMap.get(String(h.itemId)) || h.oldValue || undefined,
+        entityName: nameMap.get(String(h.itemId)) || undefined,
       },
       createdAt: h.createdAt,
     }));

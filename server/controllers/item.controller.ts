@@ -33,34 +33,34 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
       page = 1,
       limit = 20,
       search = "",
-      fournisseur = "",
-      etat = "",
+      supplier = "",
+      status = "",
       lowStock,
-      prepaCG,
-      prepaTPV,
-      sortBy = "denomination",
+      cgKit,
+      tpvKit,
+      sortBy = "name",
       sortOrder = "asc",
     } = req.query;
 
     const filter: Record<string, unknown> = {};
 
     if (search) {
-      filter.denomination = { $regex: search, $options: "i" };
+      filter.name = { $regex: search, $options: "i" };
     }
-    if (fournisseur) {
-      filter.fournisseur = { $in: (fournisseur as string).split(",") };
+    if (supplier) {
+      filter.supplier = { $in: (supplier as string).split(",") };
     }
-    if (etat) {
-      filter.etat = { $in: (etat as string).split(",") };
+    if (status) {
+      filter.status = { $in: (status as string).split(",") };
     }
     if (lowStock === "true") {
-      filter.quantite = { $lt: 5 };
+      filter.quantity = { $lt: 5 };
     }
-    if (prepaCG === "true") {
-      filter.prepaCG = true;
+    if (cgKit === "true") {
+      filter.cgKit = true;
     }
-    if (prepaTPV === "true") {
-      filter.prepaTPV = true;
+    if (tpvKit === "true") {
+      filter.tpvKit = true;
     }
 
     const sort: Record<string, 1 | -1> = {
@@ -79,8 +79,8 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
 
     // If a prepa filter is active, check if decrement is possible
     const prepaFields: string[] = [];
-    if (prepaCG === "true") prepaFields.push("prepaCG");
-    if (prepaTPV === "true") prepaFields.push("prepaTPV");
+    if (cgKit === "true") prepaFields.push("cgKit");
+    if (tpvKit === "true") prepaFields.push("tpvKit");
 
     if (prepaFields.length > 0) {
       for (const field of prepaFields) {
@@ -89,12 +89,12 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
           ItemModel.countDocuments({
             [field]: true,
             $or: [
-              { quantite: { $lte: 0 } },
-              ...(field === "prepaCG"
+              { quantity: { $lte: 0 } },
+              ...(field === "cgKit"
                 ? [
                     {
-                      denomination: { $regex: /cassette/i },
-                      quantite: { $lt: 4 },
+                      name: { $regex: /cassette/i },
+                      quantity: { $lt: 4 },
                     },
                   ]
                 : []),
@@ -135,25 +135,25 @@ export const createItem = async (
   res: Response,
 ): Promise<void> => {
   const {
-    denomination,
-    quantite,
-    fournisseur,
-    etat,
+    name,
+    quantity,
+    supplier,
+    status,
     posterId,
     modifierName,
-    prepaCG,
-    prepaTPV,
+    cgKit,
+    tpvKit,
   } = req.body;
   try {
     const item = await ItemModel.create({
-      denomination,
-      fournisseur,
-      etat,
-      quantite: parseInt(quantite, 10) || 0,
+      name,
+      supplier,
+      status,
+      quantity: parseInt(quantity, 10) || 0,
       posterId,
       modifierName,
-      prepaCG: prepaCG || false,
-      prepaTPV: prepaTPV || false,
+      cgKit: cgKit || false,
+      tpvKit: tpvKit || false,
     });
 
     try {
@@ -193,22 +193,22 @@ export const updateItem = async (
         ? (item.toObject() as unknown as Record<string, unknown>)
         : { ...item };
 
-    if (req.body.denomination) item.denomination = req.body.denomination;
-    if (req.body.fournisseur) item.fournisseur = req.body.fournisseur;
-    if (req.body.etat) item.etat = req.body.etat;
+    if (req.body.name) item.name = req.body.name;
+    if (req.body.supplier) item.supplier = req.body.supplier;
+    if (req.body.status) item.status = req.body.status;
 
-    if (Object.prototype.hasOwnProperty.call(req.body, "quantite")) {
-      item.quantite = req.body.quantite < 0 ? 0 : req.body.quantite;
+    if (Object.prototype.hasOwnProperty.call(req.body, "quantity")) {
+      item.quantity = req.body.quantity < 0 ? 0 : req.body.quantity;
     }
 
     if (req.body.image) item.image = req.body.image;
     if (req.body.modifierName) item.modifierName = req.body.modifierName;
 
-    if (Object.prototype.hasOwnProperty.call(req.body, "prepaCG")) {
-      item.prepaCG = req.body.prepaCG;
+    if (Object.prototype.hasOwnProperty.call(req.body, "cgKit")) {
+      item.cgKit = req.body.cgKit;
     }
-    if (Object.prototype.hasOwnProperty.call(req.body, "prepaTPV")) {
-      item.prepaTPV = req.body.prepaTPV;
+    if (Object.prototype.hasOwnProperty.call(req.body, "tpvKit")) {
+      item.tpvKit = req.body.tpvKit;
     }
 
     const updatedItem = await item.save();
@@ -262,7 +262,7 @@ export const deleteItem = async (
       try {
         logItemDelete(
           req.params.id as string,
-          String(item.denomination ?? ""),
+          String(item.name ?? ""),
           res.locals.user?.pseudo || "Admin",
         );
       } catch (err) {
@@ -300,7 +300,7 @@ export const prepaBatch = async (
       ? Math.max(1, Math.floor(Number(rawCount) || 1))
       : 1;
 
-  if (!prepa || !["prepaCG", "prepaTPV"].includes(prepa)) {
+  if (!prepa || !["cgKit", "tpvKit"].includes(prepa)) {
     res.status(400).json({ message: "Prépa invalide" });
     return;
   }
@@ -315,13 +315,13 @@ export const prepaBatch = async (
     let updated = 0;
 
     for (const item of items) {
-      const oldQty = item.quantite;
+      const oldQty = item.quantity;
 
       // For CG: cassettes change by 4, the rest by 1 — multiplied by count
       let delta = 1 * count;
       if (
-        prepa === "prepaCG" &&
-        item.denomination.toLowerCase().includes("cassette")
+        prepa === "cgKit" &&
+        item.name.toLowerCase().includes("cassette")
       ) {
         delta = 4 * count;
       }
@@ -332,20 +332,20 @@ export const prepaBatch = async (
           : Math.max(0, oldQty - delta);
 
       if (newQty !== oldQty) {
-        item.quantite = newQty;
+        item.quantity = newQty;
         await item.save();
 
         logItemChanges(
           String(item._id),
-          { ...item.toObject(), quantite: oldQty },
-          { quantite: newQty },
+          { ...item.toObject(), quantity: oldQty },
+          { quantity: newQty },
           userName,
         );
         updated++;
       }
     }
 
-    const prepaLabel = prepa === "prepaCG" ? "CashGuard" : "Caisse TPV";
+    const prepaLabel = prepa === "cgKit" ? "CashGuard" : "Caisse TPV";
     await logEvent("update", "item", undefined, userName, {
       batch: true,
       prepa: prepaLabel,

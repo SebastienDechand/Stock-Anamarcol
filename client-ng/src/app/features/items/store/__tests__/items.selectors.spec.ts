@@ -19,26 +19,26 @@ import type { Item, ItemHistory } from '../../../../shared/models/item.model';
 const sampleItem: Item = {
   _id: 'item-1',
   posterId: 'user-1',
-  denomination: 'Écran tactile',
-  quantite: 5,
-  fournisseur: 'Fournisseur A',
-  etat: 'bon',
+  name: 'Écran tactile',
+  quantity: 5,
+  supplier: 'Fournisseur A',
+  status: 'bon',
 };
 
 const sampleItem2: Item = {
   _id: 'item-2',
   posterId: 'user-2',
-  denomination: 'Clavier',
-  quantite: 2,
-  fournisseur: 'Fournisseur B',
-  etat: 'neuf',
+  name: 'Clavier',
+  quantity: 2,
+  supplier: 'Fournisseur B',
+  status: 'neuf',
 };
 
 const sampleHistory: ItemHistory = {
   _id: 'hist-1',
   itemId: 'item-1',
   action: 'quantity_change',
-  field: 'quantite',
+  field: 'quantity',
   oldValue: '4',
   newValue: '5',
   userName: 'Admin',

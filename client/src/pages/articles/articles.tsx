@@ -6,8 +6,8 @@ import type { FetchItemsParams } from "../../types";
 import {
   deleteItem,
   setSelectedItemId,
-  setSelectedItemQuantite,
-  updateQuantite,
+  setSelectedItemQuantity,
+  updateQuantity,
   prepaBatch,
 } from "../../actions/item.actions";
 import AddModal from "../../components/Modales/AddModale";
@@ -80,8 +80,8 @@ export default function Articles() {
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [fournisseurFilter, setFournisseurFilter] = useState<string[]>([]);
-  const [etatFilter, setEtatFilter] = useState<string[]>([]);
+  const [supplierFilter, setSupplierFilter] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [prepaFilter, setPrepaFilter] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -101,8 +101,8 @@ export default function Articles() {
     setCurrentPage(1);
   }, [
     debouncedSearch,
-    fournisseurFilter,
-    etatFilter,
+    supplierFilter,
+    statusFilter,
     prepaFilter,
     itemsPerPage,
   ]);
@@ -114,17 +114,17 @@ export default function Articles() {
       limit: itemsPerPage,
     };
     if (debouncedSearch) params.search = debouncedSearch;
-    if (fournisseurFilter.length) params.fournisseur = fournisseurFilter;
-    if (etatFilter.length) params.etat = etatFilter;
-    if (prepaFilter.includes("CashGuard")) params.prepaCG = true;
-    if (prepaFilter.includes("Caisse TPV")) params.prepaTPV = true;
+    if (supplierFilter.length) params.supplier = supplierFilter;
+    if (statusFilter.length) params.status = statusFilter;
+    if (prepaFilter.includes("CashGuard")) params.cgKit = true;
+    if (prepaFilter.includes("Caisse TPV")) params.tpvKit = true;
     return params;
   }, [
     currentPage,
     itemsPerPage,
     debouncedSearch,
-    fournisseurFilter,
-    etatFilter,
+    supplierFilter,
+    statusFilter,
     prepaFilter,
   ]);
 
@@ -137,22 +137,22 @@ export default function Articles() {
     dispatch(fetchItems(fetchParams));
   }, [dispatch, fetchParams]);
 
-  const toggleFournisseur = useCallback((f: string) => {
-    setFournisseurFilter((prev) =>
+  const toggleSupplier = useCallback((f: string) => {
+    setSupplierFilter((prev) =>
       prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f],
     );
   }, []);
 
-  const toggleEtat = useCallback((e: string) => {
-    setEtatFilter((prev) =>
+  const toggleStatus = useCallback((e: string) => {
+    setStatusFilter((prev) =>
       prev.includes(e) ? prev.filter((x) => x !== e) : [...prev, e],
     );
   }, []);
 
   const PREPARATIONS = ["CashGuard", "Caisse TPV"] as const;
   const PREPA_FIELD_MAP: Record<string, string> = {
-    CashGuard: "prepaCG",
-    "Caisse TPV": "prepaTPV",
+    CashGuard: "cgKit",
+    "Caisse TPV": "tpvKit",
   };
   const [prepaBatchLoading, setPrepaBatchLoading] = useState<string | null>(
     null,
@@ -190,14 +190,14 @@ export default function Articles() {
     e.stopPropagation();
     const item = pageItems.find((i: Item) => i._id === itemId);
     if (!item) return;
-    const qty = Number(item.quantite);
+    const qty = Number(item.quantity);
     const newQty = operation === "increment" ? qty + 1 : qty - 1;
     if (newQty < 0) return;
-    dispatch(updateQuantite(itemId, newQty, userPseudo || "", operation));
+    dispatch(updateQuantity(itemId, newQty, userPseudo || "", operation));
   };
 
-  const handleDelete = (itemId: string, fournisseur: string, etat: string) => {
-    dispatch(deleteItem(itemId, fournisseur, etat));
+  const handleDelete = (itemId: string, supplier: string, status: string) => {
+    dispatch(deleteItem(itemId, supplier, status));
     setDeleteConfirmId(null);
   };
 
@@ -217,7 +217,7 @@ export default function Articles() {
 
   const closeItemModal = () => {
     dispatch(setSelectedItemId(null));
-    dispatch(setSelectedItemQuantite(null));
+    dispatch(setSelectedItemQuantity(null));
     setIsItemModalOpen(false);
     refetchItems();
   };
@@ -278,8 +278,8 @@ export default function Articles() {
                 <Sliders size={18} />
                 <span className="sr-only">Filtres</span>
                 {(debouncedSearch ||
-                  fournisseurFilter.length > 0 ||
-                  etatFilter.length > 0 ||
+                  supplierFilter.length > 0 ||
+                  statusFilter.length > 0 ||
                   prepaFilter.length > 0) && (
                   <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full" />
                 )}
@@ -314,9 +314,9 @@ export default function Articles() {
           {FOURNISSEURS.map((f) => (
             <button
               key={f}
-              onClick={() => toggleFournisseur(f)}
+              onClick={() => toggleSupplier(f)}
               className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors shrink-0 ${
-                fournisseurFilter.includes(f)
+                supplierFilter.includes(f)
                   ? "bg-brand-600 text-white border-brand-600"
                   : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
               }`}
@@ -334,9 +334,9 @@ export default function Articles() {
           {ETATS.map((e) => (
             <button
               key={e}
-              onClick={() => toggleEtat(e)}
+              onClick={() => toggleStatus(e)}
               className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors shrink-0 ${
-                etatFilter.includes(e)
+                statusFilter.includes(e)
                   ? "bg-emerald-600 text-white border-emerald-600"
                   : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
               }`}
@@ -363,13 +363,13 @@ export default function Articles() {
               {p}
             </button>
           ))}
-          {(fournisseurFilter.length > 0 ||
-            etatFilter.length > 0 ||
+          {(supplierFilter.length > 0 ||
+            statusFilter.length > 0 ||
             prepaFilter.length > 0) && (
             <button
               onClick={() => {
-                setFournisseurFilter([]);
-                setEtatFilter([]);
+                setSupplierFilter([]);
+                setStatusFilter([]);
                 setPrepaFilter([]);
               }}
               className="flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors shrink-0 ml-auto"
@@ -517,7 +517,7 @@ export default function Articles() {
               className="relative bg-white rounded-xl overflow-hidden cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group ring-1 ring-black/[0.04] flex flex-col min-h-0"
             >
               <div className="relative h-32 bg-white flex items-center justify-center p-3">
-                {getBadge(item.quantite)}
+                {getBadge(item.quantity)}
                 {isAdmin && (
                   <button
                     onClick={(e) => {
@@ -534,7 +534,7 @@ export default function Articles() {
                 )}
                 <img
                   src={item.image}
-                  alt={item.denomination}
+                  alt={item.name}
                   className="max-h-full max-w-full object-contain"
                 />
               </div>
@@ -550,7 +550,7 @@ export default function Articles() {
                   <div className="flex gap-2">
                     <button
                       onClick={() =>
-                        handleDelete(item._id, item.fournisseur, item.etat)
+                        handleDelete(item._id, item.supplier, item.status)
                       }
                       className="px-2.5 py-1 bg-red-600 text-white text-[11px] font-medium rounded-md hover:bg-red-700"
                     >
@@ -569,10 +569,10 @@ export default function Articles() {
               <div className="px-2 py-1.5 border-t border-gray-200/60 bg-gray-50 mt-auto">
                 <div className="min-w-0 mb-1">
                   <h3 className="text-[11px] font-semibold text-gray-900 truncate leading-tight">
-                    {item.denomination}
+                    {item.name}
                   </h3>
                   <p className="text-[10px] text-gray-400 truncate">
-                    {item.fournisseur} &middot; {item.etat}
+                    {item.supplier} &middot; {item.status}
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
@@ -587,12 +587,12 @@ export default function Articles() {
                   </button>
                   <span
                     className={`text-sm font-bold tabular-nums ${
-                      Number(item.quantite) < 5
+                      Number(item.quantity) < 5
                         ? "text-red-600"
                         : "text-gray-900"
                     }`}
                   >
-                    {item.quantite}
+                    {item.quantity}
                   </span>
                   <button
                     onClick={(e) =>
@@ -688,13 +688,13 @@ export default function Articles() {
         <FiltersModal
           onClose={() => setIsFiltersModalOpen(false)}
           search={search}
-          fournisseurFilter={fournisseurFilter}
-          etatFilter={etatFilter}
+          supplierFilter={supplierFilter}
+          statusFilter={statusFilter}
           prepaFilter={prepaFilter}
           onApply={(s, f, e, p) => {
             setSearch(s);
-            setFournisseurFilter(f);
-            setEtatFilter(e);
+            setSupplierFilter(f);
+            setStatusFilter(e);
             setPrepaFilter(p);
           }}
         />

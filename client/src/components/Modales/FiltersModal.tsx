@@ -5,8 +5,8 @@ import { FOURNISSEURS, ETATS } from "../../constants";
 interface Props {
   onClose: () => void;
   search: string;
-  fournisseurFilter: string[];
-  etatFilter: string[];
+  supplierFilter: string[];
+  statusFilter: string[];
   prepaFilter: string[];
   onApply: (s: string, f: string[], e: string[], p: string[]) => void;
 }
@@ -14,14 +14,14 @@ interface Props {
 const FiltersModal = ({
   onClose,
   search,
-  fournisseurFilter,
-  etatFilter,
+  supplierFilter,
+  statusFilter,
   prepaFilter,
   onApply,
 }: Props) => {
   const [localSearch, setLocalSearch] = useState(search);
-  const [localF, setLocalF] = useState<string[]>([...fournisseurFilter]);
-  const [localE, setLocalE] = useState<string[]>([...etatFilter]);
+  const [localF, setLocalF] = useState<string[]>([...supplierFilter]);
+  const [localE, setLocalE] = useState<string[]>([...statusFilter]);
   const [localP, setLocalP] = useState<string[]>([...prepaFilter]);
 
   const toggle = (arr: string[], set: (v: string[]) => void, val: string) => {

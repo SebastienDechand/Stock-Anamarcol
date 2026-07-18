@@ -17,28 +17,28 @@ import { Item, ItemHistory, NewItem } from '../../../../shared/models/item.model
 const mockItem: Item = {
   _id: 'item-001',
   posterId: 'user-001',
-  denomination: 'Stylo bleu',
-  quantite: 10,
-  fournisseur: 'Bureau Vallée',
-  etat: 'Neuf',
-  prepaCG: false,
-  prepaTPV: false,
+  name: 'Stylo bleu',
+  quantity: 10,
+  supplier: 'Bureau Vallée',
+  status: 'Neuf',
+  cgKit: false,
+  tpvKit: false,
 };
 
 const mockItem2: Item = {
   _id: 'item-002',
   posterId: 'user-001',
-  denomination: 'Crayon HB',
-  quantite: 50,
-  fournisseur: 'Leclerc',
-  etat: 'Usagé',
+  name: 'Crayon HB',
+  quantity: 50,
+  supplier: 'Leclerc',
+  status: 'Usagé',
 };
 
 const mockNewItem: NewItem = {
-  denomination: 'Ramette papier A4',
-  fournisseur: 'Staples',
-  quantite: 5,
-  etat: 'Neuf',
+  name: 'Ramette papier A4',
+  supplier: 'Staples',
+  quantity: 5,
+  status: 'Neuf',
   posterId: 'user-001',
   modifierName: 'Alice',
 };
@@ -48,7 +48,7 @@ const mockHistory: ItemHistory[] = [
     _id: 'hist-001',
     itemId: 'item-001',
     action: 'quantity_change',
-    field: 'quantite',
+    field: 'quantity',
     oldValue: '10',
     newValue: '15',
     userName: 'Alice',
@@ -58,7 +58,7 @@ const mockHistory: ItemHistory[] = [
     _id: 'hist-002',
     itemId: 'item-001',
     action: 'update',
-    field: 'etat',
+    field: 'status',
     oldValue: 'Neuf',
     newValue: 'Usagé',
     userName: 'Bob',
@@ -180,8 +180,8 @@ describe('ItemsEffects', () => {
             page: 2,
             limit: 20,
             search: 'stylo',
-            fournisseur: ['Bureau Vallée'],
-            etat: ['Neuf'],
+            supplier: ['Bureau Vallée'],
+            status: ['Neuf'],
           },
         }),
       );
@@ -198,7 +198,7 @@ describe('ItemsEffects', () => {
       );
     });
 
-    it('should dispatch fetchItemsSuccess with prepaCG and prepaTPV flags', async () => {
+    it('should dispatch fetchItemsSuccess with cgKit and tpvKit flags', async () => {
       const paginatedResponse = {
         items: [mockItem],
         total: 1,
@@ -211,7 +211,7 @@ describe('ItemsEffects', () => {
       const fetchItemsPromise = firstValueFrom(effects.fetchItems$);
       actions$.next(
         ItemsActions.fetchItems({
-          params: { prepaCG: true, prepaTPV: true, sortBy: 'denomination', sortOrder: 'asc' },
+          params: { cgKit: true, tpvKit: true, sortBy: 'name', sortOrder: 'asc' },
         }),
       );
       const result = await fetchItemsPromise;
@@ -297,13 +297,11 @@ describe('ItemsEffects', () => {
 
   describe('updateItem$', () => {
     it('should dispatch updateItemSuccess and show success toast', async () => {
-      const updatedItem: Item = { ...mockItem, denomination: 'Stylo rouge' };
+      const updatedItem: Item = { ...mockItem, name: 'Stylo rouge' };
       api.put.mockReturnValue(of({ item: updatedItem }));
 
       const updateItemPromise = firstValueFrom(effects.updateItem$);
-      actions$.next(
-        ItemsActions.updateItem({ id: 'item-001', data: { denomination: 'Stylo rouge' } }),
-      );
+      actions$.next(ItemsActions.updateItem({ id: 'item-001', data: { name: 'Stylo rouge' } }));
       const result = await updateItemPromise;
 
       expect(result).toEqual(ItemsActions.updateItemSuccess({ item: updatedItem }));
@@ -314,9 +312,7 @@ describe('ItemsEffects', () => {
       api.put.mockReturnValue(throwError(() => new Error('Not found')));
 
       const updateItemPromise = firstValueFrom(effects.updateItem$);
-      actions$.next(
-        ItemsActions.updateItem({ id: 'item-001', data: { denomination: 'Stylo rouge' } }),
-      );
+      actions$.next(ItemsActions.updateItem({ id: 'item-001', data: { name: 'Stylo rouge' } }));
       const result = await updateItemPromise;
 
       expect(result).toEqual(ItemsActions.updateItemFailure({ error: 'Not found' }));
@@ -360,60 +356,62 @@ describe('ItemsEffects', () => {
     });
   });
 
-  // ── updateQuantite$ ────────────────────────────────────────────────────────
+  // ── updateQuantity$ ───────────────────────────────────────────────────────
 
-  describe('updateQuantite$', () => {
-    it('should dispatch updateQuantiteSuccess and show success toast', async () => {
-      const updatedItem: Item = { ...mockItem, quantite: 15 };
+  describe('updateQuantity$', () => {
+    it('should dispatch updateQuantitySuccess and show success toast', async () => {
+      const updatedItem: Item = { ...mockItem, quantity: 15 };
       api.put.mockReturnValue(of({ item: updatedItem }));
 
-      const updateQuantitePromise = firstValueFrom(effects.updateQuantite$);
+      const updateQuantityPromise = firstValueFrom(effects.updateQuantity$);
       actions$.next(
-        ItemsActions.updateQuantite({
+        ItemsActions.updateQuantity({
           id: 'item-001',
-          quantite: 15,
+          quantity: 15,
           modifierName: 'Alice',
           operation: 'add',
         }),
       );
-      const result = await updateQuantitePromise;
+      const result = await updateQuantityPromise;
 
-      expect(result).toEqual(ItemsActions.updateQuantiteSuccess({ id: 'item-001', quantite: 15 }));
+      expect(result).toEqual(
+        ItemsActions.updateQuantitySuccess({ id: 'item-001', quantity: 15 }),
+      );
       expect(toast.success).toHaveBeenCalledWith('TOAST.ITEM_QTY_UPDATED');
     });
 
-    it('should dispatch updateQuantiteFailure on API error', async () => {
+    it('should dispatch updateQuantityFailure on API error', async () => {
       api.put.mockReturnValue(throwError(() => new Error('Stock error')));
 
-      const updateQuantitePromise = firstValueFrom(effects.updateQuantite$);
+      const updateQuantityPromise = firstValueFrom(effects.updateQuantity$);
       actions$.next(
-        ItemsActions.updateQuantite({
+        ItemsActions.updateQuantity({
           id: 'item-001',
-          quantite: 0,
+          quantity: 0,
           modifierName: 'Bob',
           operation: 'subtract',
         }),
       );
-      const result = await updateQuantitePromise;
+      const result = await updateQuantityPromise;
 
-      expect(result).toEqual(ItemsActions.updateQuantiteFailure({ error: 'Stock error' }));
+      expect(result).toEqual(ItemsActions.updateQuantityFailure({ error: 'Stock error' }));
     });
 
-    it('should use fallback error message when updateQuantite error has no message', async () => {
+    it('should use fallback error message when updateQuantity error has no message', async () => {
       api.put.mockReturnValue(throwError(() => null));
 
-      const updateQuantitePromise = firstValueFrom(effects.updateQuantite$);
+      const updateQuantityPromise = firstValueFrom(effects.updateQuantity$);
       actions$.next(
-        ItemsActions.updateQuantite({
+        ItemsActions.updateQuantity({
           id: 'item-001',
-          quantite: 5,
+          quantity: 5,
           modifierName: 'Alice',
           operation: 'add',
         }),
       );
-      const result = await updateQuantitePromise;
+      const result = await updateQuantityPromise;
 
-      expect(result).toEqual(ItemsActions.updateQuantiteFailure({ error: 'Erreur' }));
+      expect(result).toEqual(ItemsActions.updateQuantityFailure({ error: 'Erreur' }));
     });
   });
 
@@ -473,13 +471,13 @@ describe('ItemsEffects', () => {
   // ── prepaBatch$ ────────────────────────────────────────────────────────────
 
   describe('prepaBatch$', () => {
-    it('should dispatch prepaBatchSuccess then refetch items for prepaCG increment', async () => {
+    it('should dispatch prepaBatchSuccess then refetch items for cgKit increment', async () => {
       api.post.mockReturnValue(of({ updated: 3, message: 'ok' }));
-      const params = { page: 1, prepaCG: true };
+      const params = { page: 1, cgKit: true };
 
       const resultsPromise = firstValueFrom(effects.prepaBatch$.pipe(take(2), toArray()));
       actions$.next(
-        ItemsActions.prepaBatch({ field: 'prepaCG', operation: 'increment', count: 3, params }),
+        ItemsActions.prepaBatch({ field: 'cgKit', operation: 'increment', count: 3, params }),
       );
       const results = await resultsPromise;
 
@@ -492,13 +490,13 @@ describe('ItemsEffects', () => {
       });
     });
 
-    it('should dispatch prepaBatchSuccess then refetch items for non-prepaCG decrement', async () => {
+    it('should dispatch prepaBatchSuccess then refetch items for non-cgKit decrement', async () => {
       api.post.mockReturnValue(of({ updated: 5, message: 'ok' }));
-      const params = { page: 1, prepaTPV: true };
+      const params = { page: 1, tpvKit: true };
 
       const resultsPromise = firstValueFrom(effects.prepaBatch$.pipe(take(2), toArray()));
       actions$.next(
-        ItemsActions.prepaBatch({ field: 'prepaTPV', operation: 'decrement', count: 5, params }),
+        ItemsActions.prepaBatch({ field: 'tpvKit', operation: 'decrement', count: 5, params }),
       );
       const results = await resultsPromise;
 
@@ -516,7 +514,7 @@ describe('ItemsEffects', () => {
 
       const prepaBatchPromise = firstValueFrom(effects.prepaBatch$);
       actions$.next(
-        ItemsActions.prepaBatch({ field: 'prepaCG', operation: 'increment', count: 2, params: {} }),
+        ItemsActions.prepaBatch({ field: 'cgKit', operation: 'increment', count: 2, params: {} }),
       );
       const result = await prepaBatchPromise;
 

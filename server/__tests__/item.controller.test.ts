@@ -83,10 +83,10 @@ describe("Item Controller", () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       const mockItem = {
         _id: "507f1f77bcf86cd799439011",
-        denomination: "Pièce A",
-        quantite: 10,
-        fournisseur: "Fournisseur1",
-        etat: "Neuf",
+        name: "Pièce A",
+        quantity: 10,
+        supplier: "Fournisseur1",
+        status: "Neuf",
       };
       mockItemModel.findById.mockReturnValue({
         lean: vi.fn().mockResolvedValue(mockItem),
@@ -102,7 +102,7 @@ describe("Item Controller", () => {
   describe("readItem", () => {
     it("should return paginated items", async () => {
       req.query = { page: "1", limit: "10" };
-      const mockItems = [{ denomination: "Test" }];
+      const mockItems = [{ name: "Test" }];
 
       mockItemModel.find.mockReturnValue({
         sort: vi.fn().mockReturnValue({
@@ -144,7 +144,7 @@ describe("Item Controller", () => {
       await readItem(req as Request, res as Response);
       expect(mockItemModel.find).toHaveBeenCalledWith(
         expect.objectContaining({
-          denomination: { $regex: "piece", $options: "i" },
+          name: { $regex: "piece", $options: "i" },
         }),
       );
     });
@@ -166,7 +166,7 @@ describe("Item Controller", () => {
       await readItem(req as Request, res as Response);
       expect(mockItemModel.find).toHaveBeenCalledWith(
         expect.objectContaining({
-          quantite: { $lt: 5 },
+          quantity: { $lt: 5 },
         }),
       );
     });
@@ -176,15 +176,15 @@ describe("Item Controller", () => {
   describe("createItem", () => {
     it("should create an item successfully", async () => {
       req.body = {
-        denomination: "Pièce B",
-        quantite: "5",
-        fournisseur: "Fournisseur1",
-        etat: "Neuf",
+        name: "Pièce B",
+        quantity: "5",
+        supplier: "Fournisseur1",
+        status: "Neuf",
         posterId: "user123",
         modifierName: "admin",
       };
 
-      const mockCreated = { ...req.body, _id: "abc123", quantite: 5 };
+      const mockCreated = { ...req.body, _id: "abc123", quantity: 5 };
       mockItemModel.create.mockResolvedValue(mockCreated);
 
       await createItem(req as Request, res as Response);
@@ -193,9 +193,9 @@ describe("Item Controller", () => {
     });
 
     it("should return 400 when creation fails", async () => {
-      req.body = { denomination: "" };
+      req.body = { name: "" };
       mockItemModel.create.mockRejectedValue(
-        new Error("denomination required"),
+        new Error("name required"),
       );
 
       await createItem(req as Request, res as Response);
@@ -221,21 +221,21 @@ describe("Item Controller", () => {
 
     it("should update an item successfully", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { denomination: "Updated", quantite: 15 };
+      req.body = { name: "Updated", quantity: 15 };
 
       const mockItem = {
         _id: "507f1f77bcf86cd799439011",
-        denomination: "Original",
-        quantite: 10,
+        name: "Original",
+        quantity: 10,
         toObject: vi.fn().mockReturnValue({
           _id: "507f1f77bcf86cd799439011",
-          denomination: "Original",
-          quantite: 10,
+          name: "Original",
+          quantity: 10,
         }),
         save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
-          denomination: "Updated",
-          quantite: 15,
+          name: "Updated",
+          quantity: 15,
         }),
       };
       mockItemModel.findById.mockResolvedValue(mockItem);
@@ -246,17 +246,17 @@ describe("Item Controller", () => {
 
     it("should prevent negative quantity", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { quantite: -5 };
+      req.body = { quantity: -5 };
 
       const mockItem = {
         _id: "507f1f77bcf86cd799439011",
-        quantite: 10,
+        quantity: 10,
         toObject: vi.fn().mockReturnValue({
           _id: "507f1f77bcf86cd799439011",
-          quantite: 10,
+          quantity: 10,
         }),
         save: vi.fn().mockImplementation(function (this: {
-          quantite: number;
+          quantity: number;
         }) {
           return Promise.resolve(this);
         }),
@@ -264,7 +264,7 @@ describe("Item Controller", () => {
       mockItemModel.findById.mockResolvedValue(mockItem);
 
       await updateItem(req as Request, res as Response);
-      expect(mockItem.quantite).toBe(0);
+      expect(mockItem.quantity).toBe(0);
     });
   });
 
@@ -281,7 +281,7 @@ describe("Item Controller", () => {
       mockItemModel.findById.mockReturnValue({
         lean: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
-          denomination: "Test",
+          name: "Test",
         }),
       });
       mockItemModel.deleteOne.mockReturnValue({
@@ -306,21 +306,21 @@ describe("Item Controller", () => {
     });
 
     it("should return 400 when operation is invalid", async () => {
-      req.body = { prepa: "prepaCG", operation: "multiply" };
+      req.body = { prepa: "cgKit", operation: "multiply" };
       await prepaBatch(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({ message: "Opération invalide" });
     });
 
     it("should decrement quantities for matching items", async () => {
-      req.body = { prepa: "prepaCG", operation: "decrement" };
+      req.body = { prepa: "cgKit", operation: "decrement" };
 
       const mockItems = [
         {
           _id: "item1",
-          denomination: "Pièce A",
-          quantite: 10,
-          toObject: vi.fn().mockReturnValue({ denomination: "Pièce A", quantite: 10 }),
+          name: "Pièce A",
+          quantity: 10,
+          toObject: vi.fn().mockReturnValue({ name: "Pièce A", quantity: 10 }),
           save: vi.fn().mockResolvedValue(true),
         },
       ];
@@ -328,7 +328,7 @@ describe("Item Controller", () => {
 
       await prepaBatch(req as Request, res as Response);
 
-      expect(mockItems[0].quantite).toBe(9);
+      expect(mockItems[0].quantity).toBe(9);
       expect(mockItems[0].save).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
@@ -336,15 +336,15 @@ describe("Item Controller", () => {
       );
     });
 
-    it("should apply delta of 4 for cassette items in prepaCG", async () => {
-      req.body = { prepa: "prepaCG", operation: "decrement" };
+    it("should apply delta of 4 for cassette items in cgKit", async () => {
+      req.body = { prepa: "cgKit", operation: "decrement" };
 
       const mockItems = [
         {
           _id: "item1",
-          denomination: "Cassette HV",
-          quantite: 10,
-          toObject: vi.fn().mockReturnValue({ denomination: "Cassette HV", quantite: 10 }),
+          name: "Cassette HV",
+          quantity: 10,
+          toObject: vi.fn().mockReturnValue({ name: "Cassette HV", quantity: 10 }),
           save: vi.fn().mockResolvedValue(true),
         },
       ];
@@ -352,18 +352,18 @@ describe("Item Controller", () => {
 
       await prepaBatch(req as Request, res as Response);
 
-      expect(mockItems[0].quantite).toBe(6);
+      expect(mockItems[0].quantity).toBe(6);
     });
 
     it("should not go below 0 on decrement", async () => {
-      req.body = { prepa: "prepaTPV", operation: "decrement" };
+      req.body = { prepa: "tpvKit", operation: "decrement" };
 
       const mockItems = [
         {
           _id: "item1",
-          denomination: "Pièce A",
-          quantite: 0,
-          toObject: vi.fn().mockReturnValue({ denomination: "Pièce A", quantite: 0 }),
+          name: "Pièce A",
+          quantity: 0,
+          toObject: vi.fn().mockReturnValue({ name: "Pièce A", quantity: 0 }),
           save: vi.fn().mockResolvedValue(true),
         },
       ];
@@ -371,7 +371,7 @@ describe("Item Controller", () => {
 
       await prepaBatch(req as Request, res as Response);
 
-      expect(mockItems[0].quantite).toBe(0);
+      expect(mockItems[0].quantity).toBe(0);
       expect(mockItems[0].save).not.toHaveBeenCalled();
     });
   });

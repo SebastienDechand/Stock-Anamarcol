@@ -71,8 +71,8 @@ export class ItemsPage implements OnInit {
   allItems$ = this.facade.allItems$;
 
   // ─── Constants ───────────────────────────────────────
-  readonly fournisseurs = FOURNISSEURS;
-  readonly etats = ETATS;
+  readonly suppliers = FOURNISSEURS;
+  readonly statuses = ETATS;
   readonly preps = ['CashGuard', 'Caisse TPV'] as const;
 
   // ─── Local State (Signals) ───────────────────────────
@@ -84,12 +84,12 @@ export class ItemsPage implements OnInit {
   modifierName = signal('');
   currentUserId = signal('');
 
-  selectedFournisseurs = signal<string[]>([]);
-  selectedEtats = signal<string[]>([]);
-  prepaCG = signal(false);
-  prepaTPV = signal(false);
-  prepaCGCount = signal(1);
-  prepaTPVCount = signal(1);
+  selectedSuppliers = signal<string[]>([]);
+  selectedStatuses = signal<string[]>([]);
+  cgKit = signal(false);
+  tpvKit = signal(false);
+  cgKitCount = signal(1);
+  tpvKitCount = signal(1);
 
   // ─── Search ───────────────────────────────────────────
   private searchSubject = new Subject<string>();
@@ -128,28 +128,28 @@ export class ItemsPage implements OnInit {
     this.searchSubject.next((event.target as HTMLInputElement).value);
   }
 
-  toggleFournisseur(fournisseur: string) {
-    const current = this.selectedFournisseurs();
-    this.selectedFournisseurs.set(
-      current.includes(fournisseur)
-        ? current.filter((item) => item !== fournisseur)
-        : [...current, fournisseur],
+  toggleSupplier(supplier: string) {
+    const current = this.selectedSuppliers();
+    this.selectedSuppliers.set(
+      current.includes(supplier)
+        ? current.filter((item) => item !== supplier)
+        : [...current, supplier],
     );
     this.loadPage(1);
   }
 
-  toggleEtat(etat: string) {
-    const current = this.selectedEtats();
-    this.selectedEtats.set(
-      current.includes(etat) ? current.filter((item) => item !== etat) : [...current, etat],
+  toggleStatus(status: string) {
+    const current = this.selectedStatuses();
+    this.selectedStatuses.set(
+      current.includes(status) ? current.filter((item) => item !== status) : [...current, status],
     );
     this.loadPage(1);
   }
 
   togglePrepa(prepa: 'CashGuard' | 'Caisse TPV') {
-    const next = togglePrepaFilter({ prepaCG: this.prepaCG(), prepaTPV: this.prepaTPV() }, prepa);
-    this.prepaCG.set(next.prepaCG);
-    this.prepaTPV.set(next.prepaTPV);
+    const next = togglePrepaFilter({ cgKit: this.cgKit(), tpvKit: this.tpvKit() }, prepa);
+    this.cgKit.set(next.cgKit);
+    this.tpvKit.set(next.tpvKit);
     this.loadPage(1);
   }
 
@@ -158,10 +158,10 @@ export class ItemsPage implements OnInit {
       page,
       limit: this.itemsPerPage(),
       search: this.currentSearch,
-      fournisseur: this.selectedFournisseurs(),
-      etat: this.selectedEtats(),
-      prepaCG: this.prepaCG() || undefined,
-      prepaTPV: this.prepaTPV() || undefined,
+      supplier: this.selectedSuppliers(),
+      status: this.selectedStatuses(),
+      cgKit: this.cgKit() || undefined,
+      tpvKit: this.tpvKit() || undefined,
     };
   }
 
@@ -196,12 +196,12 @@ export class ItemsPage implements OnInit {
   }
 
   onIncrement(item: Item) {
-    this.facade.updateQuantite(item._id, item.quantite + 1, this.modifierName(), 'add');
+    this.facade.updateQuantity(item._id, item.quantity + 1, this.modifierName(), 'add');
   }
 
   onDecrement(item: Item) {
-    if (item.quantite <= 0) return;
-    this.facade.updateQuantite(item._id, item.quantite - 1, this.modifierName(), 'subtract');
+    if (item.quantity <= 0) return;
+    this.facade.updateQuantity(item._id, item.quantity - 1, this.modifierName(), 'subtract');
   }
 
   onUploadPicture(event: { item: Item; file: File }) {
@@ -214,63 +214,63 @@ export class ItemsPage implements OnInit {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
-  isFournisseurActive(fournisseur: string) {
-    return this.selectedFournisseurs().includes(fournisseur);
+  isSupplierActive(supplier: string) {
+    return this.selectedSuppliers().includes(supplier);
   }
-  isEtatActive(etat: string) {
-    return this.selectedEtats().includes(etat);
+  isStatusActive(status: string) {
+    return this.selectedStatuses().includes(status);
   }
 
   get hasActiveFilters(): boolean {
     return (
-      this.selectedFournisseurs().length > 0 ||
-      this.selectedEtats().length > 0 ||
-      this.prepaCG() ||
-      this.prepaTPV()
+      this.selectedSuppliers().length > 0 ||
+      this.selectedStatuses().length > 0 ||
+      this.cgKit() ||
+      this.tpvKit()
     );
   }
 
   clearPrepa() {
-    this.prepaCG.set(false);
-    this.prepaTPV.set(false);
+    this.cgKit.set(false);
+    this.tpvKit.set(false);
     this.loadPage(1);
   }
 
   clearAllFilters() {
-    this.selectedFournisseurs.set([]);
-    this.selectedEtats.set([]);
-    this.prepaCG.set(false);
-    this.prepaTPV.set(false);
+    this.selectedSuppliers.set([]);
+    this.selectedStatuses.set([]);
+    this.cgKit.set(false);
+    this.tpvKit.set(false);
     this.loadPage(1);
   }
 
   onFiltersApplied(filters: FiltersApplied) {
-    this.selectedFournisseurs.set(filters.fournisseurs);
-    this.selectedEtats.set(filters.etats);
-    this.prepaCG.set(filters.prepaCG);
-    this.prepaTPV.set(filters.prepaTPV);
+    this.selectedSuppliers.set(filters.suppliers);
+    this.selectedStatuses.set(filters.statuses);
+    this.cgKit.set(filters.cgKit);
+    this.tpvKit.set(filters.tpvKit);
     this.showFiltersModal.set(false);
     this.loadPage(1);
   }
 
-  onPrepaCGCountChange(event: Event) {
+  onCgKitCountChange(event: Event) {
     const parsedValue = +(event.target as HTMLInputElement).value;
-    this.prepaCGCount.set(parsedValue > 0 ? parsedValue : 1);
+    this.cgKitCount.set(parsedValue > 0 ? parsedValue : 1);
   }
 
-  onPrepaTPVCountChange(event: Event) {
+  onTpvKitCountChange(event: Event) {
     const parsedValue = +(event.target as HTMLInputElement).value;
-    this.prepaTPVCount.set(parsedValue > 0 ? parsedValue : 1);
+    this.tpvKitCount.set(parsedValue > 0 ? parsedValue : 1);
   }
 
   onPrepaBatch(prep: 'CashGuard' | 'Caisse TPV', operation: 'increment' | 'decrement') {
-    const field = prep === 'CashGuard' ? 'prepaCG' : 'prepaTPV';
+    const field = prep === 'CashGuard' ? 'cgKit' : 'tpvKit';
     const count =
       operation === 'decrement'
         ? 1
         : prep === 'CashGuard'
-          ? this.prepaCGCount()
-          : this.prepaTPVCount();
+          ? this.cgKitCount()
+          : this.tpvKitCount();
     this.facade.prepaBatch(field, operation, count, this.buildFetchParams(this.currentPage));
   }
 }

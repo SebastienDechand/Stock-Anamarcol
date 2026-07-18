@@ -9,7 +9,7 @@ export const uploadItem = async (
   if (!validateUploadedFile(req, res)) return;
 
   const fileName =
-    req.body.denomination + req.body.fournisseur + req.body.etat + ".jpg";
+    req.body.name + req.body.supplier + req.body.status + ".jpg";
 
   try {
     const imageUrl = await uploadToImgBB(req.file!.buffer, fileName);

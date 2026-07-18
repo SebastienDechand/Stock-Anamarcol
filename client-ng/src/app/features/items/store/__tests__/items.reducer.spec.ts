@@ -7,10 +7,10 @@ import type { Item } from '../../../../shared/models/item.model';
 const sampleItem: Item = {
   _id: '1',
   posterId: 'u1',
-  denomination: 'Pièce A',
-  quantite: 10,
-  fournisseur: 'Alpha',
-  etat: 'Neuf',
+  name: 'Pièce A',
+  quantity: 10,
+  supplier: 'Alpha',
+  status: 'Neuf',
 };
 
 describe('itemsReducer', () => {
@@ -87,7 +87,7 @@ describe('itemsReducer', () => {
   });
 
   it('should handle updateItemSuccess in both items and allItems', () => {
-    const updated: Item = { ...sampleItem, denomination: 'Pièce A modifiée' };
+    const updated: Item = { ...sampleItem, name: 'Pièce A modifiée' };
     const state = itemsReducer(
       { ...initialItemsState, items: [sampleItem], allItems: [sampleItem] },
       ItemsActions.updateItemSuccess({ item: updated }),
@@ -106,13 +106,13 @@ describe('itemsReducer', () => {
     expect(state.total).toBe(0);
   });
 
-  it('should handle updateQuantiteSuccess', () => {
+  it('should handle updateQuantitySuccess', () => {
     const state = itemsReducer(
       { ...initialItemsState, items: [sampleItem], allItems: [sampleItem] },
-      ItemsActions.updateQuantiteSuccess({ id: '1', quantite: 99 }),
+      ItemsActions.updateQuantitySuccess({ id: '1', quantity: 99 }),
     );
-    expect(state.items[0].quantite).toBe(99);
-    expect(state.allItems[0].quantite).toBe(99);
+    expect(state.items[0].quantity).toBe(99);
+    expect(state.allItems[0].quantity).toBe(99);
   });
 
   it('should handle setSelectedItemId', () => {

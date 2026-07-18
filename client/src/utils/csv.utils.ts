@@ -11,12 +11,12 @@ export function exportItemsToCSV(items: Item[]) {
   ];
 
   const rows = items.map((item) => [
-    item.denomination,
-    item.fournisseur,
-    item.etat,
-    String(item.quantite),
-    item.prepaCG ? "Oui" : "Non",
-    item.prepaTPV ? "Oui" : "Non",
+    item.name,
+    item.supplier,
+    item.status,
+    String(item.quantity),
+    item.cgKit ? "Oui" : "Non",
+    item.tpvKit ? "Oui" : "Non",
   ]);
 
   const csvContent =

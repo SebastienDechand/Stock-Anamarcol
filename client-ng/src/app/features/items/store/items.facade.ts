@@ -52,13 +52,13 @@ export class ItemsFacade {
   deleteItem(id: string) {
     this.store.dispatch(ItemsActions.deleteItem({ id }));
   }
-  updateQuantite(
+  updateQuantity(
     id: string,
-    quantite: number,
+    quantity: number,
     modifierName: string,
     operation: 'add' | 'subtract',
   ) {
-    this.store.dispatch(ItemsActions.updateQuantite({ id, quantite, modifierName, operation }));
+    this.store.dispatch(ItemsActions.updateQuantity({ id, quantity, modifierName, operation }));
   }
   uploadPicture(id: string, formData: FormData) {
     this.store.dispatch(ItemsActions.uploadItemPicture({ id, formData }));

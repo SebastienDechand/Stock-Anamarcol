@@ -1,5 +1,5 @@
 // ─── Suppliers ───────────────────────────────────────
-export const FOURNISSEURS = [
+export const SUPPLIERS = [
   "Amazon",
   "CashGuard",
   "LDLC",
@@ -12,12 +12,12 @@ export const FOURNISSEURS = [
   "VNE",
 ] as const;
 
-export type Fournisseur = (typeof FOURNISSEURS)[number];
+export type Supplier = (typeof SUPPLIERS)[number];
 
-// ─── States ──────────────────────────────────────────
-export const ETATS = ["Neuf", "SAV"] as const;
+// ─── Statuses ────────────────────────────────────────
+export const STATUSES = ["NEW", "RMA"] as const;
 
-export type Etat = (typeof ETATS)[number];
+export type Status = (typeof STATUSES)[number];
 
 // ─── Upload ──────────────────────────────────────────
 export const MAX_FILE_SIZE = 2_500_000; // 2.5 MB

@@ -6,10 +6,10 @@
       <canvas baseChart [data]="pieData" type="doughnut" [options]="pieOptions"></canvas>
     </div>
     <div class="stock-chart__legend">
-      @for (s of stats; track s.nom; let i = $index) {
+      @for (s of stats; track s.name; let i = $index) {
         <div class="stock-chart__legend-item">
           <span class="stock-chart__legend-dot" [style.background]="palette[i]"></span>
-          <span class="stock-chart__legend-label">{{ s.nom }}</span>
+          <span class="stock-chart__legend-label">{{ s.name }}</span>
         </div>
       }
     </div>
@@ -18,10 +18,10 @@
       <canvas baseChart [data]="barData" type="bar" [options]="barOptions"></canvas>
     </div>
     <div class="stock-chart__legend">
-      @for (s of stats; track s.nom; let i = $index) {
+      @for (s of stats; track s.name; let i = $index) {
         <div class="stock-chart__legend-item">
           <span class="stock-chart__legend-dot" [style.background]="palette[i]"></span>
-          <span class="stock-chart__legend-label">{{ s.nom }}</span>
+          <span class="stock-chart__legend-label">{{ s.name }}</span>
         </div>
       }
     </div>
