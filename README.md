@@ -6,7 +6,6 @@
 
 Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 
-![React](https://img.shields.io/badge/React-19.2-61DAFB?style=for-the-badge&logo=react&logoColor=white)
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?style=for-the-badge&logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-5.2-000000?style=for-the-badge&logo=express&logoColor=white)
@@ -18,8 +17,6 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 [![Deploy](https://github.com/SebastienDechand/Stock-Anamarcol/actions/workflows/deploy.yml/badge.svg)](https://github.com/SebastienDechand/Stock-Anamarcol/actions/workflows/deploy.yml)
 
 </div>
-
-> 🚧 **Migration en cours** : le frontend est en cours de réécriture en Angular 21 (`client-ng/`), en parallèle du frontend React (`client/`) actuellement déployé en production. Les deux couvrent les mêmes fonctionnalités et sont testés en CI ; seul `client/` est déployé sur o2switch pour le moment.
 
 ---
 
@@ -94,30 +91,7 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 
 ```
 Stock-Anamarcol
-├── client/                     Application React (SPA) — déployée en production
-│   └── src/
-│       ├── actions/            Actions Redux (thunks)
-│       ├── components/         Composants réutilisables
-│       ├── constants/          Constantes applicatives
-│       ├── hooks/              Hooks personnalisés
-│       ├── pages/              Pages / vues
-│       │   ├── admin-roles/
-│       │   ├── articles/
-│       │   ├── contacts/
-│       │   ├── envois/
-│       │   ├── fiches-clients/
-│       │   ├── flotte/
-│       │   ├── history/
-│       │   ├── home/
-│       │   ├── login/
-│       │   ├── membres/
-│       │   ├── not-found/
-│       │   ├── profil/
-│       │   └── surveillance/
-│       ├── reducers/           Reducers Redux
-│       └── types/              Types TypeScript
-│
-├── client-ng/                   Application Angular 21 (SPA) — en cours de migration
+├── client-ng/                   Application Angular 21 (SPA) — déployée en production
 │   └── src/app/
 │       ├── core/                Layout, guards, config
 │       ├── features/            Un dossier par domaine (articles, contacts, envois,
@@ -177,15 +151,6 @@ SUPERADMIN_EMAIL=<email_superadmin>
 
 </details>
 
-<details>
-<summary><strong>Frontend</strong> — <code>client/.env.development</code></summary>
-
-```env
-VITE_API_URL=http://localhost:4000/
-```
-
-</details>
-
 ### 4️⃣ Lancer en développement
 
 ```bash
@@ -193,10 +158,10 @@ VITE_API_URL=http://localhost:4000/
 cd server && npm run dev
 
 # Terminal 2 — Frontend
-cd client && npm run dev
+cd client-ng && npm start
 ```
 
-> L'application est accessible sur **http://localhost:3000**
+> L'application est accessible sur **http://localhost:4200**
 
 ---
 
@@ -204,20 +169,7 @@ cd client && npm run dev
 
 <table>
 <tr>
-<td width="33%" valign="top">
-
-### Client (React)
-
-| Commande             | Description                 |
-| -------------------- | --------------------------- |
-| `npm run dev`        | Serveur de dev Vite         |
-| `npm run build`      | Build production → `build/` |
-| `npm run preview`    | Prévisualisation build      |
-| `npm test`           | Tests Vitest                |
-| `npm run test:watch` | Tests en watch              |
-
-</td>
-<td width="33%" valign="top">
+<td width="50%" valign="top">
 
 ### Client (Angular)
 
@@ -229,7 +181,7 @@ cd client && npm run dev
 | `npm run test:watch` | Tests en watch   |
 
 </td>
-<td width="34%" valign="top">
+<td width="50%" valign="top">
 
 ### Serveur
 
@@ -303,7 +255,6 @@ Gate (CI) → Build + FTP client (React) → Build TS + FTP server
 
 | Document                                          | Description                                          |
 | -------------------------------------------------- | ----------------------------------------------------- |
-| [**Client React (Frontend)**](client/README.md)   | Architecture React, Redux, routes, auth, styling      |
 | [**Client Angular (Frontend)**](client-ng/README.md) | Architecture Angular, NgRx, routes, guards, styling  |
 | [**Server (Backend)**](server/README.md)          | API endpoints, modèles, middleware, sécurité          |
 
