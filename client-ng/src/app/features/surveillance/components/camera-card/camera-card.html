@@ -1,8 +1,8 @@
-<div class="camera-card" [class.camera-card--full]="fullHeight">
-  @if (showHeader) {
+<div class="camera-card" [class.camera-card--full]="fullHeight()">
+  @if (showHeader()) {
     <div class="camera-card__header">
       <div class="camera-card__header-left">
-        <span class="camera-card__name">{{ camera.name | translate }}</span>
+        <span class="camera-card__name">{{ camera().name | translate }}</span>
       </div>
       <div class="camera-card__controls">
         <button
@@ -32,7 +32,7 @@
   <div
     #wrapper
     class="camera-card__viewport"
-    [class.camera-card__viewport--full]="fullHeight"
+    [class.camera-card__viewport--full]="fullHeight()"
     [class.camera-card__viewport--dragging]="isDragging()"
     (mousedown)="onMouseDown($event)"
     (mousemove)="onMouseMove($event)"
@@ -45,7 +45,7 @@
     @if (streamUrl()) {
       <img
         [src]="streamUrl()"
-        [alt]="camera.name"
+        [alt]="camera().name"
         class="camera-card__img"
         [style.transform]="transformStyle()"
         draggable="false"
@@ -55,7 +55,7 @@
       <div class="camera-card__placeholder">{{ 'SURVEILLANCE.LOADING' | translate }}</div>
     }
   </div>
-  @if (showFooter) {
-    <div class="camera-card__footer">{{ 'SURVEILLANCE.PORT' | translate }} {{ camera.port }}</div>
+  @if (showFooter()) {
+    <div class="camera-card__footer">{{ 'SURVEILLANCE.PORT' | translate }} {{ camera().port }}</div>
   }
 </div>

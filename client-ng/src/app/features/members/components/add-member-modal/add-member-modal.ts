@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -14,8 +14,8 @@ import { ALL_POLE_LABELS } from '../../../../shared/constants/poles.constants';
   styleUrl: './add-member-modal.scss',
 })
 export class AddMemberModal {
-  @Output() submitted = new EventEmitter<NewUserData>();
-  @Output() cancelled = new EventEmitter<void>();
+  submitted = output<NewUserData>();
+  cancelled = output<void>();
 
   poles = ALL_POLE_LABELS;
 

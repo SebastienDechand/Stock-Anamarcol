@@ -1,6 +1,6 @@
 import {
   Component,
-  Input,
+  input,
   OnChanges,
   AfterViewChecked,
   ViewChildren,
@@ -55,8 +55,8 @@ const PALETTE = [
   styleUrl: './stock-chart.scss',
 })
 export class StockChart implements OnChanges, AfterViewChecked {
-  @Input({ required: true }) stats!: SupplierStats[];
-  @Input() chartType: 'pie' | 'bar' = 'pie';
+  stats = input.required<SupplierStats[]>();
+  chartType = input<'pie' | 'bar'>('pie');
 
   private readonly translate = inject(TranslateService);
 
@@ -88,7 +88,7 @@ export class StockChart implements OnChanges, AfterViewChecked {
   };
 
   get palette() {
-    return this.stats.map((_, index) => PALETTE[index % PALETTE.length]);
+    return this.stats().map((_, index) => PALETTE[index % PALETTE.length]);
   }
 
   ngAfterViewChecked() {
@@ -100,8 +100,10 @@ export class StockChart implements OnChanges, AfterViewChecked {
 
   ngOnChanges() {
     this.needsResize = true;
-    const labels = this.stats.map((stat) => stat.name ?? this.translate.instant('HOME.UNKNOWN'));
-    const data = this.stats.map((stat) => stat.totalStock);
+    const labels = this.stats().map(
+      (stat) => stat.name ?? this.translate.instant('HOME.UNKNOWN'),
+    );
+    const data = this.stats().map((stat) => stat.totalStock);
     const colors = this.palette;
 
     this.pieData = {

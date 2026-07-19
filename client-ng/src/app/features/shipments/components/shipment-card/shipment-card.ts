@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
@@ -21,12 +21,12 @@ import { Shipment } from '../../../../shared/models/shipment.model';
   styleUrl: './shipment-card.scss',
 })
 export class ShipmentCard {
-  @Input({ required: true }) shipment!: Shipment;
-  @Input() canMarkSent = false;
-  @Input() canDelete = false;
-  @Output() markSent = new EventEmitter<Shipment>();
-  @Output() delete = new EventEmitter<Shipment>();
-  @Output() viewDetail = new EventEmitter<Shipment>();
+  shipment = input.required<Shipment>();
+  canMarkSent = input(false);
+  canDelete = input(false);
+  markSent = output<Shipment>();
+  delete = output<Shipment>();
+  viewDetail = output<Shipment>();
 
   readonly check = Check;
   readonly trash2 = Trash2;

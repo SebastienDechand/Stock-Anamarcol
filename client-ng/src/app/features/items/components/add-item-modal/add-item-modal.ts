@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -14,9 +14,9 @@ import { NewItem } from '../../../../shared/models/item.model';
   styleUrl: './add-item-modal.scss',
 })
 export class AddItemModal {
-  @Input() posterId = '';
-  @Output() submitted = new EventEmitter<NewItem>();
-  @Output() cancelled = new EventEmitter<void>();
+  posterId = input('');
+  submitted = output<NewItem>();
+  cancelled = output<void>();
 
   suppliers = FOURNISSEURS;
   statuses = ETATS;
@@ -46,7 +46,7 @@ export class AddItemModal {
       supplier: this.form.supplier,
       status: this.form.status,
       quantity: this.form.quantity,
-      posterId: this.posterId,
+      posterId: this.posterId(),
       cgKit: this.form.cgKit,
       tpvKit: this.form.tpvKit,
     });

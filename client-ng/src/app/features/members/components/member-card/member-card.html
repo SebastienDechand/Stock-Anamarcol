@@ -1,7 +1,7 @@
-<div class="member-card" [class.member-card--clickable]="clickable" (click)="onClick()">
+<div class="member-card" [class.member-card--clickable]="clickable()" (click)="onClick()">
   <div class="member-card__avatar">
     @if (avatarUrl) {
-      <img [src]="avatarUrl" [alt]="user.pseudo" class="member-card__img" />
+      <img [src]="avatarUrl" [alt]="user().pseudo" class="member-card__img" />
     } @else {
       <span class="member-card__initials">{{ initials }}</span>
     }
@@ -9,8 +9,8 @@
 
   <div class="member-card__info">
     <div class="member-card__name-row">
-      <p class="member-card__name">{{ user.pseudo }}</p>
-      @if (showRoles) {
+      <p class="member-card__name">{{ user().pseudo }}</p>
+      @if (showRoles()) {
         @for (badge of badges; track badge.role) {
           <span class="role-badge role-badge--{{ badge.role }}">{{
             badge.labelKey | translate
@@ -18,29 +18,29 @@
         }
       }
     </div>
-    @if (user.poste) {
-      <p class="member-card__poste">{{ user.poste }}</p>
+    @if (user().poste) {
+      <p class="member-card__poste">{{ user().poste }}</p>
     }
     <div class="member-card__contact">
-      @if (user.email) {
+      @if (user().email) {
         <span class="contact-item">
           <lucide-icon name="mail" [size]="12" />
-          {{ user.email }}
+          {{ user().email }}
         </span>
       }
-      @if (user.numero) {
+      @if (user().numero) {
         <span class="contact-item">
           <lucide-icon name="phone" [size]="12" />
-          {{ user.numero }}
+          {{ user().numero }}
         </span>
       }
     </div>
   </div>
 
-  @if (canDelete) {
+  @if (canDelete()) {
     <button
       class="member-card__delete"
-      (click)="$event.stopPropagation(); deleteRequested.emit(user)"
+      (click)="$event.stopPropagation(); deleteRequested.emit(user())"
       [title]="'MEMBERS.DELETE' | translate"
     >
       <lucide-icon name="trash-2" [size]="13" />

@@ -12,7 +12,7 @@
       <div class="avatar-section">
         <div class="avatar-wrap">
           @if (avatarUrl) {
-            <img [src]="avatarUrl" [alt]="contact.nom" class="avatar-img" />
+            <img [src]="avatarUrl" [alt]="contact().nom" class="avatar-img" />
           } @else {
             <span class="avatar-initials">{{ initials }}</span>
           }

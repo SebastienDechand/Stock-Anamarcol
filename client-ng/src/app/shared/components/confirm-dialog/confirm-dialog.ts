@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { AlertTriangle } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -11,14 +11,14 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrl: './confirm-dialog.scss',
 })
 export class ConfirmDialog {
-  @Input() title?: string;
-  @Input() message?: string;
-  @Input() confirmLabel?: string;
-  @Input() cancelLabel?: string;
-  @Input() isLoading = false;
+  title = input<string>();
+  message = input<string>();
+  confirmLabel = input<string>();
+  cancelLabel = input<string>();
+  isLoading = input(false);
 
-  @Output() confirmed = new EventEmitter<void>();
-  @Output() cancelled = new EventEmitter<void>();
+  confirmed = output<void>();
+  cancelled = output<void>();
 
   readonly icons = { AlertTriangle };
 }

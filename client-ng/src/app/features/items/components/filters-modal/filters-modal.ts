@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
+import { Component, OnInit, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -20,13 +20,13 @@ export interface FiltersApplied {
   styleUrl: './filters-modal.scss',
 })
 export class FiltersModal implements OnInit {
-  @Input() selectedSuppliers: string[] = [];
-  @Input() selectedStatuses: string[] = [];
-  @Input() cgKit = false;
-  @Input() tpvKit = false;
+  selectedSuppliers = input<string[]>([]);
+  selectedStatuses = input<string[]>([]);
+  cgKit = input(false);
+  tpvKit = input(false);
 
-  @Output() applied = new EventEmitter<FiltersApplied>();
-  @Output() cancelled = new EventEmitter<void>();
+  applied = output<FiltersApplied>();
+  cancelled = output<void>();
 
   readonly suppliers = FOURNISSEURS;
   readonly statuses = ETATS;
@@ -39,10 +39,10 @@ export class FiltersModal implements OnInit {
 
   // ─── Side Effects ────────────────────────────────────
   ngOnInit() {
-    this.localSuppliers.set([...this.selectedSuppliers]);
-    this.localStatuses.set([...this.selectedStatuses]);
-    this.localCgKit.set(this.cgKit);
-    this.localTpvKit.set(this.tpvKit);
+    this.localSuppliers.set([...this.selectedSuppliers()]);
+    this.localStatuses.set([...this.selectedStatuses()]);
+    this.localCgKit.set(this.cgKit());
+    this.localTpvKit.set(this.tpvKit());
   }
 
   // ─── Handlers ────────────────────────────────────────

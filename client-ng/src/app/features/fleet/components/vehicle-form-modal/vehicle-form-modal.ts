@@ -1,12 +1,4 @@
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  OnChanges,
-  SimpleChanges,
-  inject,
-} from '@angular/core';
+import { Component, OnChanges, SimpleChanges, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -50,9 +42,9 @@ const MODELE_FORMAT: Record<VehicleModel, VehicleFormat[]> = {
 export class VehicleFormModal implements OnChanges {
   private readonly usersFacade = inject(UsersFacade);
 
-  @Input() vehicle: Vehicle | null = null;
-  @Output() save = new EventEmitter<{ id?: string; data: VehicleForm }>();
-  @Output() closed = new EventEmitter<void>();
+  vehicle = input<Vehicle | null>(null);
+  save = output<{ id?: string; data: VehicleForm }>();
+  closed = output<void>();
 
   readonly x = X;
   readonly users = toSignal(this.usersFacade.users$, { initialValue: [] });
@@ -93,26 +85,27 @@ export class VehicleFormModal implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['vehicle']) {
-      if (this.vehicle) {
+      const vehicle = this.vehicle();
+      if (vehicle) {
         this.form = {
-          marque: this.vehicle.marque,
-          modele: this.vehicle.modele,
-          format: this.vehicle.format,
-          immatriculation: this.vehicle.immatriculation,
-          dateRevision: this.toDateInput(this.vehicle.dateRevision),
-          dateCtInspection: this.toDateInput(this.vehicle.dateCtInspection),
-          dateCtExpiration: this.toDateInput(this.vehicle.dateCtExpiration),
+          marque: vehicle.marque,
+          modele: vehicle.modele,
+          format: vehicle.format,
+          immatriculation: vehicle.immatriculation,
+          dateRevision: this.toDateInput(vehicle.dateRevision),
+          dateCtInspection: this.toDateInput(vehicle.dateCtInspection),
+          dateCtExpiration: this.toDateInput(vehicle.dateCtExpiration),
           dateControlAntiPollutionInspection: this.toDateInput(
-            this.vehicle.dateControlAntiPollutionInspection,
+            vehicle.dateControlAntiPollutionInspection,
           ),
           dateControlAntiPollutionExpiration: this.toDateInput(
-            this.vehicle.dateControlAntiPollutionExpiration,
+            vehicle.dateControlAntiPollutionExpiration,
           ),
           assignedTo:
-            (typeof this.vehicle.assignedTo === 'object'
-              ? this.vehicle.assignedTo?._id
-              : this.vehicle.assignedTo) ?? '',
-          notes: this.vehicle.notes ?? '',
+            (typeof vehicle.assignedTo === 'object'
+              ? vehicle.assignedTo?._id
+              : vehicle.assignedTo) ?? '',
+          notes: vehicle.notes ?? '',
         };
       } else {
         this.resetForm();
@@ -151,11 +144,11 @@ export class VehicleFormModal implements OnChanges {
 
   submit(): void {
     if (!this.form.immatriculation.trim()) return;
-    this.save.emit({ id: this.vehicle?._id, data: { ...this.form } });
+    this.save.emit({ id: this.vehicle()?._id, data: { ...this.form } });
   }
 
   get isEdit(): boolean {
-    return !!this.vehicle;
+    return !!this.vehicle();
   }
 
   private toDateInput(date: string | Date | undefined): string {

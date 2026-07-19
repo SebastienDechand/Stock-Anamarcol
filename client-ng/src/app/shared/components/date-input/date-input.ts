@@ -1,13 +1,12 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
   computed,
   signal,
   HostListener,
   ElementRef,
   inject,
+  input,
+  model,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
@@ -50,10 +49,9 @@ export class DateInput {
   private readonly translate = inject(TranslateService);
   private readonly id = Symbol();
 
-  @Input() value: string | undefined = '';
-  @Input() placeholder = '';
-  @Input() disabled = false;
-  @Output() valueChange = new EventEmitter<string>();
+  value = model<string | undefined>('');
+  placeholder = input('');
+  disabled = input(false);
 
   readonly iconCalendar = Calendar;
   readonly iconLeft = ChevronLeft;
@@ -71,7 +69,7 @@ export class DateInput {
   ];
 
   get effectivePlaceholder(): string {
-    return this.placeholder || this.translate.instant('COMMON.DATE_PLACEHOLDER');
+    return this.placeholder() || this.translate.instant('COMMON.DATE_PLACEHOLDER');
   }
 
   isOpen = computed(() => this.registry.isActive(this.id));
@@ -83,8 +81,8 @@ export class DateInput {
   popupMinWidth = signal('260px');
 
   get displayValue(): string {
-    if (!this.value) return '';
-    const [year, month, day] = this.value.split('-');
+    if (!this.value()) return '';
+    const [year, month, day] = this.value()!.split('-');
     return `${day}/${month}/${year}`;
   }
 
@@ -93,8 +91,8 @@ export class DateInput {
   }
 
   private get selectedDate(): Date | null {
-    if (!this.value) return null;
-    const [year, month, day] = this.value.split('-').map(Number);
+    if (!this.value()) return null;
+    const [year, month, day] = this.value()!.split('-').map(Number);
     return new Date(year, month - 1, day);
   }
 
@@ -149,12 +147,12 @@ export class DateInput {
   }
 
   toggle(): void {
-    if (this.disabled) return;
+    if (this.disabled()) return;
     if (this.registry.isActive(this.id)) {
       this.registry.close(this.id);
     } else {
-      if (this.value) {
-        const [year, month] = this.value.split('-').map(Number);
+      if (this.value()) {
+        const [year, month] = this.value()!.split('-').map(Number);
         this.viewYear.set(year);
         this.viewMonth.set(month - 1);
       } else {
@@ -205,13 +203,13 @@ export class DateInput {
       String(date.getMonth() + 1).padStart(2, '0'),
       String(date.getDate()).padStart(2, '0'),
     ].join('-');
-    this.valueChange.emit(iso);
+    this.value.set(iso);
     this.registry.close(this.id);
   }
 
   clear(event: Event): void {
     event.stopPropagation();
-    this.valueChange.emit('');
+    this.value.set('');
     this.registry.close(this.id);
   }
 

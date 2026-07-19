@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, signal } from '@angular/core';
+import { Component, OnInit, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -13,32 +13,32 @@ import { Contact } from '../../../../shared/models/contact.model';
   styleUrl: './contact-modal.scss',
 })
 export class ContactModal implements OnInit {
-  @Input({ required: true }) contact!: Contact;
-  @Output() saved = new EventEmitter<Partial<Contact>>();
-  @Output() pictureUploaded = new EventEmitter<{ id: string; formData: FormData }>();
-  @Output() cancelled = new EventEmitter<void>();
+  contact = input.required<Contact>();
+  saved = output<Partial<Contact>>();
+  pictureUploaded = output<{ id: string; formData: FormData }>();
+  cancelled = output<void>();
 
   form = { nom: '', email: '', tel: '', poste: '', lien: '' };
 
   ngOnInit() {
     this.form = {
-      nom: this.contact.nom ?? '',
-      email: this.contact.email ?? '',
-      tel: this.contact.tel ?? '',
-      poste: this.contact.poste ?? '',
-      lien: this.contact.lien ?? '',
+      nom: this.contact().nom ?? '',
+      email: this.contact().email ?? '',
+      tel: this.contact().tel ?? '',
+      poste: this.contact().poste ?? '',
+      lien: this.contact().lien ?? '',
     };
   }
 
   get avatarUrl(): string {
-    const picture = this.contact.picture;
+    const picture = this.contact().picture;
     if (!picture) return '';
     if (picture.startsWith('http') || picture.startsWith('/')) return picture;
     return `/${picture}`;
   }
 
   get initials(): string {
-    return (this.contact.nom ?? '?')[0].toUpperCase();
+    return (this.contact().nom ?? '?')[0].toUpperCase();
   }
 
   onFileChange(event: Event) {
@@ -46,8 +46,8 @@ export class ContactModal implements OnInit {
     if (!file) return;
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('contactId', this.contact._id);
-    this.pictureUploaded.emit({ id: this.contact._id, formData });
+    formData.append('contactId', this.contact()._id);
+    this.pictureUploaded.emit({ id: this.contact()._id, formData });
   }
 
   submit() {

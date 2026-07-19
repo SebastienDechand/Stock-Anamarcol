@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, AlertCircle, Edit2, Trash2, FileText } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -18,11 +18,11 @@ import {
   styleUrl: './vehicle-card.scss',
 })
 export class VehicleCard {
-  @Input({ required: true }) vehicle!: Vehicle;
-  @Input() isAdmin = false;
-  @Output() edit = new EventEmitter<Vehicle>();
-  @Output() delete = new EventEmitter<Vehicle>();
-  @Output() viewDocuments = new EventEmitter<Vehicle>();
+  vehicle = input.required<Vehicle>();
+  isAdmin = input(false);
+  edit = output<Vehicle>();
+  delete = output<Vehicle>();
+  viewDocuments = output<Vehicle>();
 
   readonly alertCircle = AlertCircle;
   readonly edit2 = Edit2;
@@ -37,7 +37,7 @@ export class VehicleCard {
       pickup: 'badge badge--green',
       camion: 'badge badge--orange',
     };
-    return map[this.vehicle.format] ?? 'badge';
+    return map[this.vehicle().format] ?? 'badge';
   }
 
   get formatLabel(): string {
@@ -46,7 +46,7 @@ export class VehicleCard {
       pickup: 'FLEET.FORMAT_PICKUP',
       camion: 'FLEET.FORMAT_CAMION',
     };
-    return map[this.vehicle.format] ?? this.vehicle.format;
+    return map[this.vehicle().format] ?? this.vehicle().format;
   }
 
   dateStatus(date: string | Date | undefined): VehicleDateStatus {
@@ -54,15 +54,15 @@ export class VehicleCard {
   }
 
   revisionStatus(): VehicleDateStatus {
-    return vehicleRevisionStatus(this.vehicle.dateRevision);
+    return vehicleRevisionStatus(this.vehicle().dateRevision);
   }
 
   get hasAlert(): boolean {
     return (
-      (this.dateStatus(this.vehicle.dateCtExpiration) !== 'ok' &&
-        this.dateStatus(this.vehicle.dateCtExpiration) !== 'none') ||
-      (this.dateStatus(this.vehicle.dateControlAntiPollutionExpiration) !== 'ok' &&
-        this.dateStatus(this.vehicle.dateControlAntiPollutionExpiration) !== 'none') ||
+      (this.dateStatus(this.vehicle().dateCtExpiration) !== 'ok' &&
+        this.dateStatus(this.vehicle().dateCtExpiration) !== 'none') ||
+      (this.dateStatus(this.vehicle().dateControlAntiPollutionExpiration) !== 'ok' &&
+        this.dateStatus(this.vehicle().dateControlAntiPollutionExpiration) !== 'none') ||
       (this.revisionStatus() !== 'ok' && this.revisionStatus() !== 'none')
     );
   }

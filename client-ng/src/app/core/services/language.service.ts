@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -6,12 +6,14 @@ export type Lang = 'fr' | 'en';
 
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
+  private readonly translate = inject(TranslateService);
+
   private readonly _lang = new BehaviorSubject<Lang>(this.getInitialLang());
   readonly lang$ = this._lang.asObservable();
 
-  constructor(private translate: TranslateService) {
-    translate.addLangs(['fr', 'en']);
-    translate.use(this._lang.value);
+  constructor() {
+    this.translate.addLangs(['fr', 'en']);
+    this.translate.use(this._lang.value);
   }
 
   get current(): Lang {

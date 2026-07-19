@@ -1,13 +1,13 @@
-<div class="item-card" (click)="cardClick.emit(item)">
+<div class="item-card" (click)="cardClick.emit(item())">
   <div class="item-card__img-wrap">
     <span class="item-card__stock-badge item-card__stock-badge--{{ stockMod }}">
       {{ stockLabel | translate }}
     </span>
 
-    @if (isAdmin) {
+    @if (isAdmin()) {
       <button
         class="item-card__delete-btn"
-        (click)="$event.stopPropagation(); delete.emit(item)"
+        (click)="$event.stopPropagation(); delete.emit(item())"
         [title]="'COMMON.DELETE' | translate"
       >
         <lucide-icon name="trash-2" [size]="12" />
@@ -15,7 +15,7 @@
     }
 
     @if (imageUrl) {
-      <img [src]="imageUrl" [alt]="item.name" class="item-card__img" />
+      <img [src]="imageUrl" [alt]="item().name" class="item-card__img" />
     } @else {
       <div class="item-card__img-placeholder">
         <lucide-icon name="package" [size]="28" />
@@ -24,22 +24,22 @@
   </div>
 
   <div class="item-card__body">
-    <h3 class="item-card__name">{{ item.name }}</h3>
-    <p class="item-card__meta">{{ item.supplier }} · {{ item.status }}</p>
+    <h3 class="item-card__name">{{ item().name }}</h3>
+    <p class="item-card__meta">{{ item().supplier }} · {{ item().status }}</p>
 
     <div class="item-card__footer">
       <button
         class="qty-btn remove-btn"
-        (click)="$event.stopPropagation(); decrement.emit(item)"
-        [disabled]="!canDecrement"
+        (click)="$event.stopPropagation(); decrement.emit(item())"
+        [disabled]="!canDecrement()"
         [title]="'ITEMS.DECREMENT' | translate"
       >
         <lucide-icon name="minus" [size]="13" [absoluteStrokeWidth]="true" />
       </button>
-      <span class="qty-value qty-value--{{ stockMod }}">{{ item.quantity }}</span>
+      <span class="qty-value qty-value--{{ stockMod }}">{{ item().quantity }}</span>
       <button
         class="qty-btn add-btn"
-        (click)="$event.stopPropagation(); increment.emit(item)"
+        (click)="$event.stopPropagation(); increment.emit(item())"
         [title]="'ITEMS.INCREMENT' | translate"
       >
         <lucide-icon name="plus" [size]="13" [absoluteStrokeWidth]="true" />

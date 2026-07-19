@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, input, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -28,10 +28,10 @@ const ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'xlsx', 'xls', 'jpg', 'jpeg', 
 export class VehicleDocumentList {
   private toast = inject(ToastService);
 
-  @Input({ required: true }) vehicle!: Vehicle;
-  @Input() isAdmin = false;
-  @Output() uploadDocument = new EventEmitter<{ id: string; formData: FormData }>();
-  @Output() deleteDocument = new EventEmitter<{ vehicleId: string; docId: string }>();
+  vehicle = input.required<Vehicle>();
+  isAdmin = input(false);
+  uploadDocument = output<{ id: string; formData: FormData }>();
+  deleteDocument = output<{ vehicleId: string; docId: string }>();
 
   readonly fileText = FileText;
   readonly trash2 = Trash2;
@@ -85,7 +85,8 @@ export class VehicleDocumentList {
   }
 
   submitUpload(): void {
-    if (!this.selectedFile || !this.selectedDocName.trim() || !this.vehicle._id) return;
+    const vehicleId = this.vehicle()._id;
+    if (!this.selectedFile || !this.selectedDocName.trim() || !vehicleId) return;
     const formData = new FormData();
     // Field names must match multer's `upload.single("file")` and the
     // controller's `req.body.docType` / `req.body.docName` (see
@@ -93,15 +94,16 @@ export class VehicleDocumentList {
     formData.append('file', this.selectedFile);
     formData.append('docName', this.selectedDocName.trim());
     formData.append('docType', this.selectedDocType);
-    this.uploadDocument.emit({ id: this.vehicle._id, formData });
+    this.uploadDocument.emit({ id: vehicleId, formData });
     this.selectedFile = null;
     this.selectedDocName = '';
     this.selectedDocType = 'autre';
   }
 
   onDelete(doc: VehicleDocument): void {
-    if (!this.vehicle._id || !doc._id) return;
-    this.deleteDocument.emit({ vehicleId: this.vehicle._id, docId: doc._id });
+    const vehicleId = this.vehicle()._id;
+    if (!vehicleId || !doc._id) return;
+    this.deleteDocument.emit({ vehicleId, docId: doc._id });
   }
 
   fileUrl(doc: VehicleDocument): string {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -15,11 +15,11 @@ import { ALL_POLE_LABELS } from '../../../../shared/constants/poles.constants';
   styleUrl: './edit-member-modal.scss',
 })
 export class EditMemberModal implements OnInit {
-  @Input({ required: true }) user!: User;
-  @Input() isSuperadmin = false;
-  @Output() saved = new EventEmitter<UpdateUserData>();
-  @Output() pictureUploaded = new EventEmitter<{ id: string; formData: FormData }>();
-  @Output() cancelled = new EventEmitter<void>();
+  user = input.required<User>();
+  isSuperadmin = input(false);
+  saved = output<UpdateUserData>();
+  pictureUploaded = output<{ id: string; formData: FormData }>();
+  cancelled = output<void>();
 
   poles = ALL_POLE_LABELS;
 
@@ -27,23 +27,23 @@ export class EditMemberModal implements OnInit {
 
   ngOnInit() {
     this.form = {
-      pseudo: this.user.pseudo,
-      email: this.user.email,
-      poste: this.user.poste ?? '',
-      numero: this.user.numero ?? '',
-      pole: this.user.pole ?? '',
+      pseudo: this.user().pseudo,
+      email: this.user().email,
+      poste: this.user().poste ?? '',
+      numero: this.user().numero ?? '',
+      pole: this.user().pole ?? '',
     };
   }
 
   get avatarUrl(): string {
-    const picture = this.user.picture;
+    const picture = this.user().picture;
     if (!picture) return '';
     if (picture.startsWith('http') || picture.startsWith('/')) return picture;
     return `/${picture}`;
   }
 
   get initials(): string {
-    return (this.user.pseudo ?? '?')[0].toUpperCase();
+    return (this.user().pseudo ?? '?')[0].toUpperCase();
   }
 
   onFileChange(event: Event) {
@@ -51,9 +51,9 @@ export class EditMemberModal implements OnInit {
     if (!file) return;
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('name', this.user.pseudo || 'user');
-    formData.append('userId', this.user._id);
-    this.pictureUploaded.emit({ id: this.user._id, formData });
+    formData.append('name', this.user().pseudo || 'user');
+    formData.append('userId', this.user()._id);
+    this.pictureUploaded.emit({ id: this.user()._id, formData });
   }
 
   submit() {

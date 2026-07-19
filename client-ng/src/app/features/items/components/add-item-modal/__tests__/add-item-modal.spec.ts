@@ -1,10 +1,15 @@
+import { TestBed } from '@angular/core/testing';
 import { describe, it, expect, vi } from 'vitest';
 import { AddItemModal } from '../add-item-modal';
 
 function build(): AddItemModal {
-  const modal = new AddItemModal();
-  modal.posterId = 'user-001';
-  return modal;
+  TestBed.overrideComponent(AddItemModal, { set: { template: '', imports: [] } });
+  TestBed.configureTestingModule({ imports: [AddItemModal] });
+
+  const fixture = TestBed.createComponent(AddItemModal);
+  fixture.componentRef.setInput('posterId', 'user-001');
+  fixture.detectChanges();
+  return fixture.componentInstance;
 }
 
 describe('AddItemModal — submit()', () => {

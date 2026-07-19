@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -18,26 +18,26 @@ import {
   styleUrl: './export-modal.scss',
 })
 export class ExportModal {
-  @Input({ required: true }) items!: Item[];
-  @Output() cancelled = new EventEmitter<void>();
+  items = input.required<Item[]>();
+  cancelled = output<void>();
 
   exportCSV() {
-    exportItemsToCSV(this.items);
+    exportItemsToCSV(this.items());
     this.cancelled.emit();
   }
 
   async exportXLSX() {
-    await exportItemsToXLSX(this.items);
+    await exportItemsToXLSX(this.items());
     this.cancelled.emit();
   }
 
   async exportPDF() {
-    await exportItemsToPDF(this.items);
+    await exportItemsToPDF(this.items());
     this.cancelled.emit();
   }
 
   exportJSON() {
-    exportItemsToJSON(this.items);
+    exportItemsToJSON(this.items());
     this.cancelled.emit();
   }
 }
