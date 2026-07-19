@@ -12,11 +12,11 @@ export interface InterventionReport {
     | string
     | {
         _id: string;
-        nom: string;
-        prenom?: string;
-        societe?: string;
-        cp?: string;
-        ville?: string;
+        lastName: string;
+        firstName?: string;
+        company?: string;
+        postalCode?: string;
+        city?: string;
       };
   twCaisse1?: string;
   twCaisse2?: string;

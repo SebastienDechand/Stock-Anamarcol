@@ -49,11 +49,11 @@ import { environment } from '../../../environments/environment';
 type ClientFileDetailTab = 'fiche' | 'technique' | 'shipments' | 'documents';
 
 const DOC_TYPE_LABELS: Record<ClientFileDocType, string> = {
-  bdc: 'CLIENT_FILES.DOC_TYPE_BDC',
-  rapport: 'CLIENT_FILES.DOC_TYPE_RAPPORT',
-  pvrecette: 'CLIENT_FILES.DOC_TYPE_PVRECETTE',
-  visite: 'CLIENT_FILES.DOC_TYPE_VISITE',
-  autre: 'CLIENT_FILES.DOC_TYPE_AUTRE',
+  purchase_order: 'CLIENT_FILES.DOC_TYPE_BDC',
+  report: 'CLIENT_FILES.DOC_TYPE_RAPPORT',
+  acceptance_report: 'CLIENT_FILES.DOC_TYPE_PVRECETTE',
+  visit: 'CLIENT_FILES.DOC_TYPE_VISITE',
+  other: 'CLIENT_FILES.DOC_TYPE_AUTRE',
 };
 
 @Component({
@@ -124,7 +124,7 @@ export class ClientFileDetailPage implements OnInit {
   shipments = signal<Shipment[]>([]);
   shipmentsLoading = signal(false);
   docUploading = signal(false);
-  docType = signal<ClientFileDocType>('bdc');
+  docType = signal<ClientFileDocType>('purchase_order');
   uploadFile = signal<File | null>(null);
 
   readonly docTypeLabels = DOC_TYPE_LABELS;
@@ -270,13 +270,13 @@ export class ClientFileDetailPage implements OnInit {
   }
 
   getClientLabel(file: ClientFile): string {
-    return [file.nom.toUpperCase(), file.prenom, file.societe ? `- ${file.societe}` : '']
+    return [file.lastName.toUpperCase(), file.firstName, file.company ? `- ${file.company}` : '']
       .filter(Boolean)
       .join(' ');
   }
 
   getMapsUrl(file: ClientFile): SafeResourceUrl {
-    const address = [file.adresse, file.cp, file.ville].filter(Boolean).join(', ');
+    const address = [file.address, file.postalCode, file.city].filter(Boolean).join(', ');
     const url = `https://maps.google.com/maps?q=${encodeURIComponent(address)}&output=embed&hl=fr`;
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }

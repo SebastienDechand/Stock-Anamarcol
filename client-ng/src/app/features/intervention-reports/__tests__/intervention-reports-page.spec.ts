@@ -12,7 +12,7 @@ const mockNavigate = vi.fn();
 
 const makeReport = (overrides: Partial<InterventionReport> = {}): InterventionReport => ({
   _id: 'r1',
-  clientFile: { _id: 'cf1', nom: 'Dupont', societe: 'SARL', ville: 'Paris' },
+  clientFile: { _id: 'cf1', lastName: 'Dupont', company: 'SARL', city: 'Paris' },
   cashguardUnits: [],
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
@@ -54,11 +54,11 @@ describe('InterventionReportsPage', () => {
   describe('filter()', () => {
     const reportA = makeReport({
       _id: 'r1',
-      clientFile: { _id: 'cf1', nom: 'Dupont', societe: 'SARL', ville: 'Paris' },
+      clientFile: { _id: 'cf1', lastName: 'Dupont', company: 'SARL', city: 'Paris' },
     });
     const reportB = makeReport({
       _id: 'r2',
-      clientFile: { _id: 'cf2', nom: 'Martin', societe: 'SAS', ville: 'Lyon' },
+      clientFile: { _id: 'cf2', lastName: 'Martin', company: 'SAS', city: 'Lyon' },
     });
 
     it('with no searchTerm returns all reports unchanged', () => {
@@ -67,19 +67,19 @@ describe('InterventionReportsPage', () => {
       expect(result).toEqual([reportA, reportB]);
     });
 
-    it('with searchTerm matching nom returns matching report', () => {
+    it('with searchTerm matching lastName returns matching report', () => {
       component.searchTerm.set('dupont');
       const result = component.filter([reportA, reportB]);
       expect(result).toEqual([reportA]);
     });
 
-    it('with searchTerm matching societe returns matching report', () => {
+    it('with searchTerm matching company returns matching report', () => {
       component.searchTerm.set('sarl');
       const result = component.filter([reportA, reportB]);
       expect(result).toEqual([reportA]);
     });
 
-    it('with searchTerm matching ville returns matching report', () => {
+    it('with searchTerm matching city returns matching report', () => {
       component.searchTerm.set('lyon');
       const result = component.filter([reportA, reportB]);
       expect(result).toEqual([reportB]);
@@ -107,20 +107,20 @@ describe('InterventionReportsPage', () => {
   });
 
   describe('getClientLabel()', () => {
-    it('with object clientFile having nom and societe returns "nom - societe"', () => {
+    it('with object clientFile having lastName and company returns "lastName - company"', () => {
       const report = makeReport({
-        clientFile: { _id: 'cf1', nom: 'Dupont', societe: 'SARL', ville: 'Paris' },
+        clientFile: { _id: 'cf1', lastName: 'Dupont', company: 'SARL', city: 'Paris' },
       });
       expect(component.getClientLabel(report)).toBe('Dupont - SARL');
     });
 
-    it('with object clientFile having nom only returns "nom"', () => {
-      const report = makeReport({ clientFile: { _id: 'cf1', nom: 'Dupont' } });
+    it('with object clientFile having lastName only returns "lastName"', () => {
+      const report = makeReport({ clientFile: { _id: 'cf1', lastName: 'Dupont' } });
       expect(component.getClientLabel(report)).toBe('Dupont');
     });
 
-    it('with object clientFile having societe only returns "societe"', () => {
-      const report = makeReport({ clientFile: { _id: 'cf1', nom: '', societe: 'SARL' } });
+    it('with object clientFile having company only returns "company"', () => {
+      const report = makeReport({ clientFile: { _id: 'cf1', lastName: '', company: 'SARL' } });
       expect(component.getClientLabel(report)).toBe('SARL');
     });
 
@@ -132,7 +132,7 @@ describe('InterventionReportsPage', () => {
 
   describe('getClientFileId()', () => {
     it('with object clientFile returns cf._id', () => {
-      const report = makeReport({ clientFile: { _id: 'cf1', nom: 'Dupont' } });
+      const report = makeReport({ clientFile: { _id: 'cf1', lastName: 'Dupont' } });
       expect(component.getClientFileId(report)).toBe('cf1');
     });
 
@@ -149,7 +149,7 @@ describe('InterventionReportsPage', () => {
 
   describe('openClientFile()', () => {
     it('navigates to /client-files/:id when clientFile is an object', () => {
-      const report = makeReport({ clientFile: { _id: 'cf1', nom: 'Dupont' } });
+      const report = makeReport({ clientFile: { _id: 'cf1', lastName: 'Dupont' } });
       component.openClientFile(report);
       expect(mockNavigate).toHaveBeenCalledWith(['/client-files', 'cf1']);
     });

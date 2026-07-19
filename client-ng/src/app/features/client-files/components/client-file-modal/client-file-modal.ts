@@ -28,69 +28,69 @@ type BDCEntry =
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const BDC_MAP: Record<string, BDCEntry> = {
-  societe: { type: 'str', key: 'societe' },
-  'raison social': { type: 'str', key: 'raisonSociale' },
-  'raison sociale': { type: 'str', key: 'raisonSociale' },
-  nom: { type: 'str', key: 'nom' },
-  prenom: { type: 'str', key: 'prenom' },
-  'nom du magasin': { type: 'str', key: 'nomMagasin' },
-  'statuts juridique': { type: 'str', key: 'statutJuridique' },
-  'statut juridique': { type: 'str', key: 'statutJuridique' },
-  adresse: { type: 'str', key: 'adresse' },
-  cp: { type: 'str', key: 'cp' },
-  'code postal': { type: 'str', key: 'cp' },
-  ville: { type: 'str', key: 'ville' },
-  tel: { type: 'str', key: 'tel' },
-  telephone: { type: 'str', key: 'tel' },
+  societe: { type: 'str', key: 'company' },
+  'raison social': { type: 'str', key: 'legalName' },
+  'raison sociale': { type: 'str', key: 'legalName' },
+  nom: { type: 'str', key: 'lastName' },
+  prenom: { type: 'str', key: 'firstName' },
+  'nom du magasin': { type: 'str', key: 'storeName' },
+  'statuts juridique': { type: 'str', key: 'legalStatus' },
+  'statut juridique': { type: 'str', key: 'legalStatus' },
+  adresse: { type: 'str', key: 'address' },
+  cp: { type: 'str', key: 'postalCode' },
+  'code postal': { type: 'str', key: 'postalCode' },
+  ville: { type: 'str', key: 'city' },
+  tel: { type: 'str', key: 'phone' },
+  telephone: { type: 'str', key: 'phone' },
   mobile: { type: 'str', key: 'mobile' },
   email: { type: 'str', key: 'email' },
   'e-mail': { type: 'str', key: 'email' },
   'n de siret': { type: 'str', key: 'siret' },
   siret: { type: 'str', key: 'siret' },
-  'n tva intra': { type: 'str', key: 'tvaIntra' },
-  'tva intra': { type: 'str', key: 'tvaIntra' },
-  'tva intracommunautaire': { type: 'str', key: 'tvaIntra' },
-  'n de tva intra': { type: 'str', key: 'tvaIntra' },
-  'n de tva intracommunautaire': { type: 'str', key: 'tvaIntra' },
-  'code naf': { type: 'str', key: 'codeNaf' },
-  'jour(s) de fermeture': { type: 'str', key: 'joursFermeture' },
-  'jours de fermeture': { type: 'str', key: 'joursFermeture' },
-  'ouverture prevue': { type: 'str', key: 'ouverturePrevue' },
-  'date installation souhaitee': { type: 'str', key: 'dateInstallationSouhaitee' },
-  "date d'installation souhaitee": { type: 'str', key: 'dateInstallationSouhaitee' },
-  'date formation souhaitee': { type: 'str', key: 'dateFormationSouhaitee' },
-  'date de formation souhaitee': { type: 'str', key: 'dateFormationSouhaitee' },
-  'visite de preinstallation': { type: 'bool', key: 'visitePreinstallation' },
-  'visite de pre-installation': { type: 'bool', key: 'visitePreinstallation' },
-  'saisir un fichier produit': { type: 'bool', key: 'saisirFichierProduit' },
-  'saisir un fichier de produit': { type: 'bool', key: 'saisirFichierProduit' },
-  'decoupe du plan - menuiserie': { type: 'bool', key: 'decoupePlanMenuiserie' },
-  'decoupe du plan a effectuer - menuiserie': { type: 'bool', key: 'decoupePlanMenuiserie' },
-  'decoupe du plan - marbrerie': { type: 'bool', key: 'decoupePlanMarbrerie' },
-  'decoupe du plan a effectuer - marbrerie': { type: 'bool', key: 'decoupePlanMarbrerie' },
-  remarques: { type: 'str', key: 'remarques' },
-  'remarques particulieres': { type: 'str', key: 'remarques' },
-  'nombre de caisses': { type: 'equipNum', key: 'nbCaisses' },
-  caisses: { type: 'equipNum', key: 'nbCaisses' },
-  'nombre de cashguard': { type: 'equipNum', key: 'nbCashguard' },
-  cashguard: { type: 'equipNum', key: 'nbCashguard' },
-  'nombre de fusion': { type: 'equipNum', key: 'nbFusion' },
-  fusion: { type: 'equipNum', key: 'nbFusion' },
-  'autres materiels': { type: 'equipNum', key: 'nbAutresMateriels' },
-  'nombre de balances/caisses': { type: 'equipNum', key: 'nbBalancesCaisses' },
-  'nombre de balances': { type: 'equipNum', key: 'nbBalancesCaisses' },
-  'licences tactis': { type: 'equipNum', key: 'licencesTactis' },
-  'licence tactis': { type: 'equipNum', key: 'licencesTactis' },
-  'licences inno': { type: 'equipNum', key: 'licencesInno' },
-  'licence inno': { type: 'equipNum', key: 'licencesInno' },
-  'pc backoffice': { type: 'equipNum', key: 'pcBackoffice' },
-  'pc de gestion': { type: 'equipNum', key: 'pcBackoffice' },
-  'pc de centralisation': { type: 'equipNum', key: 'pcCentralisation' },
-  'pc centralisation': { type: 'equipNum', key: 'pcCentralisation' },
-  'borne allergene': { type: 'equipBool', key: 'borneAllergene' },
-  'borne de commande': { type: 'equipBool', key: 'borneCommande' },
-  'etiquettes electronique': { type: 'equipBool', key: 'etiquettesElectronique' },
-  'carte fidelite': { type: 'equipBool', key: 'carteFidelite' },
+  'n tva intra': { type: 'str', key: 'vatNumber' },
+  'tva intra': { type: 'str', key: 'vatNumber' },
+  'tva intracommunautaire': { type: 'str', key: 'vatNumber' },
+  'n de tva intra': { type: 'str', key: 'vatNumber' },
+  'n de tva intracommunautaire': { type: 'str', key: 'vatNumber' },
+  'code naf': { type: 'str', key: 'nafCode' },
+  'jour(s) de fermeture': { type: 'str', key: 'closingDays' },
+  'jours de fermeture': { type: 'str', key: 'closingDays' },
+  'ouverture prevue': { type: 'str', key: 'plannedOpening' },
+  'date installation souhaitee': { type: 'str', key: 'desiredInstallationDate' },
+  "date d'installation souhaitee": { type: 'str', key: 'desiredInstallationDate' },
+  'date formation souhaitee': { type: 'str', key: 'desiredTrainingDate' },
+  'date de formation souhaitee': { type: 'str', key: 'desiredTrainingDate' },
+  'visite de preinstallation': { type: 'bool', key: 'preInstallationVisit' },
+  'visite de pre-installation': { type: 'bool', key: 'preInstallationVisit' },
+  'saisir un fichier produit': { type: 'bool', key: 'productFileEntry' },
+  'saisir un fichier de produit': { type: 'bool', key: 'productFileEntry' },
+  'decoupe du plan - menuiserie': { type: 'bool', key: 'carpentryPlanCutout' },
+  'decoupe du plan a effectuer - menuiserie': { type: 'bool', key: 'carpentryPlanCutout' },
+  'decoupe du plan - marbrerie': { type: 'bool', key: 'stoneworkPlanCutout' },
+  'decoupe du plan a effectuer - marbrerie': { type: 'bool', key: 'stoneworkPlanCutout' },
+  remarques: { type: 'str', key: 'notes' },
+  'remarques particulieres': { type: 'str', key: 'notes' },
+  'nombre de caisses': { type: 'equipNum', key: 'registerCount' },
+  caisses: { type: 'equipNum', key: 'registerCount' },
+  'nombre de cashguard': { type: 'equipNum', key: 'cashguardCount' },
+  cashguard: { type: 'equipNum', key: 'cashguardCount' },
+  'nombre de fusion': { type: 'equipNum', key: 'fusionCount' },
+  fusion: { type: 'equipNum', key: 'fusionCount' },
+  'autres materiels': { type: 'equipNum', key: 'otherEquipmentCount' },
+  'nombre de balances/caisses': { type: 'equipNum', key: 'scaleCount' },
+  'nombre de balances': { type: 'equipNum', key: 'scaleCount' },
+  'licences tactis': { type: 'equipNum', key: 'tactisLicenses' },
+  'licence tactis': { type: 'equipNum', key: 'tactisLicenses' },
+  'licences inno': { type: 'equipNum', key: 'innoLicenses' },
+  'licence inno': { type: 'equipNum', key: 'innoLicenses' },
+  'pc backoffice': { type: 'equipNum', key: 'backofficePcCount' },
+  'pc de gestion': { type: 'equipNum', key: 'backofficePcCount' },
+  'pc de centralisation': { type: 'equipNum', key: 'centralizationPcCount' },
+  'pc centralisation': { type: 'equipNum', key: 'centralizationPcCount' },
+  'borne allergene': { type: 'equipBool', key: 'allergenKiosk' },
+  'borne de commande': { type: 'equipBool', key: 'orderKiosk' },
+  'etiquettes electronique': { type: 'equipBool', key: 'electronicLabels' },
+  'carte fidelite': { type: 'equipBool', key: 'loyaltyCard' },
 };
 
 function stripDiacritics(value: string): string {
@@ -130,7 +130,7 @@ function toNum(value: string): number {
   return isNaN(parsed) ? 0 : parsed;
 }
 
-type BDCPatch = Omit<Partial<ClientFileForm>, 'equipement'> & { equipement?: Partial<Equipement> };
+type BDCPatch = Omit<Partial<ClientFileForm>, 'equipment'> & { equipment?: Partial<Equipement> };
 
 function applyBDCEntries(entries: { label: string; value: string }[]): BDCPatch {
   const patch: BDCPatch = {};
@@ -144,11 +144,11 @@ function applyBDCEntries(entries: { label: string; value: string }[]): BDCPatch 
     } else if (mapping.type === 'bool') {
       (patch as Record<string, unknown>)[mapping.key] = toBool(trimmedValue);
     } else if (mapping.type === 'equipNum') {
-      if (!patch.equipement) patch.equipement = {};
-      (patch.equipement as unknown as Record<string, unknown>)[mapping.key] = toNum(trimmedValue);
+      if (!patch.equipment) patch.equipment = {};
+      (patch.equipment as unknown as Record<string, unknown>)[mapping.key] = toNum(trimmedValue);
     } else if (mapping.type === 'equipBool') {
-      if (!patch.equipement) patch.equipement = {};
-      (patch.equipement as unknown as Record<string, unknown>)[mapping.key] = toBool(trimmedValue);
+      if (!patch.equipment) patch.equipment = {};
+      (patch.equipment as unknown as Record<string, unknown>)[mapping.key] = toBool(trimmedValue);
     }
   }
   return patch;
@@ -192,48 +192,48 @@ async function parseXlsxBDC(file: File): Promise<BDCPatch> {
 // ─── Empty form ───────────────────────────────────────────────────────────────
 
 const emptyEquipement: Equipement = {
-  nbCashguard: 0,
-  nbFusion: 0,
-  nbCaisses: 0,
-  nbAutresMateriels: 0,
-  nbBalancesCaisses: 0,
-  licencesTactis: 0,
-  licencesInno: 0,
-  pcBackoffice: 0,
-  pcCentralisation: 0,
-  borneAllergene: false,
-  borneCommande: false,
-  etiquettesElectronique: false,
-  carteFidelite: false,
+  cashguardCount: 0,
+  fusionCount: 0,
+  registerCount: 0,
+  otherEquipmentCount: 0,
+  scaleCount: 0,
+  tactisLicenses: 0,
+  innoLicenses: 0,
+  backofficePcCount: 0,
+  centralizationPcCount: 0,
+  allergenKiosk: false,
+  orderKiosk: false,
+  electronicLabels: false,
+  loyaltyCard: false,
 };
 
 function emptyForm(): ClientFileForm {
   return {
-    societe: '',
-    nom: '',
-    prenom: '',
-    adresse: '',
-    cp: '',
-    ville: '',
-    tel: '',
+    company: '',
+    lastName: '',
+    firstName: '',
+    address: '',
+    postalCode: '',
+    city: '',
+    phone: '',
     mobile: '',
     email: '',
-    statutJuridique: '',
-    raisonSociale: '',
-    nomMagasin: '',
+    legalStatus: '',
+    legalName: '',
+    storeName: '',
     siret: '',
-    tvaIntra: '',
-    codeNaf: '',
-    joursFermeture: '',
-    visitePreinstallation: false,
-    dateInstallationSouhaitee: '',
-    dateFormationSouhaitee: '',
-    saisirFichierProduit: false,
-    decoupePlanMenuiserie: false,
-    decoupePlanMarbrerie: false,
-    ouverturePrevue: '',
-    equipement: { ...emptyEquipement },
-    remarques: '',
+    vatNumber: '',
+    nafCode: '',
+    closingDays: '',
+    preInstallationVisit: false,
+    desiredInstallationDate: '',
+    desiredTrainingDate: '',
+    productFileEntry: false,
+    carpentryPlanCutout: false,
+    stoneworkPlanCutout: false,
+    plannedOpening: '',
+    equipment: { ...emptyEquipement },
+    notes: '',
   };
 }
 
@@ -261,29 +261,29 @@ export class ClientFileModal implements OnChanges {
   isDragging = signal(false);
 
   readonly checkboxFields: { key: keyof ClientFileForm; label: string }[] = [
-    { key: 'visitePreinstallation', label: 'CLIENT_FILES.VISIT_PREINSTALL' },
-    { key: 'saisirFichierProduit', label: 'CLIENT_FILES.PRODUCT_FILE' },
-    { key: 'decoupePlanMenuiserie', label: 'CLIENT_FILES.CUT_JOINERY' },
-    { key: 'decoupePlanMarbrerie', label: 'CLIENT_FILES.CUT_MARBLE' },
+    { key: 'preInstallationVisit', label: 'CLIENT_FILES.VISIT_PREINSTALL' },
+    { key: 'productFileEntry', label: 'CLIENT_FILES.PRODUCT_FILE' },
+    { key: 'carpentryPlanCutout', label: 'CLIENT_FILES.CUT_JOINERY' },
+    { key: 'stoneworkPlanCutout', label: 'CLIENT_FILES.CUT_MARBLE' },
   ];
 
   readonly equipNumFields: { key: keyof Equipement; label: string }[] = [
-    { key: 'nbCashguard', label: 'CLIENT_FILES.NB_CASHGUARD' },
-    { key: 'nbFusion', label: 'CLIENT_FILES.NB_FUSION' },
-    { key: 'nbCaisses', label: 'CLIENT_FILES.NB_CAISSES' },
-    { key: 'nbAutresMateriels', label: 'CLIENT_FILES.NB_OTHER' },
-    { key: 'nbBalancesCaisses', label: 'CLIENT_FILES.NB_SCALES' },
-    { key: 'licencesTactis', label: 'CLIENT_FILES.LICENCES_TACTIS' },
-    { key: 'licencesInno', label: 'CLIENT_FILES.LICENCES_INNO' },
-    { key: 'pcBackoffice', label: 'CLIENT_FILES.PC_BACKOFFICE' },
-    { key: 'pcCentralisation', label: 'CLIENT_FILES.PC_CENTRALISATION' },
+    { key: 'cashguardCount', label: 'CLIENT_FILES.NB_CASHGUARD' },
+    { key: 'fusionCount', label: 'CLIENT_FILES.NB_FUSION' },
+    { key: 'registerCount', label: 'CLIENT_FILES.NB_CAISSES' },
+    { key: 'otherEquipmentCount', label: 'CLIENT_FILES.NB_OTHER' },
+    { key: 'scaleCount', label: 'CLIENT_FILES.NB_SCALES' },
+    { key: 'tactisLicenses', label: 'CLIENT_FILES.LICENCES_TACTIS' },
+    { key: 'innoLicenses', label: 'CLIENT_FILES.LICENCES_INNO' },
+    { key: 'backofficePcCount', label: 'CLIENT_FILES.PC_BACKOFFICE' },
+    { key: 'centralizationPcCount', label: 'CLIENT_FILES.PC_CENTRALISATION' },
   ];
 
   readonly equipBoolFields: { key: keyof Equipement; label: string }[] = [
-    { key: 'borneAllergene', label: 'CLIENT_FILES.BORNE_ALLERGENE' },
-    { key: 'borneCommande', label: 'CLIENT_FILES.BORNE_COMMANDE' },
-    { key: 'etiquettesElectronique', label: 'CLIENT_FILES.ETIQUETTES' },
-    { key: 'carteFidelite', label: 'CLIENT_FILES.CARTE_FIDELITE' },
+    { key: 'allergenKiosk', label: 'CLIENT_FILES.BORNE_ALLERGENE' },
+    { key: 'orderKiosk', label: 'CLIENT_FILES.BORNE_COMMANDE' },
+    { key: 'electronicLabels', label: 'CLIENT_FILES.ETIQUETTES' },
+    { key: 'loyaltyCard', label: 'CLIENT_FILES.CARTE_FIDELITE' },
   ];
 
   get isEdit(): boolean {
@@ -295,31 +295,31 @@ export class ClientFileModal implements OnChanges {
       const file = this.file();
       this.form = file
         ? {
-            societe: file.societe ?? '',
-            nom: file.nom ?? '',
-            prenom: file.prenom ?? '',
-            adresse: file.adresse ?? '',
-            cp: file.cp ?? '',
-            ville: file.ville ?? '',
-            tel: file.tel ?? '',
+            company: file.company ?? '',
+            lastName: file.lastName ?? '',
+            firstName: file.firstName ?? '',
+            address: file.address ?? '',
+            postalCode: file.postalCode ?? '',
+            city: file.city ?? '',
+            phone: file.phone ?? '',
             mobile: file.mobile ?? '',
             email: file.email ?? '',
-            statutJuridique: file.statutJuridique ?? '',
-            raisonSociale: file.raisonSociale ?? '',
-            nomMagasin: file.nomMagasin ?? '',
+            legalStatus: file.legalStatus ?? '',
+            legalName: file.legalName ?? '',
+            storeName: file.storeName ?? '',
             siret: file.siret ?? '',
-            tvaIntra: file.tvaIntra ?? '',
-            codeNaf: file.codeNaf ?? '',
-            joursFermeture: file.joursFermeture ?? '',
-            visitePreinstallation: file.visitePreinstallation,
-            dateInstallationSouhaitee: file.dateInstallationSouhaitee ?? '',
-            dateFormationSouhaitee: file.dateFormationSouhaitee ?? '',
-            saisirFichierProduit: file.saisirFichierProduit,
-            decoupePlanMenuiserie: file.decoupePlanMenuiserie,
-            decoupePlanMarbrerie: file.decoupePlanMarbrerie,
-            ouverturePrevue: file.ouverturePrevue ?? '',
-            equipement: { ...emptyEquipement, ...file.equipement },
-            remarques: file.remarques ?? '',
+            vatNumber: file.vatNumber ?? '',
+            nafCode: file.nafCode ?? '',
+            closingDays: file.closingDays ?? '',
+            preInstallationVisit: file.preInstallationVisit,
+            desiredInstallationDate: file.desiredInstallationDate ?? '',
+            desiredTrainingDate: file.desiredTrainingDate ?? '',
+            productFileEntry: file.productFileEntry,
+            carpentryPlanCutout: file.carpentryPlanCutout,
+            stoneworkPlanCutout: file.stoneworkPlanCutout,
+            plannedOpening: file.plannedOpening ?? '',
+            equipment: { ...emptyEquipement, ...file.equipment },
+            notes: file.notes ?? '',
           }
         : emptyForm();
     }
@@ -342,19 +342,19 @@ export class ClientFileModal implements OnChanges {
   }
 
   getEquipNum(key: keyof Equipement): number {
-    return (this.form.equipement[key] as number | undefined) ?? 0;
+    return (this.form.equipment[key] as number | undefined) ?? 0;
   }
 
   setEquipNum(key: keyof Equipement, raw: string): void {
-    (this.form.equipement as unknown as Record<string, unknown>)[key] = parseInt(raw, 10) || 0;
+    (this.form.equipment as unknown as Record<string, unknown>)[key] = parseInt(raw, 10) || 0;
   }
 
   getEquipBool(key: keyof Equipement): boolean {
-    return !!(this.form.equipement[key] as boolean | undefined);
+    return !!(this.form.equipment[key] as boolean | undefined);
   }
 
   setEquipBool(key: keyof Equipement, value: boolean): void {
-    (this.form.equipement as unknown as Record<string, unknown>)[key] = value;
+    (this.form.equipment as unknown as Record<string, unknown>)[key] = value;
   }
 
   async onXlsxChange(event: Event): Promise<void> {
@@ -390,8 +390,8 @@ export class ClientFileModal implements OnChanges {
       const patch = await parseXlsxBDC(file);
       this.applyPatch(patch);
       const count =
-        Object.keys(patch).filter((k) => k !== 'equipement').length +
-        Object.keys(patch.equipement ?? {}).length;
+        Object.keys(patch).filter((k) => k !== 'equipment').length +
+        Object.keys(patch.equipment ?? {}).length;
       this.toast.success('TOAST.BDC_UPDATED', { count });
     } catch {
       this.toast.error('TOAST.BDC_ERROR');
@@ -401,15 +401,15 @@ export class ClientFileModal implements OnChanges {
   }
 
   private applyPatch(patch: BDCPatch): void {
-    const { equipement, ...rest } = patch;
+    const { equipment, ...rest } = patch;
     Object.assign(this.form, rest);
-    if (equipement) {
-      this.form.equipement = { ...this.form.equipement, ...equipement };
+    if (equipment) {
+      this.form.equipment = { ...this.form.equipment, ...equipment };
     }
   }
 
   submit(): void {
-    if (!this.form.nom.trim()) return;
+    if (!this.form.lastName.trim()) return;
     this.save.emit({ id: this.file()?._id, data: { ...this.form } });
   }
 }

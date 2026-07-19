@@ -139,19 +139,19 @@
                       (click)="selectClientFile(cf)"
                       [title]="
                         'SHIPMENTS.SELECT_CLIENT_TITLE'
-                          | translate: { name: cf.nom + (cf.prenom ? ' ' + cf.prenom : '') }
+                          | translate: { name: cf.lastName + (cf.firstName ? ' ' + cf.firstName : '') }
                       "
                     >
                       <lucide-icon [img]="folderOpen" [size]="13" class="cf-dropdown__icon" />
                       <div>
                         <p class="cf-dropdown__name">
-                          {{ cf.nom.toUpperCase() }}{{ cf.prenom ? ' ' + cf.prenom : '' }}
+                          {{ cf.lastName.toUpperCase() }}{{ cf.firstName ? ' ' + cf.firstName : '' }}
                         </p>
-                        @if (cf.societe) {
-                          <p class="cf-dropdown__sub">{{ cf.societe }}</p>
+                        @if (cf.company) {
+                          <p class="cf-dropdown__sub">{{ cf.company }}</p>
                         }
-                        @if (cf.cp || cf.ville) {
-                          <p class="cf-dropdown__sub">{{ cf.cp }} {{ cf.ville }}</p>
+                        @if (cf.postalCode || cf.city) {
+                          <p class="cf-dropdown__sub">{{ cf.postalCode }} {{ cf.city }}</p>
                         }
                       </div>
                     </button>

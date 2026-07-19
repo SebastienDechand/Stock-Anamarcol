@@ -86,16 +86,16 @@ export class ClientFilesPage implements OnInit {
   filter(files: ClientFile[]): ClientFile[] {
     const q = this.searchTerm().toLowerCase().trim();
     const sorted = [...files].sort((a, b) =>
-      a.nom.localeCompare(b.nom, 'fr', { sensitivity: 'base' }),
+      a.lastName.localeCompare(b.lastName, 'fr', { sensitivity: 'base' }),
     );
     if (!q) return sorted;
     return sorted.filter(
       (f) =>
-        f.nom?.toLowerCase().includes(q) ||
-        f.prenom?.toLowerCase().includes(q) ||
-        f.societe?.toLowerCase().includes(q) ||
-        f.ville?.toLowerCase().includes(q) ||
-        f.cp?.includes(q),
+        f.lastName?.toLowerCase().includes(q) ||
+        f.firstName?.toLowerCase().includes(q) ||
+        f.company?.toLowerCase().includes(q) ||
+        f.city?.toLowerCase().includes(q) ||
+        f.postalCode?.includes(q),
     );
   }
 
@@ -121,8 +121,8 @@ export class ClientFilesPage implements OnInit {
   }
 
   displayName(file: ClientFile): string {
-    const parts = [file.nom?.toUpperCase(), file.prenom].filter(Boolean).join(' ');
-    return file.societe ? `${parts} - ${file.societe}` : parts;
+    const parts = [file.lastName?.toUpperCase(), file.firstName].filter(Boolean).join(' ');
+    return file.company ? `${parts} - ${file.company}` : parts;
   }
 
   // ─── Handlers ────────────────────────────────────────

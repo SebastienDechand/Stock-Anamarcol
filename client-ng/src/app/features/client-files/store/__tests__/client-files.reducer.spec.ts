@@ -5,49 +5,49 @@ import { initialClientFilesState } from '../client-files.state';
 import type { ClientFile } from '../../../../shared/models/client-file.model';
 
 const baseEquipement = {
-  nbCashguard: 1,
-  nbFusion: 0,
-  nbCaisses: 2,
-  nbAutresMateriels: 0,
-  nbBalancesCaisses: 0,
-  licencesTactis: 1,
-  licencesInno: 0,
-  pcBackoffice: 1,
-  pcCentralisation: 0,
-  borneAllergene: false,
-  borneCommande: false,
-  etiquettesElectronique: false,
-  carteFidelite: false,
+  cashguardCount: 1,
+  fusionCount: 0,
+  registerCount: 2,
+  otherEquipmentCount: 0,
+  scaleCount: 0,
+  tactisLicenses: 1,
+  innoLicenses: 0,
+  backofficePcCount: 1,
+  centralizationPcCount: 0,
+  allergenKiosk: false,
+  orderKiosk: false,
+  electronicLabels: false,
+  loyaltyCard: false,
 };
 
 const sampleFile: ClientFile = {
   _id: 'f1',
-  nom: 'Dupont',
-  prenom: 'Jean',
-  societe: 'Bistrot du coin',
-  ville: 'Paris',
-  cp: '75001',
-  visitePreinstallation: false,
-  saisirFichierProduit: false,
-  decoupePlanMenuiserie: false,
-  decoupePlanMarbrerie: false,
-  equipement: baseEquipement,
+  lastName: 'Dupont',
+  firstName: 'Jean',
+  company: 'Bistrot du coin',
+  city: 'Paris',
+  postalCode: '75001',
+  preInstallationVisit: false,
+  productFileEntry: false,
+  carpentryPlanCutout: false,
+  stoneworkPlanCutout: false,
+  equipment: baseEquipement,
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
 };
 
 const otherFile: ClientFile = {
   _id: 'f2',
-  nom: 'Martin',
-  prenom: 'Claire',
-  societe: 'Brasserie Nord',
-  ville: 'Lyon',
-  cp: '69001',
-  visitePreinstallation: true,
-  saisirFichierProduit: false,
-  decoupePlanMenuiserie: false,
-  decoupePlanMarbrerie: false,
-  equipement: { ...baseEquipement, nbCashguard: 2 },
+  lastName: 'Martin',
+  firstName: 'Claire',
+  company: 'Brasserie Nord',
+  city: 'Lyon',
+  postalCode: '69001',
+  preInstallationVisit: true,
+  productFileEntry: false,
+  carpentryPlanCutout: false,
+  stoneworkPlanCutout: false,
+  equipment: { ...baseEquipement, cashguardCount: 2 },
   createdAt: '2024-02-01T00:00:00Z',
   updatedAt: '2024-02-01T00:00:00Z',
 };
@@ -84,7 +84,7 @@ describe('clientFilesReducer', () => {
   });
 
   it('should handle loadOneSuccess by setting selectedFile and updating list if present', () => {
-    const updated: ClientFile = { ...sampleFile, ville: 'Bordeaux' };
+    const updated: ClientFile = { ...sampleFile, city: 'Bordeaux' };
     const state = clientFilesReducer(
       { ...initialClientFilesState, clientFiles: [sampleFile, otherFile] },
       ClientFilesActions.loadOneSuccess({ file: updated }),
@@ -111,7 +111,7 @@ describe('clientFilesReducer', () => {
   });
 
   it('should handle updateFileSuccess by replacing file in list', () => {
-    const updated: ClientFile = { ...sampleFile, ville: 'Marseille' };
+    const updated: ClientFile = { ...sampleFile, city: 'Marseille' };
     const state = clientFilesReducer(
       { ...initialClientFilesState, clientFiles: [sampleFile, otherFile] },
       ClientFilesActions.updateFileSuccess({ file: updated }),
@@ -121,7 +121,7 @@ describe('clientFilesReducer', () => {
   });
 
   it('should handle updateFileSuccess by updating selectedFile when it matches', () => {
-    const updated: ClientFile = { ...sampleFile, ville: 'Marseille' };
+    const updated: ClientFile = { ...sampleFile, city: 'Marseille' };
     const state = clientFilesReducer(
       {
         ...initialClientFilesState,
@@ -134,7 +134,7 @@ describe('clientFilesReducer', () => {
   });
 
   it('should handle updateFileSuccess without changing selectedFile when it does not match', () => {
-    const updated: ClientFile = { ...sampleFile, ville: 'Marseille' };
+    const updated: ClientFile = { ...sampleFile, city: 'Marseille' };
     const state = clientFilesReducer(
       {
         ...initialClientFilesState,
@@ -186,7 +186,7 @@ describe('clientFilesReducer', () => {
           _id: 'd1',
           name: 'BDC 2024',
           filename: 'bdc_2024.pdf',
-          type: 'bdc',
+          type: 'purchase_order',
           uploadedAt: '2024-03-01T00:00:00Z',
         },
       ],

@@ -14,61 +14,61 @@ import { ClientFilesActions } from '../client-files.actions';
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
 const mockEquipement = {
-  nbCashguard: 1,
-  nbFusion: 0,
-  nbCaisses: 3,
-  nbAutresMateriels: 0,
-  nbBalancesCaisses: 2,
-  licencesTactis: 3,
-  licencesInno: 0,
-  pcBackoffice: 1,
-  pcCentralisation: 1,
-  borneAllergene: false,
-  borneCommande: true,
-  etiquettesElectronique: false,
-  carteFidelite: true,
+  cashguardCount: 1,
+  fusionCount: 0,
+  registerCount: 3,
+  otherEquipmentCount: 0,
+  scaleCount: 2,
+  tactisLicenses: 3,
+  innoLicenses: 0,
+  backofficePcCount: 1,
+  centralizationPcCount: 1,
+  allergenKiosk: false,
+  orderKiosk: true,
+  electronicLabels: false,
+  loyaltyCard: true,
 };
 
 const mockFile: ClientFile = {
   _id: 'file-001',
-  nom: 'Dupont',
-  prenom: 'Marie',
+  lastName: 'Dupont',
+  firstName: 'Marie',
   email: 'marie.dupont@example.com',
-  tel: '0102030405',
-  ville: 'Paris',
-  cp: '75001',
-  visitePreinstallation: true,
-  saisirFichierProduit: false,
-  decoupePlanMenuiserie: false,
-  decoupePlanMarbrerie: false,
-  equipement: mockEquipement,
+  phone: '0102030405',
+  city: 'Paris',
+  postalCode: '75001',
+  preInstallationVisit: true,
+  productFileEntry: false,
+  carpentryPlanCutout: false,
+  stoneworkPlanCutout: false,
+  equipment: mockEquipement,
   createdAt: '2024-01-15T10:00:00.000Z',
   updatedAt: '2024-06-01T12:00:00.000Z',
 };
 
 const mockFile2: ClientFile = {
   _id: 'file-002',
-  nom: 'Martin',
-  prenom: 'Paul',
+  lastName: 'Martin',
+  firstName: 'Paul',
   email: 'paul.martin@example.com',
-  visitePreinstallation: false,
-  saisirFichierProduit: true,
-  decoupePlanMenuiserie: true,
-  decoupePlanMarbrerie: false,
-  equipement: { ...mockEquipement, nbCaisses: 5 },
+  preInstallationVisit: false,
+  productFileEntry: true,
+  carpentryPlanCutout: true,
+  stoneworkPlanCutout: false,
+  equipment: { ...mockEquipement, registerCount: 5 },
   createdAt: '2024-02-20T08:00:00.000Z',
   updatedAt: '2024-06-15T09:30:00.000Z',
 };
 
 const mockFormData: Partial<typeof mockFile> = {
-  nom: 'Durand',
-  prenom: 'Sophie',
+  lastName: 'Durand',
+  firstName: 'Sophie',
   email: 'sophie.durand@example.com',
-  visitePreinstallation: false,
-  saisirFichierProduit: false,
-  decoupePlanMenuiserie: false,
-  decoupePlanMarbrerie: false,
-  equipement: mockEquipement,
+  preInstallationVisit: false,
+  productFileEntry: false,
+  carpentryPlanCutout: false,
+  stoneworkPlanCutout: false,
+  equipment: mockEquipement,
 };
 
 // ─── Suite ───────────────────────────────────────────────────────────────────
@@ -223,7 +223,7 @@ describe('ClientFilesEffects', () => {
   // ── update$ ───────────────────────────────────────────────────────────────
 
   describe('update$', () => {
-    const updatedData = { nom: 'Dupont-Durand', prenom: 'Marie' };
+    const updatedData = { lastName: 'Dupont-Durand', firstName: 'Marie' };
 
     it('should dispatch updateFileSuccess and show success toast on success', async () => {
       const updatedFile = { ...mockFile, ...updatedData };
@@ -312,7 +312,7 @@ describe('ClientFilesEffects', () => {
             _id: 'doc-001',
             name: 'rapport.pdf',
             filename: 'rapport_2024.pdf',
-            type: 'rapport',
+            type: 'report',
             uploadedAt: '2024-06-01T12:00:00.000Z',
           },
         ],

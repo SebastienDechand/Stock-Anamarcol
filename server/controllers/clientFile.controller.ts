@@ -89,30 +89,30 @@ export const createClientFile = async (
     const data = { ...req.body, createdBy: res.locals.user?.pseudo };
 
     // ─── Duplicate check ─────────────────────────────────────────────────────
-    // 1. SIRET + adresse (même enseigne, même boutique)
-    if (data.siret?.trim() && data.adresse?.trim()) {
+    // 1. SIRET + address (même enseigne, même boutique)
+    if (data.siret?.trim() && data.address?.trim()) {
       const bySiretAddr = await ClientFileModel.findOne({
         siret: data.siret.trim(),
-        adresse: { $regex: `^${data.adresse.trim()}$`, $options: "i" },
+        address: { $regex: `^${data.address.trim()}$`, $options: "i" },
       }).lean();
       if (bySiretAddr) {
         res.status(409).json({
           message: "Une fiche client avec ce SIRET et cette adresse existe déjà",
-          duplicate: { _id: bySiretAddr._id, nom: bySiretAddr.nom, societe: bySiretAddr.societe },
+          duplicate: { _id: bySiretAddr._id, lastName: bySiretAddr.lastName, company: bySiretAddr.company },
         });
         return;
       }
     }
-    // 2. nom + adresse
-    if (data.nom?.trim() && data.adresse?.trim()) {
+    // 2. lastName + address
+    if (data.lastName?.trim() && data.address?.trim()) {
       const byAddr = await ClientFileModel.findOne({
-        nom: { $regex: `^${data.nom.trim()}$`, $options: "i" },
-        adresse: { $regex: `^${data.adresse.trim()}$`, $options: "i" },
+        lastName: { $regex: `^${data.lastName.trim()}$`, $options: "i" },
+        address: { $regex: `^${data.address.trim()}$`, $options: "i" },
       }).lean();
       if (byAddr) {
         res.status(409).json({
           message: "Une fiche client avec ce nom et cette adresse existe déjà",
-          duplicate: { _id: byAddr._id, nom: byAddr.nom, societe: byAddr.societe },
+          duplicate: { _id: byAddr._id, lastName: byAddr.lastName, company: byAddr.company },
         });
         return;
       }
@@ -124,7 +124,7 @@ export const createClientFile = async (
       "clientfile",
       file._id.toString(),
       res.locals.user?.pseudo,
-      { entityName: `${file.nom} ${file.prenom ?? ""}`.trim() },
+      { entityName: `${file.lastName} ${file.firstName ?? ""}`.trim() },
     );
     res.status(201).json({ clientFile: file._id });
   } catch (err) {
@@ -148,31 +148,31 @@ export const updateClientFile = async (
     }
 
     const updatableFields = [
-      "societe",
-      "nom",
-      "prenom",
-      "adresse",
-      "cp",
-      "ville",
-      "tel",
+      "company",
+      "lastName",
+      "firstName",
+      "address",
+      "postalCode",
+      "city",
+      "phone",
       "mobile",
       "email",
-      "statutJuridique",
-      "raisonSociale",
-      "nomMagasin",
+      "legalStatus",
+      "legalName",
+      "storeName",
       "siret",
-      "tvaIntra",
-      "codeNaf",
-      "joursFermeture",
-      "visitePreinstallation",
-      "dateInstallationSouhaitee",
-      "dateFormationSouhaitee",
-      "saisirFichierProduit",
-      "decoupePlanMenuiserie",
-      "decoupePlanMarbrerie",
-      "ouverturePrevue",
-      "equipement",
-      "remarques",
+      "vatNumber",
+      "nafCode",
+      "closingDays",
+      "preInstallationVisit",
+      "desiredInstallationDate",
+      "desiredTrainingDate",
+      "productFileEntry",
+      "carpentryPlanCutout",
+      "stoneworkPlanCutout",
+      "plannedOpening",
+      "equipment",
+      "notes",
       "contactRef",
       "dateInstallation",
       "dateRenouvellement",
@@ -211,7 +211,7 @@ export const deleteClientFile = async (
       "clientfile",
       req.params.id as string,
       res.locals.user?.pseudo,
-      { entityName: `${file.nom} ${file.prenom ?? ""}`.trim() },
+      { entityName: `${file.lastName} ${file.firstName ?? ""}`.trim() },
     );
     res.status(200).json({ message: "Fiche supprimée" });
   } catch (err) {
@@ -239,7 +239,7 @@ export const uploadDocument = async (
     }
 
     const docType: ClientFileDocType =
-      (req.body.type as ClientFileDocType) || "autre";
+      (req.body.type as ClientFileDocType) || "other";
 
     file.documents.push({
       name: req.file.originalname,

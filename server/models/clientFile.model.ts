@@ -2,11 +2,11 @@ import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
 // ─── Document sub-document ───────────────────────────────────────────────────
 export type ClientFileDocType =
-  | "bdc"
-  | "rapport"
-  | "pvrecette"
-  | "visite"
-  | "autre";
+  | "purchase_order"
+  | "report"
+  | "acceptance_report"
+  | "visit"
+  | "other";
 
 export interface IClientFileDoc {
   _id: Types.ObjectId;
@@ -19,52 +19,52 @@ export interface IClientFileDoc {
 
 // ─── Equipment sub-document ───────────────────────────────────────────────────
 export interface IEquipement {
-  nbCashguard: number;
-  nbFusion: number;
-  nbCaisses: number;
-  nbAutresMateriels: number;
-  nbBalancesCaisses: number;
-  licencesTactis: number;
-  licencesInno: number;
-  pcBackoffice: number;
-  pcCentralisation: number;
-  borneAllergene: boolean;
-  borneCommande: boolean;
-  etiquettesElectronique: boolean;
-  carteFidelite: boolean;
+  cashguardCount: number;
+  fusionCount: number;
+  registerCount: number;
+  otherEquipmentCount: number;
+  scaleCount: number;
+  tactisLicenses: number;
+  innoLicenses: number;
+  backofficePcCount: number;
+  centralizationPcCount: number;
+  allergenKiosk: boolean;
+  orderKiosk: boolean;
+  electronicLabels: boolean;
+  loyaltyCard: boolean;
 }
 
 // ─── Main interface ───────────────────────────────────────────────────────────
 export interface IClientFile extends Document {
   // Identity
-  societe?: string;
-  nom: string;
-  prenom?: string;
-  adresse?: string;
-  cp?: string;
-  ville?: string;
-  tel?: string;
+  company?: string;
+  lastName: string;
+  firstName?: string;
+  address?: string;
+  postalCode?: string;
+  city?: string;
+  phone?: string;
   mobile?: string;
   email?: string;
-  statutJuridique?: string;
-  raisonSociale?: string;
-  nomMagasin?: string;
+  legalStatus?: string;
+  legalName?: string;
+  storeName?: string;
   siret?: string;
-  tvaIntra?: string;
-  codeNaf?: string;
+  vatNumber?: string;
+  nafCode?: string;
   // Planning
-  joursFermeture?: string;
-  visitePreinstallation: boolean;
-  dateInstallationSouhaitee?: string;
-  dateFormationSouhaitee?: string;
-  saisirFichierProduit: boolean;
-  decoupePlanMenuiserie: boolean;
-  decoupePlanMarbrerie: boolean;
-  ouverturePrevue?: string;
+  closingDays?: string;
+  preInstallationVisit: boolean;
+  desiredInstallationDate?: string;
+  desiredTrainingDate?: string;
+  productFileEntry: boolean;
+  carpentryPlanCutout: boolean;
+  stoneworkPlanCutout: boolean;
+  plannedOpening?: string;
   // Equipment
-  equipement: IEquipement;
+  equipment: IEquipement;
   // Remarks
-  remarques?: string;
+  notes?: string;
   // Documents
   documents: IClientFileDoc[];
   // Link to existing contact (optional)
@@ -80,19 +80,19 @@ export interface IClientFile extends Document {
 
 const equipementSchema = new Schema<IEquipement>(
   {
-    nbCashguard: { type: Number, default: 0 },
-    nbFusion: { type: Number, default: 0 },
-    nbCaisses: { type: Number, default: 0 },
-    nbAutresMateriels: { type: Number, default: 0 },
-    nbBalancesCaisses: { type: Number, default: 0 },
-    licencesTactis: { type: Number, default: 0 },
-    licencesInno: { type: Number, default: 0 },
-    pcBackoffice: { type: Number, default: 0 },
-    pcCentralisation: { type: Number, default: 0 },
-    borneAllergene: { type: Boolean, default: false },
-    borneCommande: { type: Boolean, default: false },
-    etiquettesElectronique: { type: Boolean, default: false },
-    carteFidelite: { type: Boolean, default: false },
+    cashguardCount: { type: Number, default: 0 },
+    fusionCount: { type: Number, default: 0 },
+    registerCount: { type: Number, default: 0 },
+    otherEquipmentCount: { type: Number, default: 0 },
+    scaleCount: { type: Number, default: 0 },
+    tactisLicenses: { type: Number, default: 0 },
+    innoLicenses: { type: Number, default: 0 },
+    backofficePcCount: { type: Number, default: 0 },
+    centralizationPcCount: { type: Number, default: 0 },
+    allergenKiosk: { type: Boolean, default: false },
+    orderKiosk: { type: Boolean, default: false },
+    electronicLabels: { type: Boolean, default: false },
+    loyaltyCard: { type: Boolean, default: false },
   },
   { _id: false },
 );
@@ -103,8 +103,14 @@ const clientFileDocSchema = new Schema<IClientFileDoc>(
     filename: { type: String, required: true },
     type: {
       type: String,
-      enum: ["bdc", "rapport", "pvrecette", "visite", "autre"],
-      default: "autre",
+      enum: [
+        "purchase_order",
+        "report",
+        "acceptance_report",
+        "visit",
+        "other",
+      ],
+      default: "other",
     },
     uploadedAt: { type: Date, default: Date.now },
     uploadedBy: { type: String },
@@ -114,31 +120,31 @@ const clientFileDocSchema = new Schema<IClientFileDoc>(
 
 const clientFileSchema = new Schema<IClientFile>(
   {
-    societe: { type: String, trim: true },
-    nom: { type: String, required: true, trim: true },
-    prenom: { type: String, trim: true },
-    adresse: { type: String, trim: true },
-    cp: { type: String, trim: true },
-    ville: { type: String, trim: true },
-    tel: { type: String, trim: true },
+    company: { type: String, trim: true },
+    lastName: { type: String, required: true, trim: true },
+    firstName: { type: String, trim: true },
+    address: { type: String, trim: true },
+    postalCode: { type: String, trim: true },
+    city: { type: String, trim: true },
+    phone: { type: String, trim: true },
     mobile: { type: String, trim: true },
     email: { type: String, lowercase: true, trim: true },
-    statutJuridique: { type: String, trim: true },
-    raisonSociale: { type: String, trim: true },
-    nomMagasin: { type: String, trim: true },
+    legalStatus: { type: String, trim: true },
+    legalName: { type: String, trim: true },
+    storeName: { type: String, trim: true },
     siret: { type: String, trim: true },
-    tvaIntra: { type: String, trim: true },
-    codeNaf: { type: String, trim: true },
-    joursFermeture: { type: String, trim: true },
-    visitePreinstallation: { type: Boolean, default: false },
-    dateInstallationSouhaitee: { type: String, trim: true },
-    dateFormationSouhaitee: { type: String, trim: true },
-    saisirFichierProduit: { type: Boolean, default: false },
-    decoupePlanMenuiserie: { type: Boolean, default: false },
-    decoupePlanMarbrerie: { type: Boolean, default: false },
-    ouverturePrevue: { type: String, trim: true },
-    equipement: { type: equipementSchema, default: () => ({}) },
-    remarques: { type: String, trim: true },
+    vatNumber: { type: String, trim: true },
+    nafCode: { type: String, trim: true },
+    closingDays: { type: String, trim: true },
+    preInstallationVisit: { type: Boolean, default: false },
+    desiredInstallationDate: { type: String, trim: true },
+    desiredTrainingDate: { type: String, trim: true },
+    productFileEntry: { type: Boolean, default: false },
+    carpentryPlanCutout: { type: Boolean, default: false },
+    stoneworkPlanCutout: { type: Boolean, default: false },
+    plannedOpening: { type: String, trim: true },
+    equipment: { type: equipementSchema, default: () => ({}) },
+    notes: { type: String, trim: true },
     documents: { type: [clientFileDocSchema], default: [] },
     contactRef: { type: Schema.Types.ObjectId, ref: "contact" },
     dateInstallation: { type: Date },
