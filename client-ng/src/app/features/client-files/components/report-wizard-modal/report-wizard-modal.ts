@@ -35,8 +35,8 @@ function emptyUnit(): CashguardUnit {
   return {
     up: '',
     ub: '',
-    k7Slots: ['', '', '', ''],
-    assignedCaisses: [],
+    cassetteSlots: ['', '', '', ''],
+    assignedRegisters: [],
     hasPc: false,
   };
 }
@@ -69,7 +69,7 @@ export class ReportWizardModal implements OnChanges {
 
   // ─── State ───────────────────────────────────────────────────────────────────
   step = signal<1 | 2>(1);
-  twCaisses = signal<string[]>(['']);
+  twRegisters = signal<string[]>(['']);
   twPc = signal('');
   units = signal<CashguardUnit[]>([emptyUnit()]);
   expandedUnit = signal(0);
@@ -85,9 +85,9 @@ export class ReportWizardModal implements OnChanges {
     return !!this.existing();
   }
 
-  get recap(): { caisses: string[]; pc: string; unitCount: number; unitNames: string } {
+  get recap(): { registers: string[]; pc: string; unitCount: number; unitNames: string } {
     return {
-      caisses: this.twCaisses().filter(Boolean),
+      registers: this.twRegisters().filter(Boolean),
       pc: this.twPc(),
       unitCount: this.units().length,
       unitNames: this.units()
@@ -103,10 +103,10 @@ export class ReportWizardModal implements OnChanges {
       const e = this.existing();
       this.step.set(1);
       if (e) {
-        const caisses = e.twCaisses?.length
-          ? e.twCaisses
-          : ([e.twCaisse1, e.twCaisse2, e.twCaisse3].filter(Boolean) as string[]);
-        this.twCaisses.set(caisses.length ? caisses : ['']);
+        const registers = e.twRegisters?.length
+          ? e.twRegisters
+          : ([e.twRegister1, e.twRegister2, e.twRegister3].filter(Boolean) as string[]);
+        this.twRegisters.set(registers.length ? registers : ['']);
         this.twPc.set(e.twPc ?? '');
         this.units.set(
           e.cashguardUnits?.length
@@ -115,7 +115,7 @@ export class ReportWizardModal implements OnChanges {
         );
         this.notes.set(e.notes ?? '');
       } else {
-        this.twCaisses.set(['']);
+        this.twRegisters.set(['']);
         this.twPc.set('');
         this.units.set([emptyUnit()]);
         this.notes.set('');
@@ -124,18 +124,18 @@ export class ReportWizardModal implements OnChanges {
     }
   }
 
-  // ─── TW Caisses ──────────────────────────────────────────────────────────────
-  addCaisse(): void {
-    this.twCaisses.update((previous) => [...previous, '']);
+  // ─── TW Registers ────────────────────────────────────────────────────────────
+  addRegister(): void {
+    this.twRegisters.update((previous) => [...previous, '']);
   }
 
-  removeCaisse(index: number): void {
-    this.twCaisses.update((previous) => previous.filter((_, i) => i !== index));
+  removeRegister(index: number): void {
+    this.twRegisters.update((previous) => previous.filter((_, i) => i !== index));
   }
 
-  setCaisse(index: number, value: string): void {
-    this.twCaisses.update((previous) =>
-      previous.map((caisse, i) => (i === index ? value : caisse)),
+  setRegister(index: number, value: string): void {
+    this.twRegisters.update((previous) =>
+      previous.map((register, i) => (i === index ? value : register)),
     );
   }
 
@@ -167,19 +167,19 @@ export class ReportWizardModal implements OnChanges {
     this.units.update((previous) =>
       previous.map((unit, i) => {
         if (i !== unitIndex) return unit;
-        const slots = [...unit.k7Slots] as [string, string, string, string];
+        const slots = [...unit.cassetteSlots] as [string, string, string, string];
         slots[slotIndex] = value;
-        return { ...unit, k7Slots: slots };
+        return { ...unit, cassetteSlots: slots };
       }),
     );
   }
 
-  setAssignedCaisses(index: number, raw: string): void {
+  setAssignedRegisters(index: number, raw: string): void {
     const list = raw
       .split(',')
-      .map((caisse) => caisse.trim())
+      .map((register) => register.trim())
       .filter(Boolean);
-    this.setUnitField(index, 'assignedCaisses', list);
+    this.setUnitField(index, 'assignedRegisters', list);
   }
 
   // ─── Submit ──────────────────────────────────────────────────────────────────
@@ -188,7 +188,7 @@ export class ReportWizardModal implements OnChanges {
     this.loading.set(true);
     const data = {
       clientFile: this.clientFileId(),
-      twCaisses: this.twCaisses(),
+      twRegisters: this.twRegisters(),
       twPc: this.twPc(),
       cashguardUnits: this.units(),
       notes: this.notes(),

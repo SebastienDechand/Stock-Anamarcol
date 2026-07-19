@@ -10,12 +10,12 @@ const sampleReport: InterventionReport = {
   cashguardUnits: [
     {
       up: 'UP-001',
-      k7Slots: ['', '', '', ''],
-      assignedCaisses: ['caisse1'],
+      cassetteSlots: ['', '', '', ''],
+      assignedRegisters: ['caisse1'],
       hasPc: true,
     },
   ],
-  twCaisse1: 'TW-001',
+  twRegister1: 'TW-001',
   notes: 'RAS',
   createdAt: '2024-01-10T00:00:00Z',
   updatedAt: '2024-01-10T00:00:00Z',

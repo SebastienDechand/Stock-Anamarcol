@@ -282,12 +282,14 @@ export class ClientFileDetailPage implements OnInit {
   }
 
   hasSlots(unit: CashguardUnit): boolean {
-    return unit.k7Slots.some((slot) => !!slot);
+    return unit.cassetteSlots.some((slot) => !!slot);
   }
 
-  getTwCaisses(report: InterventionReport): string[] {
-    return report.twCaisses?.length
-      ? report.twCaisses
-      : ([report.twCaisse1, report.twCaisse2, report.twCaisse3].filter(Boolean) as string[]);
+  getTwRegisters(report: InterventionReport): string[] {
+    return report.twRegisters?.length
+      ? report.twRegisters
+      : ([report.twRegister1, report.twRegister2, report.twRegister3].filter(
+          Boolean,
+        ) as string[]);
   }
 }

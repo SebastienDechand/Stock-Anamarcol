@@ -342,7 +342,7 @@
           </div>
         } @else {
           @let report = reports[0];
-          @let twCaisses = getTwCaisses(report);
+          @let twRegisters = getTwRegisters(report);
           <div class="card card--padded">
             <!-- TW codes -->
             <div class="report-section">
@@ -370,8 +370,8 @@
                   }
                 </div>
               </div>
-              @if (twCaisses.length || report.twPc) {
-                @for (tw of twCaisses; track $index; let i = $index) {
+              @if (twRegisters.length || report.twPc) {
+                @for (tw of twRegisters; track $index; let i = $index) {
                   <div class="info-row">
                     <span>{{ 'CLIENT_FILES.TW_REGISTER' | translate: { n: i + 1 } }}</span
                     ><span class="mono">{{ tw }}</span>
@@ -414,7 +414,7 @@
                         <p class="cashguard-card__sub">
                           {{ 'CLIENT_FILES.CASSETTES' | translate }}
                         </p>
-                        @for (slot of unit.k7Slots; track $index; let si = $index) {
+                        @for (slot of unit.cassetteSlots; track $index; let si = $index) {
                           @if (slot) {
                             <div class="info-row">
                               <span>S{{ si + 1 }}</span
@@ -423,10 +423,10 @@
                           }
                         }
                       }
-                      @if (unit.assignedCaisses.length) {
+                      @if (unit.assignedRegisters.length) {
                         <div class="info-row">
                           <span>{{ 'CLIENT_FILES.ASSIGNED_REGISTERS' | translate }}</span
-                          ><span>{{ unit.assignedCaisses.join(', ') }}</span>
+                          ><span>{{ unit.assignedRegisters.join(', ') }}</span>
                         </div>
                       }
                       @if (unit.hasPc) {

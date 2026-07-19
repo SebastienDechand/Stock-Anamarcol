@@ -74,10 +74,10 @@ export const updateInterventionReport = async (
     }
 
     const fields = [
-      "twCaisse1",
-      "twCaisse2",
-      "twCaisse3",
-      "twCaisses",
+      "twRegister1",
+      "twRegister2",
+      "twRegister3",
+      "twRegisters",
       "twPc",
       "cashguardUnits",
       "notes",

@@ -35,18 +35,18 @@ const VALID_ID = "507f1f77bcf86cd799439011";
 const CLIENT_FILE_ID = "507f1f77bcf86cd799439012";
 
 const mockUnit = {
-  nSerie: "SN001",
+  serialNumber: "SN001",
   up: "UP1",
   ub: "UB1",
-  k7Slots: ["", "", "", ""],
-  assignedCaisses: ["CAISSE 1"],
+  cassetteSlots: ["", "", "", ""],
+  assignedRegisters: ["CAISSE 1"],
   hasPc: false,
 };
 
 const mockReport = {
   _id: VALID_ID,
   clientFile: CLIENT_FILE_ID,
-  twCaisses: ["TW123"],
+  twRegisters: ["TW123"],
   twPc: "TWPC456",
   cashguardUnits: [mockUnit],
   notes: "Test notes",
@@ -170,7 +170,7 @@ describe("InterventionReport Controller", () => {
     it("should create a report and return 201", async () => {
       req.body = {
         clientFile: CLIENT_FILE_ID,
-        twCaisses: ["TW123"],
+        twRegisters: ["TW123"],
         cashguardUnits: [mockUnit],
       };
       mockReportModel.create.mockResolvedValue({
@@ -221,7 +221,7 @@ describe("InterventionReport Controller", () => {
 
     it("should update fields and return 200", async () => {
       req.params = { id: VALID_ID };
-      req.body = { notes: "Updated notes", twCaisses: ["TW999"] };
+      req.body = { notes: "Updated notes", twRegisters: ["TW999"] };
 
       const report = {
         ...mockReport,
