@@ -17,7 +17,7 @@ export const selectSelectedVehicle = createSelector(
   selectVehiclesState,
   (state) => state.vehicles.find((vehicle) => vehicle._id === state.selectedVehicleId) ?? null,
 );
-export const selectVehiclesByModel = (modele: string) =>
+export const selectVehiclesByModel = (model: string) =>
   createSelector(selectAllVehicles, (vehicles) =>
-    vehicles.filter((vehicle) => vehicle.modele === modele),
+    vehicles.filter((vehicle) => vehicle.model === model),
   );

@@ -22,10 +22,10 @@ const makeUser = (overrides: Partial<User> = {}): User => ({
 });
 
 const makeVehicle = (format: Vehicle['format']): Vehicle => ({
-  marque: 'mercedes',
-  modele: 'vito',
+  brand: 'mercedes',
+  model: 'vito',
   format,
-  immatriculation: 'AA-123-BB',
+  licensePlate: 'AA-123-BB',
   documents: [],
 });
 
@@ -102,12 +102,12 @@ describe('ProfilePage', () => {
   });
 
   describe('vehicleIcon()', () => {
-    it('returns truck for utilitaire', () => {
-      expect(component.vehicleIcon(makeVehicle('utilitaire'))).toBe('truck');
+    it('returns truck for van', () => {
+      expect(component.vehicleIcon(makeVehicle('van'))).toBe('truck');
     });
 
-    it('returns bus for camion', () => {
-      expect(component.vehicleIcon(makeVehicle('camion'))).toBe('bus');
+    it('returns bus for truck', () => {
+      expect(component.vehicleIcon(makeVehicle('truck'))).toBe('bus');
     });
 
     it('returns car for pickup', () => {

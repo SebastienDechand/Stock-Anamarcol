@@ -11,10 +11,10 @@ import {
 import { initialContactsState } from '../contacts.state';
 import type { Contact } from '../../../../shared/models/contact.model';
 
-const makeContact = (id: string, nom: string): Contact => ({
+const makeContact = (id: string, name: string): Contact => ({
   _id: id,
-  nom,
-  email: `${nom.toLowerCase()}@example.com`,
+  name,
+  email: `${name.toLowerCase()}@example.com`,
 });
 
 const contacts: Contact[] = [

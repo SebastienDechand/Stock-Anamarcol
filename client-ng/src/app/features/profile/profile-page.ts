@@ -69,9 +69,9 @@ export class ProfilePage implements OnInit {
 
   vehicleIcon(vehicle: Vehicle): string {
     switch (vehicle.format) {
-      case 'utilitaire':
+      case 'van':
         return 'truck';
-      case 'camion':
+      case 'truck':
         return 'bus';
       case 'pickup':
         return 'car';

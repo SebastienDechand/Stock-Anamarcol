@@ -11,9 +11,9 @@ const initialState = { contacts: initialContactsState, auth: initialAuthState };
 
 const mockContact: Contact = {
   _id: 'contact-1',
-  nom: 'Dupont',
+  name: 'Dupont',
   email: 'dupont@example.com',
-  poste: 'Développeur',
+  position: 'Développeur',
 };
 
 describe('ContactsPage', () => {
@@ -59,7 +59,7 @@ describe('ContactsPage', () => {
 
   describe('onSave', () => {
     it('should call facade.update with contact id and data when editingContact is set', () => {
-      const updateData: Partial<Contact> = { nom: 'Dupont Modifié' };
+      const updateData: Partial<Contact> = { name: 'Dupont Modifié' };
       vi.spyOn(facade, 'loadOne').mockImplementation(() => {});
       vi.spyOn(facade, 'update').mockImplementation(() => {});
 
@@ -74,7 +74,7 @@ describe('ContactsPage', () => {
       vi.spyOn(facade, 'update').mockImplementation(() => {});
 
       component.openModal(mockContact);
-      component.onSave({ nom: 'Dupont Modifié' });
+      component.onSave({ name: 'Dupont Modifié' });
 
       expect(component.editingContact()).toBeNull();
     });
@@ -82,7 +82,7 @@ describe('ContactsPage', () => {
     it('should do nothing when editingContact is null', () => {
       vi.spyOn(facade, 'update').mockImplementation(() => {});
 
-      component.onSave({ nom: 'Dupont Modifié' });
+      component.onSave({ name: 'Dupont Modifié' });
 
       expect(facade.update).not.toHaveBeenCalled();
     });

@@ -49,7 +49,7 @@ export const getClientFiles = async (
   try {
     const files = await ClientFileModel.find()
       .sort({ createdAt: -1 })
-      .populate("contactRef", "nom email tel")
+      .populate("contactRef", "name email phone")
       .lean();
     res.status(200).json(files);
   } catch (err) {
@@ -67,7 +67,7 @@ export const getClientFile = async (
 
   try {
     const file = await ClientFileModel.findById(req.params.id)
-      .populate("contactRef", "nom email tel")
+      .populate("contactRef", "name email phone")
       .lean();
     if (!file) {
       res.status(404).json({ message: "Fiche client introuvable" });

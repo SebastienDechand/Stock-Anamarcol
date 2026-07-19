@@ -12,28 +12,28 @@ import type { Vehicle } from '../../../../shared/models/vehicle.model';
 
 const sampleVehicle: Vehicle = {
   _id: 'v-1',
-  marque: 'mercedes',
-  modele: 'citan',
-  format: 'utilitaire',
-  immatriculation: 'AB-123-CD',
+  brand: 'mercedes',
+  model: 'citan',
+  format: 'van',
+  licensePlate: 'AB-123-CD',
   documents: [],
 };
 
 const sampleVehicle2: Vehicle = {
   _id: 'v-2',
-  marque: 'nissan',
-  modele: 'navara',
+  brand: 'nissan',
+  model: 'navara',
   format: 'pickup',
-  immatriculation: 'EF-456-GH',
+  licensePlate: 'EF-456-GH',
   documents: [],
 };
 
 const sampleVehicle3: Vehicle = {
   _id: 'v-3',
-  marque: 'mercedes',
-  modele: 'vito',
-  format: 'utilitaire',
-  immatriculation: 'IJ-789-KL',
+  brand: 'mercedes',
+  model: 'vito',
+  format: 'van',
+  licensePlate: 'IJ-789-KL',
   documents: [],
 };
 
@@ -138,10 +138,10 @@ describe('Vehicles Selectors', () => {
     it('should return multiple vehicles matching the given model', () => {
       const anotherCitan: Vehicle = {
         _id: 'v-4',
-        marque: 'mercedes',
-        modele: 'citan',
-        format: 'utilitaire',
-        immatriculation: 'MN-000-OP',
+        brand: 'mercedes',
+        model: 'citan',
+        format: 'van',
+        licensePlate: 'MN-000-OP',
         documents: [],
       };
       const state = {

@@ -21,14 +21,14 @@ function addYears(dateStr: string, years: number): string {
   return d.toISOString().split('T')[0];
 }
 
-const MARQUE_MODELE: Record<VehicleBrand, VehicleModel[]> = {
+const BRAND_MODEL: Record<VehicleBrand, VehicleModel[]> = {
   mercedes: ['citan', 'vito'],
   nissan: ['navara'],
 };
 
-const MODELE_FORMAT: Record<VehicleModel, VehicleFormat[]> = {
-  citan: ['utilitaire'],
-  vito: ['utilitaire', 'camion'],
+const MODEL_FORMAT: Record<VehicleModel, VehicleFormat[]> = {
+  citan: ['van'],
+  vito: ['van', 'truck'],
   navara: ['pickup'],
 };
 
@@ -50,37 +50,37 @@ export class VehicleFormModal implements OnChanges {
   readonly users = toSignal(this.usersFacade.users$, { initialValue: [] });
 
   form: VehicleForm = {
-    marque: 'mercedes',
-    modele: 'citan',
-    format: 'utilitaire',
-    immatriculation: '',
-    dateRevision: '',
-    dateCtInspection: '',
-    dateCtExpiration: '',
-    dateControlAntiPollutionInspection: '',
-    dateControlAntiPollutionExpiration: '',
+    brand: 'mercedes',
+    model: 'citan',
+    format: 'van',
+    licensePlate: '',
+    serviceDate: '',
+    inspectionDate: '',
+    inspectionExpiryDate: '',
+    antiPollutionInspectionDate: '',
+    antiPollutionExpiryDate: '',
     assignedTo: '',
     notes: '',
   };
 
-  availableModeles: VehicleModel[] = MARQUE_MODELE['mercedes'];
-  availableFormats: VehicleFormat[] = MODELE_FORMAT['citan'];
+  availableModels: VehicleModel[] = BRAND_MODEL['mercedes'];
+  availableFormats: VehicleFormat[] = MODEL_FORMAT['citan'];
 
-  marqueOptions: { value: VehicleBrand; label: string }[] = [
+  brandOptions: { value: VehicleBrand; label: string }[] = [
     { value: 'mercedes', label: 'Mercedes' },
     { value: 'nissan', label: 'Nissan' },
   ];
 
-  modeleLabels: Record<VehicleModel, string> = {
+  modelLabels: Record<VehicleModel, string> = {
     citan: 'Citan',
     vito: 'Vito',
     navara: 'Navara',
   };
 
   formatLabels: Record<VehicleFormat, string> = {
-    utilitaire: 'Utilitaire',
+    van: 'Utilitaire',
     pickup: 'Pickup',
-    camion: 'Camion',
+    truck: 'Camion',
   };
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -88,18 +88,18 @@ export class VehicleFormModal implements OnChanges {
       const vehicle = this.vehicle();
       if (vehicle) {
         this.form = {
-          marque: vehicle.marque,
-          modele: vehicle.modele,
+          brand: vehicle.brand,
+          model: vehicle.model,
           format: vehicle.format,
-          immatriculation: vehicle.immatriculation,
-          dateRevision: this.toDateInput(vehicle.dateRevision),
-          dateCtInspection: this.toDateInput(vehicle.dateCtInspection),
-          dateCtExpiration: this.toDateInput(vehicle.dateCtExpiration),
-          dateControlAntiPollutionInspection: this.toDateInput(
-            vehicle.dateControlAntiPollutionInspection,
+          licensePlate: vehicle.licensePlate,
+          serviceDate: this.toDateInput(vehicle.serviceDate),
+          inspectionDate: this.toDateInput(vehicle.inspectionDate),
+          inspectionExpiryDate: this.toDateInput(vehicle.inspectionExpiryDate),
+          antiPollutionInspectionDate: this.toDateInput(
+            vehicle.antiPollutionInspectionDate,
           ),
-          dateControlAntiPollutionExpiration: this.toDateInput(
-            vehicle.dateControlAntiPollutionExpiration,
+          antiPollutionExpiryDate: this.toDateInput(
+            vehicle.antiPollutionExpiryDate,
           ),
           assignedTo:
             (typeof vehicle.assignedTo === 'object'
@@ -114,36 +114,36 @@ export class VehicleFormModal implements OnChanges {
     }
   }
 
-  onMarqueChange(): void {
-    this.availableModeles = MARQUE_MODELE[this.form.marque] ?? [];
-    this.form.modele = this.availableModeles[0];
-    this.onModeleChange();
+  onBrandChange(): void {
+    this.availableModels = BRAND_MODEL[this.form.brand] ?? [];
+    this.form.model = this.availableModels[0];
+    this.onModelChange();
   }
 
-  onModeleChange(): void {
-    this.availableFormats = MODELE_FORMAT[this.form.modele] ?? [];
+  onModelChange(): void {
+    this.availableFormats = MODEL_FORMAT[this.form.model] ?? [];
     this.form.format = this.availableFormats[0];
   }
 
   onCtInspectionChange(value?: string): void {
-    if (value !== undefined) this.form.dateCtInspection = value;
-    if (this.form.dateCtInspection) {
-      this.form.dateCtExpiration = addYears(this.form.dateCtInspection, 2);
+    if (value !== undefined) this.form.inspectionDate = value;
+    if (this.form.inspectionDate) {
+      this.form.inspectionExpiryDate = addYears(this.form.inspectionDate, 2);
     }
   }
 
   onAntiPollutionInspectionChange(value?: string): void {
-    if (value !== undefined) this.form.dateControlAntiPollutionInspection = value;
-    if (this.form.dateControlAntiPollutionInspection) {
-      this.form.dateControlAntiPollutionExpiration = addYears(
-        this.form.dateControlAntiPollutionInspection,
+    if (value !== undefined) this.form.antiPollutionInspectionDate = value;
+    if (this.form.antiPollutionInspectionDate) {
+      this.form.antiPollutionExpiryDate = addYears(
+        this.form.antiPollutionInspectionDate,
         2,
       );
     }
   }
 
   submit(): void {
-    if (!this.form.immatriculation.trim()) return;
+    if (!this.form.licensePlate.trim()) return;
     this.save.emit({ id: this.vehicle()?._id, data: { ...this.form } });
   }
 
@@ -158,22 +158,22 @@ export class VehicleFormModal implements OnChanges {
 
   private resetForm(): void {
     this.form = {
-      marque: 'mercedes',
-      modele: 'citan',
-      format: 'utilitaire',
-      immatriculation: '',
-      dateRevision: '',
-      dateCtInspection: '',
-      dateCtExpiration: '',
-      dateControlAntiPollutionInspection: '',
-      dateControlAntiPollutionExpiration: '',
+      brand: 'mercedes',
+      model: 'citan',
+      format: 'van',
+      licensePlate: '',
+      serviceDate: '',
+      inspectionDate: '',
+      inspectionExpiryDate: '',
+      antiPollutionInspectionDate: '',
+      antiPollutionExpiryDate: '',
       assignedTo: '',
       notes: '',
     };
   }
 
   private updateDependencies(): void {
-    this.availableModeles = MARQUE_MODELE[this.form.marque] ?? [];
-    this.availableFormats = MODELE_FORMAT[this.form.modele] ?? [];
+    this.availableModels = BRAND_MODEL[this.form.brand] ?? [];
+    this.availableFormats = MODEL_FORMAT[this.form.model] ?? [];
   }
 }

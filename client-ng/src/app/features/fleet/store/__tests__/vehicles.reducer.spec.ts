@@ -6,19 +6,19 @@ import type { Vehicle } from '../../../../shared/models/vehicle.model';
 
 const vehicle1: Vehicle = {
   _id: '1',
-  marque: 'mercedes',
-  modele: 'vito',
-  format: 'utilitaire',
-  immatriculation: 'AA-123-BB',
+  brand: 'mercedes',
+  model: 'vito',
+  format: 'van',
+  licensePlate: 'AA-123-BB',
   documents: [],
 };
 
 const vehicle2: Vehicle = {
   _id: '2',
-  marque: 'nissan',
-  modele: 'navara',
+  brand: 'nissan',
+  model: 'navara',
   format: 'pickup',
-  immatriculation: 'CC-456-DD',
+  licensePlate: 'CC-456-DD',
   documents: [],
 };
 
@@ -40,7 +40,7 @@ describe('vehiclesReducer', () => {
 
   describe('replaceVehicle upsert behaviour (loadOneSuccess)', () => {
     it('should replace an existing vehicle in place', () => {
-      const updated: Vehicle = { ...vehicle1, immatriculation: 'AA-999-ZZ' };
+      const updated: Vehicle = { ...vehicle1, licensePlate: 'AA-999-ZZ' };
       const state = vehiclesReducer(
         { ...initialVehiclesState, vehicles: [vehicle1, vehicle2] },
         VehiclesActions.loadOneSuccess({ vehicle: updated }),
@@ -66,7 +66,7 @@ describe('vehiclesReducer', () => {
   });
 
   it('should update a vehicle on updateVehicleSuccess', () => {
-    const updated: Vehicle = { ...vehicle1, format: 'camion' };
+    const updated: Vehicle = { ...vehicle1, format: 'truck' };
     const state = vehiclesReducer(
       { ...initialVehiclesState, vehicles: [vehicle1] },
       VehiclesActions.updateVehicleSuccess({ vehicle: updated }),

@@ -13,12 +13,12 @@ import { Contact } from '../../../../shared/models/contact.model';
 
 const mockContact: Contact = {
   _id: 'abc123',
-  nom: 'Dupont',
+  name: 'Dupont',
   email: 'dupont@example.com',
-  poste: 'Développeur',
-  tel: '0600000000',
+  position: 'Développeur',
+  phone: '0600000000',
   picture: 'https://example.com/photo.jpg',
-  lien: 'https://linkedin.com/in/dupont',
+  link: 'https://linkedin.com/in/dupont',
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-06-01T00:00:00.000Z',
 };
@@ -27,9 +27,9 @@ const mockContacts: Contact[] = [
   mockContact,
   {
     _id: 'def456',
-    nom: 'Martin',
+    name: 'Martin',
     email: 'martin@example.com',
-    poste: 'Designer',
+    position: 'Designer',
   },
 ];
 
@@ -145,7 +145,7 @@ describe('ContactsEffects', () => {
   // ─── update$ ─────────────────────────────────────────────────────────────
 
   describe('update$', () => {
-    const updateData: Partial<Contact> = { nom: 'Dupont Updated', poste: 'Lead Dev' };
+    const updateData: Partial<Contact> = { name: 'Dupont Updated', position: 'Lead Dev' };
 
     it('should dispatch updateContactSuccess and call toast.success on success', async () => {
       api.put.mockReturnValue(of(mockContact));

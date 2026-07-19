@@ -52,12 +52,12 @@ const options: swaggerJsdoc.Options = {
           type: "object",
           properties: {
             _id: { type: "string" },
-            nom: { type: "string" },
+            name: { type: "string" },
             email: { type: "string" },
-            lien: { type: "string" },
+            link: { type: "string" },
             picture: { type: "string" },
-            poste: { type: "string" },
-            tel: { type: "string" },
+            position: { type: "string" },
+            phone: { type: "string" },
           },
         },
         History: {

@@ -50,7 +50,7 @@ export const getHistory = async (
     const [contacts, users, auditItems, actionUsers] = await Promise.all([
       contactIds.length > 0
         ? ContactModel.find({ _id: { $in: [...new Set(contactIds)] } })
-            .select("nom")
+            .select("name")
             .lean()
         : [],
       userIds.length > 0
@@ -70,7 +70,7 @@ export const getHistory = async (
         : [],
     ]);
 
-    const contactNameMap = new Map(contacts.map((c) => [String(c._id), c.nom]));
+    const contactNameMap = new Map(contacts.map((c) => [String(c._id), c.name]));
     const userNameMap = new Map(users.map((u) => [String(u._id), u.pseudo]));
     const auditItemNameMap = new Map(
       auditItems.map((i) => [String(i._id), i.name]),
@@ -99,7 +99,7 @@ export const getHistory = async (
         if (e.entity === "contact") {
           entityName =
             contactNameMap.get(String(e.entityId)) ||
-            ((details.deleted as Record<string, unknown>)?.nom as string) ||
+            ((details.deleted as Record<string, unknown>)?.name as string) ||
             undefined;
         } else if (e.entity === "user") {
           entityName =

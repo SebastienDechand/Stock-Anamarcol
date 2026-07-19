@@ -12,7 +12,7 @@
       <div class="avatar-section">
         <div class="avatar-wrap">
           @if (avatarUrl) {
-            <img [src]="avatarUrl" [alt]="contact().nom" class="avatar-img" />
+            <img [src]="avatarUrl" [alt]="contact().name" class="avatar-img" />
           } @else {
             <span class="avatar-initials">{{ initials }}</span>
           }
@@ -27,11 +27,11 @@
         <div class="form-grid">
           <div class="form-row">
             <label class="form-label">{{ 'CONTACTS.NAME' | translate }}</label>
-            <input class="form-input" [(ngModel)]="form.nom" name="nom" />
+            <input class="form-input" [(ngModel)]="form.name" name="name" />
           </div>
           <div class="form-row">
             <label class="form-label">{{ 'CONTACTS.COMPANY' | translate }}</label>
-            <input class="form-input" [(ngModel)]="form.poste" name="poste" />
+            <input class="form-input" [(ngModel)]="form.position" name="position" />
           </div>
           <div class="form-row">
             <label class="form-label">{{ 'CONTACTS.EMAIL' | translate }}</label>
@@ -39,12 +39,12 @@
           </div>
           <div class="form-row">
             <label class="form-label">{{ 'CONTACTS.PHONE' | translate }}</label>
-            <input class="form-input" [(ngModel)]="form.tel" name="tel" />
+            <input class="form-input" [(ngModel)]="form.phone" name="phone" />
           </div>
         </div>
         <div class="form-row website">
           <label class="form-label website">{{ 'CONTACTS.WEBSITE' | translate }}</label>
-          <input class="form-input" [(ngModel)]="form.lien" name="lien" placeholder="https://..." />
+          <input class="form-input" [(ngModel)]="form.link" name="link" placeholder="https://..." />
         </div>
 
         <div class="modal-panel__footer">

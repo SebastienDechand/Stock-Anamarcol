@@ -18,15 +18,15 @@ export class ContactModal implements OnInit {
   pictureUploaded = output<{ id: string; formData: FormData }>();
   cancelled = output<void>();
 
-  form = { nom: '', email: '', tel: '', poste: '', lien: '' };
+  form = { name: '', email: '', phone: '', position: '', link: '' };
 
   ngOnInit() {
     this.form = {
-      nom: this.contact().nom ?? '',
+      name: this.contact().name ?? '',
       email: this.contact().email ?? '',
-      tel: this.contact().tel ?? '',
-      poste: this.contact().poste ?? '',
-      lien: this.contact().lien ?? '',
+      phone: this.contact().phone ?? '',
+      position: this.contact().position ?? '',
+      link: this.contact().link ?? '',
     };
   }
 
@@ -38,7 +38,7 @@ export class ContactModal implements OnInit {
   }
 
   get initials(): string {
-    return (this.contact().nom ?? '?')[0].toUpperCase();
+    return (this.contact().name ?? '?')[0].toUpperCase();
   }
 
   onFileChange(event: Event) {

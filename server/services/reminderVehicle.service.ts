@@ -5,7 +5,7 @@ import { Role } from "../constants";
 
 export interface ReminderCheck {
   vehicleId: string;
-  immatriculation: string;
+  licensePlate: string;
   type: "revision" | "ct" | "anti_pollution";
   daysUntilDue: number;
   reminderType: "jour_du_controle" | "1_week" | "1_month";
@@ -75,9 +75,9 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
   for (const vehicle of vehicles) {
     // ─── Révision (anniversaire annuel) ───
     const revisionDays = getDaysUntilDue(
-      vehicle.dateRevision
+      vehicle.serviceDate
         ? new Date(
-            new Date(vehicle.dateRevision).getTime() +
+            new Date(vehicle.serviceDate).getTime() +
               365 * 24 * 60 * 60 * 1000,
           )
         : null,
@@ -87,27 +87,27 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
       const reminderType = revisionReminderType;
       reminders.push({
         vehicleId: vehicle._id.toString(),
-        immatriculation: vehicle.immatriculation,
+        licensePlate: vehicle.licensePlate,
         type: "revision",
         daysUntilDue: revisionDays,
         reminderType,
       });
       // Envoie au superadmin
       for (const admin of superAdmins) {
-        const nextRevisionDate = vehicle.dateRevision
+        const nextRevisionDate = vehicle.serviceDate
           ? new Date(
-              new Date(vehicle.dateRevision).getTime() +
+              new Date(vehicle.serviceDate).getTime() +
                 365 * 24 * 60 * 60 * 1000,
             )
           : new Date();
         await sendVehicleReminder(admin.email, {
-          vehicleName: `${vehicle.marque.toUpperCase()} ${vehicle.modele} (${vehicle.immatriculation})`,
+          vehicleName: `${vehicle.brand.toUpperCase()} ${vehicle.model} (${vehicle.licensePlate})`,
           daysUntil: revisionDays,
           dueDate: nextRevisionDate,
           type: "revision",
         }).catch((err) => {
           console.error(
-            `[Reminder] Erreur envoi rappel révision pour ${vehicle.immatriculation}:`,
+            `[Reminder] Erreur envoi rappel révision pour ${vehicle.licensePlate}:`,
             err,
           );
         });
@@ -116,14 +116,14 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
 
     // ─── CT (expiration) ───
     const ctDays = getDaysUntilDue(
-      vehicle.dateCtExpiration ? new Date(vehicle.dateCtExpiration) : null,
+      vehicle.inspectionExpiryDate ? new Date(vehicle.inspectionExpiryDate) : null,
     );
     const ctReminderType = getReminderType(ctDays);
     if (ctReminderType && ctDays !== null) {
       const reminderType = ctReminderType;
       reminders.push({
         vehicleId: vehicle._id.toString(),
-        immatriculation: vehicle.immatriculation,
+        licensePlate: vehicle.licensePlate,
         type: "ct",
         daysUntilDue: ctDays,
         reminderType,
@@ -131,15 +131,15 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
       // Envoie au superadmin
       for (const admin of superAdmins) {
         await sendVehicleReminder(admin.email, {
-          vehicleName: `${vehicle.marque.toUpperCase()} ${vehicle.modele} (${vehicle.immatriculation})`,
+          vehicleName: `${vehicle.brand.toUpperCase()} ${vehicle.model} (${vehicle.licensePlate})`,
           daysUntil: ctDays,
-          dueDate: vehicle.dateCtExpiration
-            ? new Date(vehicle.dateCtExpiration)
+          dueDate: vehicle.inspectionExpiryDate
+            ? new Date(vehicle.inspectionExpiryDate)
             : new Date(),
           type: "ct",
         }).catch((err) => {
           console.error(
-            `[Reminder] Erreur envoi rappel CT pour ${vehicle.immatriculation}:`,
+            `[Reminder] Erreur envoi rappel CT pour ${vehicle.licensePlate}:`,
             err,
           );
         });
@@ -148,8 +148,8 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
 
     // ─── Anti-pollution (expiration) ───
     const antiPollutionDays = getDaysUntilDue(
-      vehicle.dateControlAntiPollutionExpiration
-        ? new Date(vehicle.dateControlAntiPollutionExpiration)
+      vehicle.antiPollutionExpiryDate
+        ? new Date(vehicle.antiPollutionExpiryDate)
         : null,
     );
     const antiPollutionReminderType = getReminderType(antiPollutionDays);
@@ -157,7 +157,7 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
       const reminderType = antiPollutionReminderType;
       reminders.push({
         vehicleId: vehicle._id.toString(),
-        immatriculation: vehicle.immatriculation,
+        licensePlate: vehicle.licensePlate,
         type: "anti_pollution",
         daysUntilDue: antiPollutionDays,
         reminderType,
@@ -165,15 +165,15 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
       // Envoie au superadmin
       for (const admin of superAdmins) {
         await sendVehicleReminder(admin.email, {
-          vehicleName: `${vehicle.marque.toUpperCase()} ${vehicle.modele} (${vehicle.immatriculation})`,
+          vehicleName: `${vehicle.brand.toUpperCase()} ${vehicle.model} (${vehicle.licensePlate})`,
           daysUntil: antiPollutionDays,
-          dueDate: vehicle.dateControlAntiPollutionExpiration
-            ? new Date(vehicle.dateControlAntiPollutionExpiration)
+          dueDate: vehicle.antiPollutionExpiryDate
+            ? new Date(vehicle.antiPollutionExpiryDate)
             : new Date(),
           type: "anti_pollution",
         }).catch((err) => {
           console.error(
-            `[Reminder] Erreur envoi rappel anti-pollution pour ${vehicle.immatriculation}:`,
+            `[Reminder] Erreur envoi rappel anti-pollution pour ${vehicle.licensePlate}:`,
             err,
           );
         });

@@ -1,7 +1,7 @@
 <div class="vehicle-card" [class.vehicle-card--alert]="hasAlert">
   <div class="vehicle-card__header">
     <div class="vehicle-card__title-row">
-      <span class="vehicle-card__plate">{{ vehicle().immatriculation }}</span>
+      <span class="vehicle-card__plate">{{ vehicle().licensePlate }}</span>
       <span [class]="formatBadgeClass">{{ formatLabel | translate }}</span>
     </div>
     @if (vehicle().assignedToName) {
@@ -19,7 +19,7 @@
         [class.text-warning]="revisionStatus() === 'soon'"
         [class.text-danger]="revisionStatus() === 'expired'"
       >
-        {{ formatDate(vehicle().dateRevision) }}
+        {{ formatDate(vehicle().serviceDate) }}
         @if (revisionStatus() === 'expired') {
           <span class="vehicle-card__date-tag vehicle-card__date-tag--danger">
             <lucide-icon [img]="alertCircle" [size]="12" /> {{ 'FLEET.EXPIRED' | translate }}
@@ -37,16 +37,16 @@
       <span class="vehicle-card__date-label">{{ 'FLEET.CT_EXPIRATION' | translate }}</span>
       <span
         class="vehicle-card__date-value"
-        [class.text-warning]="dateStatus(vehicle().dateCtExpiration) === 'soon'"
-        [class.text-danger]="dateStatus(vehicle().dateCtExpiration) === 'expired'"
+        [class.text-warning]="dateStatus(vehicle().inspectionExpiryDate) === 'soon'"
+        [class.text-danger]="dateStatus(vehicle().inspectionExpiryDate) === 'expired'"
       >
-        {{ formatDate(vehicle().dateCtExpiration) }}
-        @if (dateStatus(vehicle().dateCtExpiration) === 'expired') {
+        {{ formatDate(vehicle().inspectionExpiryDate) }}
+        @if (dateStatus(vehicle().inspectionExpiryDate) === 'expired') {
           <span class="vehicle-card__date-tag vehicle-card__date-tag--danger">
             <lucide-icon [img]="alertCircle" [size]="12" /> {{ 'FLEET.EXPIRED' | translate }}
           </span>
         }
-        @if (dateStatus(vehicle().dateCtExpiration) === 'soon') {
+        @if (dateStatus(vehicle().inspectionExpiryDate) === 'soon') {
           <span class="vehicle-card__date-tag vehicle-card__date-tag--warning">
             <lucide-icon [img]="alertCircle" [size]="12" /> {{ 'FLEET.SOON' | translate }}
           </span>
@@ -58,16 +58,16 @@
       <span class="vehicle-card__date-label">{{ 'FLEET.ANTI_POLLUTION' | translate }}</span>
       <span
         class="vehicle-card__date-value"
-        [class.text-warning]="dateStatus(vehicle().dateControlAntiPollutionExpiration) === 'soon'"
-        [class.text-danger]="dateStatus(vehicle().dateControlAntiPollutionExpiration) === 'expired'"
+        [class.text-warning]="dateStatus(vehicle().antiPollutionExpiryDate) === 'soon'"
+        [class.text-danger]="dateStatus(vehicle().antiPollutionExpiryDate) === 'expired'"
       >
-        {{ formatDate(vehicle().dateControlAntiPollutionExpiration) }}
-        @if (dateStatus(vehicle().dateControlAntiPollutionExpiration) === 'expired') {
+        {{ formatDate(vehicle().antiPollutionExpiryDate) }}
+        @if (dateStatus(vehicle().antiPollutionExpiryDate) === 'expired') {
           <span class="vehicle-card__date-tag vehicle-card__date-tag--danger">
             <lucide-icon [img]="alertCircle" [size]="12" /> {{ 'FLEET.EXPIRED' | translate }}
           </span>
         }
-        @if (dateStatus(vehicle().dateControlAntiPollutionExpiration) === 'soon') {
+        @if (dateStatus(vehicle().antiPollutionExpiryDate) === 'soon') {
           <span class="vehicle-card__date-tag vehicle-card__date-tag--warning">
             <lucide-icon [img]="alertCircle" [size]="12" /> {{ 'FLEET.SOON' | translate }}
           </span>

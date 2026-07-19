@@ -41,44 +41,44 @@ export const getVehicleById = async (req: Request, res: Response) => {
 export const createVehicle = async (req: Request, res: Response) => {
   try {
     const {
-      marque,
-      modele,
+      brand,
+      model,
       format,
-      immatriculation,
-      dateRevision,
-      dateCtInspection,
-      dateCtExpiration,
-      dateControlAntiPollutionInspection,
-      dateControlAntiPollutionExpiration,
+      licensePlate,
+      serviceDate,
+      inspectionDate,
+      inspectionExpiryDate,
+      antiPollutionInspectionDate,
+      antiPollutionExpiryDate,
       assignedTo,
       notes,
     } = req.body;
 
     // Validate required fields
-    if (!marque || !modele || !format || !immatriculation) {
+    if (!brand || !model || !format || !licensePlate) {
       return res.status(400).json({
         message:
-          "Missing required fields: marque, modele, format, immatriculation",
+          "Missing required fields: brand, model, format, licensePlate",
       });
     }
 
-    // Check if immatriculation already exists
+    // Check if licensePlate already exists
     const existingVehicle = await VehicleModel.findOne({
-      immatriculation: immatriculation.toUpperCase(),
+      licensePlate: licensePlate.toUpperCase(),
     });
     if (existingVehicle) {
       return res.status(400).json({
-        message: "Vehicle with this immatriculation already exists",
+        message: "Vehicle with this licensePlate already exists",
       });
     }
 
     // Validate brand-model combination
-    if (marque === "mercedes" && !["citan", "vito"].includes(modele)) {
+    if (brand === "mercedes" && !["citan", "vito"].includes(model)) {
       return res.status(400).json({
         message: "Mercedes vehicles must be Citan or Vito",
       });
     }
-    if (marque === "nissan" && modele !== "navara") {
+    if (brand === "nissan" && model !== "navara") {
       return res.status(400).json({
         message: "Nissan vehicles must be Navara",
       });
@@ -95,15 +95,15 @@ export const createVehicle = async (req: Request, res: Response) => {
     }
 
     const newVehicle = new VehicleModel({
-      marque,
-      modele,
+      brand,
+      model,
       format,
-      immatriculation: immatriculation.toUpperCase(),
-      dateRevision: dateRevision ? new Date(dateRevision) : undefined,
-      dateCtInspection: dateCtInspection ? new Date(dateCtInspection) : undefined,
-      dateCtExpiration: dateCtExpiration ? new Date(dateCtExpiration) : undefined,
-      dateControlAntiPollutionInspection: dateControlAntiPollutionInspection ? new Date(dateControlAntiPollutionInspection) : undefined,
-      dateControlAntiPollutionExpiration: dateControlAntiPollutionExpiration ? new Date(dateControlAntiPollutionExpiration) : undefined,
+      licensePlate: licensePlate.toUpperCase(),
+      serviceDate: serviceDate ? new Date(serviceDate) : undefined,
+      inspectionDate: inspectionDate ? new Date(inspectionDate) : undefined,
+      inspectionExpiryDate: inspectionExpiryDate ? new Date(inspectionExpiryDate) : undefined,
+      antiPollutionInspectionDate: antiPollutionInspectionDate ? new Date(antiPollutionInspectionDate) : undefined,
+      antiPollutionExpiryDate: antiPollutionExpiryDate ? new Date(antiPollutionExpiryDate) : undefined,
       assignedTo: assignedTo || undefined,
       assignedToName,
       notes,
@@ -117,9 +117,9 @@ export const createVehicle = async (req: Request, res: Response) => {
       newVehicle._id.toString(),
       res.locals.user?.pseudo,
       {
-        marque,
-        modele,
-        immatriculation,
+        brand,
+        model,
+        licensePlate,
       },
     );
 
@@ -135,15 +135,15 @@ export const updateVehicle = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const {
-      marque,
-      modele,
+      brand,
+      model,
       format,
-      immatriculation,
-      dateRevision,
-      dateCtInspection,
-      dateCtExpiration,
-      dateControlAntiPollutionInspection,
-      dateControlAntiPollutionExpiration,
+      licensePlate,
+      serviceDate,
+      inspectionDate,
+      inspectionExpiryDate,
+      antiPollutionInspectionDate,
+      antiPollutionExpiryDate,
       assignedTo,
       notes,
     } = req.body;
@@ -153,27 +153,27 @@ export const updateVehicle = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Vehicle not found" });
     }
 
-    // Check immatriculation uniqueness if changed
-    if (immatriculation && immatriculation !== vehicle.immatriculation) {
+    // Check licensePlate uniqueness if changed
+    if (licensePlate && licensePlate !== vehicle.licensePlate) {
       const existing = await VehicleModel.findOne({
-        immatriculation: immatriculation.toUpperCase(),
+        licensePlate: licensePlate.toUpperCase(),
         _id: { $ne: new (require("mongoose").Types.ObjectId)(id) },
       } as any);
       if (existing) {
         return res.status(400).json({
-          message: "Vehicle with this immatriculation already exists",
+          message: "Vehicle with this licensePlate already exists",
         });
       }
     }
 
     // Validate brand-model combination if provided
-    if (marque && modele) {
-      if (marque === "mercedes" && !["citan", "vito"].includes(modele)) {
+    if (brand && model) {
+      if (brand === "mercedes" && !["citan", "vito"].includes(model)) {
         return res.status(400).json({
           message: "Mercedes vehicles must be Citan or Vito",
         });
       }
-      if (marque === "nissan" && modele !== "navara") {
+      if (brand === "nissan" && model !== "navara") {
         return res.status(400).json({
           message: "Nissan vehicles must be Navara",
         });
@@ -196,21 +196,21 @@ export const updateVehicle = async (req: Request, res: Response) => {
     }
 
     // Update fields
-    if (marque) vehicle.marque = marque;
-    if (modele) vehicle.modele = modele;
+    if (brand) vehicle.brand = brand;
+    if (model) vehicle.model = model;
     if (format) vehicle.format = format;
-    if (immatriculation)
-      vehicle.immatriculation = immatriculation.toUpperCase();
-    if (dateRevision) vehicle.dateRevision = new Date(dateRevision);
-    if (dateCtInspection) vehicle.dateCtInspection = new Date(dateCtInspection);
-    if (dateCtExpiration) vehicle.dateCtExpiration = new Date(dateCtExpiration);
-    if (dateControlAntiPollutionInspection) vehicle.dateControlAntiPollutionInspection = new Date(dateControlAntiPollutionInspection);
-    if (dateControlAntiPollutionExpiration) vehicle.dateControlAntiPollutionExpiration = new Date(dateControlAntiPollutionExpiration);
+    if (licensePlate)
+      vehicle.licensePlate = licensePlate.toUpperCase();
+    if (serviceDate) vehicle.serviceDate = new Date(serviceDate);
+    if (inspectionDate) vehicle.inspectionDate = new Date(inspectionDate);
+    if (inspectionExpiryDate) vehicle.inspectionExpiryDate = new Date(inspectionExpiryDate);
+    if (antiPollutionInspectionDate) vehicle.antiPollutionInspectionDate = new Date(antiPollutionInspectionDate);
+    if (antiPollutionExpiryDate) vehicle.antiPollutionExpiryDate = new Date(antiPollutionExpiryDate);
     if (notes !== undefined) vehicle.notes = notes;
 
     await vehicle.save();
     await logEvent("update", "vehicle", id as string, res.locals.user?.pseudo, {
-      updatedFields: { marque, modele, format, immatriculation },
+      updatedFields: { brand, model, format, licensePlate },
     });
 
     const updated = await vehicle.populate("assignedTo", "pseudo email poste");
@@ -232,7 +232,7 @@ export const deleteVehicle = async (req: Request, res: Response) => {
     }
 
     await logEvent("delete", "vehicle", id as string, res.locals.user?.pseudo, {
-      immatriculation: vehicle.immatriculation,
+      licensePlate: vehicle.licensePlate,
     });
 
     res.status(200).json({ message: "Vehicle deleted successfully" });
@@ -245,19 +245,19 @@ export const deleteVehicle = async (req: Request, res: Response) => {
 // ─── SEARCH Vehicles ─────────────────────────────────
 export const searchVehicles = async (req: Request, res: Response) => {
   try {
-    const { q, marque, modele, assignedTo } = req.query;
+    const { q, brand, model, assignedTo } = req.query;
 
     const filter: Record<string, unknown> = {};
 
     if (q) {
       filter.$or = [
-        { immatriculation: { $regex: q, $options: "i" } },
+        { licensePlate: { $regex: q, $options: "i" } },
         { assignedToName: { $regex: q, $options: "i" } },
       ];
     }
 
-    if (marque) filter.marque = marque;
-    if (modele) filter.modele = modele;
+    if (brand) filter.brand = brand;
+    if (model) filter.model = model;
     if (assignedTo) filter.assignedTo = assignedTo;
 
     const vehicles = await VehicleModel.find(filter)
