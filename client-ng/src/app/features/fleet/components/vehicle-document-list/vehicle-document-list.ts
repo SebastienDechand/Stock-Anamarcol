@@ -8,10 +8,10 @@ import { environment } from '../../../../../environments/environment';
 import { ToastService } from '../../../../core/toast/toast.service';
 
 const DOC_TYPE_LABEL_KEYS: Record<DocumentType, string> = {
-  facture_revision: 'FLEET.DOC_TYPE_FACTURE_REVISION',
-  ct: 'FLEET.DOC_TYPE_CT',
+  service_invoice: 'FLEET.DOC_TYPE_FACTURE_REVISION',
+  inspection: 'FLEET.DOC_TYPE_CT',
   anti_pollution: 'FLEET.DOC_TYPE_ANTI_POLLUTION',
-  autre: 'FLEET.DOC_TYPE_AUTRE',
+  other: 'FLEET.DOC_TYPE_AUTRE',
 };
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
@@ -38,13 +38,13 @@ export class VehicleDocumentList {
   readonly upload = Upload;
 
   docTypeOptions: { value: DocumentType; labelKey: string }[] = [
-    { value: 'facture_revision', labelKey: DOC_TYPE_LABEL_KEYS.facture_revision },
-    { value: 'ct', labelKey: DOC_TYPE_LABEL_KEYS.ct },
+    { value: 'service_invoice', labelKey: DOC_TYPE_LABEL_KEYS.service_invoice },
+    { value: 'inspection', labelKey: DOC_TYPE_LABEL_KEYS.inspection },
     { value: 'anti_pollution', labelKey: DOC_TYPE_LABEL_KEYS.anti_pollution },
-    { value: 'autre', labelKey: DOC_TYPE_LABEL_KEYS.autre },
+    { value: 'other', labelKey: DOC_TYPE_LABEL_KEYS.other },
   ];
 
-  selectedDocType: DocumentType = 'autre';
+  selectedDocType: DocumentType = 'other';
   selectedDocName = '';
   selectedFile: File | null = null;
 
@@ -97,7 +97,7 @@ export class VehicleDocumentList {
     this.uploadDocument.emit({ id: vehicleId, formData });
     this.selectedFile = null;
     this.selectedDocName = '';
-    this.selectedDocType = 'autre';
+    this.selectedDocType = 'other';
   }
 
   onDelete(doc: VehicleDocument): void {

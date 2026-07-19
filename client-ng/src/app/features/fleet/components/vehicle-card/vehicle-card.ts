@@ -33,18 +33,18 @@ export class VehicleCard {
 
   get formatBadgeClass(): string {
     const map: Record<string, string> = {
-      utilitaire: 'badge badge--blue',
+      van: 'badge badge--blue',
       pickup: 'badge badge--green',
-      camion: 'badge badge--orange',
+      truck: 'badge badge--orange',
     };
     return map[this.vehicle().format] ?? 'badge';
   }
 
   get formatLabel(): string {
     const map: Record<string, string> = {
-      utilitaire: 'FLEET.FORMAT_UTILITAIRE',
+      van: 'FLEET.FORMAT_UTILITAIRE',
       pickup: 'FLEET.FORMAT_PICKUP',
-      camion: 'FLEET.FORMAT_CAMION',
+      truck: 'FLEET.FORMAT_CAMION',
     };
     return map[this.vehicle().format] ?? this.vehicle().format;
   }
@@ -54,15 +54,15 @@ export class VehicleCard {
   }
 
   revisionStatus(): VehicleDateStatus {
-    return vehicleRevisionStatus(this.vehicle().dateRevision);
+    return vehicleRevisionStatus(this.vehicle().serviceDate);
   }
 
   get hasAlert(): boolean {
     return (
-      (this.dateStatus(this.vehicle().dateCtExpiration) !== 'ok' &&
-        this.dateStatus(this.vehicle().dateCtExpiration) !== 'none') ||
-      (this.dateStatus(this.vehicle().dateControlAntiPollutionExpiration) !== 'ok' &&
-        this.dateStatus(this.vehicle().dateControlAntiPollutionExpiration) !== 'none') ||
+      (this.dateStatus(this.vehicle().inspectionExpiryDate) !== 'ok' &&
+        this.dateStatus(this.vehicle().inspectionExpiryDate) !== 'none') ||
+      (this.dateStatus(this.vehicle().antiPollutionExpiryDate) !== 'ok' &&
+        this.dateStatus(this.vehicle().antiPollutionExpiryDate) !== 'none') ||
       (this.revisionStatus() !== 'ok' && this.revisionStatus() !== 'none')
     );
   }

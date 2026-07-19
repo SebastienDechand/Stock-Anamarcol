@@ -5,25 +5,28 @@ export interface IVehicleDoc {
   _id: Types.ObjectId;
   name: string;
   filename: string;
-  type: "facture_revision" | "ct" | "anti_pollution" | "autre";
+  type: "service_invoice" | "inspection" | "anti_pollution" | "other";
   uploadedAt: Date;
   uploadedBy?: string;
 }
 
 // ─── Main interface ───────────────────────────────────
-export interface IVehicle extends Document {
+// `Omit<Document, "model">` avoids a naming collision with Mongoose's own
+// `Document.model()` method, which our `model` field would otherwise clash
+// with (Document, unlike Schema, uses "model" as a reserved instance method).
+export interface IVehicle extends Omit<Document, "model"> {
   // Identification
-  marque: "mercedes" | "nissan";
-  modele: "citan" | "vito" | "navara";
-  format: "utilitaire" | "pickup" | "camion";
-  immatriculation: string;
+  brand: "mercedes" | "nissan";
+  model: "citan" | "vito" | "navara";
+  format: "van" | "pickup" | "truck";
+  licensePlate: string;
 
   // Maintenance
-  dateRevision?: Date;
-  dateCtInspection?: Date;
-  dateCtExpiration?: Date;
-  dateControlAntiPollutionInspection?: Date;
-  dateControlAntiPollutionExpiration?: Date;
+  serviceDate?: Date;
+  inspectionDate?: Date;
+  inspectionExpiryDate?: Date;
+  antiPollutionInspectionDate?: Date;
+  antiPollutionExpiryDate?: Date;
 
   // Assignment
   assignedTo?: any;
@@ -46,8 +49,8 @@ const vehicleDocSchema = new Schema<IVehicleDoc>(
     filename: { type: String, required: true },
     type: {
       type: String,
-      enum: ["facture_revision", "ct", "anti_pollution", "autre"],
-      default: "autre",
+      enum: ["service_invoice", "inspection", "anti_pollution", "other"],
+      default: "other",
     },
     uploadedAt: { type: Date, default: Date.now },
     uploadedBy: { type: String },
@@ -57,13 +60,13 @@ const vehicleDocSchema = new Schema<IVehicleDoc>(
 
 const vehicleSchema = new Schema<IVehicle>(
   {
-    marque: {
+    brand: {
       type: String,
       enum: ["mercedes", "nissan"],
       required: true,
       index: true,
     },
-    modele: {
+    model: {
       type: String,
       enum: ["citan", "vito", "navara"],
       required: true,
@@ -71,21 +74,21 @@ const vehicleSchema = new Schema<IVehicle>(
     },
     format: {
       type: String,
-      enum: ["utilitaire", "pickup", "camion"],
+      enum: ["van", "pickup", "truck"],
       required: true,
     },
-    immatriculation: {
+    licensePlate: {
       type: String,
       required: true,
       unique: true,
       trim: true,
       uppercase: true,
     },
-    dateRevision: { type: Date },
-    dateCtInspection: { type: Date },
-    dateCtExpiration: { type: Date },
-    dateControlAntiPollutionInspection: { type: Date },
-    dateControlAntiPollutionExpiration: { type: Date },
+    serviceDate: { type: Date },
+    inspectionDate: { type: Date },
+    inspectionExpiryDate: { type: Date },
+    antiPollutionInspectionDate: { type: Date },
+    antiPollutionExpiryDate: { type: Date },
     assignedTo: {
       type: Schema.Types.ObjectId,
       ref: "user",
@@ -100,7 +103,7 @@ const vehicleSchema = new Schema<IVehicle>(
 );
 
 // Indexes
-vehicleSchema.index({ marque: 1, modele: 1 });
+vehicleSchema.index({ brand: 1, model: 1 });
 vehicleSchema.index({ assignedTo: 1 });
 vehicleSchema.index({ createdAt: -1 });
 
@@ -109,8 +112,8 @@ const VehicleModel: Model<IVehicle> = mongoose.model<IVehicle>(
   vehicleSchema,
 );
 
-// Drop legacy index left over from when the field was named "licensePlate"
-VehicleModel.collection.dropIndex("licensePlate_1").catch(() => {
+// Drop legacy index left over from when the field was named "immatriculation"
+VehicleModel.collection.dropIndex("immatriculation_1").catch(() => {
   // Index doesn't exist — nothing to do
 });
 

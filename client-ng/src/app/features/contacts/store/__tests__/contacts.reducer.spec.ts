@@ -6,15 +6,15 @@ import type { Contact } from '../../../../shared/models/contact.model';
 
 const sampleContact: Contact = {
   _id: '1',
-  nom: 'Dupont',
+  name: 'Dupont',
   email: 'dupont@example.com',
-  poste: 'Technicien',
-  tel: '0600000001',
+  position: 'Technicien',
+  phone: '0600000001',
 };
 
 const otherContact: Contact = {
   _id: '2',
-  nom: 'Martin',
+  name: 'Martin',
   email: 'martin@example.com',
 };
 
@@ -58,7 +58,7 @@ describe('contactsReducer', () => {
   });
 
   it('should handle updateContactSuccess by replacing in list and updating selectedContact', () => {
-    const updated: Contact = { ...sampleContact, nom: 'Dupont Modifié' };
+    const updated: Contact = { ...sampleContact, name: 'Dupont Modifié' };
     const state = contactsReducer(
       {
         ...initialContactsState,
@@ -72,7 +72,7 @@ describe('contactsReducer', () => {
   });
 
   it('should handle updateContactSuccess without touching unrelated contacts', () => {
-    const updated: Contact = { ...sampleContact, nom: 'Dupont Modifié' };
+    const updated: Contact = { ...sampleContact, name: 'Dupont Modifié' };
     const state = contactsReducer(
       { ...initialContactsState, contacts: [sampleContact, otherContact] },
       ContactsActions.updateContactSuccess({ contact: updated }),

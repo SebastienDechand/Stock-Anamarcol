@@ -34,17 +34,17 @@ export const createContact = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const { nom, email, lien, poste, tel } = req.body;
+  const { name, email, link, position, phone } = req.body;
 
   try {
-    const contact = await ContactModel.create({ nom, email, lien, poste, tel });
+    const contact = await ContactModel.create({ name, email, link, position, phone });
     // Audit
     await logEvent(
       "create",
       "contact",
       contact._id.toString(),
       res.locals.user?.pseudo,
-      { entityName: nom },
+      { entityName: name },
     );
     res.status(200).json({ contact: contact._id });
   } catch (err) {
@@ -67,11 +67,11 @@ export const updateContact = async (
     }
 
     const old = contact.toObject();
-    if (req.body.nom) contact.nom = req.body.nom;
+    if (req.body.name) contact.name = req.body.name;
     if (req.body.email) contact.email = req.body.email;
-    if (req.body.lien) contact.lien = req.body.lien;
-    if (req.body.poste) contact.poste = req.body.poste;
-    if (req.body.tel) contact.tel = req.body.tel;
+    if (req.body.link) contact.link = req.body.link;
+    if (req.body.position) contact.position = req.body.position;
+    if (req.body.phone) contact.phone = req.body.phone;
     if (req.body.picture) contact.picture = req.body.picture;
 
     const updatedContact = await contact.save();
@@ -79,11 +79,11 @@ export const updateContact = async (
     try {
       const changes: Record<string, { old?: unknown; new?: unknown }> = {};
       const fields: Array<keyof IContact> = [
-        "nom",
+        "name",
         "email",
-        "lien",
-        "poste",
-        "tel",
+        "link",
+        "position",
+        "phone",
         "picture",
       ];
       const oldObj = old as Partial<Record<keyof IContact, unknown>>;
@@ -101,7 +101,7 @@ export const updateContact = async (
           "contact",
           updatedContact._id.toString(),
           res.locals.user?.pseudo,
-          { changes, entityName: updatedContact.nom },
+          { changes, entityName: updatedContact.name },
         );
       }
     } catch (err) {

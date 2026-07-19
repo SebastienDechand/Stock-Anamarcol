@@ -13,10 +13,10 @@ import { Vehicle, VehicleForm } from '../../../../shared/models/vehicle.model';
 
 const mockVehicle: Vehicle = {
   _id: 'v-001',
-  marque: 'mercedes',
-  modele: 'vito',
-  format: 'utilitaire',
-  immatriculation: 'AB-123-CD',
+  brand: 'mercedes',
+  model: 'vito',
+  format: 'van',
+  licensePlate: 'AB-123-CD',
   documents: [],
   createdAt: '2024-01-15T10:00:00.000Z',
   updatedAt: '2024-06-01T08:00:00.000Z',
@@ -24,18 +24,18 @@ const mockVehicle: Vehicle = {
 
 const mockVehicle2: Vehicle = {
   _id: 'v-002',
-  marque: 'nissan',
-  modele: 'navara',
+  brand: 'nissan',
+  model: 'navara',
   format: 'pickup',
-  immatriculation: 'EF-456-GH',
+  licensePlate: 'EF-456-GH',
   documents: [],
 };
 
 const mockVehicleForm: VehicleForm = {
-  marque: 'mercedes',
-  modele: 'citan',
-  format: 'utilitaire',
-  immatriculation: 'XY-789-ZA',
+  brand: 'mercedes',
+  model: 'citan',
+  format: 'van',
+  licensePlate: 'XY-789-ZA',
   notes: '',
 };
 
@@ -216,12 +216,12 @@ describe('VehiclesEffects', () => {
 
   describe('update$', () => {
     it('should dispatch updateVehicleSuccess and call toast.success on success', async () => {
-      const updatedVehicle: Vehicle = { ...mockVehicle, immatriculation: 'ZZ-000-ZZ' };
+      const updatedVehicle: Vehicle = { ...mockVehicle, licensePlate: 'ZZ-000-ZZ' };
       api.put.mockReturnValue(of(updatedVehicle));
 
       const updatePromise = firstValueFrom(effects.update$);
       actions$.next(
-        VehiclesActions.updateVehicle({ id: 'v-001', data: { immatriculation: 'ZZ-000-ZZ' } }),
+        VehiclesActions.updateVehicle({ id: 'v-001', data: { licensePlate: 'ZZ-000-ZZ' } }),
       );
       const result = await updatePromise;
 
@@ -235,7 +235,7 @@ describe('VehiclesEffects', () => {
 
       const updatePromise = firstValueFrom(effects.update$);
       actions$.next(
-        VehiclesActions.updateVehicle({ id: 'v-001', data: { immatriculation: 'ZZ-000-ZZ' } }),
+        VehiclesActions.updateVehicle({ id: 'v-001', data: { licensePlate: 'ZZ-000-ZZ' } }),
       );
       const result = await updatePromise;
 
@@ -302,7 +302,7 @@ describe('VehiclesEffects', () => {
             _id: 'doc-1',
             name: 'CT 2024',
             filename: 'ct-2024.pdf',
-            type: 'ct',
+            type: 'inspection',
             uploadedAt: '2024-05-01',
           },
         ],

@@ -11,10 +11,10 @@ const initialState = { vehicles: initialVehiclesState, auth: initialAuthState };
 
 const mockVehicle: Vehicle = {
   _id: 'v1',
-  marque: 'mercedes',
-  modele: 'vito',
-  format: 'utilitaire',
-  immatriculation: 'AA-123-BB',
+  brand: 'mercedes',
+  model: 'vito',
+  format: 'van',
+  licensePlate: 'AA-123-BB',
   documents: [],
 };
 
@@ -46,19 +46,19 @@ describe('FleetPage', () => {
 
   describe('vehiclesBySection()', () => {
     const vehicles: Vehicle[] = [
-      { ...mockVehicle, _id: 'v1', modele: 'vito', marque: 'mercedes' },
-      { ...mockVehicle, _id: 'v2', modele: 'citan', marque: 'mercedes' },
-      { ...mockVehicle, _id: 'v3', modele: 'vito', marque: 'nissan' },
+      { ...mockVehicle, _id: 'v1', model: 'vito', brand: 'mercedes' },
+      { ...mockVehicle, _id: 'v2', model: 'citan', brand: 'mercedes' },
+      { ...mockVehicle, _id: 'v3', model: 'vito', brand: 'nissan' },
     ];
 
-    it('should return only vehicles whose modele matches the section', () => {
+    it('should return only vehicles whose model matches the section', () => {
       const result = component.vehiclesBySection(vehicles, 'vito');
       expect(result.length).toBe(2);
-      expect(result.every((v) => v.modele === 'vito')).toBe(true);
+      expect(result.every((v) => v.model === 'vito')).toBe(true);
     });
 
-    it('should also filter by marque when filterMarque is set', () => {
-      component.filterMarque.set('mercedes');
+    it('should also filter by brand when filterBrand is set', () => {
+      component.filterBrand.set('mercedes');
       const result = component.vehiclesBySection(vehicles, 'vito');
       expect(result.length).toBe(1);
       expect(result[0]._id).toBe('v1');
@@ -160,10 +160,10 @@ describe('FleetPage', () => {
 
   describe('onSave()', () => {
     const form: VehicleForm = {
-      marque: 'mercedes',
-      modele: 'vito',
-      format: 'utilitaire',
-      immatriculation: 'AA-123-BB',
+      brand: 'mercedes',
+      model: 'vito',
+      format: 'van',
+      licensePlate: 'AA-123-BB',
     };
 
     it('should call facade.update and then closeModal when payload has an id', () => {

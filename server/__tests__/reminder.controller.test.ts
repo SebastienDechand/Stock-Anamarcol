@@ -34,14 +34,14 @@ describe("Reminder Controller", () => {
       const mockReminders = [
         {
           vehicleId: "vehicle123",
-          immatriculation: "AB-123-CD",
+          licensePlate: "AB-123-CD",
           type: "ct" as const,
           daysUntilDue: 7,
           reminderType: "1_week" as const,
         },
         {
           vehicleId: "vehicle456",
-          immatriculation: "EF-456-GH",
+          licensePlate: "EF-456-GH",
           type: "revision" as const,
           daysUntilDue: 30,
           reminderType: "1_month" as const,

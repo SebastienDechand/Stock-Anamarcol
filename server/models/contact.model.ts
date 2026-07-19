@@ -1,19 +1,19 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
 export interface IContact extends Document {
-  nom: string;
+  name: string;
   email?: string;
-  lien?: string;
+  link?: string;
   picture?: string;
-  poste?: string;
-  tel?: string;
+  position?: string;
+  phone?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const contactSchema = new Schema<IContact>(
   {
-    nom: {
+    name: {
       type: String,
       required: true,
       trim: true,
@@ -23,18 +23,18 @@ const contactSchema = new Schema<IContact>(
       lowercase: true,
       trim: true,
     },
-    lien: {
+    link: {
       type: String,
     },
     picture: {
       type: String,
       default: "./uploads/profil/random-user.png",
     },
-    poste: {
+    position: {
       type: String,
       maxlength: 1024,
     },
-    tel: {
+    phone: {
       type: String,
     },
   },

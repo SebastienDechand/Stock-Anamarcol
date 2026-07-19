@@ -82,7 +82,7 @@ export class FleetPage implements OnInit {
   deletingVehicle = signal<Vehicle | null>(null);
   docVehicle = signal<Vehicle | null>(null);
   rawSearch = signal('');
-  filterMarque = signal('');
+  filterBrand = signal('');
   collapsedSections = signal(new Set<string>());
 
   private searchSubject = new Subject<string>();
@@ -104,10 +104,10 @@ export class FleetPage implements OnInit {
     this.searchSubject.next(value);
   }
 
-  vehiclesBySection(vehicles: Vehicle[], modele: string): Vehicle[] {
+  vehiclesBySection(vehicles: Vehicle[], model: string): Vehicle[] {
     return vehicles.filter((v) => {
-      if (v.modele !== modele) return false;
-      if (this.filterMarque() && v.marque !== this.filterMarque()) return false;
+      if (v.model !== model) return false;
+      if (this.filterBrand() && v.brand !== this.filterBrand()) return false;
       return true;
     });
   }
@@ -138,8 +138,8 @@ export class FleetPage implements OnInit {
 
   badge(format: string): { css: string; label: string; icon: LucideIconData } {
     const map: Record<string, { css: string; label: string; icon: LucideIconData }> = {
-      utilitaire: { css: 'badge badge--blue', label: 'FLEET.FORMAT_UTILITAIRE', icon: this.truck },
-      camion: { css: 'badge badge--orange', label: 'FLEET.FORMAT_CAMION', icon: this.bus },
+      van: { css: 'badge badge--blue', label: 'FLEET.FORMAT_UTILITAIRE', icon: this.truck },
+      truck: { css: 'badge badge--orange', label: 'FLEET.FORMAT_CAMION', icon: this.bus },
       pickup: { css: 'badge badge--green', label: 'FLEET.FORMAT_PICKUP', icon: this.car },
     };
     return map[format] ?? { css: 'badge', label: format, icon: this.truck };

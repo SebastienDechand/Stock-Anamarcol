@@ -9,7 +9,7 @@ export const uploadContact = async (
 ): Promise<void> => {
   if (!validateUploadedFile(req, res)) return;
 
-  const fileName = req.body.nom + ".jpg";
+  const fileName = req.body.name + ".jpg";
 
   try {
     const pictureUrl = await uploadToImgBB(req.file!.buffer, fileName);

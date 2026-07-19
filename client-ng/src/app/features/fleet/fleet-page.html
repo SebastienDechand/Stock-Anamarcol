@@ -24,7 +24,7 @@
         (input)="onSearch($any($event.target).value)"
       />
     </div>
-    <select class="filter-select" (change)="filterMarque.set($any($event.target).value)">
+    <select class="filter-select" (change)="filterBrand.set($any($event.target).value)">
       <option value="">{{ 'FLEET.ALL_BRANDS' | translate }}</option>
       <option value="mercedes">{{ 'FLEET.BRAND_MERCEDES' | translate }}</option>
       <option value="nissan">{{ 'FLEET.BRAND_NISSAN' | translate }}</option>
@@ -82,21 +82,21 @@
                             {{ b.label | translate }}
                           </span>
                         </td>
-                        <td class="col-plate-val">{{ v.immatriculation }}</td>
+                        <td class="col-plate-val">{{ v.licensePlate }}</td>
                         <td class="col-assigned-val">{{ v.assignedToName || '-' }}</td>
                         <td>
                           <span
-                            [class.text-warning]="revisionStatus(v.dateRevision) === 'soon'"
-                            [class.text-danger]="revisionStatus(v.dateRevision) === 'expired'"
-                            >{{ formatDate(v.dateRevision) }}</span
+                            [class.text-warning]="revisionStatus(v.serviceDate) === 'soon'"
+                            [class.text-danger]="revisionStatus(v.serviceDate) === 'expired'"
+                            >{{ formatDate(v.serviceDate) }}</span
                           >
-                          @if (revisionStatus(v.dateRevision) === 'expired') {
+                          @if (revisionStatus(v.serviceDate) === 'expired') {
                             <div class="date-alert date-alert--warning">
                               <lucide-icon [img]="alertCircle" [size]="11" />
                               {{ 'FLEET.EXPIRED' | translate }}
                             </div>
                           }
-                          @if (revisionStatus(v.dateRevision) === 'soon') {
+                          @if (revisionStatus(v.serviceDate) === 'soon') {
                             <div class="date-alert date-alert--warning">
                               <lucide-icon [img]="alertCircle" [size]="11" />
                               {{ 'FLEET.SOON' | translate }}
@@ -105,17 +105,17 @@
                         </td>
                         <td>
                           <span
-                            [class.text-warning]="dateStatus(v.dateCtExpiration) === 'soon'"
-                            [class.text-danger]="dateStatus(v.dateCtExpiration) === 'expired'"
-                            >{{ formatDate(v.dateCtExpiration) }}</span
+                            [class.text-warning]="dateStatus(v.inspectionExpiryDate) === 'soon'"
+                            [class.text-danger]="dateStatus(v.inspectionExpiryDate) === 'expired'"
+                            >{{ formatDate(v.inspectionExpiryDate) }}</span
                           >
-                          @if (dateStatus(v.dateCtExpiration) === 'expired') {
+                          @if (dateStatus(v.inspectionExpiryDate) === 'expired') {
                             <div class="date-alert date-alert--danger">
                               <lucide-icon [img]="alertCircle" [size]="11" />
                               {{ 'FLEET.EXPIRED' | translate }}
                             </div>
                           }
-                          @if (dateStatus(v.dateCtExpiration) === 'soon') {
+                          @if (dateStatus(v.inspectionExpiryDate) === 'soon') {
                             <div class="date-alert date-alert--warning">
                               <lucide-icon [img]="alertCircle" [size]="11" />
                               {{ 'FLEET.SOON' | translate }}
@@ -125,20 +125,20 @@
                         <td>
                           <span
                             [class.text-warning]="
-                              dateStatus(v.dateControlAntiPollutionExpiration) === 'soon'
+                              dateStatus(v.antiPollutionExpiryDate) === 'soon'
                             "
                             [class.text-danger]="
-                              dateStatus(v.dateControlAntiPollutionExpiration) === 'expired'
+                              dateStatus(v.antiPollutionExpiryDate) === 'expired'
                             "
-                            >{{ formatDate(v.dateControlAntiPollutionExpiration) }}</span
+                            >{{ formatDate(v.antiPollutionExpiryDate) }}</span
                           >
-                          @if (dateStatus(v.dateControlAntiPollutionExpiration) === 'expired') {
+                          @if (dateStatus(v.antiPollutionExpiryDate) === 'expired') {
                             <div class="date-alert date-alert--danger">
                               <lucide-icon [img]="alertCircle" [size]="11" />
                               {{ 'FLEET.EXPIRED' | translate }}
                             </div>
                           }
-                          @if (dateStatus(v.dateControlAntiPollutionExpiration) === 'soon') {
+                          @if (dateStatus(v.antiPollutionExpiryDate) === 'soon') {
                             <div class="date-alert date-alert--warning">
                               <lucide-icon [img]="alertCircle" [size]="11" />
                               {{ 'FLEET.SOON' | translate }}
@@ -227,7 +227,7 @@
                             <lucide-icon [img]="b.icon" [size]="11" />
                             {{ b.label | translate }}
                           </span>
-                          <span class="vrm__plate">{{ vehicle.immatriculation }}</span>
+                          <span class="vrm__plate">{{ vehicle.licensePlate }}</span>
                         </div>
                         <div class="vrm__actions" (click)="$event.stopPropagation()">
                           @if (isAdmin$ | async) {
@@ -268,36 +268,36 @@
                           >{{ 'FLEET.REVISION_SHORT' | translate }}
                           <span
                             [class.vrm__date--warning]="
-                              revisionStatus(vehicle.dateRevision) === 'soon'
+                              revisionStatus(vehicle.serviceDate) === 'soon'
                             "
                             [class.vrm__date--danger]="
-                              revisionStatus(vehicle.dateRevision) === 'expired'
+                              revisionStatus(vehicle.serviceDate) === 'expired'
                             "
-                            >{{ formatDate(vehicle.dateRevision) }}</span
+                            >{{ formatDate(vehicle.serviceDate) }}</span
                           >
                         </span>
                         <span class="vrm__date-chip"
                           >{{ 'FLEET.CT_SHORT' | translate }}
                           <span
                             [class.vrm__date--warning]="
-                              dateStatus(vehicle.dateCtExpiration) === 'soon'
+                              dateStatus(vehicle.inspectionExpiryDate) === 'soon'
                             "
                             [class.vrm__date--danger]="
-                              dateStatus(vehicle.dateCtExpiration) === 'expired'
+                              dateStatus(vehicle.inspectionExpiryDate) === 'expired'
                             "
-                            >{{ formatDate(vehicle.dateCtExpiration) }}</span
+                            >{{ formatDate(vehicle.inspectionExpiryDate) }}</span
                           >
                         </span>
                         <span class="vrm__date-chip"
                           >{{ 'FLEET.AP_SHORT' | translate }}
                           <span
                             [class.vrm__date--warning]="
-                              dateStatus(vehicle.dateControlAntiPollutionExpiration) === 'soon'
+                              dateStatus(vehicle.antiPollutionExpiryDate) === 'soon'
                             "
                             [class.vrm__date--danger]="
-                              dateStatus(vehicle.dateControlAntiPollutionExpiration) === 'expired'
+                              dateStatus(vehicle.antiPollutionExpiryDate) === 'expired'
                             "
-                            >{{ formatDate(vehicle.dateControlAntiPollutionExpiration) }}</span
+                            >{{ formatDate(vehicle.antiPollutionExpiryDate) }}</span
                           >
                         </span>
                       </div>
@@ -325,7 +325,7 @@
   <app-confirm-dialog
     [title]="'FLEET.CONFIRM_DELETE' | translate"
     [message]="
-      ('FLEET.CONFIRM_DELETE_MSG' | translate) + ' ' + deletingVehicle()!.immatriculation + ' ?'
+      ('FLEET.CONFIRM_DELETE_MSG' | translate) + ' ' + deletingVehicle()!.licensePlate + ' ?'
     "
     [confirmLabel]="'COMMON.DELETE' | translate"
     (confirmed)="confirmDelete()"
@@ -338,7 +338,7 @@
   <div class="doc-panel" role="dialog">
     <div class="doc-panel__header">
       <h2 class="doc-panel__title">
-        {{ 'FLEET.DOCUMENTS' | translate }} - {{ docVehicle()!.immatriculation }}
+        {{ 'FLEET.DOCUMENTS' | translate }} - {{ docVehicle()!.licensePlate }}
       </h2>
       <button class="btn-icon" (click)="docVehicle.set(null)" [title]="'COMMON.CLOSE' | translate">
         ✕

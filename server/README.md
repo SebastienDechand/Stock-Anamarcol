@@ -293,12 +293,12 @@ server/
 
 ```typescript
 {
-  nom: string; // required
+  name: string; // required
   email: string; // lowercase, trimmed
-  lien: string;
+  link: string;
   picture: string; // default: "./uploads/profil/random-user.png"
-  poste: string; // max 1024 characters
-  tel: string;
+  position: string; // max 1024 characters
+  phone: string;
   timestamps: true;
 }
 ```

@@ -121,9 +121,9 @@
                 <lucide-icon [name]="vehicleIcon(vehicle)" [size]="36" />
               </div>
               <p class="vehicle-detail__name">
-                {{ vehicle.marque | titlecase }} {{ vehicle.modele | titlecase }}
+                {{ vehicle.brand | titlecase }} {{ vehicle.model | titlecase }}
               </p>
-              <p class="vehicle-detail__immat">{{ vehicle.immatriculation }}</p>
+              <p class="vehicle-detail__immat">{{ vehicle.licensePlate }}</p>
               <span class="vehicle-detail__badge">{{ vehicle.format | titlecase }}</span>
             </div>
           } @else {

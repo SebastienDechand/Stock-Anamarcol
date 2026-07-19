@@ -13,8 +13,8 @@
       <div class="form-grid">
         <div class="form-group">
           <label class="label-base">{{ 'FLEET.BRAND' | translate }}</label>
-          <select class="input-base" [(ngModel)]="form.marque" (ngModelChange)="onMarqueChange()">
-            @for (opt of marqueOptions; track opt.value) {
+          <select class="input-base" [(ngModel)]="form.brand" (ngModelChange)="onBrandChange()">
+            @for (opt of brandOptions; track opt.value) {
               <option [value]="opt.value">{{ opt.label }}</option>
             }
           </select>
@@ -22,9 +22,9 @@
 
         <div class="form-group">
           <label class="label-base">{{ 'FLEET.MODEL_LABEL' | translate }}</label>
-          <select class="input-base" [(ngModel)]="form.modele" (ngModelChange)="onModeleChange()">
-            @for (m of availableModeles; track m) {
-              <option [value]="m">{{ modeleLabels[m] }}</option>
+          <select class="input-base" [(ngModel)]="form.model" (ngModelChange)="onModelChange()">
+            @for (m of availableModels; track m) {
+              <option [value]="m">{{ modelLabels[m] }}</option>
             }
           </select>
         </div>
@@ -43,7 +43,7 @@
           <input
             type="text"
             class="input-base"
-            [(ngModel)]="form.immatriculation"
+            [(ngModel)]="form.licensePlate"
             placeholder="AB-123-CD"
           />
         </div>
@@ -61,32 +61,32 @@
         <div class="form-group">
           <label class="label-base">{{ 'FLEET.CT_INSPECTION' | translate }}</label>
           <app-date-input
-            [value]="form.dateCtInspection"
+            [value]="form.inspectionDate"
             (valueChange)="onCtInspectionChange($event)"
           />
         </div>
 
         <div class="form-group">
           <label class="label-base">{{ 'FLEET.CT_EXPIRATION' | translate }}</label>
-          <app-date-input [(value)]="form.dateCtExpiration" />
+          <app-date-input [(value)]="form.inspectionExpiryDate" />
         </div>
 
         <div class="form-group">
           <label class="label-base">{{ 'FLEET.AP_INSPECTION' | translate }}</label>
           <app-date-input
-            [value]="form.dateControlAntiPollutionInspection"
+            [value]="form.antiPollutionInspectionDate"
             (valueChange)="onAntiPollutionInspectionChange($event)"
           />
         </div>
 
         <div class="form-group">
           <label class="label-base">{{ 'FLEET.AP_EXPIRATION' | translate }}</label>
-          <app-date-input [(value)]="form.dateControlAntiPollutionExpiration" />
+          <app-date-input [(value)]="form.antiPollutionExpiryDate" />
         </div>
 
         <div class="form-group">
           <label class="label-base">{{ 'FLEET.REVISION' | translate }}</label>
-          <app-date-input [(value)]="form.dateRevision" />
+          <app-date-input [(value)]="form.serviceDate" />
         </div>
 
         <div class="form-group form-group--full">
@@ -107,7 +107,7 @@
       </button>
       <button
         class="btn-primary"
-        [disabled]="!form.immatriculation.trim()"
+        [disabled]="!form.licensePlate.trim()"
         (click)="submit()"
         [title]="isEdit ? ('COMMON.SAVE' | translate) : ('FLEET.ADD' | translate)"
       >

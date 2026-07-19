@@ -1,11 +1,11 @@
 export interface Contact {
   _id: string;
-  nom: string;
+  name: string;
   email?: string;
-  lien?: string;
+  link?: string;
   picture?: string;
-  poste?: string;
-  tel?: string;
+  position?: string;
+  phone?: string;
   createdAt?: string;
   updatedAt?: string;
 }

@@ -53,7 +53,7 @@ export interface ClientFile {
   equipement: Equipement;
   remarques?: string;
   documents?: ClientFileDoc[];
-  contactRef?: string | { _id: string; nom: string; email?: string; tel?: string };
+  contactRef?: string | { _id: string; name: string; email?: string; phone?: string };
   dateInstallation?: string;
   dateRenouvellement?: string;
   createdBy?: string;

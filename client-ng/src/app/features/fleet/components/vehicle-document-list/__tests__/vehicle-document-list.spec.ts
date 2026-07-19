@@ -7,16 +7,16 @@ import { environment } from '../../../../../../environments/environment';
 
 const sampleVehicle: Vehicle = {
   _id: 'v1',
-  marque: 'mercedes',
-  modele: 'citan',
-  format: 'utilitaire',
-  immatriculation: 'AB-123-CD',
+  brand: 'mercedes',
+  model: 'citan',
+  format: 'van',
+  licensePlate: 'AB-123-CD',
   documents: [
     {
       _id: 'd1',
       name: 'Facture',
       filename: '123-abc.pdf',
-      type: 'facture_revision',
+      type: 'service_invoice',
       uploadedAt: '2026-01-01T00:00:00.000Z',
     },
   ],
@@ -82,7 +82,7 @@ describe('VehicleDocumentList', () => {
       const file = new File(['data'], 'doc.pdf', { type: 'application/pdf' });
       component.selectedFile = file;
       component.selectedDocName = 'Mon document';
-      component.selectedDocType = 'ct';
+      component.selectedDocType = 'inspection';
 
       let emitted: { id: string; formData: FormData } | undefined;
       component.uploadDocument.subscribe((e) => (emitted = e));
@@ -92,7 +92,7 @@ describe('VehicleDocumentList', () => {
       expect(emitted?.id).toBe('v1');
       expect(emitted?.formData.get('file')).toBe(file);
       expect(emitted?.formData.get('docName')).toBe('Mon document');
-      expect(emitted?.formData.get('docType')).toBe('ct');
+      expect(emitted?.formData.get('docType')).toBe('inspection');
       // These field names must NOT be used — they don't match the backend
       // (server/routes/vehicle.routes.ts uses upload.single("file"), and
       // server/controllers/vehicle.controller.ts reads req.body.docType / docName).
@@ -104,13 +104,13 @@ describe('VehicleDocumentList', () => {
     it('resets the form after emitting', () => {
       component.selectedFile = new File(['data'], 'doc.pdf');
       component.selectedDocName = 'Mon document';
-      component.selectedDocType = 'ct';
+      component.selectedDocType = 'inspection';
 
       component.submitUpload();
 
       expect(component.selectedFile).toBeNull();
       expect(component.selectedDocName).toBe('');
-      expect(component.selectedDocType).toBe('autre');
+      expect(component.selectedDocType).toBe('other');
     });
 
     it('does nothing when no file is selected', () => {
