@@ -13,7 +13,7 @@ export const getInterventionReports = async (
       : {};
     const reports = await InterventionReportModel.find(filter)
       .sort({ createdAt: -1 })
-      .populate("clientFile", "nom prenom societe cp ville")
+      .populate("clientFile", "lastName firstName company postalCode city")
       .lean();
     res.status(200).json(reports);
   } catch (err) {
@@ -31,7 +31,7 @@ export const getInterventionReport = async (
 
   try {
     const report = await InterventionReportModel.findById(req.params.id)
-      .populate("clientFile", "nom prenom societe cp ville")
+      .populate("clientFile", "lastName firstName company postalCode city")
       .lean();
     if (!report) {
       res.status(404).json({ message: "Rapport introuvable" });

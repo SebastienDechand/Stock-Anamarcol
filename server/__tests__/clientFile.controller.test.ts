@@ -56,11 +56,11 @@ const mockDoc = {
 
 const mockFile = {
   _id: VALID_ID,
-  nom: "DUPONT",
-  prenom: "Jean",
-  societe: "TestCorp",
-  equipement: { nbCaisses: 2, nbCashguard: 1 },
-  remarques: "",
+  lastName: "DUPONT",
+  firstName: "Jean",
+  company: "TestCorp",
+  equipment: { registerCount: 2, cashguardCount: 1 },
+  notes: "",
   documents: [mockDoc],
   save: vi.fn(),
 };
@@ -159,7 +159,7 @@ describe("ClientFile Controller", () => {
   // ─── createClientFile ──────────────────────────────────
   describe("createClientFile", () => {
     it("should create a client file and return 201", async () => {
-      req.body = { nom: "DUPONT", prenom: "Jean" };
+      req.body = { lastName: "DUPONT", firstName: "Jean" };
       mockClientFileModel.create.mockResolvedValue({
         ...mockFile,
         _id: { toString: () => VALID_ID },
@@ -168,7 +168,7 @@ describe("ClientFile Controller", () => {
       await createClientFile(req as Request, res as Response);
 
       expect(mockClientFileModel.create).toHaveBeenCalledWith(
-        expect.objectContaining({ nom: "DUPONT", createdBy: "admin" }),
+        expect.objectContaining({ lastName: "DUPONT", createdBy: "admin" }),
       );
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
@@ -207,11 +207,11 @@ describe("ClientFile Controller", () => {
 
     it("should update fields and return 200", async () => {
       req.params = { id: VALID_ID };
-      req.body = { nom: "MARTIN", ville: "Paris" };
+      req.body = { lastName: "MARTIN", city: "Paris" };
 
       const file = {
         ...mockFile,
-        save: vi.fn().mockResolvedValue({ ...mockFile, nom: "MARTIN" }),
+        save: vi.fn().mockResolvedValue({ ...mockFile, lastName: "MARTIN" }),
       };
       mockClientFileModel.findById.mockResolvedValue(file);
 
@@ -224,10 +224,10 @@ describe("ClientFile Controller", () => {
     it("should update new planning and equipment fields", async () => {
       req.params = { id: VALID_ID };
       req.body = {
-        equipement: { nbCaisses: 5, nbCashguard: 2 },
-        remarques: "Attention fragile",
-        visitePreinstallation: true,
-        decoupePlanMenuiserie: false,
+        equipment: { registerCount: 5, cashguardCount: 2 },
+        notes: "Attention fragile",
+        preInstallationVisit: true,
+        carpentryPlanCutout: false,
       };
 
       const file = { ...mockFile, save: vi.fn().mockResolvedValue(mockFile) };
@@ -235,11 +235,11 @@ describe("ClientFile Controller", () => {
 
       await updateClientFile(req as Request, res as Response);
 
-      expect((file as Record<string, unknown>).equipement).toEqual({
-        nbCaisses: 5,
-        nbCashguard: 2,
+      expect((file as Record<string, unknown>).equipment).toEqual({
+        registerCount: 5,
+        cashguardCount: 2,
       });
-      expect((file as Record<string, unknown>).remarques).toBe(
+      expect((file as Record<string, unknown>).notes).toBe(
         "Attention fragile",
       );
       expect(file.save).toHaveBeenCalled();
@@ -248,7 +248,7 @@ describe("ClientFile Controller", () => {
 
     it("should return 400 on save error", async () => {
       req.params = { id: VALID_ID };
-      req.body = { nom: "ERR" };
+      req.body = { lastName: "ERR" };
 
       const file = {
         ...mockFile,

@@ -32,33 +32,33 @@ const sampleShipment: Shipment = {
 
 const sampleClientFile: ClientFile = {
   _id: 'cf1',
-  nom: 'Martin',
-  prenom: 'Claire',
-  societe: 'Brasserie Nord',
-  adresse: '5 avenue Victor Hugo',
-  cp: '69001',
-  ville: 'Lyon',
-  tel: '0612345678',
+  lastName: 'Martin',
+  firstName: 'Claire',
+  company: 'Brasserie Nord',
+  address: '5 avenue Victor Hugo',
+  postalCode: '69001',
+  city: 'Lyon',
+  phone: '0612345678',
   mobile: '0698765432',
   email: 'claire@example.com',
-  visitePreinstallation: false,
-  saisirFichierProduit: false,
-  decoupePlanMenuiserie: false,
-  decoupePlanMarbrerie: false,
-  equipement: {
-    nbCashguard: 0,
-    nbFusion: 0,
-    nbCaisses: 0,
-    nbAutresMateriels: 0,
-    nbBalancesCaisses: 0,
-    licencesTactis: 0,
-    licencesInno: 0,
-    pcBackoffice: 0,
-    pcCentralisation: 0,
-    borneAllergene: false,
-    borneCommande: false,
-    etiquettesElectronique: false,
-    carteFidelite: false,
+  preInstallationVisit: false,
+  productFileEntry: false,
+  carpentryPlanCutout: false,
+  stoneworkPlanCutout: false,
+  equipment: {
+    cashguardCount: 0,
+    fusionCount: 0,
+    registerCount: 0,
+    otherEquipmentCount: 0,
+    scaleCount: 0,
+    tactisLicenses: 0,
+    innoLicenses: 0,
+    backofficePcCount: 0,
+    centralizationPcCount: 0,
+    allergenKiosk: false,
+    orderKiosk: false,
+    electronicLabels: false,
+    loyaltyCard: false,
   },
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
@@ -314,23 +314,23 @@ describe('ShipmentsPage', () => {
   });
 
   describe('clientFileLabel()', () => {
-    it('should return uppercase nom when prenom and societe are absent', () => {
-      const cf = { ...sampleClientFile, prenom: undefined, societe: undefined };
+    it('should return uppercase lastName when firstName and company are absent', () => {
+      const cf = { ...sampleClientFile, firstName: undefined, company: undefined };
       expect(component.clientFileLabel(cf)).toBe('MARTIN');
     });
 
-    it('should include prenom when present', () => {
-      const cf = { ...sampleClientFile, prenom: 'Claire', societe: undefined };
+    it('should include firstName when present', () => {
+      const cf = { ...sampleClientFile, firstName: 'Claire', company: undefined };
       expect(component.clientFileLabel(cf)).toBe('MARTIN Claire');
     });
 
-    it('should include societe with separator when present', () => {
-      const cf = { ...sampleClientFile, prenom: undefined, societe: 'Brasserie Nord' };
+    it('should include company with separator when present', () => {
+      const cf = { ...sampleClientFile, firstName: undefined, company: 'Brasserie Nord' };
       expect(component.clientFileLabel(cf)).toBe('MARTIN - Brasserie Nord');
     });
 
-    it('should include both prenom and societe when both present', () => {
-      const cf = { ...sampleClientFile, prenom: 'Claire', societe: 'Brasserie Nord' };
+    it('should include both firstName and company when both present', () => {
+      const cf = { ...sampleClientFile, firstName: 'Claire', company: 'Brasserie Nord' };
       expect(component.clientFileLabel(cf)).toBe('MARTIN Claire - Brasserie Nord');
     });
   });

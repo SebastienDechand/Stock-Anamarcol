@@ -10,18 +10,18 @@
         </button>
         <div class="page-header__info">
           <h1 class="page-title">
-            {{ file.nom.toUpperCase() }}{{ file.prenom ? ' ' + file.prenom : '' }}
+            {{ file.lastName.toUpperCase() }}{{ file.firstName ? ' ' + file.firstName : '' }}
           </h1>
-          @if (file.societe) {
+          @if (file.company) {
             <p class="page-subtitle">
               <lucide-icon [img]="building2" [size]="13" />
-              {{ file.societe }}{{ file.nomMagasin ? ' · ' + file.nomMagasin : '' }}
+              {{ file.company }}{{ file.storeName ? ' · ' + file.storeName : '' }}
             </p>
           }
-          @if (file.ville || file.cp) {
+          @if (file.city || file.postalCode) {
             <p class="page-location">
               <lucide-icon [img]="mapPin" [size]="11" />
-              {{ file.cp }} {{ file.ville }}
+              {{ file.postalCode }} {{ file.city }}
             </p>
           }
         </div>
@@ -58,10 +58,10 @@
         <div class="quick-strip">
           @for (
             item of [
-              { key: 'COMMON.PHONE', value: file.mobile || file.tel },
+              { key: 'COMMON.PHONE', value: file.mobile || file.phone },
               { key: 'COMMON.EMAIL', value: file.email },
-              { key: 'CLIENT_FILES.QUICK_INSTALL', value: file.dateInstallationSouhaitee },
-              { key: 'CLIENT_FILES.QUICK_OPENING', value: file.ouverturePrevue },
+              { key: 'CLIENT_FILES.QUICK_INSTALL', value: file.desiredInstallationDate },
+              { key: 'CLIENT_FILES.QUICK_OPENING', value: file.plannedOpening },
             ];
             track item.key
           ) {
@@ -78,16 +78,16 @@
             <!-- Identité -->
             <div class="info-col">
               <p class="info-col__title">{{ 'CLIENT_FILES.IDENTITY_SHORT' | translate }}</p>
-              @if (file.raisonSociale) {
+              @if (file.legalName) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.TRADE_NAME' | translate }}</span
-                  ><span>{{ file.raisonSociale }}</span>
+                  ><span>{{ file.legalName }}</span>
                 </div>
               }
-              @if (file.nomMagasin) {
+              @if (file.storeName) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.STORE_NAME' | translate }}</span
-                  ><span>{{ file.nomMagasin }}</span>
+                  ><span>{{ file.storeName }}</span>
                 </div>
               }
               @if (file.siret) {
@@ -96,22 +96,22 @@
                   ><span>{{ file.siret }}</span>
                 </div>
               }
-              @if (file.tvaIntra) {
+              @if (file.vatNumber) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.TVA_LABEL' | translate }}</span
-                  ><span>{{ file.tvaIntra }}</span>
+                  ><span>{{ file.vatNumber }}</span>
                 </div>
               }
-              @if (file.codeNaf) {
+              @if (file.nafCode) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.NAF_CODE' | translate }}</span
-                  ><span>{{ file.codeNaf }}</span>
+                  ><span>{{ file.nafCode }}</span>
                 </div>
               }
-              @if (file.statutJuridique) {
+              @if (file.legalStatus) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.LEGAL_STATUS' | translate }}</span
-                  ><span>{{ file.statutJuridique }}</span>
+                  ><span>{{ file.legalStatus }}</span>
                 </div>
               }
             </div>
@@ -119,22 +119,22 @@
             <!-- Coordonnées -->
             <div class="info-col">
               <p class="info-col__title">{{ 'CLIENT_FILES.COORDINATES_SHORT' | translate }}</p>
-              @if (file.adresse) {
+              @if (file.address) {
                 <div class="info-row">
                   <span>{{ 'COMMON.ADDRESS' | translate }}</span
-                  ><span>{{ file.adresse }}</span>
+                  ><span>{{ file.address }}</span>
                 </div>
               }
-              @if (file.cp || file.ville) {
+              @if (file.postalCode || file.city) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.CP_CITY' | translate }}</span
-                  ><span>{{ file.cp }} {{ file.ville }}</span>
+                  ><span>{{ file.postalCode }} {{ file.city }}</span>
                 </div>
               }
-              @if (file.tel) {
+              @if (file.phone) {
                 <div class="info-row">
                   <span>{{ 'COMMON.PHONE' | translate }}</span
-                  ><span>{{ file.tel }}</span>
+                  ><span>{{ file.phone }}</span>
                 </div>
               }
               @if (file.mobile) {
@@ -149,10 +149,10 @@
                   ><span>{{ file.email }}</span>
                 </div>
               }
-              @if (file.joursFermeture) {
+              @if (file.closingDays) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.CLOSURE_DAYS' | translate }}</span
-                  ><span>{{ file.joursFermeture }}</span>
+                  ><span>{{ file.closingDays }}</span>
                 </div>
               }
             </div>
@@ -160,43 +160,43 @@
             <!-- Planning -->
             <div class="info-col">
               <p class="info-col__title">{{ 'CLIENT_FILES.PLANNING' | translate }}</p>
-              @if (file.dateInstallationSouhaitee) {
+              @if (file.desiredInstallationDate) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.INSTALL_SHORT' | translate }}</span
-                  ><span>{{ file.dateInstallationSouhaitee }}</span>
+                  ><span>{{ file.desiredInstallationDate }}</span>
                 </div>
               }
-              @if (file.dateFormationSouhaitee) {
+              @if (file.desiredTrainingDate) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.TRAINING_SHORT' | translate }}</span
-                  ><span>{{ file.dateFormationSouhaitee }}</span>
+                  ><span>{{ file.desiredTrainingDate }}</span>
                 </div>
               }
-              @if (file.ouverturePrevue) {
+              @if (file.plannedOpening) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.OPENING_SHORT' | translate }}</span
-                  ><span>{{ file.ouverturePrevue }}</span>
+                  ><span>{{ file.plannedOpening }}</span>
                 </div>
               }
-              @if (file.visitePreinstallation) {
+              @if (file.preInstallationVisit) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.VISIT_PREINSTALL_SHORT' | translate }}</span
                   ><span>{{ 'COMMON.YES' | translate }}</span>
                 </div>
               }
-              @if (file.saisirFichierProduit) {
+              @if (file.productFileEntry) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.PRODUCT_FILE_SHORT' | translate }}</span
                   ><span>{{ 'COMMON.YES' | translate }}</span>
                 </div>
               }
-              @if (file.decoupePlanMenuiserie) {
+              @if (file.carpentryPlanCutout) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.CUT_JOINERY' | translate }}</span
                   ><span>{{ 'COMMON.YES' | translate }}</span>
                 </div>
               }
-              @if (file.decoupePlanMarbrerie) {
+              @if (file.stoneworkPlanCutout) {
                 <div class="info-row">
                   <span>{{ 'CLIENT_FILES.CUT_MARBLE' | translate }}</span
                   ><span>{{ 'COMMON.YES' | translate }}</span>
@@ -209,81 +209,81 @@
               <p class="info-col__title">{{ 'CLIENT_FILES.ORDERED_EQUIP' | translate }}</p>
               <div class="equip-grid">
                 <div>
-                  @if (file.equipement.nbCashguard) {
+                  @if (file.equipment.cashguardCount) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.CASHGUARD_LABEL' | translate }}</span
-                      ><span>{{ file.equipement.nbCashguard }}</span>
+                      ><span>{{ file.equipment.cashguardCount }}</span>
                     </div>
                   }
-                  @if (file.equipement.nbCaisses) {
+                  @if (file.equipment.registerCount) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.CAISSES_LABEL' | translate }}</span
-                      ><span>{{ file.equipement.nbCaisses }}</span>
+                      ><span>{{ file.equipment.registerCount }}</span>
                     </div>
                   }
-                  @if (file.equipement.nbBalancesCaisses) {
+                  @if (file.equipment.scaleCount) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.SCALES_LABEL' | translate }}</span
-                      ><span>{{ file.equipement.nbBalancesCaisses }}</span>
+                      ><span>{{ file.equipment.scaleCount }}</span>
                     </div>
                   }
-                  @if (file.equipement.licencesTactis) {
+                  @if (file.equipment.tactisLicenses) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.LICENCES_TACTIS' | translate }}</span
-                      ><span>{{ file.equipement.licencesTactis }}</span>
+                      ><span>{{ file.equipment.tactisLicenses }}</span>
                     </div>
                   }
-                  @if (file.equipement.licencesInno) {
+                  @if (file.equipment.innoLicenses) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.LICENCES_INNO' | translate }}</span
-                      ><span>{{ file.equipement.licencesInno }}</span>
+                      ><span>{{ file.equipment.innoLicenses }}</span>
                     </div>
                   }
-                  @if (file.equipement.pcBackoffice) {
+                  @if (file.equipment.backofficePcCount) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.PC_BACKOFFICE' | translate }}</span
-                      ><span>{{ file.equipement.pcBackoffice }}</span>
+                      ><span>{{ file.equipment.backofficePcCount }}</span>
                     </div>
                   }
-                  @if (file.equipement.pcCentralisation) {
+                  @if (file.equipment.centralizationPcCount) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.PC_CENTRALISATION' | translate }}</span
-                      ><span>{{ file.equipement.pcCentralisation }}</span>
+                      ><span>{{ file.equipment.centralizationPcCount }}</span>
                     </div>
                   }
                 </div>
                 <div>
-                  @if (file.equipement.nbFusion) {
+                  @if (file.equipment.fusionCount) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.FUSION_LABEL' | translate }}</span
-                      ><span>{{ file.equipement.nbFusion }}</span>
+                      ><span>{{ file.equipment.fusionCount }}</span>
                     </div>
                   }
-                  @if (file.equipement.nbAutresMateriels) {
+                  @if (file.equipment.otherEquipmentCount) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.OTHER_EQUIP' | translate }}</span
-                      ><span>{{ file.equipement.nbAutresMateriels }}</span>
+                      ><span>{{ file.equipment.otherEquipmentCount }}</span>
                     </div>
                   }
-                  @if (file.equipement.borneAllergene) {
+                  @if (file.equipment.allergenKiosk) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.BORNE_ALLERGENE' | translate }}</span
                       ><span>{{ 'COMMON.YES' | translate }}</span>
                     </div>
                   }
-                  @if (file.equipement.borneCommande) {
+                  @if (file.equipment.orderKiosk) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.BORNE_COMMANDE' | translate }}</span
                       ><span>{{ 'COMMON.YES' | translate }}</span>
                     </div>
                   }
-                  @if (file.equipement.etiquettesElectronique) {
+                  @if (file.equipment.electronicLabels) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.ETIQUETTES' | translate }}</span
                       ><span>{{ 'COMMON.YES' | translate }}</span>
                     </div>
                   }
-                  @if (file.equipement.carteFidelite) {
+                  @if (file.equipment.loyaltyCard) {
                     <div class="info-row">
                       <span>{{ 'CLIENT_FILES.CARTE_FIDELITE' | translate }}</span
                       ><span>{{ 'COMMON.YES' | translate }}</span>
@@ -294,10 +294,10 @@
             </div>
 
             <!-- Remarques -->
-            @if (file.remarques) {
+            @if (file.notes) {
               <div class="info-col info-col--full">
                 <p class="info-col__title">{{ 'CLIENT_FILES.REMARKS_SHORT' | translate }}</p>
-                <p class="info-notes">{{ file.remarques }}</p>
+                <p class="info-notes">{{ file.notes }}</p>
               </div>
             }
           </div>
@@ -305,7 +305,7 @@
           <!-- Google Maps -->
           <div class="map-panel">
             <p class="map-panel__title">{{ 'CLIENT_FILES.LOCATION' | translate }}</p>
-            @if (file.adresse || file.cp || file.ville) {
+            @if (file.address || file.postalCode || file.city) {
               <iframe
                 [src]="getMapsUrl(file)"
                 class="map-frame"

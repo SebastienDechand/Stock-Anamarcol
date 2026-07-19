@@ -178,11 +178,11 @@ export class ShipmentsPage implements OnInit {
     return list
       .filter(
         (clientFile) =>
-          clientFile.nom.toLowerCase().includes(searchTerm) ||
-          (clientFile.prenom ?? '').toLowerCase().includes(searchTerm) ||
-          (clientFile.societe ?? '').toLowerCase().includes(searchTerm) ||
-          (clientFile.ville ?? '').toLowerCase().includes(searchTerm) ||
-          (clientFile.cp ?? '').includes(searchTerm),
+          clientFile.lastName.toLowerCase().includes(searchTerm) ||
+          (clientFile.firstName ?? '').toLowerCase().includes(searchTerm) ||
+          (clientFile.company ?? '').toLowerCase().includes(searchTerm) ||
+          (clientFile.city ?? '').toLowerCase().includes(searchTerm) ||
+          (clientFile.postalCode ?? '').includes(searchTerm),
       )
       .slice(0, 8);
   });
@@ -265,15 +265,15 @@ export class ShipmentsPage implements OnInit {
     this.showCfSuggestions.set(false);
     this.form.update((currentForm) => ({
       ...currentForm,
-      lastName: clientFile.nom,
-      firstName: clientFile.prenom ?? '',
-      phone: clientFile.tel ?? clientFile.mobile ?? '',
+      lastName: clientFile.lastName,
+      firstName: clientFile.firstName ?? '',
+      phone: clientFile.phone ?? clientFile.mobile ?? '',
       email: clientFile.email ?? '',
-      address: clientFile.adresse ?? '',
-      postalCode: clientFile.cp ?? '',
-      city: clientFile.ville ?? '',
-      company: clientFile.societe ?? '',
-      companyOrRole: clientFile.societe ?? '',
+      address: clientFile.address ?? '',
+      postalCode: clientFile.postalCode ?? '',
+      city: clientFile.city ?? '',
+      company: clientFile.company ?? '',
+      companyOrRole: clientFile.company ?? '',
     }));
   }
 
@@ -346,6 +346,6 @@ export class ShipmentsPage implements OnInit {
   }
 
   clientFileLabel(clientFile: ClientFile): string {
-    return `${clientFile.nom.toUpperCase()}${clientFile.prenom ? ' ' + clientFile.prenom : ''}${clientFile.societe ? ' - ' + clientFile.societe : ''}`;
+    return `${clientFile.lastName.toUpperCase()}${clientFile.firstName ? ' ' + clientFile.firstName : ''}${clientFile.company ? ' - ' + clientFile.company : ''}`;
   }
 }

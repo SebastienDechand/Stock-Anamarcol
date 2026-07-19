@@ -65,39 +65,39 @@
             <div class="file-card__header">
               <div class="file-card__title-wrap">
                 <h3 class="file-card__name">
-                  {{ file.nom.toUpperCase() }}{{ file.prenom ? ' ' + file.prenom : '' }}
+                  {{ file.lastName.toUpperCase() }}{{ file.firstName ? ' ' + file.firstName : '' }}
                 </h3>
-                @if (file.societe) {
+                @if (file.company) {
                   <p class="file-card__company">
                     <lucide-icon [img]="building2" [size]="11" />
-                    {{ file.societe }}
+                    {{ file.company }}
                   </p>
                 }
               </div>
-              @if (file.nomMagasin) {
-                <span class="file-card__magasin">{{ file.nomMagasin }}</span>
+              @if (file.storeName) {
+                <span class="file-card__magasin">{{ file.storeName }}</span>
               }
             </div>
 
             <!-- Details -->
             <div class="file-card__details">
-              @if (file.adresse || file.cp || file.ville) {
+              @if (file.address || file.postalCode || file.city) {
                 <p class="file-card__detail">
                   <lucide-icon [img]="mapPin" [size]="12" class="file-card__detail-icon" />
                   <span>
-                    @if (file.adresse) {
-                      <span class="block">{{ file.adresse }}</span>
+                    @if (file.address) {
+                      <span class="block">{{ file.address }}</span>
                     }
-                    @if (file.cp || file.ville) {
-                      <span class="block">{{ file.cp }} {{ file.ville }}</span>
+                    @if (file.postalCode || file.city) {
+                      <span class="block">{{ file.postalCode }} {{ file.city }}</span>
                     }
                   </span>
                 </p>
               }
-              @if (file.mobile || file.tel) {
+              @if (file.mobile || file.phone) {
                 <p class="file-card__detail">
                   <lucide-icon [img]="phone" [size]="12" class="file-card__detail-icon" />
-                  {{ file.mobile ?? file.tel }}
+                  {{ file.mobile ?? file.phone }}
                 </p>
               }
               @if (file.email) {
@@ -110,44 +110,44 @@
 
             <!-- Equipment badges -->
             <div class="file-card__badges">
-              @if (file.equipement.nbCaisses > 0) {
+              @if (file.equipment.registerCount > 0) {
                 <span class="badge badge--green"
-                  >{{ file.equipement.nbCaisses }} Caisse{{
-                    file.equipement.nbCaisses > 1 ? 's' : ''
+                  >{{ file.equipment.registerCount }} Caisse{{
+                    file.equipment.registerCount > 1 ? 's' : ''
                   }}</span
                 >
               }
-              @if (file.equipement.nbBalancesCaisses > 0) {
+              @if (file.equipment.scaleCount > 0) {
                 <span class="badge badge--green"
-                  >{{ file.equipement.nbBalancesCaisses }} Caisse{{
-                    file.equipement.nbBalancesCaisses > 1 ? 's' : ''
+                  >{{ file.equipment.scaleCount }} Caisse{{
+                    file.equipment.scaleCount > 1 ? 's' : ''
                   }}
                   (Bal.)</span
                 >
               }
-              @if (file.equipement.nbCashguard > 0) {
-                <span class="badge badge--blue">{{ file.equipement.nbCashguard }} CashGuard</span>
+              @if (file.equipment.cashguardCount > 0) {
+                <span class="badge badge--blue">{{ file.equipment.cashguardCount }} CashGuard</span>
               }
-              @if (file.equipement.nbFusion > 0) {
-                <span class="badge badge--cyan">{{ file.equipement.nbFusion }} Fusion</span>
+              @if (file.equipment.fusionCount > 0) {
+                <span class="badge badge--cyan">{{ file.equipment.fusionCount }} Fusion</span>
               }
-              @if (file.equipement.licencesTactis > 0) {
-                <span class="badge badge--purple">{{ file.equipement.licencesTactis }} TACTIS</span>
+              @if (file.equipment.tactisLicenses > 0) {
+                <span class="badge badge--purple">{{ file.equipment.tactisLicenses }} TACTIS</span>
               }
-              @if (file.equipement.pcBackoffice > 0) {
-                <span class="badge badge--gray">{{ file.equipement.pcBackoffice }} PC</span>
+              @if (file.equipment.backofficePcCount > 0) {
+                <span class="badge badge--gray">{{ file.equipment.backofficePcCount }} PC</span>
               }
-              @if (file.visitePreinstallation) {
+              @if (file.preInstallationVisit) {
                 <span class="badge badge--yellow">{{
                   'CLIENT_FILES.PREINSTALL_BADGE' | translate
                 }}</span>
               }
             </div>
 
-            @if (file.dateInstallationSouhaitee) {
+            @if (file.desiredInstallationDate) {
               <p class="file-card__date">
                 {{
-                  'CLIENT_FILES.INSTALL_LABEL' | translate: { date: file.dateInstallationSouhaitee }
+                  'CLIENT_FILES.INSTALL_LABEL' | translate: { date: file.desiredInstallationDate }
                 }}
               </p>
             }

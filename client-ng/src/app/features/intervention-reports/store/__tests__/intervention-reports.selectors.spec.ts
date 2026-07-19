@@ -27,7 +27,7 @@ const sampleReport: InterventionReport = {
 
 const sampleReport2: InterventionReport = {
   _id: 'rep-2',
-  clientFile: { _id: 'cf-2', nom: 'Martin', ville: 'Lyon', cp: '69001' },
+  clientFile: { _id: 'cf-2', lastName: 'Martin', city: 'Lyon', postalCode: '69001' },
   cashguardUnits: [],
   notes: 'Mise à jour logiciel',
   createdAt: '2024-03-15T09:00:00Z',

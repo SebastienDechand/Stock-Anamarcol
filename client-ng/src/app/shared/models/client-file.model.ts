@@ -1,4 +1,9 @@
-export type ClientFileDocType = 'bdc' | 'rapport' | 'pvrecette' | 'visite' | 'autre';
+export type ClientFileDocType =
+  | 'purchase_order'
+  | 'report'
+  | 'acceptance_report'
+  | 'visit'
+  | 'other';
 
 export interface ClientFileDoc {
   _id: string;
@@ -10,48 +15,48 @@ export interface ClientFileDoc {
 }
 
 export interface Equipement {
-  nbCashguard: number;
-  nbFusion: number;
-  nbCaisses: number;
-  nbAutresMateriels: number;
-  nbBalancesCaisses: number;
-  licencesTactis: number;
-  licencesInno: number;
-  pcBackoffice: number;
-  pcCentralisation: number;
-  borneAllergene: boolean;
-  borneCommande: boolean;
-  etiquettesElectronique: boolean;
-  carteFidelite: boolean;
+  cashguardCount: number;
+  fusionCount: number;
+  registerCount: number;
+  otherEquipmentCount: number;
+  scaleCount: number;
+  tactisLicenses: number;
+  innoLicenses: number;
+  backofficePcCount: number;
+  centralizationPcCount: number;
+  allergenKiosk: boolean;
+  orderKiosk: boolean;
+  electronicLabels: boolean;
+  loyaltyCard: boolean;
 }
 
 export interface ClientFile {
   _id: string;
-  societe?: string;
-  nom: string;
-  prenom?: string;
-  adresse?: string;
-  cp?: string;
-  ville?: string;
-  tel?: string;
+  company?: string;
+  lastName: string;
+  firstName?: string;
+  address?: string;
+  postalCode?: string;
+  city?: string;
+  phone?: string;
   mobile?: string;
   email?: string;
-  statutJuridique?: string;
-  raisonSociale?: string;
-  nomMagasin?: string;
+  legalStatus?: string;
+  legalName?: string;
+  storeName?: string;
   siret?: string;
-  tvaIntra?: string;
-  codeNaf?: string;
-  joursFermeture?: string;
-  visitePreinstallation: boolean;
-  dateInstallationSouhaitee?: string;
-  dateFormationSouhaitee?: string;
-  saisirFichierProduit: boolean;
-  decoupePlanMenuiserie: boolean;
-  decoupePlanMarbrerie: boolean;
-  ouverturePrevue?: string;
-  equipement: Equipement;
-  remarques?: string;
+  vatNumber?: string;
+  nafCode?: string;
+  closingDays?: string;
+  preInstallationVisit: boolean;
+  desiredInstallationDate?: string;
+  desiredTrainingDate?: string;
+  productFileEntry: boolean;
+  carpentryPlanCutout: boolean;
+  stoneworkPlanCutout: boolean;
+  plannedOpening?: string;
+  equipment: Equipement;
+  notes?: string;
   documents?: ClientFileDoc[];
   contactRef?: string | { _id: string; name: string; email?: string; phone?: string };
   dateInstallation?: string;

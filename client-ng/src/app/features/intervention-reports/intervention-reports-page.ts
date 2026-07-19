@@ -38,9 +38,9 @@ export class InterventionReportsPage implements OnInit {
       const clientFile = report.clientFile;
       if (typeof clientFile === 'object' && clientFile !== null) {
         return (
-          clientFile.nom?.toLowerCase().includes(searchTerm) ||
-          clientFile.societe?.toLowerCase().includes(searchTerm) ||
-          clientFile.ville?.toLowerCase().includes(searchTerm)
+          clientFile.lastName?.toLowerCase().includes(searchTerm) ||
+          clientFile.company?.toLowerCase().includes(searchTerm) ||
+          clientFile.city?.toLowerCase().includes(searchTerm)
         );
       }
       return String(clientFile).toLowerCase().includes(searchTerm);
@@ -50,7 +50,7 @@ export class InterventionReportsPage implements OnInit {
   getClientLabel(report: InterventionReport): string {
     const clientFile = report.clientFile;
     if (typeof clientFile === 'object' && clientFile !== null) {
-      return [clientFile.nom, clientFile.societe].filter(Boolean).join(' - ');
+      return [clientFile.lastName, clientFile.company].filter(Boolean).join(' - ');
     }
     return String(clientFile ?? '');
   }

@@ -27,26 +27,26 @@ const initialState = {
 
 const makeClientFile = (overrides: Partial<ClientFile> = {}): ClientFile => ({
   _id: 'file-1',
-  nom: 'Dupont',
-  prenom: 'Jean',
-  visitePreinstallation: false,
-  saisirFichierProduit: false,
-  decoupePlanMenuiserie: false,
-  decoupePlanMarbrerie: false,
-  equipement: {
-    nbCashguard: 0,
-    nbFusion: 0,
-    nbCaisses: 0,
-    nbAutresMateriels: 0,
-    nbBalancesCaisses: 0,
-    licencesTactis: 0,
-    licencesInno: 0,
-    pcBackoffice: 0,
-    pcCentralisation: 0,
-    borneAllergene: false,
-    borneCommande: false,
-    etiquettesElectronique: false,
-    carteFidelite: false,
+  lastName: 'Dupont',
+  firstName: 'Jean',
+  preInstallationVisit: false,
+  productFileEntry: false,
+  carpentryPlanCutout: false,
+  stoneworkPlanCutout: false,
+  equipment: {
+    cashguardCount: 0,
+    fusionCount: 0,
+    registerCount: 0,
+    otherEquipmentCount: 0,
+    scaleCount: 0,
+    tactisLicenses: 0,
+    innoLicenses: 0,
+    backofficePcCount: 0,
+    centralizationPcCount: 0,
+    allergenKiosk: false,
+    orderKiosk: false,
+    electronicLabels: false,
+    loyaltyCard: false,
   },
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
@@ -221,16 +221,16 @@ describe('ClientFileDetailPage', () => {
   // ─── getClientLabel() ────────────────────────────────────────────────────────
 
   describe('getClientLabel()', () => {
-    it('returns "NOM prenom - societe" when all fields are set', () => {
-      const file = makeClientFile({ nom: 'dupont', prenom: 'Jean', societe: 'SARL Dupont' });
+    it('returns "NOM firstName - company" when all fields are set', () => {
+      const file = makeClientFile({ lastName: 'dupont', firstName: 'Jean', company: 'SARL Dupont' });
 
       const label = component.getClientLabel(file);
 
       expect(label).toBe('DUPONT Jean - SARL Dupont');
     });
 
-    it('returns uppercased nom only when prenom and societe are absent', () => {
-      const file = makeClientFile({ nom: 'dupont', prenom: undefined, societe: undefined });
+    it('returns uppercased lastName only when firstName and company are absent', () => {
+      const file = makeClientFile({ lastName: 'dupont', firstName: undefined, company: undefined });
 
       const label = component.getClientLabel(file);
 

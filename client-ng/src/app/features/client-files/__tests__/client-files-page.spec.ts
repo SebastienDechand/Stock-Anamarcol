@@ -12,26 +12,26 @@ const initialState = { clientFiles: initialClientFilesState, auth: initialAuthSt
 
 const makeFile = (overrides: Partial<ClientFile> = {}): ClientFile => ({
   _id: 'file-1',
-  nom: 'Dupont',
-  prenom: 'Jean',
-  visitePreinstallation: false,
-  saisirFichierProduit: false,
-  decoupePlanMenuiserie: false,
-  decoupePlanMarbrerie: false,
-  equipement: {
-    nbCashguard: 0,
-    nbFusion: 0,
-    nbCaisses: 0,
-    nbAutresMateriels: 0,
-    nbBalancesCaisses: 0,
-    licencesTactis: 0,
-    licencesInno: 0,
-    pcBackoffice: 0,
-    pcCentralisation: 0,
-    borneAllergene: false,
-    borneCommande: false,
-    etiquettesElectronique: false,
-    carteFidelite: false,
+  lastName: 'Dupont',
+  firstName: 'Jean',
+  preInstallationVisit: false,
+  productFileEntry: false,
+  carpentryPlanCutout: false,
+  stoneworkPlanCutout: false,
+  equipment: {
+    cashguardCount: 0,
+    fusionCount: 0,
+    registerCount: 0,
+    otherEquipmentCount: 0,
+    scaleCount: 0,
+    tactisLicenses: 0,
+    innoLicenses: 0,
+    backofficePcCount: 0,
+    centralizationPcCount: 0,
+    allergenKiosk: false,
+    orderKiosk: false,
+    electronicLabels: false,
+    loyaltyCard: false,
   },
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
@@ -40,26 +40,26 @@ const makeFile = (overrides: Partial<ClientFile> = {}): ClientFile => ({
 
 const makeForm = (overrides: Partial<ClientFileForm> = {}): ClientFileForm => {
   const base: ClientFileForm = {
-    nom: 'Dupont',
-    prenom: 'Jean',
-    visitePreinstallation: false,
-    saisirFichierProduit: false,
-    decoupePlanMenuiserie: false,
-    decoupePlanMarbrerie: false,
-    equipement: {
-      nbCashguard: 0,
-      nbFusion: 0,
-      nbCaisses: 0,
-      nbAutresMateriels: 0,
-      nbBalancesCaisses: 0,
-      licencesTactis: 0,
-      licencesInno: 0,
-      pcBackoffice: 0,
-      pcCentralisation: 0,
-      borneAllergene: false,
-      borneCommande: false,
-      etiquettesElectronique: false,
-      carteFidelite: false,
+    lastName: 'Dupont',
+    firstName: 'Jean',
+    preInstallationVisit: false,
+    productFileEntry: false,
+    carpentryPlanCutout: false,
+    stoneworkPlanCutout: false,
+    equipment: {
+      cashguardCount: 0,
+      fusionCount: 0,
+      registerCount: 0,
+      otherEquipmentCount: 0,
+      scaleCount: 0,
+      tactisLicenses: 0,
+      innoLicenses: 0,
+      backofficePcCount: 0,
+      centralizationPcCount: 0,
+      allergenKiosk: false,
+      orderKiosk: false,
+      electronicLabels: false,
+      loyaltyCard: false,
     },
   };
   return Object.assign(base, overrides);
@@ -99,44 +99,44 @@ describe('ClientFilesPage', () => {
   // ─── filter() ────────────────────────────────────────────────────────────────
 
   describe('filter()', () => {
-    it('returns files sorted by nom when no searchTerm', () => {
+    it('returns files sorted by lastName when no searchTerm', () => {
       const files = [
-        makeFile({ _id: '1', nom: 'Martin' }),
-        makeFile({ _id: '2', nom: 'Arnaud' }),
-        makeFile({ _id: '3', nom: 'Dupont' }),
+        makeFile({ _id: '1', lastName: 'Martin' }),
+        makeFile({ _id: '2', lastName: 'Arnaud' }),
+        makeFile({ _id: '3', lastName: 'Dupont' }),
       ];
 
       const result = component.filter(files);
 
-      expect(result.map((f) => f.nom)).toEqual(['Arnaud', 'Dupont', 'Martin']);
+      expect(result.map((f) => f.lastName)).toEqual(['Arnaud', 'Dupont', 'Martin']);
     });
 
-    it('filters by nom when searchTerm matches', () => {
+    it('filters by lastName when searchTerm matches', () => {
       const files = [
-        makeFile({ _id: '1', nom: 'Martin' }),
-        makeFile({ _id: '2', nom: 'Dupont' }),
-        makeFile({ _id: '3', nom: 'Bernard' }),
+        makeFile({ _id: '1', lastName: 'Martin' }),
+        makeFile({ _id: '2', lastName: 'Dupont' }),
+        makeFile({ _id: '3', lastName: 'Bernard' }),
       ];
       component.searchTerm.set('mar');
 
       const result = component.filter(files);
 
       expect(result).toHaveLength(1);
-      expect(result[0].nom).toBe('Martin');
+      expect(result[0].lastName).toBe('Martin');
     });
 
-    it('filters by societe when searchTerm matches', () => {
+    it('filters by company when searchTerm matches', () => {
       const files = [
-        makeFile({ _id: '1', nom: 'Dupont', societe: 'SARL Dupont' }),
-        makeFile({ _id: '2', nom: 'Martin', societe: 'SAS Martin' }),
-        makeFile({ _id: '3', nom: 'Bernard' }),
+        makeFile({ _id: '1', lastName: 'Dupont', company: 'SARL Dupont' }),
+        makeFile({ _id: '2', lastName: 'Martin', company: 'SAS Martin' }),
+        makeFile({ _id: '3', lastName: 'Bernard' }),
       ];
       component.searchTerm.set('sarl');
 
       const result = component.filter(files);
 
       expect(result).toHaveLength(1);
-      expect(result[0].societe).toBe('SARL Dupont');
+      expect(result[0].company).toBe('SARL Dupont');
     });
   });
 
@@ -144,7 +144,7 @@ describe('ClientFilesPage', () => {
 
   describe('paginate()', () => {
     it('returns the first 9 items for page 1', () => {
-      const files = Array.from({ length: 15 }, (_, i) => makeFile({ _id: `${i}`, nom: `Nom${i}` }));
+      const files = Array.from({ length: 15 }, (_, i) => makeFile({ _id: `${i}`, lastName: `Nom${i}` }));
       component.currentPage.set(1);
 
       const result = component.paginate(files);
@@ -155,7 +155,7 @@ describe('ClientFilesPage', () => {
     });
 
     it('returns the correct slice for page 2', () => {
-      const files = Array.from({ length: 15 }, (_, i) => makeFile({ _id: `${i}`, nom: `Nom${i}` }));
+      const files = Array.from({ length: 15 }, (_, i) => makeFile({ _id: `${i}`, lastName: `Nom${i}` }));
       component.currentPage.set(2);
 
       const result = component.paginate(files);
@@ -170,7 +170,7 @@ describe('ClientFilesPage', () => {
 
   describe('totalPages()', () => {
     it('returns 1 for 9 or fewer items', () => {
-      const files = Array.from({ length: 9 }, (_, i) => makeFile({ _id: `${i}`, nom: `Nom${i}` }));
+      const files = Array.from({ length: 9 }, (_, i) => makeFile({ _id: `${i}`, lastName: `Nom${i}` }));
       expect(component.totalPages(files)).toBe(1);
     });
 
@@ -179,7 +179,7 @@ describe('ClientFilesPage', () => {
     });
 
     it('returns 2 for 10 items', () => {
-      const files = Array.from({ length: 10 }, (_, i) => makeFile({ _id: `${i}`, nom: `Nom${i}` }));
+      const files = Array.from({ length: 10 }, (_, i) => makeFile({ _id: `${i}`, lastName: `Nom${i}` }));
       expect(component.totalPages(files)).toBe(2);
     });
   });
@@ -187,13 +187,13 @@ describe('ClientFilesPage', () => {
   // ─── displayName() ────────────────────────────────────────────────────────────
 
   describe('displayName()', () => {
-    it('returns "NOM prenom" when no societe', () => {
-      const file = makeFile({ nom: 'dupont', prenom: 'Jean' });
+    it('returns "NOM firstName" when no company', () => {
+      const file = makeFile({ lastName: 'dupont', firstName: 'Jean' });
       expect(component.displayName(file)).toBe('DUPONT Jean');
     });
 
-    it('returns "NOM prenom - SARL" when societe is set', () => {
-      const file = makeFile({ nom: 'dupont', prenom: 'Jean', societe: 'SARL Dupont' });
+    it('returns "NOM firstName - SARL" when company is set', () => {
+      const file = makeFile({ lastName: 'dupont', firstName: 'Jean', company: 'SARL Dupont' });
       expect(component.displayName(file)).toBe('DUPONT Jean - SARL Dupont');
     });
   });
@@ -233,7 +233,7 @@ describe('ClientFilesPage', () => {
     it('calls facade.update and not facade.create when id is provided', () => {
       vi.spyOn(facade, 'update').mockImplementation(() => {});
       vi.spyOn(facade, 'create').mockImplementation(() => {});
-      const formData = makeForm({ nom: 'Dupont' });
+      const formData = makeForm({ lastName: 'Dupont' });
 
       component.onModalSave({ id: 'file-1', data: formData });
 
@@ -244,7 +244,7 @@ describe('ClientFilesPage', () => {
     it('calls facade.create and not facade.update when no id is provided', () => {
       vi.spyOn(facade, 'update').mockImplementation(() => {});
       vi.spyOn(facade, 'create').mockImplementation(() => {});
-      const formData = makeForm({ nom: 'Dupont' });
+      const formData = makeForm({ lastName: 'Dupont' });
 
       component.onModalSave({ data: formData });
 
