@@ -241,54 +241,58 @@ describe('ClientFileDetailPage', () => {
   // ─── hasSlots() ──────────────────────────────────────────────────────────────
 
   describe('hasSlots()', () => {
-    it('returns true when at least one k7Slot is non-empty', () => {
+    it('returns true when at least one cassetteSlot is non-empty', () => {
       const unit: CashguardUnit = {
-        k7Slots: ['', 'CG-001', '', ''],
-        assignedCaisses: [],
+        cassetteSlots: ['', 'CG-001', '', ''],
+        assignedRegisters: [],
         hasPc: false,
       };
       expect(component.hasSlots(unit)).toBe(true);
     });
 
-    it('returns false when all k7Slots are empty strings', () => {
-      const unit: CashguardUnit = { k7Slots: ['', '', '', ''], assignedCaisses: [], hasPc: false };
+    it('returns false when all cassetteSlots are empty strings', () => {
+      const unit: CashguardUnit = {
+        cassetteSlots: ['', '', '', ''],
+        assignedRegisters: [],
+        hasPc: false,
+      };
       expect(component.hasSlots(unit)).toBe(false);
     });
 
     it('returns true when only the last slot is non-empty', () => {
       const unit: CashguardUnit = {
-        k7Slots: ['', '', '', 'CG-004'],
-        assignedCaisses: [],
+        cassetteSlots: ['', '', '', 'CG-004'],
+        assignedRegisters: [],
         hasPc: false,
       };
       expect(component.hasSlots(unit)).toBe(true);
     });
   });
 
-  // ─── getTwCaisses() ──────────────────────────────────────────────────────────
+  // ─── getTwRegisters() ────────────────────────────────────────────────────────
 
-  describe('getTwCaisses()', () => {
-    it('returns twCaisses array when it has items', () => {
-      const report = makeReport({ twCaisses: ['A', 'B', 'C'] });
+  describe('getTwRegisters()', () => {
+    it('returns twRegisters array when it has items', () => {
+      const report = makeReport({ twRegisters: ['A', 'B', 'C'] });
 
-      expect(component.getTwCaisses(report)).toEqual(['A', 'B', 'C']);
+      expect(component.getTwRegisters(report)).toEqual(['A', 'B', 'C']);
     });
 
-    it('returns [twCaisse1, twCaisse2, twCaisse3] (truthy only) when twCaisses is empty', () => {
+    it('returns [twRegister1, twRegister2, twRegister3] (truthy only) when twRegisters is empty', () => {
       const report = makeReport({
-        twCaisses: [],
-        twCaisse1: 'X1',
-        twCaisse2: '',
-        twCaisse3: 'X3',
+        twRegisters: [],
+        twRegister1: 'X1',
+        twRegister2: '',
+        twRegister3: 'X3',
       });
 
-      expect(component.getTwCaisses(report)).toEqual(['X1', 'X3']);
+      expect(component.getTwRegisters(report)).toEqual(['X1', 'X3']);
     });
 
-    it('returns empty array when twCaisses is absent and individual fields are falsy', () => {
-      const report = makeReport({ twCaisses: undefined });
+    it('returns empty array when twRegisters is absent and individual fields are falsy', () => {
+      const report = makeReport({ twRegisters: undefined });
 
-      expect(component.getTwCaisses(report)).toEqual([]);
+      expect(component.getTwRegisters(report)).toEqual([]);
     });
   });
 

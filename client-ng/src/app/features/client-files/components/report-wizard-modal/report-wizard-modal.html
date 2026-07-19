@@ -51,7 +51,7 @@
               <button
                 class="btn-add"
                 type="button"
-                (click)="addCaisse()"
+                (click)="addRegister()"
                 [title]="'CLIENT_FILES.ADD_REGISTER' | translate"
               >
                 <lucide-icon [img]="plus" [size]="13" />
@@ -59,7 +59,7 @@
               </button>
             </div>
             <div class="tw-grid">
-              @for (tw of twCaisses(); track $index; let i = $index) {
+              @for (tw of twRegisters(); track $index; let i = $index) {
                 <div class="tw-item">
                   <div class="tw-item__field">
                     <label class="form-label">{{
@@ -68,14 +68,14 @@
                     <input
                       class="input-base"
                       [value]="tw"
-                      (input)="setCaisse(i, $any($event.target).value)"
+                      (input)="setRegister(i, $any($event.target).value)"
                     />
                   </div>
-                  @if (twCaisses().length > 1) {
+                  @if (twRegisters().length > 1) {
                     <button
                       class="btn-remove"
                       type="button"
-                      (click)="removeCaisse(i)"
+                      (click)="removeRegister(i)"
                       [title]="'CLIENT_FILES.REMOVE_REGISTER' | translate"
                     >
                       <lucide-icon [img]="x" [size]="12" />
@@ -159,7 +159,7 @@
                           {{ 'CLIENT_FILES.CASSETTES_SLOTS' | translate }}
                         </p>
                         <div class="k7-grid">
-                          @for (slot of unit.k7Slots; track $index; let si = $index) {
+                          @for (slot of unit.cassetteSlots; track $index; let si = $index) {
                             <div>
                               <label class="slot-label">S{{ si + 1 }}</label>
                               <input
@@ -177,8 +177,8 @@
                         </label>
                         <input
                           class="input-base"
-                          [value]="unit.assignedCaisses.join(', ')"
-                          (input)="setAssignedCaisses(i, $any($event.target).value)"
+                          [value]="unit.assignedRegisters.join(', ')"
+                          (input)="setAssignedRegisters(i, $any($event.target).value)"
                           [placeholder]="'CLIENT_FILES.REGISTERS_PLACEHOLDER' | translate"
                         />
                       </div>
@@ -221,7 +221,7 @@
           <!-- Recap -->
           <div class="recap">
             <p class="recap__title">{{ 'CLIENT_FILES.RECAP_TITLE' | translate }}</p>
-            @for (tw of recap.caisses; track $index; let i = $index) {
+            @for (tw of recap.registers; track $index; let i = $index) {
               <p>
                 {{ 'CLIENT_FILES.TW_REGISTER' | translate: { n: i + 1 } }} :
                 <span class="recap__mono">{{ tw }}</span>

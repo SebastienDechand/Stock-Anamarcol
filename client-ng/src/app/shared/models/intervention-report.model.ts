@@ -1,8 +1,8 @@
 export interface CashguardUnit {
   up?: string;
   ub?: string;
-  k7Slots: [string, string, string, string];
-  assignedCaisses: string[];
+  cassetteSlots: [string, string, string, string];
+  assignedRegisters: string[];
   hasPc: boolean;
 }
 
@@ -18,10 +18,10 @@ export interface InterventionReport {
         postalCode?: string;
         city?: string;
       };
-  twCaisse1?: string;
-  twCaisse2?: string;
-  twCaisse3?: string;
-  twCaisses?: string[];
+  twRegister1?: string;
+  twRegister2?: string;
+  twRegister3?: string;
+  twRegisters?: string[];
   twPc?: string;
   cashguardUnits: CashguardUnit[];
   notes?: string;

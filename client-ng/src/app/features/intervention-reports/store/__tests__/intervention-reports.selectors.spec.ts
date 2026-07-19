@@ -15,8 +15,8 @@ const sampleReport: InterventionReport = {
     {
       up: 'UP1',
       ub: 'UB1',
-      k7Slots: ['', '', '', ''],
-      assignedCaisses: ['caisse-1'],
+      cassetteSlots: ['', '', '', ''],
+      assignedRegisters: ['caisse-1'],
       hasPc: true,
     },
   ],
