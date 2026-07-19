@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KpiCard } from '../../../../shared/components/kpi-card/kpi-card';
 import { GlobalStatistics } from '../../../../shared/models/statistics.model';
@@ -11,5 +11,5 @@ import { GlobalStatistics } from '../../../../shared/models/statistics.model';
   styleUrl: './kpi-grid.scss',
 })
 export class KpiGrid {
-  @Input({ required: true }) stats!: GlobalStatistics;
+  stats = input.required<GlobalStatistics>();
 }

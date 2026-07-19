@@ -1,4 +1,4 @@
-import { Component, DestroyRef, EventEmitter, inject, OnInit, Output, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LucideAngularModule, X, Archive, AlertTriangle, Download } from 'lucide-angular';
@@ -15,8 +15,8 @@ import { ShipmentArchive } from '../../../../shared/models/shipment.model';
   styleUrl: './shipment-history-modal.scss',
 })
 export class ShipmentHistoryModal implements OnInit {
-  @Output() closed = new EventEmitter<void>();
-  @Output() archived = new EventEmitter<void>();
+  closed = output<void>();
+  archived = output<void>();
 
   private api = inject(ApiService);
   private toast = inject(ToastService);

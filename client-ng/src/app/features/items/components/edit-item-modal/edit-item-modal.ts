@@ -1,11 +1,10 @@
 import {
   Component,
-  EventEmitter,
-  Input,
   OnDestroy,
   OnInit,
-  Output,
   inject,
+  input,
+  output,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -34,9 +33,9 @@ import { AuthFacade } from '../../../../store/auth/auth.facade';
   styleUrl: './edit-item-modal.scss',
 })
 export class EditItemModal implements OnInit, OnDestroy {
-  @Input({ required: true }) item!: Item;
-  @Output() submitted = new EventEmitter<Partial<Item>>();
-  @Output() cancelled = new EventEmitter<void>();
+  item = input.required<Item>();
+  submitted = output<Partial<Item>>();
+  cancelled = output<void>();
 
   private facade = inject(ItemsFacade);
   private usersFacade = inject(UsersFacade);
@@ -49,9 +48,12 @@ export class EditItemModal implements OnInit, OnDestroy {
   readonly isAdmin = toSignal(this.authFacade.isAdmin$, { initialValue: false });
   readonly currentUser = toSignal(this.authFacade.user$, { initialValue: null });
   readonly users = toSignal(this.usersFacade.users$, { initialValue: [] });
-  readonly liveItem = toSignal(this.facade.selectedItem$.pipe(map((item) => item ?? this.item)), {
-    initialValue: null,
-  });
+  readonly liveItem = toSignal(
+    this.facade.selectedItem$.pipe(map((item) => item ?? this.item())),
+    {
+      initialValue: null,
+    },
+  );
   readonly history = toSignal(this.facade.history$, { initialValue: [] as ItemHistory[] });
   readonly isLoadingHistory = toSignal(this.facade.isLoadingHistory$, { initialValue: false });
 
@@ -73,7 +75,7 @@ export class EditItemModal implements OnInit, OnDestroy {
   };
 
   ngOnInit() {
-    this.facade.setSelectedItemId(this.item._id);
+    this.facade.setSelectedItemId(this.item()._id);
     this.resetForm();
   }
 
@@ -84,7 +86,7 @@ export class EditItemModal implements OnInit, OnDestroy {
   }
 
   get displayItem(): Item {
-    return this.liveItem() ?? this.item;
+    return this.liveItem() ?? this.item();
   }
 
   get poster() {
@@ -106,7 +108,7 @@ export class EditItemModal implements OnInit, OnDestroy {
   switchTab(tab: 'detail' | 'history') {
     this.activeTab = tab;
     if (tab === 'history' && !this.historyFetched) {
-      this.facade.loadHistory(this.item._id);
+      this.facade.loadHistory(this.item()._id);
       this.historyFetched = true;
     }
   }
@@ -139,7 +141,7 @@ export class EditItemModal implements OnInit, OnDestroy {
     const current = this.displayItem.quantity;
     const name = this.currentUser()?.pseudo ?? '';
     const operation = newQty >= current ? 'add' : 'subtract';
-    this.facade.updateQuantity(this.item._id, newQty, name, operation);
+    this.facade.updateQuantity(this.item()._id, newQty, name, operation);
     this.editingQty = false;
   }
 
@@ -162,7 +164,7 @@ export class EditItemModal implements OnInit, OnDestroy {
     this.imagePreview.set(URL.createObjectURL(file));
     const formData = new FormData();
     formData.append('file', file);
-    this.facade.uploadPicture(this.item._id, formData);
+    this.facade.uploadPicture(this.item()._id, formData);
   }
 
   formatDate(dateStr?: string): string {

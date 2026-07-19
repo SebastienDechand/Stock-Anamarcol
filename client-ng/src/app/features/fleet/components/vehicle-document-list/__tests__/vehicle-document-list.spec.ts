@@ -34,7 +34,7 @@ describe('VehicleDocumentList', () => {
 
     const fixture = TestBed.createComponent(VehicleDocumentList);
     component = fixture.componentInstance;
-    component.vehicle = sampleVehicle;
+    fixture.componentRef.setInput('vehicle', sampleVehicle);
     fixture.detectChanges();
   });
 

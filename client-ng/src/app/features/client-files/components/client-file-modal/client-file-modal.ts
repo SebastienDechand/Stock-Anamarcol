@@ -1,11 +1,10 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
   OnChanges,
   SimpleChanges,
   inject,
+  input,
+  output,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -250,9 +249,9 @@ function emptyForm(): ClientFileForm {
 export class ClientFileModal implements OnChanges {
   private toast = inject(ToastService);
 
-  @Input() file: ClientFile | null = null;
-  @Output() save = new EventEmitter<{ id?: string; data: ClientFileForm }>();
-  @Output() closed = new EventEmitter<void>();
+  file = input<ClientFile | null>(null);
+  save = output<{ id?: string; data: ClientFileForm }>();
+  closed = output<void>();
 
   readonly x = X;
   readonly fileSpreadsheet = FileSpreadsheet;
@@ -288,38 +287,39 @@ export class ClientFileModal implements OnChanges {
   ];
 
   get isEdit(): boolean {
-    return !!this.file;
+    return !!this.file();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['file']) {
-      this.form = this.file
+      const file = this.file();
+      this.form = file
         ? {
-            societe: this.file.societe ?? '',
-            nom: this.file.nom ?? '',
-            prenom: this.file.prenom ?? '',
-            adresse: this.file.adresse ?? '',
-            cp: this.file.cp ?? '',
-            ville: this.file.ville ?? '',
-            tel: this.file.tel ?? '',
-            mobile: this.file.mobile ?? '',
-            email: this.file.email ?? '',
-            statutJuridique: this.file.statutJuridique ?? '',
-            raisonSociale: this.file.raisonSociale ?? '',
-            nomMagasin: this.file.nomMagasin ?? '',
-            siret: this.file.siret ?? '',
-            tvaIntra: this.file.tvaIntra ?? '',
-            codeNaf: this.file.codeNaf ?? '',
-            joursFermeture: this.file.joursFermeture ?? '',
-            visitePreinstallation: this.file.visitePreinstallation,
-            dateInstallationSouhaitee: this.file.dateInstallationSouhaitee ?? '',
-            dateFormationSouhaitee: this.file.dateFormationSouhaitee ?? '',
-            saisirFichierProduit: this.file.saisirFichierProduit,
-            decoupePlanMenuiserie: this.file.decoupePlanMenuiserie,
-            decoupePlanMarbrerie: this.file.decoupePlanMarbrerie,
-            ouverturePrevue: this.file.ouverturePrevue ?? '',
-            equipement: { ...emptyEquipement, ...this.file.equipement },
-            remarques: this.file.remarques ?? '',
+            societe: file.societe ?? '',
+            nom: file.nom ?? '',
+            prenom: file.prenom ?? '',
+            adresse: file.adresse ?? '',
+            cp: file.cp ?? '',
+            ville: file.ville ?? '',
+            tel: file.tel ?? '',
+            mobile: file.mobile ?? '',
+            email: file.email ?? '',
+            statutJuridique: file.statutJuridique ?? '',
+            raisonSociale: file.raisonSociale ?? '',
+            nomMagasin: file.nomMagasin ?? '',
+            siret: file.siret ?? '',
+            tvaIntra: file.tvaIntra ?? '',
+            codeNaf: file.codeNaf ?? '',
+            joursFermeture: file.joursFermeture ?? '',
+            visitePreinstallation: file.visitePreinstallation,
+            dateInstallationSouhaitee: file.dateInstallationSouhaitee ?? '',
+            dateFormationSouhaitee: file.dateFormationSouhaitee ?? '',
+            saisirFichierProduit: file.saisirFichierProduit,
+            decoupePlanMenuiserie: file.decoupePlanMenuiserie,
+            decoupePlanMarbrerie: file.decoupePlanMarbrerie,
+            ouverturePrevue: file.ouverturePrevue ?? '',
+            equipement: { ...emptyEquipement, ...file.equipement },
+            remarques: file.remarques ?? '',
           }
         : emptyForm();
     }
@@ -410,6 +410,6 @@ export class ClientFileModal implements OnChanges {
 
   submit(): void {
     if (!this.form.nom.trim()) return;
-    this.save.emit({ id: this.file?._id, data: { ...this.form } });
+    this.save.emit({ id: this.file()?._id, data: { ...this.form } });
   }
 }

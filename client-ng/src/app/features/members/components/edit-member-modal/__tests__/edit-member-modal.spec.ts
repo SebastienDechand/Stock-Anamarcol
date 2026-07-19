@@ -1,4 +1,4 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { EditMemberModal } from '../edit-member-modal';
 import type { User } from '../../../../../shared/models/user.model';
@@ -13,6 +13,7 @@ const sampleUser: User = {
 
 describe('EditMemberModal', () => {
   let component: EditMemberModal;
+  let fixture: ComponentFixture<EditMemberModal>;
 
   beforeEach(() => {
     TestBed.overrideComponent(EditMemberModal, { set: { template: '', imports: [] } });
@@ -20,9 +21,9 @@ describe('EditMemberModal', () => {
       imports: [EditMemberModal],
     });
 
-    const fixture = TestBed.createComponent(EditMemberModal);
+    fixture = TestBed.createComponent(EditMemberModal);
     component = fixture.componentInstance;
-    component.user = sampleUser;
+    fixture.componentRef.setInput('user', sampleUser);
     fixture.detectChanges();
   });
 
@@ -32,15 +33,15 @@ describe('EditMemberModal', () => {
     });
 
     it('returns the picture as-is when it is already an absolute or rooted URL', () => {
-      component.user = { ...sampleUser, picture: 'https://cdn.example.com/pic.jpg' };
+      fixture.componentRef.setInput('user', { ...sampleUser, picture: 'https://cdn.example.com/pic.jpg' });
       expect(component.avatarUrl).toBe('https://cdn.example.com/pic.jpg');
 
-      component.user = { ...sampleUser, picture: '/uploads/pic.jpg' };
+      fixture.componentRef.setInput('user', { ...sampleUser, picture: '/uploads/pic.jpg' });
       expect(component.avatarUrl).toBe('/uploads/pic.jpg');
     });
 
     it('prefixes a bare relative path with a leading slash', () => {
-      component.user = { ...sampleUser, picture: 'uploads/pic.jpg' };
+      fixture.componentRef.setInput('user', { ...sampleUser, picture: 'uploads/pic.jpg' });
       expect(component.avatarUrl).toBe('/uploads/pic.jpg');
     });
   });

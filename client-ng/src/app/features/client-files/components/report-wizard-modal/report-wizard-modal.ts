@@ -1,13 +1,12 @@
 import {
   Component,
   DestroyRef,
-  Input,
-  Output,
-  EventEmitter,
   OnChanges,
   SimpleChanges,
   signal,
   inject,
+  input,
+  output,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -50,11 +49,11 @@ function emptyUnit(): CashguardUnit {
   styleUrl: './report-wizard-modal.scss',
 })
 export class ReportWizardModal implements OnChanges {
-  @Input() clientFileId = '';
-  @Input() clientLabel = '';
-  @Input() existing: InterventionReport | null = null;
-  @Output() saved = new EventEmitter<void>();
-  @Output() closed = new EventEmitter<void>();
+  clientFileId = input('');
+  clientLabel = input('');
+  existing = input<InterventionReport | null>(null);
+  saved = output<void>();
+  closed = output<void>();
 
   private facade = inject(InterventionReportsFacade);
   private actions$ = inject(Actions);
@@ -83,7 +82,7 @@ export class ReportWizardModal implements OnChanges {
   ];
 
   get isEdit(): boolean {
-    return !!this.existing;
+    return !!this.existing();
   }
 
   get recap(): { caisses: string[]; pc: string; unitCount: number; unitNames: string } {
@@ -101,7 +100,7 @@ export class ReportWizardModal implements OnChanges {
   // ─── Lifecycle ───────────────────────────────────────────────────────────────
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['existing']) {
-      const e = this.existing;
+      const e = this.existing();
       this.step.set(1);
       if (e) {
         const caisses = e.twCaisses?.length
@@ -188,14 +187,14 @@ export class ReportWizardModal implements OnChanges {
     if (this.loading()) return;
     this.loading.set(true);
     const data = {
-      clientFile: this.clientFileId,
+      clientFile: this.clientFileId(),
       twCaisses: this.twCaisses(),
       twPc: this.twPc(),
       cashguardUnits: this.units(),
       notes: this.notes(),
     };
 
-    if (this.existing) {
+    if (this.existing()) {
       this.actions$
         .pipe(
           ofType(
@@ -210,7 +209,7 @@ export class ReportWizardModal implements OnChanges {
           if (action.type === InterventionReportsActions.updateReportSuccess.type)
             this.saved.emit();
         });
-      this.facade.update(this.existing._id, data);
+      this.facade.update(this.existing()!._id, data);
     } else {
       this.actions$
         .pipe(

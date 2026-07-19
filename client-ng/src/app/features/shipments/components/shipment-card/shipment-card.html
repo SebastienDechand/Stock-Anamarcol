@@ -1,67 +1,67 @@
-<div class="shipment-card" [class.shipment-card--sent]="shipment.sent">
+<div class="shipment-card" [class.shipment-card--sent]="shipment().sent">
   <div class="shipment-card__header">
-    <div class="shipment-card__name">{{ shipment.prenom }} {{ shipment.nom }}</div>
-    @if (shipment.sent) {
+    <div class="shipment-card__name">{{ shipment().prenom }} {{ shipment().nom }}</div>
+    @if (shipment().sent) {
       <span class="badge badge--green">{{ 'SHIPMENTS.STATUS_SENT' | translate }}</span>
     } @else {
       <span class="badge badge--orange">{{ 'SHIPMENTS.STATUS_PENDING' | translate }}</span>
     }
   </div>
 
-  @if (shipment.societe) {
+  @if (shipment().societe) {
     <div class="shipment-card__row">
       <lucide-icon [img]="user" [size]="14" />
-      <span>{{ shipment.societe }}</span>
+      <span>{{ shipment().societe }}</span>
     </div>
   }
 
   <div class="shipment-card__row">
     <lucide-icon [img]="mapPin" [size]="14" />
-    <span>{{ shipment.adresse }}, {{ shipment.codePostal }} {{ shipment.ville }}</span>
+    <span>{{ shipment().adresse }}, {{ shipment().codePostal }} {{ shipment().ville }}</span>
   </div>
 
   <div class="shipment-card__row">
     <lucide-icon [img]="packageIcon" [size]="14" />
-    <span>{{ shipment.piece }}</span>
+    <span>{{ shipment().piece }}</span>
   </div>
 
-  @if (shipment.requestDate) {
+  @if (shipment().requestDate) {
     <div class="shipment-card__row">
       <lucide-icon [img]="clock" [size]="14" />
       <span>{{
-        'SHIPMENTS.REQUESTED_ON' | translate: { date: formatDate(shipment.requestDate) }
+        'SHIPMENTS.REQUESTED_ON' | translate: { date: formatDate(shipment().requestDate) }
       }}</span>
     </div>
   }
 
-  @if (shipment.createdByName) {
+  @if (shipment().createdByName) {
     <p class="shipment-card__creator">
-      {{ 'SHIPMENTS.CREATED_BY_LABEL' | translate: { name: shipment.createdByName } }}
+      {{ 'SHIPMENTS.CREATED_BY_LABEL' | translate: { name: shipment().createdByName } }}
     </p>
   }
 
   <div class="shipment-card__footer">
     <button
       class="btn-icon"
-      (click)="viewDetail.emit(shipment)"
+      (click)="viewDetail.emit(shipment())"
       [title]="'SHIPMENTS.DETAIL' | translate"
     >
       <lucide-icon [img]="eye" [size]="16" />
     </button>
-    @if (!shipment.sent && canMarkSent) {
+    @if (!shipment().sent && canMarkSent()) {
       <button
         class="btn-success"
-        (click)="markSent.emit(shipment)"
+        (click)="markSent.emit(shipment())"
         [title]="'SHIPMENTS.MARK_SENT' | translate"
       >
         <lucide-icon [img]="check" [size]="14" />
         {{ 'SHIPMENTS.MARK_SENT' | translate }}
       </button>
     }
-    @if (canDelete) {
+    @if (canDelete()) {
       <button
         class="btn-icon btn-icon--danger"
-        (click)="delete.emit(shipment)"
+        (click)="delete.emit(shipment())"
         [title]="'SHIPMENTS.DELETE' | translate"
       >
         <lucide-icon [img]="trash2" [size]="16" />

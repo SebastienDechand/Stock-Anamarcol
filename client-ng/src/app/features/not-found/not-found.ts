@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { LucideAngularModule, Home } from 'lucide-angular';
@@ -12,8 +12,9 @@ import { TranslatePipe } from '@ngx-translate/core';
   styleUrl: './not-found.scss',
 })
 export class NotFound {
+  private router = inject(Router);
+
   readonly home = Home;
-  constructor(private router: Router) {}
   goHome() {
     this.router.navigate(['/home']);
   }

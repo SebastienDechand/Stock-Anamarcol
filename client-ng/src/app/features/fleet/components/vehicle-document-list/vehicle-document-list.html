@@ -1,14 +1,14 @@
 <div class="doc-list">
   <h3 class="doc-list__title">
     <lucide-icon [img]="fileText" [size]="16" />
-    {{ 'FLEET.DOCUMENTS' | translate }} ({{ vehicle.documents.length }})
+    {{ 'FLEET.DOCUMENTS' | translate }} ({{ vehicle().documents.length }})
   </h3>
 
-  @if (!vehicle.documents.length) {
+  @if (!vehicle().documents.length) {
     <p class="doc-list__empty">{{ 'COMMON.EMPTY' | translate }}</p>
   } @else {
     <ul class="doc-list__items">
-      @for (doc of vehicle.documents; track doc._id) {
+      @for (doc of vehicle().documents; track doc._id) {
         <li class="doc-list__item">
           <div class="doc-list__item-info">
             <span class="doc-list__item-name">{{ doc.name }}</span>
@@ -25,7 +25,7 @@
           >
             <lucide-icon [img]="fileText" [size]="14" />
           </a>
-          @if (isAdmin) {
+          @if (isAdmin()) {
             <button
               class="btn-icon btn-icon--danger"
               (click)="onDelete(doc)"
@@ -39,7 +39,7 @@
     </ul>
   }
 
-  @if (isAdmin) {
+  @if (isAdmin()) {
     <div class="doc-list__upload">
       <h4 class="doc-list__upload-title">{{ 'FLEET.ADD_DOC' | translate }}</h4>
       <div class="doc-list__upload-form">

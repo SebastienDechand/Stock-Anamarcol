@@ -1,15 +1,19 @@
+import { TestBed } from '@angular/core/testing';
 import { describe, it, expect } from 'vitest';
 import { FiltersModal } from '../filters-modal';
 
 describe('FiltersModal — togglePrepa()', () => {
   function build(): FiltersModal {
-    const modal = new FiltersModal();
-    modal.selectedSuppliers = [];
-    modal.selectedStatuses = [];
-    modal.cgKit = false;
-    modal.tpvKit = false;
-    modal.ngOnInit();
-    return modal;
+    TestBed.overrideComponent(FiltersModal, { set: { template: '', imports: [] } });
+    TestBed.configureTestingModule({ imports: [FiltersModal] });
+
+    const fixture = TestBed.createComponent(FiltersModal);
+    fixture.componentRef.setInput('selectedSuppliers', []);
+    fixture.componentRef.setInput('selectedStatuses', []);
+    fixture.componentRef.setInput('cgKit', false);
+    fixture.componentRef.setInput('tpvKit', false);
+    fixture.detectChanges();
+    return fixture.componentInstance;
   }
 
   it('should activate CashGuard when neither is active', () => {

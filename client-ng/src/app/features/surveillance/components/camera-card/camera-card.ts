@@ -3,7 +3,7 @@ import {
   Component,
   computed,
   ElementRef,
-  Input,
+  input,
   OnDestroy,
   OnInit,
   signal,
@@ -35,10 +35,10 @@ function clampOffset(x: number, y: number, zoom: number): { x: number; y: number
   styleUrl: './camera-card.scss',
 })
 export class CameraCard implements OnInit, AfterViewInit, OnDestroy {
-  @Input({ required: true }) camera!: CameraConfig;
-  @Input() showHeader = true;
-  @Input() showFooter = true;
-  @Input() fullHeight = false;
+  camera = input.required<CameraConfig>();
+  showHeader = input(true);
+  showFooter = input(true);
+  fullHeight = input(false);
   @ViewChild('wrapper') wrapperEl?: ElementRef<HTMLDivElement>;
 
   streamUrl = signal('');
@@ -58,7 +58,7 @@ export class CameraCard implements OnInit, AfterViewInit, OnDestroy {
   private touchLastPos: { x: number; y: number } | null = null;
 
   ngOnInit(): void {
-    this.streamUrl.set(buildStreamUrl(this.camera));
+    this.streamUrl.set(buildStreamUrl(this.camera()));
   }
 
   ngAfterViewInit(): void {

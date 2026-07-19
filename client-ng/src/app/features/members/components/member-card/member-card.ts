@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -13,27 +13,27 @@ import { ROLE_DISPLAY_ORDER, ROLE_LABEL_KEYS } from '../../../../shared/constant
   styleUrl: './member-card.scss',
 })
 export class MemberCard {
-  @Input({ required: true }) user!: User;
-  @Input() showRoles = false;
-  @Input() canDelete = false;
-  @Input() clickable = false;
+  user = input.required<User>();
+  showRoles = input(false);
+  canDelete = input(false);
+  clickable = input(false);
 
-  @Output() selected = new EventEmitter<User>();
-  @Output() deleteRequested = new EventEmitter<User>();
+  selected = output<User>();
+  deleteRequested = output<User>();
 
   get initials(): string {
-    return (this.user.pseudo ?? '?')[0].toUpperCase();
+    return (this.user().pseudo ?? '?')[0].toUpperCase();
   }
 
   get avatarUrl(): string {
-    const picture = this.user.picture;
+    const picture = this.user().picture;
     if (!picture) return '';
     if (picture.startsWith('http') || picture.startsWith('/')) return picture;
     return `/${picture}`;
   }
 
   get badges() {
-    const userRoles = this.user.roles ?? [];
+    const userRoles = this.user().roles ?? [];
     return ROLE_DISPLAY_ORDER.filter((role) => userRoles.includes(role)).map((role) => ({
       role,
       labelKey: ROLE_LABEL_KEYS[role],
@@ -41,6 +41,6 @@ export class MemberCard {
   }
 
   onClick() {
-    if (this.clickable) this.selected.emit(this.user);
+    if (this.clickable()) this.selected.emit(this.user());
   }
 }

@@ -1,40 +1,40 @@
 <div class="kpi-grid">
   <app-kpi-card
     [label]="'HOME.KPI_ITEMS_COUNT' | translate"
-    [value]="stats.numberOfArticles"
+    [value]="stats().numberOfArticles"
     icon="package"
     accent="brand"
   />
   <app-kpi-card
     [label]="'HOME.KPI_TOTAL_STOCK' | translate"
-    [value]="stats.totalStock"
+    [value]="stats().totalStock"
     icon="warehouse"
     accent="blue"
   />
   <app-kpi-card
     [label]="'HOME.KPI_SUPPLIERS' | translate"
-    [value]="stats.numberOfSuppliers"
+    [value]="stats().numberOfSuppliers"
     icon="truck"
     accent="amber"
   />
   <app-kpi-card
     [label]="'HOME.KPI_LOW_STOCK' | translate"
-    [value]="stats.numberOfLowStockArticles"
+    [value]="stats().numberOfLowStockArticles"
     icon="alert-triangle"
     accent="red"
   />
-  @if (stats.cgKit !== undefined) {
+  @if (stats().cgKit !== undefined) {
     <app-kpi-card
       [label]="'HOME.KPI_PRECA_CG' | translate"
-      [value]="stats.cgKit"
+      [value]="stats().cgKit!"
       icon="monitor"
       accent="violet"
     />
   }
-  @if (stats.tpvKit !== undefined) {
+  @if (stats().tpvKit !== undefined) {
     <app-kpi-card
       [label]="'HOME.KPI_PRECA_TPV' | translate"
-      [value]="stats.tpvKit"
+      [value]="stats().tpvKit!"
       icon="credit-card"
       accent="violet"
     />
