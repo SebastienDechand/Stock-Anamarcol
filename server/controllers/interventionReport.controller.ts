@@ -50,7 +50,7 @@ export const createInterventionReport = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const data = { ...req.body, createdBy: res.locals.user?.pseudo };
+    const data = { ...req.body, createdBy: res.locals.user?.username };
     const report = await InterventionReportModel.create(data);
     res.status(201).json({ interventionReport: report._id });
   } catch (err) {
@@ -89,7 +89,7 @@ export const updateInterventionReport = async (
         (report as any)[field] = req.body[field];
       }
     }
-    report.updatedBy = res.locals.user?.pseudo;
+    report.updatedBy = res.locals.user?.username;
 
     const updated = await report.save();
     res.status(200).json(updated);

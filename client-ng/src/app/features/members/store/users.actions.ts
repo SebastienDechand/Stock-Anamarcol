@@ -3,20 +3,20 @@ import { User } from '../../../shared/models/user.model';
 import { Role } from '../../../shared/constants/roles.constants';
 
 export interface NewUserData {
-  pseudo: string;
+  username: string;
   email: string;
   password: string;
-  poste?: string;
-  numero?: string;
-  pole?: string;
+  position?: string;
+  phone?: string;
+  department?: string;
 }
 
 export interface UpdateUserData {
-  pseudo?: string;
+  username?: string;
   email?: string;
-  poste?: string;
-  numero?: string;
-  pole?: string;
+  position?: string;
+  phone?: string;
+  department?: string;
 }
 
 export const UsersActions = createActionGroup({

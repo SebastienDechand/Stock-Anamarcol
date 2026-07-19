@@ -83,7 +83,7 @@ describe("Shipments Controller", () => {
   beforeEach(() => {
     req = { params: {}, body: {}, query: {} };
     res = {
-      locals: { user: { pseudo: "hotliner", _id: "1" } },
+      locals: { user: { username: "hotliner", _id: "1" } },
       status: vi.fn().mockReturnThis() as unknown as Response["status"],
       json: vi.fn() as unknown as Response["json"],
       setHeader: vi.fn() as unknown as Response["setHeader"],

@@ -33,7 +33,7 @@ describe("User Controller", () => {
   beforeEach(() => {
     req = { params: {}, body: {} };
     res = {
-      locals: { user: { _id: "admin-id", pseudo: "admin", roles: [Role.ADMIN] } },
+      locals: { user: { _id: "admin-id", username: "admin", roles: [Role.ADMIN] } },
       status: vi.fn().mockReturnThis() as unknown as Response["status"],
       json: vi.fn() as unknown as Response["json"],
       send: vi.fn() as unknown as Response["send"],
@@ -50,8 +50,8 @@ describe("User Controller", () => {
   describe("getAllUsers", () => {
     it("should return all users", async () => {
       const mockUsers = [
-        { _id: "1", pseudo: "user1" },
-        { _id: "2", pseudo: "user2" },
+        { _id: "1", username: "user1" },
+        { _id: "2", username: "user2" },
       ];
       mockUserModel.find.mockReturnValue({
         select: vi.fn().mockResolvedValue(mockUsers),
@@ -73,7 +73,7 @@ describe("User Controller", () => {
 
     it("should return user info", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
-      const mockUser = { _id: "507f1f77bcf86cd799439011", pseudo: "test" };
+      const mockUser = { _id: "507f1f77bcf86cd799439011", username: "test" };
 
       mockUserModel.findById.mockReturnValue({
         select: vi.fn().mockReturnValue({
@@ -128,39 +128,39 @@ describe("User Controller", () => {
 
     it("should update a user successfully", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { email: "new@test.com", poste: "Dev" };
+      req.body = { email: "new@test.com", position: "Dev" };
 
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
         email: "old@test.com",
-        poste: "",
+        position: "",
         save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
           email: "new@test.com",
-          poste: "Dev",
+          position: "Dev",
         }),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await updateUser(req as Request, res as Response);
       expect(mockUser.email).toBe("new@test.com");
-      expect(mockUser.poste).toBe("Dev");
+      expect(mockUser.position).toBe("Dev");
       expect(mockUser.save).toHaveBeenCalled();
     });
 
-    it("should auto-assign hotline role when pole set to Hotline", async () => {
+    it("should auto-assign hotline role when department set to Hotline", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { pole: "Hotline" };
+      req.body = { department: "Hotline" };
 
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
         email: "old@test.com",
-        poste: "",
-        pole: "",
+        position: "",
+        department: "",
         roles: [Role.USER],
         save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
-          pole: "Hotline",
+          department: "Hotline",
           roles: [Role.USER, Role.HOTLINE],
         }),
       };
@@ -171,19 +171,19 @@ describe("User Controller", () => {
       expect(mockUser.save).toHaveBeenCalled();
     });
 
-    it("should downgrade hotline role when pole removed", async () => {
+    it("should downgrade hotline role when department removed", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { pole: "Direction" };
+      req.body = { department: "Management" };
 
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
         email: "old@test.com",
-        poste: "",
-        pole: "Hotline",
+        position: "",
+        department: "Hotline",
         roles: [Role.USER, Role.HOTLINE],
         save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
-          pole: "Direction",
+          department: "Management",
           roles: [Role.USER],
         }),
       };
@@ -194,19 +194,19 @@ describe("User Controller", () => {
       expect(mockUser.save).toHaveBeenCalled();
     });
 
-    it("should NOT override admin role when pole set to Hotline", async () => {
+    it("should NOT override admin role when department set to Hotline", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { pole: "Hotline" };
+      req.body = { department: "Hotline" };
 
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
         email: "admin@test.com",
-        poste: "",
-        pole: "Direction",
+        position: "",
+        department: "Management",
         roles: [Role.ADMIN, Role.USER],
         save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
-          pole: "Hotline",
+          department: "Hotline",
           roles: [Role.ADMIN, Role.USER],
         }),
       };
@@ -218,19 +218,19 @@ describe("User Controller", () => {
       expect(mockUser.save).toHaveBeenCalled();
     });
 
-    it("should NOT override superadmin role when pole set to Hotline", async () => {
+    it("should NOT override superadmin role when department set to Hotline", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { pole: "Hotline" };
+      req.body = { department: "Hotline" };
 
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
         email: "super@test.com",
-        poste: "",
-        pole: "Direction",
+        position: "",
+        department: "Management",
         roles: [Role.SUPERADMIN, Role.ADMIN, Role.USER],
         save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
-          pole: "Hotline",
+          department: "Hotline",
           roles: [Role.SUPERADMIN, Role.ADMIN, Role.USER],
         }),
       };
@@ -243,48 +243,48 @@ describe("User Controller", () => {
     });
 
     it("should return 403 when a non-admin tries to update another user", async () => {
-      res.locals!.user = { _id: "user-id", pseudo: "regular", roles: [Role.USER] };
+      res.locals!.user = { _id: "user-id", username: "regular", roles: [Role.USER] };
       req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { numero: "0102030405" };
+      req.body = { phone: "0102030405" };
 
       await updateUser(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(403);
       expect(mockUserModel.findById).not.toHaveBeenCalled();
     });
 
-    it("should let a non-admin update their own numero and picture", async () => {
-      res.locals!.user = { _id: "507f1f77bcf86cd799439011", pseudo: "regular", roles: [Role.USER] };
+    it("should let a non-admin update their own phone and picture", async () => {
+      res.locals!.user = { _id: "507f1f77bcf86cd799439011", username: "regular", roles: [Role.USER] };
       req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { numero: "0102030405", picture: "https://cdn.example.com/pic.jpg" };
+      req.body = { phone: "0102030405", picture: "https://cdn.example.com/pic.jpg" };
 
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
-        numero: "",
+        phone: "",
         picture: "",
         save: vi.fn().mockResolvedValue({
           _id: "507f1f77bcf86cd799439011",
-          numero: "0102030405",
+          phone: "0102030405",
           picture: "https://cdn.example.com/pic.jpg",
         }),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await updateUser(req as Request, res as Response);
-      expect(mockUser.numero).toBe("0102030405");
+      expect(mockUser.phone).toBe("0102030405");
       expect(mockUser.picture).toBe("https://cdn.example.com/pic.jpg");
       expect(mockUser.save).toHaveBeenCalled();
     });
 
     it("should silently ignore admin-only fields when a non-admin updates their own record", async () => {
-      res.locals!.user = { _id: "507f1f77bcf86cd799439011", pseudo: "regular", roles: [Role.USER] };
+      res.locals!.user = { _id: "507f1f77bcf86cd799439011", username: "regular", roles: [Role.USER] };
       req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { email: "hacked@test.com", poste: "Boss", pole: "Hotline" };
+      req.body = { email: "hacked@test.com", position: "Boss", department: "Hotline" };
 
       const mockUser = {
         _id: "507f1f77bcf86cd799439011",
         email: "old@test.com",
-        poste: "",
-        pole: "",
+        position: "",
+        department: "",
         roles: [Role.USER],
         save: vi.fn().mockResolvedValue({}),
       };
@@ -292,8 +292,8 @@ describe("User Controller", () => {
 
       await updateUser(req as Request, res as Response);
       expect(mockUser.email).toBe("old@test.com");
-      expect(mockUser.poste).toBe("");
-      expect(mockUser.pole).toBe("");
+      expect(mockUser.position).toBe("");
+      expect(mockUser.department).toBe("");
       expect(mockUser.roles).not.toContain(Role.HOTLINE);
       expect(mockUser.save).toHaveBeenCalled();
     });

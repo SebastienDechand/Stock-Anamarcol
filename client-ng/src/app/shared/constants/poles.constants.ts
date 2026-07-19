@@ -1,12 +1,18 @@
-export interface PoleInfo {
+export interface DepartmentInfo {
   label: string;
   roles?: string[];
 }
 
-export const POLES: PoleInfo[] = [{ label: 'Hotline' }, { label: 'Monteur' }];
+export const DEPARTMENTS: DepartmentInfo[] = [{ label: 'Hotline' }, { label: 'Installer' }];
 
-export const POLE_ENTREPOT = 'Entrepôt';
-export const POLE_DIRECTION = 'Direction';
-export const POLE_GESTION = 'Gestion du site';
+export const DEPARTMENT_WAREHOUSE = 'Warehouse';
+export const DEPARTMENT_MANAGEMENT = 'Management';
+export const DEPARTMENT_SITE_MANAGEMENT = 'Site Management';
 
-export const ALL_POLE_LABELS = [POLE_DIRECTION, 'Hotline', POLE_ENTREPOT, 'Monteur', POLE_GESTION];
+export const ALL_DEPARTMENT_LABELS = [
+  DEPARTMENT_MANAGEMENT,
+  'Hotline',
+  DEPARTMENT_WAREHOUSE,
+  'Installer',
+  DEPARTMENT_SITE_MANAGEMENT,
+];

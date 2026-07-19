@@ -43,7 +43,7 @@ export const createContact = async (
       "create",
       "contact",
       contact._id.toString(),
-      res.locals.user?.pseudo,
+      res.locals.user?.username,
       { entityName: name },
     );
     res.status(200).json({ contact: contact._id });
@@ -100,7 +100,7 @@ export const updateContact = async (
           "update",
           "contact",
           updatedContact._id.toString(),
-          res.locals.user?.pseudo,
+          res.locals.user?.username,
           { changes, entityName: updatedContact.name },
         );
       }
@@ -142,7 +142,7 @@ export const deleteContact = async (
         "delete",
         "contact",
         String(req.params.id),
-        res.locals.user?.pseudo,
+        res.locals.user?.username,
         { deleted: toDelete },
       );
     } catch (err) {

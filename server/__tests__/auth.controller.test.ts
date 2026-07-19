@@ -43,12 +43,12 @@ describe("Auth Controller", () => {
   describe("signUp", () => {
     it("should create a user and return 200 with user ID", async () => {
       req.body = {
-        pseudo: "testuser",
+        username: "testuser",
         email: "test@test.com",
         password: "Password1",
-        poste: "Dev",
-        numero: "0600000000",
-        pole: "Direction",
+        position: "Dev",
+        phone: "0600000000",
+        department: "Management",
       };
       mockCreate.mockResolvedValue({ _id: "newuser123" });
 
@@ -56,22 +56,22 @@ describe("Auth Controller", () => {
 
       expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          pseudo: "testuser",
+          username: "testuser",
           email: "test@test.com",
           password: "Password1",
-          pole: "Direction",
+          department: "Management",
         }),
       );
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({ user: "newuser123" });
     });
 
-    it("should auto-assign hotline role when pole is Hotline", async () => {
+    it("should auto-assign hotline role when department is Hotline", async () => {
       req.body = {
-        pseudo: "hotlineuser",
+        username: "hotlineuser",
         email: "hotline@test.com",
         password: "Password1",
-        pole: "Hotline",
+        department: "Hotline",
       };
       mockCreate.mockResolvedValue({ _id: "hotline123" });
 
@@ -79,18 +79,18 @@ describe("Auth Controller", () => {
 
       expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({
-          pole: "Hotline",
+          department: "Hotline",
           roles: [Role.USER, Role.HOTLINE],
         }),
       );
     });
 
-    it("should NOT set role when pole is not Hotline", async () => {
+    it("should NOT set role when department is not Hotline", async () => {
       req.body = {
-        pseudo: "normaluser",
+        username: "normaluser",
         email: "normal@test.com",
         password: "Password1",
-        pole: "Direction",
+        department: "Management",
       };
       mockCreate.mockResolvedValue({ _id: "normal123" });
 
@@ -102,7 +102,7 @@ describe("Auth Controller", () => {
     });
 
     it("should return 400 with errors on validation failure", async () => {
-      req.body = { pseudo: "ab", email: "bad", password: "1" };
+      req.body = { username: "ab", email: "bad", password: "1" };
       const validationError = new Error("validation failed");
       (validationError as unknown as Record<string, unknown>).code = undefined;
       mockCreate.mockRejectedValue(validationError);
@@ -113,9 +113,9 @@ describe("Auth Controller", () => {
       expect(res.json).toHaveBeenCalledWith({ errors: expect.any(Object) });
     });
 
-    it("should return 400 with duplicate pseudo error", async () => {
+    it("should return 400 with duplicate username error", async () => {
       req.body = {
-        pseudo: "existing",
+        username: "existing",
         email: "new@test.com",
         password: "Password1",
       };
@@ -124,7 +124,7 @@ describe("Auth Controller", () => {
         keyValue: Record<string, unknown>;
       };
       dupError.code = 11000;
-      dupError.keyValue = { pseudo: "existing" };
+      dupError.keyValue = { username: "existing" };
       mockCreate.mockRejectedValue(dupError);
 
       await signUp(req as Request, res as Response);
@@ -139,7 +139,7 @@ describe("Auth Controller", () => {
       req.body = { email: "test@test.com", password: "Password1" };
       mockLogin.mockResolvedValue({
         _id: "user123",
-        pseudo: "testuser",
+        username: "testuser",
         roles: [Role.USER],
       });
 

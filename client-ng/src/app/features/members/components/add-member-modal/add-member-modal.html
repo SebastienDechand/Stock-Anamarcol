@@ -13,8 +13,8 @@
           <label class="form-label">{{ 'MEMBERS.PSEUDO' | translate }} *</label>
           <input
             class="form-input"
-            [(ngModel)]="form.pseudo"
-            name="pseudo"
+            [(ngModel)]="form.username"
+            name="username"
             required
             [placeholder]="'MEMBERS.PSEUDO' | translate"
           />
@@ -63,8 +63,8 @@
           <label class="form-label">{{ 'MEMBERS.POSITION' | translate }}</label>
           <input
             class="form-input"
-            [(ngModel)]="form.poste"
-            name="poste"
+            [(ngModel)]="form.position"
+            name="position"
             [placeholder]="'MEMBERS.POSITION_PLACEHOLDER' | translate"
           />
         </div>
@@ -72,8 +72,8 @@
           <label class="form-label">{{ 'MEMBERS.PHONE' | translate }}</label>
           <input
             class="form-input"
-            [(ngModel)]="form.numero"
-            name="numero"
+            [(ngModel)]="form.phone"
+            name="phone"
             placeholder="06 XX XX XX XX"
           />
         </div>
@@ -81,10 +81,10 @@
 
       <div class="form-row">
         <label class="form-label">{{ 'MEMBERS.POLE' | translate }}</label>
-        <select class="form-input" [(ngModel)]="form.pole" name="pole">
+        <select class="form-input" [(ngModel)]="form.department" name="department">
           <option value="">{{ 'MEMBERS.SELECT' | translate }}</option>
-          @for (pole of poles; track pole) {
-            <option [value]="pole">{{ pole }}</option>
+          @for (department of departments; track department) {
+            <option [value]="department">{{ department }}</option>
           }
         </select>
       </div>
@@ -101,7 +101,7 @@
         <button
           type="submit"
           class="btn-primary"
-          [disabled]="!form.pseudo.trim() || !form.email.trim() || !form.password.trim()"
+          [disabled]="!form.username.trim() || !form.email.trim() || !form.password.trim()"
           [title]="'COMMON.CREATE' | translate"
         >
           {{ 'COMMON.CREATE' | translate }}

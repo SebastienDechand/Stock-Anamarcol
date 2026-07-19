@@ -35,7 +35,7 @@ export const setRole = async (req: Request, res: Response): Promise<void> => {
       "update",
       "user",
       updated._id.toString(),
-      res.locals.user?.pseudo,
+      res.locals.user?.username,
       { roles: user.roles },
     );
     res
@@ -73,7 +73,7 @@ export const setRoles = async (req: Request, res: Response): Promise<void> => {
       "update",
       "user",
       updated._id.toString(),
-      res.locals.user?.pseudo,
+      res.locals.user?.username,
       { roles },
     );
     res.status(200).json({ message: "Rôles mis à jour", roles });
@@ -143,19 +143,19 @@ export const updateUser = async (
       typeof user.toObject === "function" ? user.toObject() : { ...user };
 
     // Self-service fields — allowed for the account owner and admins alike.
-    if (req.body.numero) user.numero = req.body.numero;
+    if (req.body.phone) user.phone = req.body.phone;
     if (req.body.picture) user.picture = req.body.picture;
 
     // Admin-only fields — a non-admin editing their own record cannot touch
-    // these (email/password/poste/pole all affect access or role assignment).
+    // these (email/password/position/department all affect access or role assignment).
     if (isAdmin) {
       if (req.body.email) user.email = req.body.email;
       if (req.body.password) user.password = req.body.password;
-      if (req.body.poste) user.poste = req.body.poste;
-      if (req.body.pole !== undefined) {
-        user.pole = req.body.pole;
-        // Auto-assign/downgrade hotline role based on pole (do not override admins)
-        if (String(req.body.pole) === "Hotline") {
+      if (req.body.position) user.position = req.body.position;
+      if (req.body.department !== undefined) {
+        user.department = req.body.department;
+        // Auto-assign/downgrade hotline role based on department (do not override admins)
+        if (String(req.body.department) === "Hotline") {
           if (
             !user.roles.includes(Role.ADMIN) &&
             !user.roles.includes(Role.SUPERADMIN) &&
@@ -177,9 +177,9 @@ export const updateUser = async (
       const changes: Record<string, { old?: unknown; new?: unknown }> = {};
       const fields: Array<keyof IUser> = [
         "email",
-        "poste",
-        "numero",
-        "pole",
+        "position",
+        "phone",
+        "department",
         "picture",
         "roles",
       ];
@@ -197,7 +197,7 @@ export const updateUser = async (
           "update",
           "user",
           updatedUser._id.toString(),
-          res.locals.user?.pseudo,
+          res.locals.user?.username,
           { changes },
         );
       }
@@ -243,7 +243,7 @@ export const deleteUser = async (
         "delete",
         "user",
         String(req.params.id),
-        res.locals.user?.pseudo,
+        res.locals.user?.username,
         { deleted: toDelete },
       );
     } catch (err) {

@@ -7,17 +7,17 @@ import { Role } from '../../../../shared/constants/roles.constants';
 
 const sampleUser: User = {
   _id: 'u1',
-  pseudo: 'jdupont',
+  username: 'jdupont',
   email: 'jdupont@example.com',
-  poste: 'Technicien',
+  position: 'Technicien',
   roles: [Role.USER],
 };
 
 const otherUser: User = {
   _id: 'u2',
-  pseudo: 'cmartin',
+  username: 'cmartin',
   email: 'cmartin@example.com',
-  poste: 'Admin',
+  position: 'Admin',
   roles: [Role.ADMIN],
 };
 
@@ -72,18 +72,21 @@ describe('usersReducer', () => {
   it('should handle updateUserSuccess by merging data into the matching user', () => {
     const state = usersReducer(
       { ...initialUsersState, users: [sampleUser, otherUser] },
-      UsersActions.updateUserSuccess({ id: 'u1', data: { pseudo: 'jdupont2', poste: 'Senior' } }),
+      UsersActions.updateUserSuccess({
+        id: 'u1',
+        data: { username: 'jdupont2', position: 'Senior' },
+      }),
     );
     const updated = state.users.find((u) => u._id === 'u1');
-    expect(updated?.pseudo).toBe('jdupont2');
-    expect(updated?.poste).toBe('Senior');
+    expect(updated?.username).toBe('jdupont2');
+    expect(updated?.position).toBe('Senior');
     expect(updated?.email).toBe('jdupont@example.com');
   });
 
   it('should handle updateUserSuccess without touching other users', () => {
     const state = usersReducer(
       { ...initialUsersState, users: [sampleUser, otherUser] },
-      UsersActions.updateUserSuccess({ id: 'u1', data: { pseudo: 'jdupont2' } }),
+      UsersActions.updateUserSuccess({ id: 'u1', data: { username: 'jdupont2' } }),
     );
     expect(state.users.find((u) => u._id === 'u2')).toEqual(otherUser);
   });

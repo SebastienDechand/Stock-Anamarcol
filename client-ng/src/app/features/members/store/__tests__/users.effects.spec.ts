@@ -16,30 +16,30 @@ import type { NewUserData, UpdateUserData } from '../users.actions';
 
 const sampleUser: User = {
   _id: 'u1',
-  pseudo: 'jdupont',
+  username: 'jdupont',
   email: 'jdupont@example.com',
-  poste: 'Technicien',
+  position: 'Technicien',
   roles: [Role.USER],
 };
 
 const otherUser: User = {
   _id: 'u2',
-  pseudo: 'cmartin',
+  username: 'cmartin',
   email: 'cmartin@example.com',
-  poste: 'Admin',
+  position: 'Admin',
   roles: [Role.ADMIN],
 };
 
 const newUserData: NewUserData = {
-  pseudo: 'newuser',
+  username: 'newuser',
   email: 'newuser@example.com',
   password: 'password123',
-  poste: 'Monteur',
+  position: 'Monteur',
 };
 
 const updateUserData: UpdateUserData = {
-  pseudo: 'jdupont-updated',
-  poste: 'Senior Technicien',
+  username: 'jdupont-updated',
+  position: 'Senior Technicien',
 };
 
 describe('UsersEffects', () => {

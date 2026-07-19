@@ -7,7 +7,7 @@ import { logEvent } from "../utils/audit.utils";
 export const getAllVehicles = async (req: Request, res: Response) => {
   try {
     const vehicles = await VehicleModel.find()
-      .populate("assignedTo", "pseudo email poste")
+      .populate("assignedTo", "username email position")
       .sort({ createdAt: -1 });
 
     res.status(200).json(vehicles);
@@ -23,7 +23,7 @@ export const getVehicleById = async (req: Request, res: Response) => {
     const { id } = req.params;
     const vehicle = await VehicleModel.findById(id).populate(
       "assignedTo",
-      "pseudo email poste",
+      "username email position",
     );
 
     if (!vehicle) {
@@ -91,7 +91,7 @@ export const createVehicle = async (req: Request, res: Response) => {
       if (!user) {
         return res.status(404).json({ message: "Assigned user not found" });
       }
-      assignedToName = user.pseudo;
+      assignedToName = user.username;
     }
 
     const newVehicle = new VehicleModel({
@@ -107,7 +107,7 @@ export const createVehicle = async (req: Request, res: Response) => {
       assignedTo: assignedTo || undefined,
       assignedToName,
       notes,
-      createdBy: res.locals.user?.pseudo || "System",
+      createdBy: res.locals.user?.username || "System",
     });
 
     await newVehicle.save();
@@ -115,7 +115,7 @@ export const createVehicle = async (req: Request, res: Response) => {
       "create",
       "vehicle",
       newVehicle._id.toString(),
-      res.locals.user?.pseudo,
+      res.locals.user?.username,
       {
         brand,
         model,
@@ -191,7 +191,7 @@ export const updateVehicle = async (req: Request, res: Response) => {
           return res.status(404).json({ message: "Assigned user not found" });
         }
         vehicle.assignedTo = assignedTo;
-        vehicle.assignedToName = user.pseudo;
+        vehicle.assignedToName = user.username;
       }
     }
 
@@ -209,11 +209,11 @@ export const updateVehicle = async (req: Request, res: Response) => {
     if (notes !== undefined) vehicle.notes = notes;
 
     await vehicle.save();
-    await logEvent("update", "vehicle", id as string, res.locals.user?.pseudo, {
+    await logEvent("update", "vehicle", id as string, res.locals.user?.username, {
       updatedFields: { brand, model, format, licensePlate },
     });
 
-    const updated = await vehicle.populate("assignedTo", "pseudo email poste");
+    const updated = await vehicle.populate("assignedTo", "username email position");
     res.status(200).json(updated);
   } catch (error) {
     console.error("Error updating vehicle:", error);
@@ -231,7 +231,7 @@ export const deleteVehicle = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Vehicle not found" });
     }
 
-    await logEvent("delete", "vehicle", id as string, res.locals.user?.pseudo, {
+    await logEvent("delete", "vehicle", id as string, res.locals.user?.username, {
       licensePlate: vehicle.licensePlate,
     });
 
@@ -261,7 +261,7 @@ export const searchVehicles = async (req: Request, res: Response) => {
     if (assignedTo) filter.assignedTo = assignedTo;
 
     const vehicles = await VehicleModel.find(filter)
-      .populate("assignedTo", "pseudo email poste")
+      .populate("assignedTo", "username email position")
       .sort({ createdAt: -1 });
 
     res.status(200).json(vehicles);
@@ -293,7 +293,7 @@ export const uploadDocument = async (req: Request, res: Response) => {
       filename: file.filename,
       type: docType,
       uploadedAt: new Date(),
-      uploadedBy: res.locals.user?.pseudo,
+      uploadedBy: res.locals.user?.username,
     };
 
     vehicle.documents.push(doc);
@@ -303,7 +303,7 @@ export const uploadDocument = async (req: Request, res: Response) => {
       "upload_document",
       "vehicle",
       id as string,
-      res.locals.user?.pseudo,
+      res.locals.user?.username,
       {
         docType,
         filename: file.filename,
@@ -326,7 +326,7 @@ export const deleteDocument = async (req: Request, res: Response) => {
       id,
       { $pull: { documents: { _id: docId } } },
       { new: true },
-    ).populate("assignedTo", "pseudo email poste");
+    ).populate("assignedTo", "username email position");
 
     if (!vehicle) {
       return res.status(404).json({ message: "Vehicle not found" });
@@ -336,7 +336,7 @@ export const deleteDocument = async (req: Request, res: Response) => {
       "delete_document",
       "vehicle",
       id as string,
-      res.locals.user?.pseudo,
+      res.locals.user?.username,
       {
         docId,
       },

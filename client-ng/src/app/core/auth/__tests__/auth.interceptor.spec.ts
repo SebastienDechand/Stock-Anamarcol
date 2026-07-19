@@ -46,7 +46,7 @@ describe('authInterceptor', () => {
   });
 
   it('should add withCredentials on PUT requests', () => {
-    http.put('/api/user/123', { pseudo: 'test' }).subscribe();
+    http.put('/api/user/123', { username: 'test' }).subscribe();
 
     const req = httpMock.expectOne('/api/user/123');
     expect(req.request.withCredentials).toBe(true);

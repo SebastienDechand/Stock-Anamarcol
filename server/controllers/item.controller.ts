@@ -159,7 +159,7 @@ export const createItem = async (
     try {
       logItemCreate(
         String(item._id),
-        res.locals.user?.pseudo || modifierName || "Inconnu",
+        res.locals.user?.username || modifierName || "Inconnu",
       );
     } catch (err) {
       console.error("logItemCreate error:", err);
@@ -218,7 +218,7 @@ export const updateItem = async (
         req.params.id as string,
         oldItem,
         req.body,
-        res.locals.user?.pseudo ||
+        res.locals.user?.username ||
           req.body.modifierName ||
           oldItem.modifierName ||
           "Inconnu",
@@ -263,7 +263,7 @@ export const deleteItem = async (
         logItemDelete(
           req.params.id as string,
           String(item.name ?? ""),
-          res.locals.user?.pseudo || "Admin",
+          res.locals.user?.username || "Admin",
         );
       } catch (err) {
         console.error("logItemDelete error:", err);
@@ -311,7 +311,7 @@ export const prepaBatch = async (
 
   try {
     const items = await ItemModel.find({ [prepa]: true });
-    const userName = res.locals.user?.pseudo || "Admin";
+    const userName = res.locals.user?.username || "Admin";
     let updated = 0;
 
     for (const item of items) {

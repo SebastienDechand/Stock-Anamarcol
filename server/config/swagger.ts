@@ -40,11 +40,12 @@ const options: swaggerJsdoc.Options = {
           type: "object",
           properties: {
             _id: { type: "string" },
-            pseudo: { type: "string" },
+            username: { type: "string" },
             email: { type: "string" },
             picture: { type: "string" },
-            poste: { type: "string" },
-            numero: { type: "string" },
+            position: { type: "string" },
+            phone: { type: "string" },
+            department: { type: "string" },
             role: { type: "string" },
           },
         },
@@ -91,11 +92,11 @@ const options: swaggerJsdoc.Options = {
                 schema: {
                   type: "object",
                   properties: {
-                    pseudo: { type: "string" },
+                    username: { type: "string" },
                     email: { type: "string" },
                     password: { type: "string" },
                   },
-                  required: ["pseudo", "email", "password"],
+                  required: ["username", "email", "password"],
                 },
               },
             },
@@ -175,11 +176,11 @@ const options: swaggerJsdoc.Options = {
                 schema: {
                   type: "object",
                   properties: {
-                    pseudo: { type: "string" },
+                    username: { type: "string" },
                     email: { type: "string" },
                     password: { type: "string" },
                   },
-                  required: ["pseudo", "email", "password"],
+                  required: ["username", "email", "password"],
                 },
               },
             },

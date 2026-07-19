@@ -16,7 +16,7 @@ const initialState = { vehicles: initialVehiclesState, auth: initialAuthState };
 
 const makeUser = (overrides: Partial<User> = {}): User => ({
   _id: 'u1',
-  pseudo: 'Alice',
+  username: 'Alice',
   email: 'alice@example.com',
   ...overrides,
 });
@@ -95,8 +95,8 @@ describe('ProfilePage', () => {
       expect(component.initials).toBe('?');
     });
 
-    it('returns first uppercase letter of pseudo when user is set', () => {
-      component.user.set(makeUser({ pseudo: 'alice' }));
+    it('returns first uppercase letter of username when user is set', () => {
+      component.user.set(makeUser({ username: 'alice' }));
       expect(component.initials).toBe('A');
     });
   });
@@ -115,28 +115,28 @@ describe('ProfilePage', () => {
     });
   });
 
-  describe('saveNumero()', () => {
+  describe('savePhone()', () => {
     it('does nothing when user is null', () => {
       const spy = vi.spyOn(authFacade, 'updateProfile');
       component.user.set(null);
-      component.saveNumero();
+      component.savePhone();
       expect(spy).not.toHaveBeenCalled();
     });
 
-    it('calls authFacade.updateProfile with user._id and numero when user is set', () => {
+    it('calls authFacade.updateProfile with user._id and phone when user is set', () => {
       const spy = vi.spyOn(authFacade, 'updateProfile').mockImplementation(() => {});
       component.user.set(makeUser({ _id: 'u1' }));
-      component.numero.set('456');
-      component.saveNumero();
-      expect(spy).toHaveBeenCalledWith('u1', { numero: '456' });
+      component.phone.set('456');
+      component.savePhone();
+      expect(spy).toHaveBeenCalledWith('u1', { phone: '456' });
     });
 
-    it('sets editingNumero to false after save', () => {
+    it('sets editingPhone to false after save', () => {
       vi.spyOn(authFacade, 'updateProfile').mockImplementation(() => {});
       component.user.set(makeUser());
-      component.editingNumero.set(true);
-      component.saveNumero();
-      expect(component.editingNumero()).toBe(false);
+      component.editingPhone.set(true);
+      component.savePhone();
+      expect(component.editingPhone()).toBe(false);
     });
   });
 });

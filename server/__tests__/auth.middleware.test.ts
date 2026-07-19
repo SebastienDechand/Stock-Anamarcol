@@ -6,7 +6,7 @@ import { Request, Response, NextFunction } from "express";
 vi.mock("../models/user.model", () => {
   const mockUser = {
     _id: "507f1f77bcf86cd799439011",
-    pseudo: "testuser",
+    username: "testuser",
     email: "test@test.com",
     roles: ["user"],
     password: "hashedpassword",

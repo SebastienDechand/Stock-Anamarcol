@@ -139,7 +139,7 @@ export class EditItemModal implements OnInit, OnDestroy {
   submitQty() {
     const newQty = Math.max(0, this.form.quantity);
     const current = this.displayItem.quantity;
-    const name = this.currentUser()?.pseudo ?? '';
+    const name = this.currentUser()?.username ?? '';
     const operation = newQty >= current ? 'add' : 'subtract';
     this.facade.updateQuantity(this.item()._id, newQty, name, operation);
     this.editingQty = false;

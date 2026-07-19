@@ -129,7 +129,7 @@ server/
 
 | Method | Route       |  Auth  | Description                                          |
 | ------ | ----------- | :----: | ------------------------------------------------------ |
-| `POST` | `/register` | Admin  | Account creation (pseudo, email, password)              |
+| `POST` | `/register` | Admin  | Account creation (username, email, password)             |
 | `POST` | `/login`    | Public | Login → JWT cookie                                      |
 | `GET`  | `/logout`   | Public | Logout (cookie removal)                                 |
 
@@ -247,13 +247,13 @@ server/
 
 ```typescript
 {
-  pseudo: string; // required, unique, 3-30 characters
+  username: string; // required, unique, 3-30 characters
   email: string; // required, unique, validated with validator
   password: string; // required, 6-1024 chars, bcrypt hashed (salt=10)
   picture: string; // default: "./uploads/profil/random-user.png"
-  poste: string; // max 1024 characters
-  numero: string;
-  pole: string; // enum: Direction, Hotline, Entrepôt, Monteur, Gestion du site, "" (default: "")
+  position: string; // max 1024 characters
+  phone: string;
+  department: string; // enum: Management, Hotline, Warehouse, Installer, Site Management, "" (default: "")
   roles: string[]; // stackable enum: superadmin, admin, hotline, monteur, user (default: [])
   timestamps: true; // createdAt, updatedAt
 }
@@ -363,7 +363,7 @@ server/
 
 | Function                        | Returns                                         | Use case                            |
 | -------------------------------- | ----------------------------------------------- | ------------------------------------ |
-| `signUpErrors(err)`              | `{ pseudo, email, password }`                   | Registration (validation + duplicates) |
+| `signUpErrors(err)`              | `{ username, email, password }`                 | Registration (validation + duplicates) |
 | `signInErrors(err)`              | `{ email, password }`                           | Login                                |
 | `createItemErrors(err)`          | `{ name, supplier, status, quantity }`          | Item creation                        |
 | `uploadErrors(err, mime, name)`  | `{ format, maxSize }`                           | File upload                          |

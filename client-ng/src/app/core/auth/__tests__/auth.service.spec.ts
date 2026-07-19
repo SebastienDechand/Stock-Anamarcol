@@ -9,7 +9,7 @@ const BASE = '/';
 
 const mockUser = {
   _id: 'user-123',
-  pseudo: 'testuser',
+  username: 'testuser',
   email: 'test@example.com',
   picture: 'https://example.com/pic.jpg',
 };
@@ -125,8 +125,8 @@ describe('AuthService', () => {
 
   describe('updateUserProfile', () => {
     it('should PUT api/user/:uid with partial data and withCredentials', () => {
-      const partial = { pseudo: 'newname' };
-      const updated = { ...mockUser, pseudo: 'newname' };
+      const partial = { username: 'newname' };
+      const updated = { ...mockUser, username: 'newname' };
 
       service.updateUserProfile('user-123', partial).subscribe((result) => {
         expect(result).toEqual(updated);

@@ -13,7 +13,7 @@
         <div class="profile-card__avatar">
           <label class="avatar-wrap" [title]="'PROFILE.CHANGE_PHOTO' | translate">
             @if (avatarUrl) {
-              <img [src]="avatarUrl" [alt]="currentUser.pseudo" class="avatar-img" />
+              <img [src]="avatarUrl" [alt]="currentUser.username" class="avatar-img" />
             } @else {
               <span class="avatar-initials">{{ initials }}</span>
             }
@@ -38,7 +38,7 @@
           <div class="info-grid">
             <div class="info-cell">
               <p class="info-cell__label">{{ 'PROFILE.PSEUDO' | translate }}</p>
-              <p class="info-cell__value">{{ currentUser.pseudo }}</p>
+              <p class="info-cell__value">{{ currentUser.username }}</p>
             </div>
 
             <div class="info-cell">
@@ -46,39 +46,39 @@
               <p class="info-cell__value">{{ currentUser.email }}</p>
             </div>
 
-            @if (currentUser.poste) {
+            @if (currentUser.position) {
               <div class="info-cell">
                 <p class="info-cell__label">{{ 'PROFILE.ROLE' | translate }}</p>
-                <p class="info-cell__value">{{ currentUser.poste }}</p>
+                <p class="info-cell__value">{{ currentUser.position }}</p>
               </div>
             }
 
-            @if (currentUser.pole) {
+            @if (currentUser.department) {
               <div class="info-cell">
                 <p class="info-cell__label">{{ 'PROFILE.POLE' | translate }}</p>
-                <p class="info-cell__value">{{ currentUser.pole }}</p>
+                <p class="info-cell__value">{{ currentUser.department }}</p>
               </div>
             }
 
             <div class="info-cell">
               <p class="info-cell__label">{{ 'PROFILE.PHONE' | translate }}</p>
-              @if (editingNumero()) {
+              @if (editingPhone()) {
                 <div class="inline-edit">
                   <input
                     class="inline-edit__input"
-                    [(ngModel)]="$any(numero)"
+                    [(ngModel)]="$any(phone)"
                     [placeholder]="'PROFILE.PHONE_PLACEHOLDER' | translate"
                   />
                   <button
                     class="inline-edit__save"
-                    (click)="saveNumero()"
+                    (click)="savePhone()"
                     [title]="'PROFILE.SAVE_PHONE' | translate"
                   >
                     <lucide-icon name="check" [size]="14" />
                   </button>
                   <button
                     class="inline-edit__cancel"
-                    (click)="editingNumero.set(false)"
+                    (click)="editingPhone.set(false)"
                     [title]="'PROFILE.CANCEL' | translate"
                   >
                     <lucide-icon name="x" [size]="14" />
@@ -86,10 +86,10 @@
                 </div>
               } @else {
                 <div class="info-cell__editable">
-                  <p class="info-cell__value">{{ currentUser.numero || '-' }}</p>
+                  <p class="info-cell__value">{{ currentUser.phone || '-' }}</p>
                   <button
                     class="edit-btn"
-                    (click)="editingNumero.set(true); numero.set(currentUser.numero || '')"
+                    (click)="editingPhone.set(true); phone.set(currentUser.phone || '')"
                     [title]="'PROFILE.EDIT_PHONE' | translate"
                   >
                     <lucide-icon name="pencil" [size]="13" />

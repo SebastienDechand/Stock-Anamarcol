@@ -18,7 +18,7 @@
   <div class="topbar__right">
     @if (user) {
       <span class="topbar__greeting">
-        {{ 'COMMON.WELCOME' | translate }}, <strong>{{ user.pseudo }}</strong>
+        {{ 'COMMON.WELCOME' | translate }}, <strong>{{ user.username }}</strong>
       </span>
     }
 
@@ -43,13 +43,13 @@
               routerLink="/profile"
               (click)="closeMenu()"
               role="menuitem"
-              [title]="'TOPBAR.MENU.PROFILE_TIP' | translate: { name: user.pseudo }"
+              [title]="'TOPBAR.MENU.PROFILE_TIP' | translate: { name: user.username }"
             >
               @if (user.picture) {
                 <img
                   class="topbar__menu-avatar"
                   [src]="getAvatarUrl(user.picture)"
-                  [alt]="user.pseudo"
+                  [alt]="user.username"
                 />
               } @else {
                 <span class="topbar__menu-avatar topbar__menu-avatar--placeholder">

@@ -6,7 +6,7 @@ import { Role } from '../../../../../shared/constants/roles.constants';
 
 const sampleUser: User = {
   _id: 'u1',
-  pseudo: 'jdupont',
+  username: 'jdupont',
   email: 'jdupont@example.com',
   roles: [Role.USER],
 };
@@ -47,7 +47,7 @@ describe('EditMemberModal', () => {
   });
 
   describe('initials', () => {
-    it('returns the uppercased first letter of the pseudo', () => {
+    it('returns the uppercased first letter of the username', () => {
       expect(component.initials).toBe('J');
     });
   });

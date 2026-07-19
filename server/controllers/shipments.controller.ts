@@ -289,7 +289,7 @@ export const createShipment = async (
       clientFile: clientFile || undefined,
       requestDate: requestDate ? new Date(requestDate) : undefined,
       createdBy: res.locals.user?._id?.toString(),
-      createdByName: res.locals.user?.pseudo,
+      createdByName: res.locals.user?.username,
     });
     res.status(201).json(created);
   } catch (err) {
@@ -308,7 +308,7 @@ export const markSent = async (req: Request, res: Response): Promise<void> => {
     }
     shipment.sent = true;
     shipment.sentAt = new Date();
-    shipment.sentBy = res.locals.user?.pseudo;
+    shipment.sentBy = res.locals.user?.username;
     const updated = await shipment.save();
     res.status(200).json(updated);
   } catch (err) {

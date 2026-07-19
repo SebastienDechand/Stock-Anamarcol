@@ -33,7 +33,7 @@
           <span class="pole-header__label">{{ 'MEMBERS.POLE_DIRECTION' | translate }}</span>
         </div>
         <div class="member-list member-list--single">
-          @let directionUsers = byPole(allUsers, poleDirection);
+          @let directionUsers = byDepartment(allUsers, departmentManagement);
           @for (member of directionUsers; track member._id) {
             <app-member-card
               [user]="member"
@@ -64,7 +64,7 @@
               <span class="pole-header__label">{{ 'MEMBERS.POLE_HOTLINE' | translate }}</span>
             </div>
             <div class="member-list">
-              @let hotlineUsers = byPole(allUsers, 'Hotline');
+              @let hotlineUsers = byDepartment(allUsers, 'Hotline');
               @for (member of hotlineUsers; track member._id) {
                 <app-member-card
                   [user]="member"
@@ -91,7 +91,7 @@
               <span class="pole-header__label">{{ 'MEMBERS.POLE_WAREHOUSE' | translate }}</span>
             </div>
             <div class="member-list">
-              @let entrepotUsers = byPole(allUsers, poleEntrepot);
+              @let entrepotUsers = byDepartment(allUsers, departmentWarehouse);
               @for (member of entrepotUsers; track member._id) {
                 <app-member-card
                   [user]="member"
@@ -120,7 +120,7 @@
             <span class="pole-header__label">{{ 'MEMBERS.POLE_TECHNICIAN' | translate }}</span>
           </div>
           <div class="member-list">
-            @let monteurUsers = byPole(allUsers, 'Monteur');
+            @let monteurUsers = byDepartment(allUsers, 'Installer');
             @for (member of monteurUsers; track member._id) {
               <app-member-card
                 [user]="member"
@@ -148,7 +148,7 @@
             <span class="pole-header__label">{{ 'MEMBERS.POLE_MANAGEMENT' | translate }}</span>
           </div>
           <div class="member-list">
-            @let gestionUsers = byPole(allUsers, poleGestion);
+            @let gestionUsers = byDepartment(allUsers, departmentSiteManagement);
             @for (member of gestionUsers; track member._id) {
               <app-member-card
                 [user]="member"
@@ -186,7 +186,7 @@
 @if (deletingUser()) {
   <app-confirm-dialog
     [title]="'MEMBERS.CONFIRM_DELETE' | translate"
-    [message]="'MEMBERS.CONFIRM_DELETE_MSG' | translate: { name: deletingUser()!.pseudo }"
+    [message]="'MEMBERS.CONFIRM_DELETE_MSG' | translate: { name: deletingUser()!.username }"
     [confirmLabel]="'MEMBERS.DELETE' | translate"
     (confirmed)="onDeleteConfirm()"
     (cancelled)="deletingUser.set(null)"

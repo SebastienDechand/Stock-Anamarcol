@@ -9,13 +9,13 @@ import {
 describe("errors.utils", () => {
   // ─── signUpErrors ───────────────────────────────────────
   describe("signUpErrors", () => {
-    it("should detect a pseudo error", () => {
-      const err = { message: "pseudo validation failed", code: 0 } as Error & {
+    it("should detect a username error", () => {
+      const err = { message: "username validation failed", code: 0 } as Error & {
         code: number;
         keyValue?: Record<string, unknown>;
       };
       const result = signUpErrors(err);
-      expect(result.pseudo).toBe("Pseudo incorrect ou déjà pris");
+      expect(result.username).toBe("Pseudo incorrect ou déjà pris");
       expect(result.email).toBe("");
       expect(result.password).toBe("");
     });
@@ -40,17 +40,17 @@ describe("errors.utils", () => {
       );
     });
 
-    it("should detect a duplicate pseudo (code 11000)", () => {
+    it("should detect a duplicate username (code 11000)", () => {
       const err = {
         message: "duplicate key",
         code: 11000,
-        keyValue: { pseudo: "test" },
+        keyValue: { username: "test" },
       } as unknown as Error & {
         code: number;
         keyValue: Record<string, unknown>;
       };
       const result = signUpErrors(err);
-      expect(result.pseudo).toBe("Ce pseudo est déjà pris");
+      expect(result.username).toBe("Ce pseudo est déjà pris");
     });
 
     it("should detect a duplicate email (code 11000)", () => {

@@ -2,12 +2,12 @@ import { Role } from '../constants/roles.constants';
 
 export interface User {
   _id: string;
-  pseudo: string;
+  username: string;
   email: string;
   picture?: string;
-  poste?: string;
-  numero?: string;
-  pole?: string;
+  position?: string;
+  phone?: string;
+  department?: string;
   roles?: Role[];
   createdAt?: string;
   updatedAt?: string;

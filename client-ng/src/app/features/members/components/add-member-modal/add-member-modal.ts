@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { NewUserData } from '../../store/users.actions';
-import { ALL_POLE_LABELS } from '../../../../shared/constants/poles.constants';
+import { ALL_DEPARTMENT_LABELS } from '../../../../shared/constants/poles.constants';
 
 @Component({
   selector: 'app-add-member-modal',
@@ -17,21 +17,22 @@ export class AddMemberModal {
   submitted = output<NewUserData>();
   cancelled = output<void>();
 
-  poles = ALL_POLE_LABELS;
+  departments = ALL_DEPARTMENT_LABELS;
 
   form: NewUserData & { password: string } = {
-    pseudo: '',
+    username: '',
     email: '',
     password: '',
-    poste: '',
-    numero: '',
-    pole: '',
+    position: '',
+    phone: '',
+    department: '',
   };
 
   showPassword = false;
 
   submit() {
-    if (!this.form.pseudo.trim() || !this.form.email.trim() || !this.form.password.trim()) return;
+    if (!this.form.username.trim() || !this.form.email.trim() || !this.form.password.trim())
+      return;
     this.submitted.emit(this.form);
   }
 }

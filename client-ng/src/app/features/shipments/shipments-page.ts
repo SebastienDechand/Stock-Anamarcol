@@ -242,7 +242,7 @@ export class ShipmentsPage implements OnInit {
     this.facade.fetch({ page: 1, limit: 200 });
     this.authFacade.user$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((user: UserModel | null) => this.currentUserName.set(user?.pseudo ?? ''));
+      .subscribe((user: UserModel | null) => this.currentUserName.set(user?.username ?? ''));
   }
 
   setSearch(searchTerm: string): void {

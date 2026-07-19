@@ -86,7 +86,7 @@ export const createClientFile = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const data = { ...req.body, createdBy: res.locals.user?.pseudo };
+    const data = { ...req.body, createdBy: res.locals.user?.username };
 
     // ─── Duplicate check ─────────────────────────────────────────────────────
     // 1. SIRET + address (même enseigne, même boutique)
@@ -123,7 +123,7 @@ export const createClientFile = async (
       "create",
       "clientfile",
       file._id.toString(),
-      res.locals.user?.pseudo,
+      res.locals.user?.username,
       { entityName: `${file.lastName} ${file.firstName ?? ""}`.trim() },
     );
     res.status(201).json({ clientFile: file._id });
@@ -210,7 +210,7 @@ export const deleteClientFile = async (
       "delete",
       "clientfile",
       req.params.id as string,
-      res.locals.user?.pseudo,
+      res.locals.user?.username,
       { entityName: `${file.lastName} ${file.firstName ?? ""}`.trim() },
     );
     res.status(200).json({ message: "Fiche supprimée" });
@@ -246,7 +246,7 @@ export const uploadDocument = async (
       filename: req.file.filename,
       type: docType,
       uploadedAt: new Date(),
-      uploadedBy: res.locals.user?.pseudo,
+      uploadedBy: res.locals.user?.username,
     } as never);
 
     const updated = await file.save();

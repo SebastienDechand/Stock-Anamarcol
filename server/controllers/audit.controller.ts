@@ -55,7 +55,7 @@ export const getHistory = async (
         : [],
       userIds.length > 0
         ? UserModel.find({ _id: { $in: [...new Set(userIds)] } })
-            .select("pseudo")
+            .select("username")
             .lean()
         : [],
       auditItemIds.length > 0
@@ -64,21 +64,21 @@ export const getHistory = async (
             .lean()
         : [],
       actionUserNames.length > 0
-        ? UserModel.find({ pseudo: { $in: actionUserNames } })
-            .select("pseudo roles")
+        ? UserModel.find({ username: { $in: actionUserNames } })
+            .select("username roles")
             .lean()
         : [],
     ]);
 
     const contactNameMap = new Map(contacts.map((c) => [String(c._id), c.name]));
-    const userNameMap = new Map(users.map((u) => [String(u._id), u.pseudo]));
+    const userNameMap = new Map(users.map((u) => [String(u._id), u.username]));
     const auditItemNameMap = new Map(
       auditItems.map((i) => [String(i._id), i.name]),
     );
 
     const superadminMap = new Map(
       actionUsers.map((u) => [
-        u.pseudo,
+        u.username,
         (u.roles as string[])?.includes(Role.SUPERADMIN) || false,
       ]),
     );
@@ -104,7 +104,7 @@ export const getHistory = async (
         } else if (e.entity === "user") {
           entityName =
             userNameMap.get(String(e.entityId)) ||
-            ((details.deleted as Record<string, unknown>)?.pseudo as string) ||
+            ((details.deleted as Record<string, unknown>)?.username as string) ||
             undefined;
         } else if (e.entity === "item") {
           entityName =
@@ -154,7 +154,7 @@ export const purgeAllHistoryAndAudit = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userName = (res.locals.user?.pseudo as string) || "unknown";
+    const userName = (res.locals.user?.username as string) || "unknown";
     const [auditRes, historyRes] = await Promise.all([
       AuditModel.deleteMany({}),
       HistoryModel.deleteMany({}),

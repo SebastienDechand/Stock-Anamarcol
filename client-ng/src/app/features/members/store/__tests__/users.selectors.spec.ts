@@ -5,16 +5,16 @@ import type { User } from '../../../../shared/models/user.model';
 
 const sampleUser: User = {
   _id: 'user-1',
-  pseudo: 'alice',
+  username: 'alice',
   email: 'alice@example.com',
-  poste: 'Technicienne',
+  position: 'Technicienne',
 };
 
 const sampleUser2: User = {
   _id: 'user-2',
-  pseudo: 'bob',
+  username: 'bob',
   email: 'bob@example.com',
-  poste: 'Monteur',
+  position: 'Monteur',
 };
 
 describe('Users Selectors', () => {

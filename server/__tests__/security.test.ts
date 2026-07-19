@@ -61,7 +61,7 @@ describe("Security - Route protection", () => {
   describe("POST /api/user/register (sign up)", () => {
     it("should return 401 without JWT (admin-only)", async () => {
       const res = await request(app).post("/api/user/register").send({
-        pseudo: "hacker",
+        username: "hacker",
         email: "h@h.com",
         password: "123456",
       });

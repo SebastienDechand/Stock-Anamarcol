@@ -111,7 +111,7 @@ export class ItemsPage implements OnInit {
       });
 
     this.authFacade.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((u: User | null) => {
-      this.modifierName.set(u?.pseudo ?? '');
+      this.modifierName.set(u?.username ?? '');
       this.currentUserId.set(u?._id ?? '');
     });
 

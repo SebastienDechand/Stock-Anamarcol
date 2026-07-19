@@ -1,7 +1,7 @@
 <div class="member-card" [class.member-card--clickable]="clickable()" (click)="onClick()">
   <div class="member-card__avatar">
     @if (avatarUrl) {
-      <img [src]="avatarUrl" [alt]="user().pseudo" class="member-card__img" />
+      <img [src]="avatarUrl" [alt]="user().username" class="member-card__img" />
     } @else {
       <span class="member-card__initials">{{ initials }}</span>
     }
@@ -9,7 +9,7 @@
 
   <div class="member-card__info">
     <div class="member-card__name-row">
-      <p class="member-card__name">{{ user().pseudo }}</p>
+      <p class="member-card__name">{{ user().username }}</p>
       @if (showRoles()) {
         @for (badge of badges; track badge.role) {
           <span class="role-badge role-badge--{{ badge.role }}">{{
@@ -18,8 +18,8 @@
         }
       }
     </div>
-    @if (user().poste) {
-      <p class="member-card__poste">{{ user().poste }}</p>
+    @if (user().position) {
+      <p class="member-card__poste">{{ user().position }}</p>
     }
     <div class="member-card__contact">
       @if (user().email) {
@@ -28,10 +28,10 @@
           {{ user().email }}
         </span>
       }
-      @if (user().numero) {
+      @if (user().phone) {
         <span class="contact-item">
           <lucide-icon name="phone" [size]="12" />
-          {{ user().numero }}
+          {{ user().phone }}
         </span>
       }
     </div>

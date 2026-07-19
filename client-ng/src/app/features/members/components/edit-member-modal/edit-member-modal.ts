@@ -5,7 +5,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { User } from '../../../../shared/models/user.model';
 import { UpdateUserData } from '../../store/users.actions';
-import { ALL_POLE_LABELS } from '../../../../shared/constants/poles.constants';
+import { ALL_DEPARTMENT_LABELS } from '../../../../shared/constants/poles.constants';
 
 @Component({
   selector: 'app-edit-member-modal',
@@ -21,17 +21,17 @@ export class EditMemberModal implements OnInit {
   pictureUploaded = output<{ id: string; formData: FormData }>();
   cancelled = output<void>();
 
-  poles = ALL_POLE_LABELS;
+  departments = ALL_DEPARTMENT_LABELS;
 
   form: UpdateUserData = {};
 
   ngOnInit() {
     this.form = {
-      pseudo: this.user().pseudo,
+      username: this.user().username,
       email: this.user().email,
-      poste: this.user().poste ?? '',
-      numero: this.user().numero ?? '',
-      pole: this.user().pole ?? '',
+      position: this.user().position ?? '',
+      phone: this.user().phone ?? '',
+      department: this.user().department ?? '',
     };
   }
 
@@ -43,7 +43,7 @@ export class EditMemberModal implements OnInit {
   }
 
   get initials(): string {
-    return (this.user().pseudo ?? '?')[0].toUpperCase();
+    return (this.user().username ?? '?')[0].toUpperCase();
   }
 
   onFileChange(event: Event) {
@@ -51,13 +51,13 @@ export class EditMemberModal implements OnInit {
     if (!file) return;
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('name', this.user().pseudo || 'user');
+    formData.append('name', this.user().username || 'user');
     formData.append('userId', this.user()._id);
     this.pictureUploaded.emit({ id: this.user()._id, formData });
   }
 
   submit() {
-    if (!this.form.pseudo?.trim() || !this.form.email?.trim()) return;
+    if (!this.form.username?.trim() || !this.form.email?.trim()) return;
     this.saved.emit(this.form);
   }
 }
