@@ -2,18 +2,18 @@ import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
 export interface IShipment extends Document {
   /* ── Client card ── */
-  nom: string;
-  prenom: string;
-  tel?: string;
-  tel2?: string;
+  lastName: string;
+  firstName: string;
+  phone?: string;
+  phone2?: string;
   email?: string;
-  adresse: string;
-  codePostal: string;
-  ville: string;
-  societeOuFonction: string;
-  societe: string;
+  address: string;
+  postalCode: string;
+  city: string;
+  companyOrRole: string;
+  company: string;
   /* ── Shipment ── */
-  piece: string;
+  part: string;
   clientFile?: Types.ObjectId;
   requestDate?: Date;
   createdBy?: string;
@@ -27,17 +27,17 @@ export interface IShipment extends Document {
 
 const ShipmentSchema = new Schema<IShipment>(
   {
-    nom: { type: String, required: true, trim: true },
-    prenom: { type: String, required: true, trim: true },
-    tel: { type: String, trim: true },
-    tel2: { type: String, trim: true },
+    lastName: { type: String, required: true, trim: true },
+    firstName: { type: String, required: true, trim: true },
+    phone: { type: String, trim: true },
+    phone2: { type: String, trim: true },
     email: { type: String, lowercase: true, trim: true },
-    adresse: { type: String, required: true, trim: true },
-    codePostal: { type: String, required: true, trim: true },
-    ville: { type: String, required: true, trim: true },
-    societeOuFonction: { type: String, required: true, trim: true },
-    societe: { type: String, required: true, trim: true },
-    piece: { type: String, required: true, trim: true },
+    address: { type: String, required: true, trim: true },
+    postalCode: { type: String, required: true, trim: true },
+    city: { type: String, required: true, trim: true },
+    companyOrRole: { type: String, required: true, trim: true },
+    company: { type: String, required: true, trim: true },
+    part: { type: String, required: true, trim: true },
     clientFile: {
       type: Schema.Types.ObjectId,
       ref: "clientfile",

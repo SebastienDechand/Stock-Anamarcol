@@ -42,40 +42,40 @@ import { User as UserModel } from '../../shared/models/user.model';
 import { ClientFilesFacade } from '../client-files/store/client-files.facade';
 
 const EMPTY_FORM: ShipmentForm = {
-  nom: '',
-  prenom: '',
-  tel: '',
-  tel2: '',
+  lastName: '',
+  firstName: '',
+  phone: '',
+  phone2: '',
   email: '',
-  adresse: '',
-  codePostal: '',
-  ville: '',
-  societeOuFonction: '',
-  societe: '',
-  piece: '',
+  address: '',
+  postalCode: '',
+  city: '',
+  companyOrRole: '',
+  company: '',
+  part: '',
   requestDate: '',
 };
 
 const FIELD_MAP: Record<string, keyof ShipmentForm> = {
-  nom: 'nom',
-  prenom: 'prenom',
-  prénom: 'prenom',
-  telephone: 'tel',
-  téléphone: 'tel',
-  tel: 'tel',
-  telephone2: 'tel2',
-  téléphone2: 'tel2',
-  tel2: 'tel2',
+  nom: 'lastName',
+  prenom: 'firstName',
+  prénom: 'firstName',
+  telephone: 'phone',
+  téléphone: 'phone',
+  tel: 'phone',
+  telephone2: 'phone2',
+  téléphone2: 'phone2',
+  tel2: 'phone2',
   email: 'email',
   'e-mail': 'email',
-  adresse: 'adresse',
-  'code postal': 'codePostal',
-  cp: 'codePostal',
-  ville: 'ville',
-  'societe ou fonction': 'societeOuFonction',
-  'société ou fonction': 'societeOuFonction',
-  societe: 'societe',
-  société: 'societe',
+  adresse: 'address',
+  'code postal': 'postalCode',
+  cp: 'postalCode',
+  ville: 'city',
+  'societe ou fonction': 'companyOrRole',
+  'société ou fonction': 'companyOrRole',
+  societe: 'company',
+  société: 'company',
 };
 
 function parsePastedText(text: string): Partial<ShipmentForm> {
@@ -208,14 +208,14 @@ export class ShipmentsPage implements OnInit {
       const matchSearch =
         !searchTerm ||
         [
-          shipment.nom,
-          shipment.prenom,
-          shipment.societe,
-          shipment.societeOuFonction ?? '',
-          shipment.piece,
-          shipment.ville,
-          shipment.codePostal,
-          shipment.tel ?? '',
+          shipment.lastName,
+          shipment.firstName,
+          shipment.company,
+          shipment.companyOrRole ?? '',
+          shipment.part,
+          shipment.city,
+          shipment.postalCode,
+          shipment.phone ?? '',
           shipment.email ?? '',
         ].some((value) => value.toLowerCase().includes(searchTerm));
       const matchStatus =
@@ -265,15 +265,15 @@ export class ShipmentsPage implements OnInit {
     this.showCfSuggestions.set(false);
     this.form.update((currentForm) => ({
       ...currentForm,
-      nom: clientFile.nom,
-      prenom: clientFile.prenom ?? '',
-      tel: clientFile.tel ?? clientFile.mobile ?? '',
+      lastName: clientFile.nom,
+      firstName: clientFile.prenom ?? '',
+      phone: clientFile.tel ?? clientFile.mobile ?? '',
       email: clientFile.email ?? '',
-      adresse: clientFile.adresse ?? '',
-      codePostal: clientFile.cp ?? '',
-      ville: clientFile.ville ?? '',
-      societe: clientFile.societe ?? '',
-      societeOuFonction: clientFile.societe ?? '',
+      address: clientFile.adresse ?? '',
+      postalCode: clientFile.cp ?? '',
+      city: clientFile.ville ?? '',
+      company: clientFile.societe ?? '',
+      companyOrRole: clientFile.societe ?? '',
     }));
   }
 
@@ -307,7 +307,7 @@ export class ShipmentsPage implements OnInit {
 
   submitCreate(): void {
     const formValue = this.form();
-    if (!formValue.nom.trim() || !formValue.piece.trim()) return;
+    if (!formValue.lastName.trim() || !formValue.part.trim()) return;
     const clientFileId = this.linkedClientFileId();
     this.facade.create(
       clientFileId ? { ...formValue, clientFile: clientFileId } : formValue,

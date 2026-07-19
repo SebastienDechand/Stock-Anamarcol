@@ -203,8 +203,8 @@
               class="input-base input-base--icon"
               type="text"
               [placeholder]="'SHIPMENTS.NAME_PLACEHOLDER' | translate"
-              [value]="form().nom"
-              (input)="updateField('nom', $any($event.target).value)"
+              [value]="form().lastName"
+              (input)="updateField('lastName', $any($event.target).value)"
             />
           </div>
         </div>
@@ -216,8 +216,8 @@
               class="input-base input-base--icon"
               type="text"
               [placeholder]="'SHIPMENTS.FIRST_NAME_PLACEHOLDER' | translate"
-              [value]="form().prenom"
-              (input)="updateField('prenom', $any($event.target).value)"
+              [value]="form().firstName"
+              (input)="updateField('firstName', $any($event.target).value)"
             />
           </div>
         </div>
@@ -229,8 +229,8 @@
               class="input-base input-base--icon"
               type="text"
               [placeholder]="'SHIPMENTS.PHONE_PLACEHOLDER' | translate"
-              [value]="form().tel"
-              (input)="updateField('tel', $any($event.target).value)"
+              [value]="form().phone"
+              (input)="updateField('phone', $any($event.target).value)"
             />
           </div>
         </div>
@@ -242,8 +242,8 @@
               class="input-base input-base--icon"
               type="text"
               [placeholder]="'SHIPMENTS.PHONE2_PLACEHOLDER' | translate"
-              [value]="form().tel2"
-              (input)="updateField('tel2', $any($event.target).value)"
+              [value]="form().phone2"
+              (input)="updateField('phone2', $any($event.target).value)"
             />
           </div>
         </div>
@@ -255,8 +255,8 @@
               class="input-base input-base--icon"
               type="text"
               [placeholder]="'SHIPMENTS.ADDRESS_PLACEHOLDER' | translate"
-              [value]="form().adresse"
-              (input)="updateField('adresse', $any($event.target).value)"
+              [value]="form().address"
+              (input)="updateField('address', $any($event.target).value)"
             />
           </div>
         </div>
@@ -266,8 +266,8 @@
             class="input-base"
             type="text"
             [placeholder]="'SHIPMENTS.ZIP_PLACEHOLDER' | translate"
-            [value]="form().codePostal"
-            (input)="updateField('codePostal', $any($event.target).value)"
+            [value]="form().postalCode"
+            (input)="updateField('postalCode', $any($event.target).value)"
           />
         </div>
         <div class="field-wrap">
@@ -276,8 +276,8 @@
             class="input-base"
             type="text"
             [placeholder]="'SHIPMENTS.CITY_PLACEHOLDER' | translate"
-            [value]="form().ville"
-            (input)="updateField('ville', $any($event.target).value)"
+            [value]="form().city"
+            (input)="updateField('city', $any($event.target).value)"
           />
         </div>
         <div class="field-wrap">
@@ -288,8 +288,8 @@
               class="input-base input-base--icon"
               type="text"
               [placeholder]="'SHIPMENTS.COMPANY_PLACEHOLDER' | translate"
-              [value]="form().societe"
-              (input)="updateField('societe', $any($event.target).value)"
+              [value]="form().company"
+              (input)="updateField('company', $any($event.target).value)"
             />
           </div>
         </div>
@@ -301,8 +301,8 @@
               class="input-base input-base--icon"
               type="text"
               [placeholder]="'SHIPMENTS.COMPANY_OR_FUNCTION_PLACEHOLDER' | translate"
-              [value]="form().societeOuFonction"
-              (input)="updateField('societeOuFonction', $any($event.target).value)"
+              [value]="form().companyOrRole"
+              (input)="updateField('companyOrRole', $any($event.target).value)"
             />
           </div>
         </div>
@@ -339,8 +339,8 @@
               class="input-base input-base--icon"
               type="text"
               [placeholder]="'SHIPMENTS.PIECE_PLACEHOLDER' | translate"
-              [value]="form().piece"
-              (input)="updateField('piece', $any($event.target).value)"
+              [value]="form().part"
+              (input)="updateField('part', $any($event.target).value)"
             />
           </div>
         </div>
@@ -353,17 +353,17 @@
           (click)="
             showForm.set(false);
             form.set({
-              nom: '',
-              prenom: '',
-              tel: '',
-              tel2: '',
+              lastName: '',
+              firstName: '',
+              phone: '',
+              phone2: '',
               email: '',
-              adresse: '',
-              codePostal: '',
-              ville: '',
-              societeOuFonction: '',
-              societe: '',
-              piece: '',
+              address: '',
+              postalCode: '',
+              city: '',
+              companyOrRole: '',
+              company: '',
+              part: '',
               requestDate: '',
             })
           "
@@ -372,7 +372,7 @@
         </button>
         <button
           class="btn-primary"
-          [disabled]="!form().nom.trim() || !form().piece.trim()"
+          [disabled]="!form().lastName.trim() || !form().part.trim()"
           (click)="submitCreate()"
           [title]="'SHIPMENTS.ADD_SUBMIT' | translate"
         >
@@ -436,11 +436,11 @@
                 </td>
                 <td>
                   <span class="client-name" [class.client-name--sent]="s.sent">
-                    {{ s.prenom }} {{ s.nom }}
+                    {{ s.firstName }} {{ s.lastName }}
                   </span>
                 </td>
-                <td class="col-secondary">{{ s.societe }}</td>
-                <td class="col-piece">{{ s.piece || '-' }}</td>
+                <td class="col-secondary">{{ s.company }}</td>
+                <td class="col-piece">{{ s.part || '-' }}</td>
                 <td class="col-secondary">{{ s.createdByName }}</td>
                 <td>
                   <div class="row-actions">
@@ -490,26 +490,26 @@
               }
               <span class="m-card__creator">{{ s.createdByName }}</span>
             </div>
-            <p class="m-card__name">{{ s.prenom }} {{ s.nom }}</p>
-            @if (s.societe || s.societeOuFonction) {
+            <p class="m-card__name">{{ s.firstName }} {{ s.lastName }}</p>
+            @if (s.company || s.companyOrRole) {
               <p class="m-card__meta">
                 <lucide-icon [img]="building2" [size]="12" />
-                {{ s.societe }}{{ s.societeOuFonction ? ' · ' + s.societeOuFonction : '' }}
+                {{ s.company }}{{ s.companyOrRole ? ' · ' + s.companyOrRole : '' }}
               </p>
             }
             <p class="m-card__piece">
-              <lucide-icon [img]="packageIcon" [size]="12" />{{ s.piece }}
+              <lucide-icon [img]="packageIcon" [size]="12" />{{ s.part }}
             </p>
-            @if (s.adresse) {
+            @if (s.address) {
               <p class="m-card__meta">
                 <lucide-icon [img]="mapPin" [size]="12" />
-                {{ s.adresse }}, {{ s.codePostal }} {{ s.ville }}
+                {{ s.address }}, {{ s.postalCode }} {{ s.city }}
               </p>
             }
-            @if (s.tel) {
+            @if (s.phone) {
               <p class="m-card__meta">
                 <lucide-icon [img]="phone" [size]="12" />
-                {{ s.tel }}{{ s.tel2 ? ' / ' + s.tel2 : '' }}
+                {{ s.phone }}{{ s.phone2 ? ' / ' + s.phone2 : '' }}
               </p>
             }
             @if (s.sentBy) {
@@ -578,7 +578,7 @@
     [title]="'SHIPMENTS.CONFIRM_DELETE' | translate"
     [message]="
       'SHIPMENTS.CONFIRM_DELETE_PERSON'
-        | translate: { name: deletingShipment()!.prenom + ' ' + deletingShipment()!.nom }
+        | translate: { name: deletingShipment()!.firstName + ' ' + deletingShipment()!.lastName }
     "
     [confirmLabel]="'SHIPMENTS.DELETE' | translate"
     (confirmed)="confirmDelete()"
@@ -622,45 +622,45 @@
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.NAME' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.nom }}</span>
+          <span class="modal-detail-row__value">{{ s.lastName }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.FIRST_NAME' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.prenom }}</span>
+          <span class="modal-detail-row__value">{{ s.firstName }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'SHIPMENTS.COMPANY' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.societe }}</span>
+          <span class="modal-detail-row__value">{{ s.company }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{
             'SHIPMENTS.COMPANY_FUNCTION' | translate
           }}</span>
-          <span class="modal-detail-row__value">{{ s.societeOuFonction || '-' }}</span>
+          <span class="modal-detail-row__value">{{ s.companyOrRole || '-' }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'SHIPMENTS.PIECE' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.piece }}</span>
+          <span class="modal-detail-row__value">{{ s.part }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.ADDRESS' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.adresse }}</span>
+          <span class="modal-detail-row__value">{{ s.address }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.ZIP_CODE' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.codePostal }}</span>
+          <span class="modal-detail-row__value">{{ s.postalCode }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.CITY' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.ville }}</span>
+          <span class="modal-detail-row__value">{{ s.city }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.PHONE' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.tel || '-' }}</span>
+          <span class="modal-detail-row__value">{{ s.phone || '-' }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.PHONE2' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.tel2 || '-' }}</span>
+          <span class="modal-detail-row__value">{{ s.phone2 || '-' }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.EMAIL' | translate }}</span>

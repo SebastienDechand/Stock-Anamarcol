@@ -9,27 +9,27 @@ import type { Shipment } from '../../../../shared/models/shipment.model';
 
 const sampleShipment: Shipment = {
   _id: 'ship-1',
-  nom: 'Dupont',
-  prenom: 'Jean',
-  adresse: '1 rue de la Paix',
-  codePostal: '75001',
-  ville: 'Paris',
-  societeOuFonction: 'Gérant',
-  societe: 'ACME',
-  piece: 'Clavier modèle X',
+  lastName: 'Dupont',
+  firstName: 'Jean',
+  address: '1 rue de la Paix',
+  postalCode: '75001',
+  city: 'Paris',
+  companyOrRole: 'Gérant',
+  company: 'ACME',
+  part: 'Clavier modèle X',
   sent: false,
 };
 
 const sampleShipment2: Shipment = {
   _id: 'ship-2',
-  nom: 'Martin',
-  prenom: 'Sophie',
-  adresse: '5 avenue de Lyon',
-  codePostal: '69001',
-  ville: 'Lyon',
-  societeOuFonction: 'Directrice',
-  societe: 'BETA',
-  piece: 'Écran 24"',
+  lastName: 'Martin',
+  firstName: 'Sophie',
+  address: '5 avenue de Lyon',
+  postalCode: '69001',
+  city: 'Lyon',
+  companyOrRole: 'Directrice',
+  company: 'BETA',
+  part: 'Écran 24"',
   sent: true,
 };
 

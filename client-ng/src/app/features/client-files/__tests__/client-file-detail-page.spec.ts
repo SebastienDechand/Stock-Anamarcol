@@ -67,14 +67,14 @@ const makeReport = (overrides: Partial<InterventionReport> = {}): InterventionRe
 const makeShipment = (overrides: Partial<Shipment> = {}): Shipment => {
   const base: Shipment = {
     _id: 'shipment-1',
-    nom: 'Dupont',
-    prenom: 'Jean',
-    adresse: '1 rue de la Paix',
-    codePostal: '75001',
-    ville: 'Paris',
-    societeOuFonction: 'SARL',
-    societe: 'SARL Dupont',
-    piece: 'Caisse',
+    lastName: 'Dupont',
+    firstName: 'Jean',
+    address: '1 rue de la Paix',
+    postalCode: '75001',
+    city: 'Paris',
+    companyOrRole: 'SARL',
+    company: 'SARL Dupont',
+    part: 'Caisse',
   };
   return Object.assign(base, overrides);
 };

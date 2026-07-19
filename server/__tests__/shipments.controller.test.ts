@@ -97,14 +97,14 @@ describe("Shipments Controller", () => {
   afterEach(() => vi.restoreAllMocks());
 
   const validBody = {
-    nom: "DUPONT",
-    prenom: "JEAN",
-    adresse: "7 AVENUE MOZART",
-    codePostal: "75016",
-    ville: "PARIS",
-    societeOuFonction: "BOULANGERIE",
-    societe: "DUPONT SARL",
-    piece: "Hooper",
+    lastName: "DUPONT",
+    firstName: "JEAN",
+    address: "7 AVENUE MOZART",
+    postalCode: "75016",
+    city: "PARIS",
+    companyOrRole: "BOULANGERIE",
+    company: "DUPONT SARL",
+    part: "Hooper",
   };
 
   describe("getShipments", () => {
@@ -115,7 +115,7 @@ describe("Shipments Controller", () => {
           .fn()
           .mockReturnValue({ lean: vi.fn().mockResolvedValue(null) }),
       });
-      const mockList = [{ _id: "s1", nom: "DUPONT" }];
+      const mockList = [{ _id: "s1", lastName: "DUPONT" }];
       mockShipmentModel.find.mockReturnValue({
         sort: vi
           .fn()
@@ -129,7 +129,7 @@ describe("Shipments Controller", () => {
 
   describe("createShipment", () => {
     it("should return 400 when required fields are missing", async () => {
-      req.body = { nom: "DUPONT" };
+      req.body = { lastName: "DUPONT" };
       await createShipment(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
@@ -155,7 +155,7 @@ describe("Shipments Controller", () => {
       await createShipment(req as Request, res as Response);
       expect(mockShipmentModel.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          nom: "DUPONT",
+          lastName: "DUPONT",
           requestDate: new Date(dt),
         }),
       );
@@ -212,15 +212,15 @@ describe("Shipments Controller", () => {
       const shipments = [
         {
           _id: "s1",
-          nom: "DUPONT",
-          prenom: "JEAN",
+          lastName: "DUPONT",
+          firstName: "JEAN",
           sent: true,
-          piece: "Hooper",
-          adresse: "7 AV MOZART",
-          codePostal: "75016",
-          ville: "PARIS",
-          societeOuFonction: "BOULANGERIE",
-          societe: "DUPONT SARL",
+          part: "Hooper",
+          address: "7 AV MOZART",
+          postalCode: "75016",
+          city: "PARIS",
+          companyOrRole: "BOULANGERIE",
+          company: "DUPONT SARL",
           sentBy: "admin",
           createdByName: "admin",
           createdAt: now,
@@ -385,9 +385,9 @@ describe("Shipments Controller", () => {
       await createShipment(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
       const payload = (res.json as Mock).mock.calls[0][0];
-      expect(payload.message).toContain("nom");
-      expect(payload.message).toContain("prenom");
-      expect(payload.message).toContain("piece");
+      expect(payload.message).toContain("lastName");
+      expect(payload.message).toContain("firstName");
+      expect(payload.message).toContain("part");
     });
   });
 
