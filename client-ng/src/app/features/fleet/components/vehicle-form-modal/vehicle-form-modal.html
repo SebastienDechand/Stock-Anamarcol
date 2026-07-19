@@ -53,7 +53,7 @@
           <select class="input-base" [(ngModel)]="form.assignedTo">
             <option [value]="''">{{ 'FLEET.NONE' | translate }}</option>
             @for (u of users(); track u._id) {
-              <option [value]="u._id">{{ u.pseudo }}</option>
+              <option [value]="u._id">{{ u.username }}</option>
             }
           </select>
         </div>

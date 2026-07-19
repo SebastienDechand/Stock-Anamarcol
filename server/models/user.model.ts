@@ -4,13 +4,13 @@ import bcrypt from "bcrypt";
 import { Role, ROLES } from "../constants";
 
 export interface IUser extends Document {
-  pseudo: string;
+  username: string;
   email: string;
   password: string;
   picture?: string;
-  poste?: string;
-  numero?: string;
-  pole?: string;
+  position?: string;
+  phone?: string;
+  department?: string;
   roles: Role[];
   createdAt: Date;
   updatedAt: Date;
@@ -22,7 +22,7 @@ export interface IUserModel extends Model<IUser> {
 
 const userSchema = new Schema<IUser, IUserModel>(
   {
-    pseudo: {
+    username: {
       type: String,
       required: true,
       minlength: 3,
@@ -48,21 +48,21 @@ const userSchema = new Schema<IUser, IUserModel>(
       type: String,
       default: "./uploads/profil/random-user.png",
     },
-    poste: {
+    position: {
       type: String,
       maxlength: 1024,
     },
-    numero: {
+    phone: {
       type: String,
     },
-    pole: {
+    department: {
       type: String,
       enum: [
-        "Direction",
+        "Management",
         "Hotline",
-        "Entrepôt",
-        "Monteur",
-        "Gestion du site",
+        "Warehouse",
+        "Installer",
+        "Site Management",
         "",
       ],
       default: "",

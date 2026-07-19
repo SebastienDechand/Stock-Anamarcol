@@ -63,7 +63,7 @@ describe("InterventionReport Controller", () => {
   beforeEach(() => {
     req = { params: {}, body: {}, query: {} };
     res = {
-      locals: { user: { pseudo: "monteur1" } },
+      locals: { user: { username: "monteur1" } },
       status: vi.fn().mockReturnThis() as unknown as Response["status"],
       json: vi.fn() as unknown as Response["json"],
     };

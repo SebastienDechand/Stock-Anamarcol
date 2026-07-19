@@ -12,9 +12,9 @@ const initialState = { users: initialUsersState, auth: initialAuthState };
 
 const makeUser = (overrides: Partial<User> = {}): User => ({
   _id: 'u1',
-  pseudo: 'Alice',
+  username: 'Alice',
   email: 'a@a.com',
-  pole: 'Direction',
+  department: 'Management',
   roles: [],
   ...overrides,
 });
@@ -42,25 +42,25 @@ describe('MembersPage', () => {
     expect(component).toBeTruthy();
   });
 
-  // byPole()
-  describe('byPole()', () => {
-    it('returns users whose pole matches', () => {
+  // byDepartment()
+  describe('byDepartment()', () => {
+    it('returns users whose department matches', () => {
       const users = [
-        makeUser({ _id: 'u1', pole: 'Direction' }),
-        makeUser({ _id: 'u2', pole: 'Technique' }),
-        makeUser({ _id: 'u3', pole: 'Direction' }),
+        makeUser({ _id: 'u1', department: 'Management' }),
+        makeUser({ _id: 'u2', department: 'Technique' }),
+        makeUser({ _id: 'u3', department: 'Management' }),
       ];
-      const result = component.byPole(users, 'Direction');
+      const result = component.byDepartment(users, 'Management');
       expect(result).toHaveLength(2);
       expect(result.map((u) => u._id)).toEqual(['u1', 'u3']);
     });
 
     it('returns empty array when none match', () => {
       const users = [
-        makeUser({ _id: 'u1', pole: 'Technique' }),
-        makeUser({ _id: 'u2', pole: 'Technique' }),
+        makeUser({ _id: 'u1', department: 'Technique' }),
+        makeUser({ _id: 'u2', department: 'Technique' }),
       ];
-      const result = component.byPole(users, 'Direction');
+      const result = component.byDepartment(users, 'Management');
       expect(result).toEqual([]);
     });
   });
@@ -95,7 +95,7 @@ describe('MembersPage', () => {
       const spy = vi.spyOn(facade, 'updateUser');
       const user = makeUser({ _id: 'u42' });
       component.editingUser.set(user);
-      const data: UpdateUserData = { pseudo: 'Bob' };
+      const data: UpdateUserData = { username: 'Bob' };
 
       component.onSave(data);
 
@@ -108,7 +108,7 @@ describe('MembersPage', () => {
       const user = makeUser();
       component.editingUser.set(user);
 
-      component.onSave({ pseudo: 'Bob' });
+      component.onSave({ username: 'Bob' });
 
       expect(component.editingUser()).toBeNull();
     });
@@ -117,7 +117,7 @@ describe('MembersPage', () => {
       const spy = vi.spyOn(facade, 'updateUser');
       component.editingUser.set(null);
 
-      component.onSave({ pseudo: 'Bob' });
+      component.onSave({ username: 'Bob' });
 
       expect(spy).not.toHaveBeenCalled();
     });
@@ -127,7 +127,7 @@ describe('MembersPage', () => {
   describe('onAdd()', () => {
     it('calls facade.addUser with the given data', () => {
       const spy = vi.spyOn(facade, 'addUser');
-      const data: NewUserData = { pseudo: 'Charlie', email: 'c@c.com', password: 'pass123' };
+      const data: NewUserData = { username: 'Charlie', email: 'c@c.com', password: 'pass123' };
 
       component.onAdd(data);
 
@@ -139,7 +139,7 @@ describe('MembersPage', () => {
       vi.spyOn(facade, 'addUser');
       component.showAddModal.set(true);
 
-      component.onAdd({ pseudo: 'Charlie', email: 'c@c.com', password: 'pass123' });
+      component.onAdd({ username: 'Charlie', email: 'c@c.com', password: 'pass123' });
 
       expect(component.showAddModal()).toBe(false);
     });

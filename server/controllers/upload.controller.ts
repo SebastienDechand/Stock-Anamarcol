@@ -25,7 +25,7 @@ export const uploadProfil = async (
         "upload",
         "user",
         req.body.userId,
-        res.locals.user?.pseudo,
+        res.locals.user?.username,
         { pictureUrl },
       );
     } catch (err) {

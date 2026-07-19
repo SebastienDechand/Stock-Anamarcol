@@ -18,7 +18,7 @@ import type { User } from '../../../shared/models/user.model';
 
 const sampleUser: User = {
   _id: 'user-1',
-  pseudo: 'alice',
+  username: 'alice',
   email: 'alice@example.com',
   roles: [Role.ADMIN],
 };

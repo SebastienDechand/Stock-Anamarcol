@@ -16,14 +16,14 @@ import { NewUserData, UpdateUserData } from './store/users.actions';
 import { User } from '../../shared/models/user.model';
 import { Role } from '../../shared/constants/roles.constants';
 import {
-  ALL_POLE_LABELS,
-  POLE_DIRECTION,
-  POLE_GESTION,
-  POLE_ENTREPOT,
+  ALL_DEPARTMENT_LABELS,
+  DEPARTMENT_MANAGEMENT,
+  DEPARTMENT_SITE_MANAGEMENT,
+  DEPARTMENT_WAREHOUSE,
 } from '../../shared/constants/poles.constants';
 
-function getUserPole(user: User): string {
-  return user.pole ?? 'autre';
+function getUserDepartment(user: User): string {
+  return user.department ?? 'autre';
 }
 
 @Component({
@@ -60,13 +60,13 @@ export class MembersPage {
   deletingUser = signal<User | null>(null);
 
   // ─── Constants ───────────────────────────────────────
-  readonly poleDirection = POLE_DIRECTION;
-  readonly poleGestion = POLE_GESTION;
-  readonly poleEntrepot = POLE_ENTREPOT;
+  readonly departmentManagement = DEPARTMENT_MANAGEMENT;
+  readonly departmentSiteManagement = DEPARTMENT_SITE_MANAGEMENT;
+  readonly departmentWarehouse = DEPARTMENT_WAREHOUSE;
 
   // ─── Helpers ─────────────────────────────────────────
-  byPole(users: User[], pole: string): User[] {
-    return users.filter((user) => getUserPole(user) === pole);
+  byDepartment(users: User[], department: string): User[] {
+    return users.filter((user) => getUserDepartment(user) === department);
   }
 
   canEdit(user: User): boolean {

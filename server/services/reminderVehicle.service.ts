@@ -51,7 +51,7 @@ async function getSuperAdmins() {
         { email: process.env.SUPERADMIN_EMAIL?.toLowerCase() },
       ],
     },
-    "email pseudo",
+    "email username",
   ).lean();
 }
 

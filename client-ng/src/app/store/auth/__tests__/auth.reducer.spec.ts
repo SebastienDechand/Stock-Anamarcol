@@ -99,7 +99,7 @@ describe('authReducer', () => {
   });
 
   it('should handle loadUserProfileSuccess', () => {
-    const user = { _id: 'u1', pseudo: 'admin', email: 'a@b.com' };
+    const user = { _id: 'u1', username: 'admin', email: 'a@b.com' };
     const state = authReducer(initialAuthState, AuthActions.loadUserProfileSuccess({ user }));
     expect(state.user).toEqual(user);
   });

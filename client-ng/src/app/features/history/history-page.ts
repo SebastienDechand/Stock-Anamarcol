@@ -105,7 +105,7 @@ export class HistoryPage implements OnInit {
   activeFilter = signal('all');
   selectedUsers = signal<string[]>([]);
   userDropdownOpen = signal(false);
-  users = signal<{ _id: string; pseudo: string }[]>([]);
+  users = signal<{ _id: string; username: string }[]>([]);
   isPurging = signal(false);
   showPurgeModal = signal(false);
 
@@ -214,9 +214,9 @@ export class HistoryPage implements OnInit {
     });
   }
 
-  toggleUser(pseudo: string): void {
+  toggleUser(username: string): void {
     this.selectedUsers.update((prev) =>
-      prev.includes(pseudo) ? prev.filter((u) => u !== pseudo) : [...prev, pseudo],
+      prev.includes(username) ? prev.filter((u) => u !== username) : [...prev, username],
     );
   }
 

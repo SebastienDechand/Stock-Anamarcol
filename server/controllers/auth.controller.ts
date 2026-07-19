@@ -14,18 +14,19 @@ const createToken = (id: string): string => {
 
 // Sign up
 export const signUp = async (req: Request, res: Response): Promise<void> => {
-  const { pseudo, email, password, poste, numero, pole } = req.body;
+  const { username, email, password, position, phone, department } =
+    req.body;
 
   try {
     const payload: Record<string, unknown> = {
-      pseudo,
+      username,
       email,
       password,
-      poste,
-      numero,
-      pole,
+      position,
+      phone,
+      department,
     };
-    if (pole === "Hotline") {
+    if (department === "Hotline") {
       payload.roles = [Role.USER, Role.HOTLINE];
     } else {
       payload.roles = [Role.USER];
@@ -55,7 +56,7 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
     });
     // Audit: login
     try {
-      await logEvent("login", "user", user._id.toString(), user.pseudo);
+      await logEvent("login", "user", user._id.toString(), user.username);
     } catch (err) {
       console.error("Audit login error:", err);
     }

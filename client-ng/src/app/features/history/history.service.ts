@@ -11,8 +11,8 @@ export class HistoryService {
     return this.api.get<AuditEvent[]>('api/history/');
   }
 
-  getUsers(): Observable<{ _id: string; pseudo: string }[]> {
-    return this.api.get<{ _id: string; pseudo: string }[]>('api/user/');
+  getUsers(): Observable<{ _id: string; username: string }[]> {
+    return this.api.get<{ _id: string; username: string }[]>('api/user/');
   }
 
   purge(): Observable<void> {

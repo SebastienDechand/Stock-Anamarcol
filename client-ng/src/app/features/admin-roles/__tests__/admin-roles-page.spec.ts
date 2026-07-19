@@ -13,7 +13,7 @@ const initialState = { users: initialUsersState, auth: initialAuthState };
 
 const makeUser = (overrides: Partial<User> = {}): User => ({
   _id: 'u1',
-  pseudo: 'Alice',
+  username: 'Alice',
   email: 'alice@example.com',
   roles: [Role.USER],
   ...overrides,
@@ -55,27 +55,27 @@ describe('AdminRolesPage', () => {
 
   describe('filterUsers()', () => {
     it('returns all users when searchTerm is empty', () => {
-      const users = [makeUser(), makeUser({ _id: 'u2', pseudo: 'Bob', email: 'bob@example.com' })];
+      const users = [makeUser(), makeUser({ _id: 'u2', username: 'Bob', email: 'bob@example.com' })];
       component.searchTerm.set('');
       expect(component.filterUsers(users)).toEqual(users);
     });
 
-    it('filters by pseudo when searchTerm matches', () => {
+    it('filters by username when searchTerm matches', () => {
       const alice = makeUser();
-      const bob = makeUser({ _id: 'u2', pseudo: 'Bob', email: 'bob@example.com' });
+      const bob = makeUser({ _id: 'u2', username: 'Bob', email: 'bob@example.com' });
       component.searchTerm.set('ali');
       expect(component.filterUsers([alice, bob])).toEqual([alice]);
     });
 
     it('filters by email when searchTerm matches', () => {
       const alice = makeUser();
-      const bob = makeUser({ _id: 'u2', pseudo: 'Bob', email: 'bob@example.com' });
+      const bob = makeUser({ _id: 'u2', username: 'Bob', email: 'bob@example.com' });
       component.searchTerm.set('bob@');
       expect(component.filterUsers([alice, bob])).toEqual([bob]);
     });
 
     it('returns empty array when no match', () => {
-      const users = [makeUser(), makeUser({ _id: 'u2', pseudo: 'Bob', email: 'bob@example.com' })];
+      const users = [makeUser(), makeUser({ _id: 'u2', username: 'Bob', email: 'bob@example.com' })];
       component.searchTerm.set('zzz');
       expect(component.filterUsers(users)).toEqual([]);
     });

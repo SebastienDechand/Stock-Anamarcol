@@ -26,7 +26,7 @@ export const uploadContact = async (
         "upload",
         "contact",
         req.body.contactId,
-        res.locals.user?.pseudo,
+        res.locals.user?.username,
         { pictureUrl },
       );
     } catch (err) {

@@ -1,5 +1,5 @@
 export interface SignUpError {
-  pseudo: string;
+  username: string;
   email: string;
   password: string;
 }

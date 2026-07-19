@@ -72,7 +72,7 @@ describe("ClientFile Controller", () => {
   beforeEach(() => {
     req = { params: {}, body: {}, query: {} };
     res = {
-      locals: { user: { pseudo: "admin" } },
+      locals: { user: { username: "admin" } },
       status: vi.fn().mockReturnThis() as unknown as Response["status"],
       json: vi.fn() as unknown as Response["json"],
     };

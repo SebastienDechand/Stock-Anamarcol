@@ -62,14 +62,14 @@
             @for (u of users(); track u._id) {
               <button
                 class="user-option"
-                (click)="toggleUser(u.pseudo)"
-                [title]="'Filtrer par : ' + u.pseudo"
+                (click)="toggleUser(u.username)"
+                [title]="'Filtrer par : ' + u.username"
               >
                 <span
                   class="user-option__check"
-                  [class.user-option__check--selected]="selectedUsers().includes(u.pseudo)"
+                  [class.user-option__check--selected]="selectedUsers().includes(u.username)"
                 >
-                  @if (selectedUsers().includes(u.pseudo)) {
+                  @if (selectedUsers().includes(u.username)) {
                     <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
                       <path
                         d="M2 5L4.5 7.5L8 2.5"
@@ -81,7 +81,7 @@
                     </svg>
                   }
                 </span>
-                {{ u.pseudo }}
+                {{ u.username }}
               </button>
             }
           </div>

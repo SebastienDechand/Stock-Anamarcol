@@ -45,7 +45,7 @@
             @for (user of filtered; track user._id) {
               <tr class="roles-table__row">
                 <td class="roles-table__td roles-table__td--member">
-                  <span class="member-name">{{ user.pseudo }}</span>
+                  <span class="member-name">{{ user.username }}</span>
                   @if (isSaving(user._id)) {
                     <lucide-icon name="loader-circle" [size]="13" class="saving-icon" />
                   }
@@ -96,9 +96,9 @@
         @for (user of filtered; track user._id) {
           <div class="user-card">
             <div class="user-card__head">
-              <div class="user-card__avatar">{{ user.pseudo | slice: 0 : 1 }}</div>
+              <div class="user-card__avatar">{{ user.username | slice: 0 : 1 }}</div>
               <div class="user-card__info">
-                <span class="user-card__name">{{ user.pseudo }}</span>
+                <span class="user-card__name">{{ user.username }}</span>
                 <span class="user-card__email">{{ user.email }}</span>
               </div>
               @if (isSaving(user._id)) {

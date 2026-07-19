@@ -66,7 +66,7 @@ describe("Reminder Vehicle Service", () => {
         lean: vi
           .fn()
           .mockResolvedValue([
-            { _id: "admin1", email: "admin@test.com", pseudo: "admin" },
+            { _id: "admin1", email: "admin@test.com", username: "admin" },
           ]),
       });
 
@@ -106,7 +106,7 @@ describe("Reminder Vehicle Service", () => {
         lean: vi
           .fn()
           .mockResolvedValue([
-            { _id: "admin1", email: "admin@test.com", pseudo: "admin" },
+            { _id: "admin1", email: "admin@test.com", username: "admin" },
           ]),
       });
 
@@ -145,7 +145,7 @@ describe("Reminder Vehicle Service", () => {
         lean: vi
           .fn()
           .mockResolvedValue([
-            { _id: "admin1", email: "admin@test.com", pseudo: "admin" },
+            { _id: "admin1", email: "admin@test.com", username: "admin" },
           ]),
       });
 
@@ -184,7 +184,7 @@ describe("Reminder Vehicle Service", () => {
         lean: vi
           .fn()
           .mockResolvedValue([
-            { _id: "admin1", email: "admin@test.com", pseudo: "admin" },
+            { _id: "admin1", email: "admin@test.com", username: "admin" },
           ]),
       });
 
@@ -213,8 +213,8 @@ describe("Reminder Vehicle Service", () => {
 
       mockUserFind.mockReturnValue({
         lean: vi.fn().mockResolvedValue([
-          { _id: "admin1", email: "admin1@test.com", pseudo: "admin1" },
-          { _id: "admin2", email: "admin2@test.com", pseudo: "admin2" },
+          { _id: "admin1", email: "admin1@test.com", username: "admin1" },
+          { _id: "admin2", email: "admin2@test.com", username: "admin2" },
         ]),
       });
 
@@ -260,7 +260,7 @@ describe("Reminder Vehicle Service", () => {
         lean: vi
           .fn()
           .mockResolvedValue([
-            { _id: "admin1", email: "admin@test.com", pseudo: "admin" },
+            { _id: "admin1", email: "admin@test.com", username: "admin" },
           ]),
       });
 
@@ -301,7 +301,7 @@ describe("Reminder Vehicle Service", () => {
         lean: vi
           .fn()
           .mockResolvedValue([
-            { _id: "admin1", email: "admin@test.com", pseudo: "admin" },
+            { _id: "admin1", email: "admin@test.com", username: "admin" },
           ]),
       });
 

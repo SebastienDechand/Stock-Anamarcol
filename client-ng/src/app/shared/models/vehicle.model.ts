@@ -23,7 +23,7 @@ export interface Vehicle {
   inspectionExpiryDate?: Date | string;
   antiPollutionInspectionDate?: Date | string;
   antiPollutionExpiryDate?: Date | string;
-  assignedTo?: string | { _id: string; pseudo: string; email?: string; poste?: string };
+  assignedTo?: string | { _id: string; username: string; email?: string; position?: string };
   assignedToName?: string;
   notes?: string;
   documents: VehicleDocument[];

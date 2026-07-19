@@ -29,8 +29,8 @@ export class ProfilePage implements OnInit {
   private translate = inject(TranslateService);
 
   user = signal<User | null>(null);
-  editingNumero = signal(false);
-  numero = signal('');
+  editingPhone = signal(false);
+  phone = signal('');
   uploadError = signal('');
   assignedVehicle = signal<Vehicle | null>(null);
 
@@ -41,7 +41,7 @@ export class ProfilePage implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([currentUser, vehicles]) => {
         this.user.set(currentUser);
-        this.numero.set(currentUser?.numero ?? '');
+        this.phone.set(currentUser?.phone ?? '');
         this.assignedVehicle.set(
           currentUser
             ? (vehicles.find((vehicle) => {
@@ -64,7 +64,7 @@ export class ProfilePage implements OnInit {
   }
 
   get initials(): string {
-    return (this.user()?.pseudo ?? '?')[0].toUpperCase();
+    return (this.user()?.username ?? '?')[0].toUpperCase();
   }
 
   vehicleIcon(vehicle: Vehicle): string {
@@ -80,11 +80,11 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  saveNumero() {
+  savePhone() {
     const user = this.user();
     if (!user) return;
-    this.authFacade.updateProfile(user._id, { numero: this.numero() });
-    this.editingNumero.set(false);
+    this.authFacade.updateProfile(user._id, { phone: this.phone() });
+    this.editingPhone.set(false);
   }
 
   onFileChange(event: Event) {
@@ -106,7 +106,7 @@ export class ProfilePage implements OnInit {
 
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('name', user.pseudo);
+    formData.append('name', user.username);
     formData.append('userId', user._id);
 
     this.usersFacade.uploadPicture(user._id, formData);

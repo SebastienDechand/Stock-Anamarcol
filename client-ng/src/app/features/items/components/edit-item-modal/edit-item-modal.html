@@ -72,7 +72,7 @@
               {{
                 'ITEMS.CREATED_BY_ON'
                   | translate
-                    : { name: poster?.pseudo || '–', date: formatDate(displayItem.createdAt) }
+                    : { name: poster?.username || '–', date: formatDate(displayItem.createdAt) }
               }}
             </p>
           }

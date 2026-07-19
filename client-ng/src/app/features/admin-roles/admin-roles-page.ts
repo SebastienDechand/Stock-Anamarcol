@@ -61,7 +61,8 @@ export class AdminRolesPage implements OnInit {
     if (!searchTerm) return users;
     return users.filter(
       (u) =>
-        u.pseudo.toLowerCase().includes(searchTerm) || u.email.toLowerCase().includes(searchTerm),
+        u.username.toLowerCase().includes(searchTerm) ||
+        u.email.toLowerCase().includes(searchTerm),
     );
   }
 
