@@ -525,8 +525,8 @@
                       >
                     }
                   </td>
-                  <td class="ship-piece">{{ s.piece || '-' }}</td>
-                  <td>{{ s.societe }}</td>
+                  <td class="ship-piece">{{ s.part || '-' }}</td>
+                  <td>{{ s.company }}</td>
                   <td>{{ s.createdByName || '-' }}</td>
                   <td>{{ s.createdAt ? (s.createdAt | date: 'dd/MM/yyyy') : '-' }}</td>
                   <td class="ship-actions">
@@ -579,9 +579,9 @@
                   </button>
                 </div>
                 <p class="ship-card__piece">
-                  <lucide-icon [img]="package" [size]="12" /> {{ s.piece }}
+                  <lucide-icon [img]="package" [size]="12" /> {{ s.part }}
                 </p>
-                <p class="ship-card__info">{{ s.societe }}</p>
+                <p class="ship-card__info">{{ s.company }}</p>
                 <p class="ship-card__meta">
                   {{ s.createdByName || '-'
                   }}{{ s.createdAt ? ' · ' + (s.createdAt | date: 'dd/MM/yyyy') : '' }}
@@ -768,35 +768,35 @@
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'SHIPMENTS.PIECE' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.piece }}</span>
+          <span class="modal-detail-row__value">{{ s.part }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.NAME' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.prenom + ' ' + s.nom }}</span>
+          <span class="modal-detail-row__value">{{ s.firstName + ' ' + s.lastName }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'SHIPMENTS.COMPANY' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.societe }}</span>
+          <span class="modal-detail-row__value">{{ s.company }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{
             'SHIPMENTS.COMPANY_FUNCTION' | translate
           }}</span>
-          <span class="modal-detail-row__value">{{ s.societeOuFonction }}</span>
+          <span class="modal-detail-row__value">{{ s.companyOrRole }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.ADDRESS' | translate }}</span>
           <span class="modal-detail-row__value">{{
-            s.adresse + ', ' + s.codePostal + ' ' + s.ville
+            s.address + ', ' + s.postalCode + ' ' + s.city
           }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.PHONE' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.tel || '-' }}</span>
+          <span class="modal-detail-row__value">{{ s.phone || '-' }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.PHONE2' | translate }}</span>
-          <span class="modal-detail-row__value">{{ s.tel2 || '-' }}</span>
+          <span class="modal-detail-row__value">{{ s.phone2 || '-' }}</span>
         </div>
         <div class="modal-detail-row">
           <span class="modal-detail-row__label">{{ 'COMMON.EMAIL' | translate }}</span>

@@ -1,16 +1,16 @@
 export interface Shipment {
   _id: string;
-  nom: string;
-  prenom: string;
-  tel?: string;
-  tel2?: string;
+  lastName: string;
+  firstName: string;
+  phone?: string;
+  phone2?: string;
   email?: string;
-  adresse: string;
-  codePostal: string;
-  ville: string;
-  societeOuFonction: string;
-  societe: string;
-  piece: string;
+  address: string;
+  postalCode: string;
+  city: string;
+  companyOrRole: string;
+  company: string;
+  part: string;
   clientFile?: string;
   requestDate?: string;
   sent?: boolean;
@@ -20,17 +20,17 @@ export interface Shipment {
 }
 
 export interface ShipmentForm {
-  nom: string;
-  prenom: string;
-  tel: string;
-  tel2: string;
+  lastName: string;
+  firstName: string;
+  phone: string;
+  phone2: string;
   email: string;
-  adresse: string;
-  codePostal: string;
-  ville: string;
-  societeOuFonction: string;
-  societe: string;
-  piece: string;
+  address: string;
+  postalCode: string;
+  city: string;
+  companyOrRole: string;
+  company: string;
+  part: string;
   requestDate: string;
   clientFile?: string;
 }

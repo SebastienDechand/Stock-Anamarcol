@@ -17,15 +17,15 @@ const initialState = {
 
 const sampleShipment: Shipment = {
   _id: 's1',
-  nom: 'Dupont',
-  prenom: 'Jean',
-  tel: '0600000001',
-  adresse: '1 rue de la Paix',
-  codePostal: '75001',
-  ville: 'Paris',
-  societeOuFonction: 'Gérant',
-  societe: 'Bistrot du coin',
-  piece: 'Écran tactile',
+  lastName: 'Dupont',
+  firstName: 'Jean',
+  phone: '0600000001',
+  address: '1 rue de la Paix',
+  postalCode: '75001',
+  city: 'Paris',
+  companyOrRole: 'Gérant',
+  company: 'Bistrot du coin',
+  part: 'Écran tactile',
   sent: false,
   createdByName: 'admin',
 };
@@ -154,43 +154,43 @@ describe('ShipmentsPage', () => {
 
   describe('updateField()', () => {
     it('should update the specified field in the form signal', () => {
-      component.updateField('nom', 'Leclerc');
-      expect(component.form().nom).toBe('Leclerc');
+      component.updateField('lastName', 'Leclerc');
+      expect(component.form().lastName).toBe('Leclerc');
     });
 
     it('should not affect other form fields', () => {
-      component.form.set({ ...component.form(), piece: 'Clavier', nom: 'Initial' });
-      component.updateField('nom', 'Nouveau');
-      expect(component.form().piece).toBe('Clavier');
+      component.form.set({ ...component.form(), part: 'Clavier', lastName: 'Initial' });
+      component.updateField('lastName', 'Nouveau');
+      expect(component.form().part).toBe('Clavier');
     });
   });
 
   describe('submitCreate()', () => {
-    it('should NOT call facade.create when nom is empty', () => {
+    it('should NOT call facade.create when lastName is empty', () => {
       vi.spyOn(facade, 'create').mockImplementation(() => {});
-      component.form.set({ ...component.form(), nom: '', piece: 'Écran' });
+      component.form.set({ ...component.form(), lastName: '', part: 'Écran' });
       component.submitCreate();
       expect(facade.create).not.toHaveBeenCalled();
     });
 
-    it('should NOT call facade.create when piece is empty', () => {
+    it('should NOT call facade.create when part is empty', () => {
       vi.spyOn(facade, 'create').mockImplementation(() => {});
-      component.form.set({ ...component.form(), nom: 'Dupont', piece: '' });
+      component.form.set({ ...component.form(), lastName: 'Dupont', part: '' });
       component.submitCreate();
       expect(facade.create).not.toHaveBeenCalled();
     });
 
-    it('should NOT call facade.create when both nom and piece are whitespace', () => {
+    it('should NOT call facade.create when both lastName and part are whitespace', () => {
       vi.spyOn(facade, 'create').mockImplementation(() => {});
-      component.form.set({ ...component.form(), nom: '   ', piece: '   ' });
+      component.form.set({ ...component.form(), lastName: '   ', part: '   ' });
       component.submitCreate();
       expect(facade.create).not.toHaveBeenCalled();
     });
 
-    it('should call facade.create with form data and currentUserName when nom and piece are filled', () => {
+    it('should call facade.create with form data and currentUserName when lastName and part are filled', () => {
       const createSpy = vi.spyOn(facade, 'create').mockImplementation(() => {});
       component.currentUserName.set('admin');
-      const formData = { ...component.form(), nom: 'Dupont', piece: 'Écran' };
+      const formData = { ...component.form(), lastName: 'Dupont', part: 'Écran' };
       component.form.set(formData);
       component.submitCreate();
       expect(createSpy).toHaveBeenCalledWith(formData, 'admin');
@@ -200,7 +200,7 @@ describe('ShipmentsPage', () => {
       const createSpy = vi.spyOn(facade, 'create').mockImplementation(() => {});
       component.currentUserName.set('admin');
       component.linkedClientFileId.set('cf1');
-      const formData = { ...component.form(), nom: 'Dupont', piece: 'Écran' };
+      const formData = { ...component.form(), lastName: 'Dupont', part: 'Écran' };
       component.form.set(formData);
       component.submitCreate();
       expect(createSpy).toHaveBeenCalledWith({ ...formData, clientFile: 'cf1' }, 'admin');
@@ -208,18 +208,23 @@ describe('ShipmentsPage', () => {
 
     it('should reset form to empty after successful submit', () => {
       vi.spyOn(facade, 'create').mockImplementation(() => {});
-      component.form.set({ ...component.form(), nom: 'Dupont', piece: 'Écran', ville: 'Paris' });
+      component.form.set({
+        ...component.form(),
+        lastName: 'Dupont',
+        part: 'Écran',
+        city: 'Paris',
+      });
       component.submitCreate();
-      expect(component.form().nom).toBe('');
-      expect(component.form().piece).toBe('');
-      expect(component.form().ville).toBe('');
+      expect(component.form().lastName).toBe('');
+      expect(component.form().part).toBe('');
+      expect(component.form().city).toBe('');
     });
 
     it('should clear linkedClientFileId and hide form after successful submit', () => {
       vi.spyOn(facade, 'create').mockImplementation(() => {});
       component.linkedClientFileId.set('cf1');
       component.showForm.set(true);
-      component.form.set({ ...component.form(), nom: 'Dupont', piece: 'Écran' });
+      component.form.set({ ...component.form(), lastName: 'Dupont', part: 'Écran' });
       component.submitCreate();
       expect(component.linkedClientFileId()).toBe('');
       expect(component.showForm()).toBe(false);

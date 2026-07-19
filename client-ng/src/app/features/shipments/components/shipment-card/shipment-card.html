@@ -1,6 +1,6 @@
 <div class="shipment-card" [class.shipment-card--sent]="shipment().sent">
   <div class="shipment-card__header">
-    <div class="shipment-card__name">{{ shipment().prenom }} {{ shipment().nom }}</div>
+    <div class="shipment-card__name">{{ shipment().firstName }} {{ shipment().lastName }}</div>
     @if (shipment().sent) {
       <span class="badge badge--green">{{ 'SHIPMENTS.STATUS_SENT' | translate }}</span>
     } @else {
@@ -8,21 +8,21 @@
     }
   </div>
 
-  @if (shipment().societe) {
+  @if (shipment().company) {
     <div class="shipment-card__row">
       <lucide-icon [img]="user" [size]="14" />
-      <span>{{ shipment().societe }}</span>
+      <span>{{ shipment().company }}</span>
     </div>
   }
 
   <div class="shipment-card__row">
     <lucide-icon [img]="mapPin" [size]="14" />
-    <span>{{ shipment().adresse }}, {{ shipment().codePostal }} {{ shipment().ville }}</span>
+    <span>{{ shipment().address }}, {{ shipment().postalCode }} {{ shipment().city }}</span>
   </div>
 
   <div class="shipment-card__row">
     <lucide-icon [img]="packageIcon" [size]="14" />
-    <span>{{ shipment().piece }}</span>
+    <span>{{ shipment().part }}</span>
   </div>
 
   @if (shipment().requestDate) {

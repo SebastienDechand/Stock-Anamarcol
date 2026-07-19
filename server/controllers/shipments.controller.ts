@@ -57,14 +57,14 @@ async function performArchiveForMonth(
 
     const cols = [
       { header: "Statut", width: 48, key: "statut" },
-      { header: "Nom", width: 60, key: "nom" },
-      { header: "Prénom", width: 55, key: "prenom" },
-      { header: "Société", width: 80, key: "societe" },
-      { header: "Pièce", width: 70, key: "piece" },
-      { header: "Adresse", width: 100, key: "adresse" },
+      { header: "Nom", width: 60, key: "lastName" },
+      { header: "Prénom", width: 55, key: "firstName" },
+      { header: "Société", width: 80, key: "company" },
+      { header: "Pièce", width: 70, key: "part" },
+      { header: "Adresse", width: 100, key: "address" },
       { header: "CP", width: 38, key: "cp" },
-      { header: "Ville", width: 60, key: "ville" },
-      { header: "Tél", width: 70, key: "tel" },
+      { header: "Ville", width: 60, key: "city" },
+      { header: "Tél", width: 70, key: "phone" },
       { header: "Envoyé par", width: 55, key: "sentBy" },
       { header: "Créé par", width: 55, key: "createdBy" },
       { header: "Date", width: 55, key: "createdAt" },
@@ -101,14 +101,14 @@ async function performArchiveForMonth(
       const s = shipments[i];
       const values: Record<string, string> = {
         statut: s.sent ? "Envoyé" : "En attente",
-        nom: s.nom || "",
-        prenom: s.prenom || "",
-        societe: [s.societe, s.societeOuFonction].filter(Boolean).join(" / "),
-        piece: s.piece || "",
-        adresse: s.adresse || "",
-        cp: s.codePostal || "",
-        ville: s.ville || "",
-        tel: [s.tel, s.tel2].filter(Boolean).join(" / "),
+        lastName: s.lastName || "",
+        firstName: s.firstName || "",
+        company: [s.company, s.companyOrRole].filter(Boolean).join(" / "),
+        part: s.part || "",
+        address: s.address || "",
+        cp: s.postalCode || "",
+        city: s.city || "",
+        phone: [s.phone, s.phone2].filter(Boolean).join(" / "),
         sentBy: s.sentBy || "",
         createdBy: s.createdByName || "",
         createdAt: new Date(s.createdAt).toLocaleDateString("fr-FR"),
@@ -154,16 +154,16 @@ async function performArchiveForMonth(
   // Build raw data rows for future XLSX export
   const rawData = shipments.map((s: IShipment) => ({
     Statut: s.sent ? "Envoyé" : "En attente",
-    Nom: s.nom || "",
-    Prénom: s.prenom || "",
-    Société: s.societe || "",
-    "Société / Fonction": s.societeOuFonction || "",
-    Pièce: s.piece || "",
-    Adresse: s.adresse || "",
-    CP: s.codePostal || "",
-    Ville: s.ville || "",
-    Tél: s.tel || "",
-    "Tél 2": s.tel2 || "",
+    Nom: s.lastName || "",
+    Prénom: s.firstName || "",
+    Société: s.company || "",
+    "Société / Fonction": s.companyOrRole || "",
+    Pièce: s.part || "",
+    Adresse: s.address || "",
+    CP: s.postalCode || "",
+    Ville: s.city || "",
+    Tél: s.phone || "",
+    "Tél 2": s.phone2 || "",
     Email: s.email || "",
     "Envoyé par": s.sentBy || "",
     "Créé par": s.createdByName || "",
@@ -241,31 +241,31 @@ export const createShipment = async (
   res: Response,
 ): Promise<void> => {
   const {
-    nom,
-    prenom,
-    tel,
-    tel2,
+    lastName,
+    firstName,
+    phone,
+    phone2,
     email,
-    adresse,
-    codePostal,
-    ville,
-    societeOuFonction,
-    societe,
-    piece,
+    address,
+    postalCode,
+    city,
+    companyOrRole,
+    company,
+    part,
     requestDate,
     clientFile,
   } = req.body;
 
   // Validate required fields
   const missing: string[] = [];
-  if (!nom) missing.push("nom");
-  if (!prenom) missing.push("prenom");
-  if (!adresse) missing.push("adresse");
-  if (!codePostal) missing.push("codePostal");
-  if (!ville) missing.push("ville");
-  if (!societeOuFonction) missing.push("societeOuFonction");
-  if (!societe) missing.push("societe");
-  if (!piece) missing.push("piece");
+  if (!lastName) missing.push("lastName");
+  if (!firstName) missing.push("firstName");
+  if (!address) missing.push("address");
+  if (!postalCode) missing.push("postalCode");
+  if (!city) missing.push("city");
+  if (!companyOrRole) missing.push("companyOrRole");
+  if (!company) missing.push("company");
+  if (!part) missing.push("part");
   if (missing.length > 0) {
     res
       .status(400)
@@ -275,17 +275,17 @@ export const createShipment = async (
 
   try {
     const created = await ShipmentModel.create({
-      nom,
-      prenom,
-      tel: tel || undefined,
-      tel2: tel2 || undefined,
+      lastName,
+      firstName,
+      phone: phone || undefined,
+      phone2: phone2 || undefined,
       email: email || undefined,
-      adresse,
-      codePostal,
-      ville,
-      societeOuFonction,
-      societe,
-      piece,
+      address,
+      postalCode,
+      city,
+      companyOrRole,
+      company,
+      part,
       clientFile: clientFile || undefined,
       requestDate: requestDate ? new Date(requestDate) : undefined,
       createdBy: res.locals.user?._id?.toString(),
