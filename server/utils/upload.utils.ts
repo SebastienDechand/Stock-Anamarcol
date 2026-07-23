@@ -1,6 +1,25 @@
 import { Request, Response } from "express";
+import multer from "multer";
 import { uploadErrors } from "../errors.utils";
 import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "../constants";
+
+// Shared multer instance for single-image uploads (profile/item/contact
+// pictures) - rejects oversized/wrong-type files before buffering them
+// in memory, instead of relying solely on the post-hoc check below.
+export const imageUpload = multer({
+  limits: { fileSize: MAX_FILE_SIZE },
+  fileFilter: (_req, file, cb) => {
+    if (
+      ACCEPTED_IMAGE_TYPES.includes(
+        file.mimetype as (typeof ACCEPTED_IMAGE_TYPES)[number],
+      )
+    ) {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid file"));
+    }
+  },
+});
 
 /**
  * Validates the uploaded file (MIME type + size).

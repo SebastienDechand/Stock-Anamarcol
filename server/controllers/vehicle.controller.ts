@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import VehicleModel, { IVehicle } from "../models/vehicle.model";
+import { Types } from "mongoose";
+import VehicleModel from "../models/vehicle.model";
 import UserModel from "../models/user.model";
 import { logEvent } from "../utils/audit.utils";
 
@@ -157,8 +158,8 @@ export const updateVehicle = async (req: Request, res: Response) => {
     if (licensePlate && licensePlate !== vehicle.licensePlate) {
       const existing = await VehicleModel.findOne({
         licensePlate: licensePlate.toUpperCase(),
-        _id: { $ne: new (require("mongoose").Types.ObjectId)(id) },
-      } as any);
+        _id: { $ne: new Types.ObjectId(id as string) },
+      } as Record<string, unknown>);
       if (existing) {
         return res.status(400).json({
           message: "Vehicle with this licensePlate already exists",
@@ -288,7 +289,7 @@ export const uploadDocument = async (req: Request, res: Response) => {
     }
 
     const doc = {
-      _id: new (require("mongoose").Types.ObjectId)(),
+      _id: new Types.ObjectId(),
       name: docName || file.originalname,
       filename: file.filename,
       type: docType,

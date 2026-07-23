@@ -24,12 +24,15 @@ export const signUpErrors = (err: MongoError): SignUpError => {
 };
 
 // Sign-in validation errors
+// Same generic message regardless of which check failed, to avoid
+// leaking whether an email is registered (account enumeration).
 export const signInErrors = (err: Error): SignInError => {
   const errors: SignInError = { email: "", password: "" };
 
-  if (err.message.includes("email")) errors.email = "Email inconnu";
-  if (err.message.includes("password"))
-    errors.password = "Le mot de passe ne correspond pas";
+  if (err.message.includes("email") || err.message.includes("password")) {
+    errors.email = "Email ou mot de passe incorrect";
+    errors.password = "Email ou mot de passe incorrect";
+  }
 
   return errors;
 };

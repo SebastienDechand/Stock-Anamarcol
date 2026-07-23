@@ -8,10 +8,10 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?style=for-the-badge&logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![NgRx](https://img.shields.io/badge/NgRx-Store-764ABC?style=for-the-badge&logo=redux&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-5.2-000000?style=for-the-badge&logo=express&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
-![Tailwind](https://img.shields.io/badge/Tailwind-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-6.3-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-24-339933?style=for-the-badge&logo=node.js&logoColor=white)
 
 [![CI](https://github.com/SebastienDechand/Stock-Anamarcol/actions/workflows/ci.yml/badge.svg)](https://github.com/SebastienDechand/Stock-Anamarcol/actions/workflows/ci.yml)
 [![Deploy](https://github.com/SebastienDechand/Stock-Anamarcol/actions/workflows/deploy.yml/badge.svg)](https://github.com/SebastienDechand/Stock-Anamarcol/actions/workflows/deploy.yml)
@@ -25,7 +25,7 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 | Fonctionnalité              | Description                                                                            |
 | --------------------------- | -------------------------------------------------------------------------------------- |
 | **Gestion des articles**    | CRUD complet, suivi des quantités, alertes stock bas                                   |
-| **Fournisseurs & états**    | Filtres avancés par fournisseur, état (Neuf / SAV) et préparation                      |
+| **Fournisseurs & états**    | Filtres avancés par fournisseur, état (NEW / RMA) et préparation                       |
 | **Tableau de bord**         | Statistiques globales, par fournisseur et par état avec graphiques                     |
 | **Préparations batch**      | Décrémentation/incrémentation groupée (CashGuard, Caisse TPV)                          |
 | **Historique & audit**      | Suivi des modifications articles, journal d'audit, purge superadmin                    |
@@ -34,7 +34,7 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 | **Fiches clients**          | Fiches détaillées par client, historique et documents associés                         |
 | **Rapports d'intervention** | Création et suivi des rapports d'intervention terrain                                  |
 | **Contacts**                | Annuaire interne avec fiches détaillées et upload photo                                |
-| **Membres**                 | Gestion de l'équipe par pôles (Direction, Hotline, Entrepôt, Monteur, Gestion du site) |
+| **Membres**                 | Gestion de l'équipe par pôles (Management, Hotline, Warehouse, Installer, Site Management) |
 | **Flotte véhicules**        | Gestion et suivi des véhicules de l'entreprise (réservé admin)                         |
 | **Surveillance**            | Affichage en continu des caméras de l'entreprise (réservé admin)                       |
 | **Upload d'images**         | Photos d'articles, avatars profils et contacts via ImgBB                               |
@@ -50,18 +50,14 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 
 ### Frontend
 
-| Technologie        | Rôle                   |
-| ------------------ | ---------------------- |
-| **React 19**       | Interface utilisateur  |
-| **TypeScript**     | Typage statique        |
-| **Vite**           | Bundler & dev server   |
-| **Redux Toolkit**  | State management       |
-| **React Router 7** | Routing SPA            |
-| **Tailwind CSS**   | Styling utilitaire     |
-| **Framer Motion**  | Animations             |
-| **Recharts**       | Graphiques             |
-| **Radix UI**       | Composants accessibles |
-| **Lucide**         | Icônes                 |
+| Technologie          | Rôle                              |
+| --------------------- | ---------------------------------- |
+| **Angular 21**         | Interface utilisateur (standalone, signals) |
+| **TypeScript**         | Typage statique                    |
+| **NgRx**               | State management (store + effects) |
+| **SCSS (BEM)**         | Styling scopé par composant        |
+| **@ngx-translate**     | i18n (FR par défaut, EN disponible) |
+| **lucide-angular**     | Icônes                             |
 
 </td>
 <td width="50%" valign="top">
@@ -70,7 +66,7 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 
 | Technologie       | Rôle                  |
 | ----------------- | --------------------- |
-| **Node.js 20**    | Runtime               |
+| **Node.js 24**    | Runtime               |
 | **Express 5**     | Framework HTTP        |
 | **TypeScript**    | Typage statique       |
 | **MongoDB Atlas** | Base de données       |
@@ -110,7 +106,7 @@ Stock-Anamarcol
 │   ├── routes/                 Définition des routes
 │   └── utils/                  Upload, validation, historique, audit
 │
-└── .github/workflows/          CI/CD (tests backend + client + client-ng, deploy)
+└── .github/workflows/          CI/CD (tests backend + client-ng, deploy)
 ```
 
 ---
@@ -132,7 +128,7 @@ cd Stock-Anamarcol
 
 ```bash
 cd server && npm install
-cd ../client && npm install
+cd ../client-ng && npm install
 ```
 
 ### 3️⃣ Variables d'environnement
@@ -143,10 +139,15 @@ cd ../client && npm install
 ```env
 PORT=4000
 DB_USER_PASS=<user>:<password>
-CLIENT_URL=http://localhost:3000
+MONGO_HOST=<cluster>.mongodb.net
+CLIENT_URL=http://localhost:4200
 TOKEN_SECRET=<votre_secret_jwt>
 IMGBB_API_KEY=<votre_cle_imgbb>
+RESEND_API_KEY=<votre_cle_resend>
 SUPERADMIN_EMAIL=<email_superadmin>
+CAMERA_HOST=<ip_camera>
+CAMERA_USERNAME=<user_camera>
+CAMERA_PASSWORD=<password_camera>
 ```
 
 </details>
@@ -208,20 +209,21 @@ Le projet utilise **GitHub Actions** avec deux workflows :
 > Déclenché sur push `main`/`develop` et PR vers `main`
 
 ```
-Tests backend (Vitest) ⇉ Tests frontend React (Vitest) ⇉ Tests frontend Angular (Vitest)
+Tests backend (Vitest) ⇉ Tests frontend Angular (Vitest)
 ```
 
-> Les 3 jobs tournent en parallèle (pas de build dans ce workflow).
+> Les 2 jobs tournent en parallèle (pas de build dans ce workflow).
 
 ### `deploy.yml` — Déploiement
 
 > Déclenché sur push `main` ou dispatch manuel
 
 ```
-Gate (CI) → Build + FTP client (React) → Build TS + FTP server
+Gate (CI) → Build + FTP client-ng (Angular) → Build TS + FTP server
 ```
 
-> Hébergement : **o2switch** (FTP) — `client-ng/` (Angular) n'est pas encore déployé.
+> Hébergement : **o2switch** (FTP). Le déploiement backend touche `tmp/restart.txt` pour
+> forcer Passenger à recharger l'app Node après chaque déploiement.
 
 ---
 

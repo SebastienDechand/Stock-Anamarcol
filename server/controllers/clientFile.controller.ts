@@ -178,10 +178,10 @@ export const updateClientFile = async (
       "dateRenouvellement",
     ] as const;
 
+    const mutableFile = file as unknown as Record<string, unknown>;
     for (const field of updatableFields) {
       if (req.body[field] !== undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (file as any)[field] = req.body[field];
+        mutableFile[field] = req.body[field];
       }
     }
 

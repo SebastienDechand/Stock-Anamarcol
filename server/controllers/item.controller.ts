@@ -317,12 +317,9 @@ export const prepaBatch = async (
     for (const item of items) {
       const oldQty = item.quantity;
 
-      // For CG: cassettes change by 4, the rest by 1 — multiplied by count
+      // For CG: cassettes change by 4, the rest by 1 - multiplied by count
       let delta = 1 * count;
-      if (
-        prepa === "cgKit" &&
-        item.name.toLowerCase().includes("cassette")
-      ) {
+      if (prepa === "cgKit" && item.name.toLowerCase().includes("cassette")) {
         delta = 4 * count;
       }
 

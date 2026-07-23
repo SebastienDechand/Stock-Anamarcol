@@ -3,10 +3,9 @@ import * as itemController from "../controllers/item.controller";
 import * as historyController from "../controllers/history.controller";
 import * as uploadItemController from "../controllers/uploadItem.controller";
 import { requireAuth, requireAdmin } from "../middleware/auth.middleware";
-import multer from "multer";
+import { imageUpload } from "../utils/upload.utils";
 
 const router = Router();
-const upload = multer();
 
 router.get("/", requireAuth, itemController.readItem);
 router.get("/history/:id", requireAuth, historyController.getItemHistory);
@@ -20,7 +19,7 @@ router.delete("/:id", requireAdmin, itemController.deleteItem);
 router.post(
   "/upload",
   requireAuth,
-  upload.single("file"),
+  imageUpload.single("file"),
   (req: Request, res: Response) => {
     uploadItemController.uploadItem(req, res);
   },

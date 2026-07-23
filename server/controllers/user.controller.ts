@@ -38,13 +38,11 @@ export const setRole = async (req: Request, res: Response): Promise<void> => {
       res.locals.user?.username,
       { roles: user.roles },
     );
-    res
-      .status(200)
-      .json({
-        message: "Rôles mis à jour",
-        user: updated._id,
-        roles: user.roles,
-      });
+    res.status(200).json({
+      message: "Rôles mis à jour",
+      user: updated._id,
+      roles: user.roles,
+    });
   } catch (err) {
     console.error("Error setting role:", err);
     res.status(500).json({ message: "Erreur interne du serveur" });
@@ -125,7 +123,7 @@ export const updateUser = async (
     !!requester?.roles?.includes(Role.SUPERADMIN);
 
   // Admins can update anyone; everyone else can only update their own record
-  // (and even then, only the self-service fields below — see isAdmin gates).
+  // (and even then, only the self-service fields below - see isAdmin gates).
   if (!isSelf && !isAdmin) {
     res.status(403).json({ message: "Accès refusé - admin requis" });
     return;
@@ -142,11 +140,11 @@ export const updateUser = async (
     const old =
       typeof user.toObject === "function" ? user.toObject() : { ...user };
 
-    // Self-service fields — allowed for the account owner and admins alike.
+    // Self-service fields - allowed for the account owner and admins alike.
     if (req.body.phone) user.phone = req.body.phone;
     if (req.body.picture) user.picture = req.body.picture;
 
-    // Admin-only fields — a non-admin editing their own record cannot touch
+    // Admin-only fields - a non-admin editing their own record cannot touch
     // these (email/password/position/department all affect access or role assignment).
     if (isAdmin) {
       if (req.body.email) user.email = req.body.email;

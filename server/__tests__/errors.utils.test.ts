@@ -69,18 +69,18 @@ describe("errors.utils", () => {
 
   // ─── signInErrors ───────────────────────────────────────
   describe("signInErrors", () => {
-    it("should detect an unknown email error", () => {
+    it("returns the same generic message for an unknown email", () => {
       const err = new Error("Incorrect email");
       const result = signInErrors(err);
-      expect(result.email).toBe("Email inconnu");
-      expect(result.password).toBe("");
+      expect(result.email).toBe("Email ou mot de passe incorrect");
+      expect(result.password).toBe("Email ou mot de passe incorrect");
     });
 
-    it("should detect a password error", () => {
+    it("returns the same generic message for a wrong password", () => {
       const err = new Error("Incorrect password");
       const result = signInErrors(err);
-      expect(result.password).toBe("Le mot de passe ne correspond pas");
-      expect(result.email).toBe("");
+      expect(result.email).toBe("Email ou mot de passe incorrect");
+      expect(result.password).toBe("Email ou mot de passe incorrect");
     });
   });
 
