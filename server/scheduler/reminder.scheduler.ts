@@ -7,7 +7,7 @@ import { checkAndSendVehicleReminders } from "../services/reminderVehicle.servic
  */
 export function startReminderScheduler(): void {
   // Expression cron : "0 8 * * *" = chaque jour à 08:00
-  const task = cron.schedule(
+  cron.schedule(
     "0 8 * * *",
     async () => {
       console.log(
@@ -37,16 +37,4 @@ export function startReminderScheduler(): void {
   console.log(
     "[Scheduler] Rappels véhicules activés (chaque jour à 08:00 CET)",
   );
-
-  return task as any;
-}
-
-/**
- * Arrête le scheduler
- */
-export function stopReminderScheduler(task: any): void {
-  if (task) {
-    task.stop();
-    console.log("[Scheduler] Rappels véhicules arrêtés");
-  }
 }

@@ -30,6 +30,10 @@ export const ACCEPTED_IMAGE_TYPES = [
 // ─── Pagination ──────────────────────────────────────
 export const LOW_STOCK_THRESHOLD = 5;
 
+// ─── Rate limiting ───────────────────────────────────
+export const LOGIN_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000; // 15 min
+export const LOGIN_RATE_LIMIT_MAX = 10;
+
 // ─── Roles ───────────────────────────────────────────
 export enum Role {
   SUPERADMIN = "superadmin",
@@ -42,7 +46,7 @@ export enum Role {
 export const ROLES = Object.values(Role);
 
 // ─── Auth ────────────────────────────────────────────
-/** JWT expiry — in seconds (for jwt.sign `expiresIn`) */
+/** JWT expiry - in seconds (for jwt.sign `expiresIn`) */
 export const JWT_MAX_AGE = 60 * 60; // 1 hour = 3 600 s
-/** Cookie expiry — in milliseconds (for res.cookie `maxAge`) */
+/** Cookie expiry - in milliseconds (for res.cookie `maxAge`) */
 export const COOKIE_MAX_AGE = 60 * 60 * 1000; // 1 hour = 3 600 000 ms

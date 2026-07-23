@@ -83,10 +83,10 @@ export const updateInterventionReport = async (
       "notes",
     ] as const;
 
+    const mutableReport = report as unknown as Record<string, unknown>;
     for (const field of fields) {
       if (req.body[field] !== undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (report as any)[field] = req.body[field];
+        mutableReport[field] = req.body[field];
       }
     }
     report.updatedBy = res.locals.user?.username;

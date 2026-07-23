@@ -407,10 +407,15 @@ server/
 | ------------------- | --------------------------- | ------------------------- |
 | `PORT`              | Listening port              | `4000`                    |
 | `DB_USER_PASS`      | MongoDB Atlas credentials   | `user:password`           |
-| `CLIENT_URL`        | Frontend URL (CORS)         | `http://localhost:3000`   |
+| `MONGO_HOST`        | MongoDB Atlas SRV hostname  | `cluster.mongodb.net`     |
+| `CLIENT_URL`        | Frontend URL (CORS)         | `http://localhost:4200`   |
 | `TOKEN_SECRET`      | Secret for signing JWTs     | `mon_secret_jwt`          |
 | `IMGBB_API_KEY`     | ImgBB API key                | `abc123...`                |
+| `RESEND_API_KEY`    | Resend API key (emails)      | `re_...`                   |
 | `SUPERADMIN_EMAIL`  | Superadmin email             | `admin@example.com`        |
+| `CAMERA_HOST`       | Surveillance camera host IP  | `80.14.140.205`            |
+| `CAMERA_USERNAME`   | Surveillance camera username | `root`                      |
+| `CAMERA_PASSWORD`   | Surveillance camera password | `********`                  |
 
 > In production (o2switch), the variables are set directly on the host. The `.env` file is only loaded if `CLIENT_URL` is not already defined.
 

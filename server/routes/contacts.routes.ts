@@ -2,10 +2,9 @@ import { Router, Request, Response } from "express";
 import * as contactController from "../controllers/contacts.controller";
 import * as uploadContactController from "../controllers/uploadContact.controller";
 import { requireAuth, requireAdmin } from "../middleware/auth.middleware";
-import multer from "multer";
+import { imageUpload } from "../utils/upload.utils";
 
 const router = Router();
-const upload = multer();
 
 router.get("/", requireAuth, contactController.getContacts);
 router.get("/:id", requireAuth, contactController.contactInfo);
@@ -17,7 +16,7 @@ router.delete("/:id", requireAdmin, contactController.deleteContact);
 router.post(
   "/upload",
   requireAdmin,
-  upload.single("file"),
+  imageUpload.single("file"),
   (req: Request, res: Response) => {
     uploadContactController.uploadContact(req, res);
   },
