@@ -30,7 +30,6 @@ export function startReminderScheduler(): void {
       }
     },
     {
-      scheduled: true,
       timezone: "Europe/Paris",
     },
   );
