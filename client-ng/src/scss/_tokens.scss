@@ -105,12 +105,12 @@
 html[data-theme='dark'] {
   color-scheme: dark;
 
-  // Surfaces — légèrement plus claires pour la hiérarchie visuelle
+  // Surfaces - légèrement plus claires pour la hiérarchie visuelle
   --surface-50: #1f2a1a;
   --surface-100: #243020;
   --surface-200: #2e4024;
   --surface-300: #3a5230;
-  --surface-400: #6b8652; // était #54703f — trop sombre, contraste insuffisant
+  --surface-400: #6b8652; // était #54703f - trop sombre, contraste insuffisant
 
   // Backgrounds
   --bg-base: #161e12;
@@ -118,13 +118,13 @@ html[data-theme='dark'] {
   --bg-elevated: #273822;
   --bg-input: #243020;
 
-  // Texte — ratios WCAG AA vérifiés sur --bg-card #1f2a1a (L≈0.035)
+  // Texte - ratios WCAG AA vérifiés sur --bg-card #1f2a1a (L≈0.035)
   --text-primary: #e4edd8; // ~10:1
   --text-secondary: #9bb878; // ~5.9:1
   --text-muted: #80a261; // ~4.6:1 (minimum AA)
   --text-inverse: #161e12;
 
-  // Bordures — plus visibles qu'avant
+  // Bordures - plus visibles qu'avant
   --border-light: #2a3c22;
   --border-default: #344e28;
   --border-medium: #406038;

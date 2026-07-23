@@ -12,7 +12,7 @@ function build(): AddItemModal {
   return fixture.componentInstance;
 }
 
-describe('AddItemModal — submit()', () => {
+describe('AddItemModal - submit()', () => {
   it('does not emit when name is blank', () => {
     const modal = build();
     const spy = vi.fn();

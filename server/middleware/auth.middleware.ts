@@ -50,7 +50,7 @@ export const checkUser = (
     });
 };
 
-// Authentication required (blocking — returns 401)
+// Authentication required (blocking - returns 401)
 export const requireAuth = (
   req: Request,
   res: Response,

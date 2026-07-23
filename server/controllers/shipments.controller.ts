@@ -426,7 +426,7 @@ export const downloadArchive = async (
       );
       res.end(xlsxBuffer);
     } else {
-      // Default: PDF — Mongoose lean() may return BSON Binary; ensure proper Buffer
+      // Default: PDF - Mongoose lean() may return BSON Binary; ensure proper Buffer
       const raw = archive.fileBuffer;
       const pdfBuffer = Buffer.isBuffer(raw)
         ? raw

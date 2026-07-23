@@ -93,7 +93,7 @@ describe('VehicleDocumentList', () => {
       expect(emitted?.formData.get('file')).toBe(file);
       expect(emitted?.formData.get('docName')).toBe('Mon document');
       expect(emitted?.formData.get('docType')).toBe('inspection');
-      // These field names must NOT be used — they don't match the backend
+      // These field names must NOT be used - they don't match the backend
       // (server/routes/vehicle.routes.ts uses upload.single("file"), and
       // server/controllers/vehicle.controller.ts reads req.body.docType / docName).
       expect(emitted?.formData.get('document')).toBeNull();

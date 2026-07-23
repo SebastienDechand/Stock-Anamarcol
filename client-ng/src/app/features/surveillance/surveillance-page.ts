@@ -22,7 +22,7 @@ export class SurveillancePage implements OnInit {
   readonly cameras = CAMERAS_CONFIG;
   readonly video = Video;
 
-  /** Mode flux seul — ?flux=camera_id : affichage plein écran d'une seule caméra, sans chrome. */
+  /** Mode flux seul - ?flux=camera_id : affichage plein écran d'une seule caméra, sans chrome. */
   fluxCamera = signal<CameraConfig | null | undefined>(undefined);
 
   ngOnInit(): void {

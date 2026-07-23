@@ -34,7 +34,7 @@ app-page-hero [slot='subtitle'] {
   margin: var(--space-4) 0;
 }
 
-// Page transition — must be global to pierce Angular's component encapsulation
+// Page transition - must be global to pierce Angular's component encapsulation
 @keyframes page-in {
   from {
     opacity: 0;
@@ -50,7 +50,7 @@ app-page-hero [slot='subtitle'] {
   animation: page-in 0.12s ease-out backwards;
 }
 
-// ─── Dark mode — overrides pour les backgrounds hardcodés #fff ───────────────
+// ─── Dark mode - overrides pour les backgrounds hardcodés #fff ───────────────
 // Spécificité (0,2,1) > encapsulation Angular (0,2,0) → pas besoin de !important
 
 html[data-theme='dark'] {
@@ -66,13 +66,13 @@ html[data-theme='dark'] {
     border-bottom-color: var(--border-default);
   }
 
-  // Cards pages — article-card a son propre background: #fff
+  // Cards pages - article-card a son propre background: #fff
   .article-card {
     background: var(--bg-card);
     border-color: var(--border-default);
   }
 
-  // Envois — classes locales (pas le shared kpi-card qui utilise le mixin)
+  // Envois - classes locales (pas le shared kpi-card qui utilise le mixin)
   .kpi-card {
     background: var(--bg-card);
     border-color: var(--border-default);
@@ -96,7 +96,7 @@ html[data-theme='dark'] {
     background: var(--bg-card);
     border-color: var(--border-default);
   }
-  // Re-assert the active-page highlight — otherwise the rule above (same
+  // Re-assert the active-page highlight - otherwise the rule above (same
   // specificity as the component's own dark-mode-unaware .pagination__page
   // selectors, but higher than the emulated-encapsulation attribute) wins
   // and silently erases which page is active.
@@ -165,7 +165,7 @@ html[data-theme='dark'] {
     background: var(--bg-card);
   }
 
-  // Modales (toutes pages — modal-box défini localement dans chaque page)
+  // Modales (toutes pages - modal-box défini localement dans chaque page)
   .modal-box {
     background: var(--bg-elevated);
     color: var(--text-primary);
@@ -183,7 +183,7 @@ html[data-theme='dark'] {
     border-color: var(--border-default);
   }
 
-  // Articles — overrides qui écrasent le mixin input-base
+  // Articles - overrides qui écrasent le mixin input-base
   .search-wrap__input {
     background: var(--bg-input);
   }
@@ -204,7 +204,7 @@ html[data-theme='dark'] {
     background: var(--bg-card);
   }
 
-  // Tables — thead rows
+  // Tables - thead rows
   thead tr {
     background: var(--surface-100) !important;
   }
@@ -228,12 +228,12 @@ html[data-theme='dark'] {
     color: #f87171;
   }
 
-  // date input — passer en dark nativement
+  // date input - passer en dark nativement
   input[type='date'] {
     color-scheme: dark;
   }
 
-  // Home — toggle icon : couleurs manquantes (bg déjà couvert)
+  // Home - toggle icon : couleurs manquantes (bg déjà couvert)
   .home__toggle-icon {
     color: var(--text-muted);
     &:hover {
@@ -244,7 +244,7 @@ html[data-theme='dark'] {
     }
   }
 
-  // Home — tableau fournisseurs (tout en hardcodé #111827 / #4b5563)
+  // Home - tableau fournisseurs (tout en hardcodé #111827 / #4b5563)
   .home__th {
     color: var(--text-muted);
     border-bottom-color: var(--border-default);
@@ -270,7 +270,7 @@ html[data-theme='dark'] {
     color: #f87171;
   }
 
-  // Articles — chips de filtre (background: white hardcodé)
+  // Articles - chips de filtre (background: white hardcodé)
   .chip {
     background: var(--bg-input);
     border-color: var(--border-default);
@@ -294,7 +294,7 @@ html[data-theme='dark'] {
     }
   }
 
-  // Articles — barre prepa + raccourcis mobile (fond violet clair → translucide)
+  // Articles - barre prepa + raccourcis mobile (fond violet clair → translucide)
   .prepa-batch,
   .prepa-shortcuts {
     background: rgb(124 58 237 / 0.12);
@@ -336,7 +336,7 @@ html[data-theme='dark'] {
     }
   }
 
-  // Admin Roles — role badges (fonds pastel → translucides)
+  // Admin Roles - role badges (fonds pastel → translucides)
   .role-badge--user {
     background: var(--surface-200);
     color: var(--text-secondary);
@@ -358,7 +358,7 @@ html[data-theme='dark'] {
     color: #f87171;
   }
 
-  // Export modal — boutons d'option (background: white hardcodé)
+  // Export modal - boutons d'option (background: white hardcodé)
   .export-btn {
     background: var(--bg-input);
     border-color: var(--border-default);
@@ -368,7 +368,7 @@ html[data-theme='dark'] {
     }
   }
 
-  // Low stock table — onglets
+  // Low stock table - onglets
   .low-stock__tabs {
     background: var(--surface-200);
   }
@@ -383,7 +383,7 @@ html[data-theme='dark'] {
     }
   }
 
-  // Low stock — badges quantité (fonds jaune/rouge clairs → inutilisables en dark)
+  // Low stock - badges quantité (fonds jaune/rouge clairs → inutilisables en dark)
   .low-stock__qty-badge--warning {
     background: rgb(180 83 9 / 0.2);
     color: #fbbf24;
@@ -393,12 +393,12 @@ html[data-theme='dark'] {
     color: #f87171;
   }
 
-  // Historique — filter pill actif utilise --text-primary comme bg (clair en dark)
+  // Historique - filter pill actif utilise --text-primary comme bg (clair en dark)
   .filter-pill--active {
     background: var(--brand-600);
   }
 
-  // Historique — dots d'événements (fonds pastel → translucides)
+  // Historique - dots d'événements (fonds pastel → translucides)
   .event-row__dot--success {
     background: rgb(22 163 74 / 0.2);
     color: #4ade80;
@@ -416,7 +416,7 @@ html[data-theme='dark'] {
     color: #fbbf24;
   }
 
-  // Envois — KPI icon backgrounds (fonds pastel → translucides)
+  // Envois - KPI icon backgrounds (fonds pastel → translucides)
   .kpi-card__icon--blue {
     background: rgb(37 99 235 / 0.18);
     color: #60a5fa;
@@ -436,7 +436,7 @@ html[data-theme='dark'] {
     color: #4ade80;
   }
 
-  // Envois — badges statut
+  // Envois - badges statut
   .badge--green {
     background: rgb(22 163 74 / 0.18);
     color: #4ade80;
