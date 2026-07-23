@@ -114,7 +114,7 @@ const VehicleModel: Model<IVehicle> = mongoose.model<IVehicle>(
 
 // Drop legacy index left over from when the field was named "immatriculation"
 VehicleModel.collection.dropIndex("immatriculation_1").catch(() => {
-  // Index doesn't exist — nothing to do
+  // Index doesn't exist - nothing to do
 });
 
 export default VehicleModel;

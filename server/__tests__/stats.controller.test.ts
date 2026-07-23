@@ -140,7 +140,7 @@ describe("Stats Controller", () => {
       await getDashboardStats(req as Request, res as Response);
       expect(mockItemModel.aggregate).toHaveBeenCalledTimes(3);
 
-      // Second call — should not hit DB
+      // Second call - should not hit DB
       vi.clearAllMocks();
       await getDashboardStats(req as Request, res as Response);
       expect(mockItemModel.aggregate).not.toHaveBeenCalled();

@@ -29,7 +29,7 @@ describe('ItemsPage', () => {
     fixture.detectChanges();
   });
 
-  describe('togglePrepa() — sélection exclusive', () => {
+  describe('togglePrepa() - sélection exclusive', () => {
     it('should activate CashGuard and leave TPV off', () => {
       component.togglePrepa('CashGuard');
       expect(component.cgKit()).toBe(true);
@@ -71,7 +71,7 @@ describe('ItemsPage', () => {
     });
   });
 
-  describe('onPrepaBatch() — mapping du champ backend', () => {
+  describe('onPrepaBatch() - mapping du champ backend', () => {
     it('should call prepaBatch with "cgKit" for CashGuard', () => {
       const spy = vi.spyOn(facade, 'prepaBatch').mockImplementation(() => {});
       component.onPrepaBatch('CashGuard', 'increment');

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { describe, it, expect } from 'vitest';
 import { FiltersModal } from '../filters-modal';
 
-describe('FiltersModal — togglePrepa()', () => {
+describe('FiltersModal - togglePrepa()', () => {
   function build(): FiltersModal {
     TestBed.overrideComponent(FiltersModal, { set: { template: '', imports: [] } });
     TestBed.configureTestingModule({ imports: [FiltersModal] });

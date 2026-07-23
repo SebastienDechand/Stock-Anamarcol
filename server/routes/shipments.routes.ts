@@ -10,7 +10,7 @@ const router = Router();
 
 // Visible to all authenticated users
 router.get("/", requireAuth, shipmentsController.getShipments);
-// Archives — admin / superadmin only
+// Archives - admin / superadmin only
 router.get("/archives", requireAdmin, shipmentsController.getArchives);
 router.get(
   "/archives/:id/download",

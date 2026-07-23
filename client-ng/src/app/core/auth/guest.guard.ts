@@ -4,7 +4,7 @@ import { filter, map, take } from 'rxjs';
 import { AuthFacade } from '../../store/auth/auth.facade';
 
 /**
- * Prevents an already-authenticated user from seeing the login page again —
+ * Prevents an already-authenticated user from seeing the login page again -
  * redirects to /home instead (mirrors React's inline `<Navigate to="/home" />` check).
  */
 export const guestGuard: CanActivateFn = () => {
