@@ -3,3 +3,4 @@ o2switch.txt
 *.env
 .env*
 node_modules/
+.superpowers
