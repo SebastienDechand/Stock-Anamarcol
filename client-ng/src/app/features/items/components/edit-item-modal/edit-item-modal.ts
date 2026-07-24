@@ -12,7 +12,6 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
 
 import {
   ACCEPTED_IMAGE_TYPES,
@@ -48,12 +47,7 @@ export class EditItemModal implements OnInit, OnDestroy {
   readonly isAdmin = toSignal(this.authFacade.isAdmin$, { initialValue: false });
   readonly currentUser = toSignal(this.authFacade.user$, { initialValue: null });
   readonly users = toSignal(this.usersFacade.users$, { initialValue: [] });
-  readonly liveItem = toSignal(
-    this.facade.selectedItem$.pipe(map((item) => item ?? this.item())),
-    {
-      initialValue: null,
-    },
-  );
+  readonly liveItem = toSignal(this.facade.selectedItem$, { initialValue: null });
   readonly history = toSignal(this.facade.history$, { initialValue: [] as ItemHistory[] });
   readonly isLoadingHistory = toSignal(this.facade.isLoadingHistory$, { initialValue: false });
 
