@@ -9,7 +9,7 @@
   margin: 0 auto;
 }
 
-// ─── Header ───────────────────────────────────────────────────────────────────
+/* #region Header */
 .legal-header {
   margin-bottom: 32px;
 }
@@ -25,8 +25,8 @@
   font-size: 0.875rem;
   color: var(--color-muted);
 }
-
-// ─── Sections ─────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Sections */
 .legal-section {
   margin-bottom: 36px;
 
@@ -42,8 +42,8 @@
     display: inline-block;
   }
 }
-
-// ─── Card (tableau de données société) ────────────────────────────────────────
+/* #endregion */
+/* #region Card (company info table) */
 .legal-card {
   @include m.card;
   padding: 0;
@@ -77,8 +77,8 @@
     }
   }
 }
-
-// ─── Blocks RGPD ──────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region GDPR blocks */
 .legal-block {
   margin-bottom: 24px;
 
@@ -128,3 +128,4 @@
   padding-top: 20px;
   border-top: 1px solid var(--surface-200);
 }
+/* #endregion */

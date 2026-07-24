@@ -17,32 +17,32 @@
   --brand-800: #4a5e32;
   --brand-900: #3b4a2a;
 
-  // Surface (neutres chauds)
+  // Surface (warm neutrals)
   --surface-50: #fafaf7;
   --surface-100: #f5f3ee;
   --surface-200: #eae5da;
   --surface-300: #ddd5c4;
   --surface-400: #c9bda8;
 
-  // Sémantique
+  // Semantic
   --color-danger: #ef4444;
   --color-danger-hover: #dc2626;
   --color-warning: #d97706;
   --color-info: #2563eb;
   --color-success: #22c55e;
 
-  // Texte
+  // Text
   --text-primary: #111827;
   --text-secondary: #6b7280;
   --text-muted: #9ca3af;
   --text-inverse: #ffffff;
 
-  // Bordures
+  // Borders
   --border-light: #f3f4f6;
   --border-default: #e5e7eb;
   --border-medium: #d1d5db;
 
-  // Espacement
+  // Spacing
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -53,7 +53,7 @@
   --space-10: 40px;
   --space-12: 48px;
 
-  // Typographie
+  // Typography
   --font-sans: 'DM Sans', 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'DM Mono', ui-monospace, 'Cascadia Code', monospace;
   --text-xs: 0.75rem;
@@ -72,20 +72,20 @@
   --radius-2xl: 20px;
   --radius-full: 9999px;
 
-  // Ombres
+  // Shadows
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
-  // Backgrounds sémantiques
+  // Semantic backgrounds
   --bg-base: var(--surface-50);
   --bg-card: #ffffff;
   --bg-elevated: #ffffff;
   --bg-input: #f9fafb;
 
-  // Aliases rétro-compatibilité
+  // Backward-compatibility aliases
   --color-text: var(--text-primary);
   --color-muted: var(--text-muted);
 
@@ -100,17 +100,17 @@
   --topbar-height: 64px;
 }
 
-// ─── Dark mode ───────────────────────────────────────────────────────────────
+/* #region Dark mode */
 
 html[data-theme='dark'] {
   color-scheme: dark;
 
-  // Surfaces - légèrement plus claires pour la hiérarchie visuelle
+  // Surfaces - slightly lighter for visual hierarchy
   --surface-50: #1f2a1a;
   --surface-100: #243020;
   --surface-200: #2e4024;
   --surface-300: #3a5230;
-  --surface-400: #6b8652; // était #54703f - trop sombre, contraste insuffisant
+  --surface-400: #6b8652; // was #54703f - too dark, insufficient contrast
 
   // Backgrounds
   --bg-base: #161e12;
@@ -118,13 +118,13 @@ html[data-theme='dark'] {
   --bg-elevated: #273822;
   --bg-input: #243020;
 
-  // Texte - ratios WCAG AA vérifiés sur --bg-card #1f2a1a (L≈0.035)
+  // Text - WCAG AA ratios verified against --bg-card #1f2a1a (L≈0.035)
   --text-primary: #e4edd8; // ~10:1
   --text-secondary: #9bb878; // ~5.9:1
-  --text-muted: #80a261; // ~4.6:1 (minimum AA)
+  --text-muted: #80a261; // ~4.6:1 (AA minimum)
   --text-inverse: #161e12;
 
-  // Bordures - plus visibles qu'avant
+  // Borders - more visible than before
   --border-light: #2a3c22;
   --border-default: #344e28;
   --border-medium: #406038;
@@ -133,15 +133,15 @@ html[data-theme='dark'] {
   --brand-50: #1e2b15;
   --brand-100: #253618;
 
-  // Ombres renforcées
+  // Stronger shadows
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.4);
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.5), 0 1px 2px -1px rgb(0 0 0 / 0.5);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
 }
-
-// Alias SCSS (pour calc/maps)
+/* #endregion */
+// SCSS aliases (for calc/maps)
 $primary-600: #16a34a;
 $brand-900: #3b4a2a;
 $brand-600: #6b8a47;

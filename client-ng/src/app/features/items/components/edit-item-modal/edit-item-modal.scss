@@ -12,7 +12,7 @@
   max-height: 90vh;
 }
 
-// ─── Header ──────────────────────────────────────────
+/* #region Header */
 .modal-header {
   display: flex;
   align-items: center;
@@ -31,8 +31,8 @@
 .icon-btn {
   @include m.btn-icon;
 }
-
-// ─── Tabs ────────────────────────────────────────────
+/* #endregion */
+/* #region Tabs */
 .modal-tabs {
   display: flex;
   border-bottom: 1px solid var(--surface-200);
@@ -64,8 +64,8 @@
     color: var(--text-secondary);
   }
 }
-
-// ─── Detail body ─────────────────────────────────────
+/* #endregion */
+/* #region Detail body */
 .modal-body {
   display: flex;
   flex: 1;
@@ -235,8 +235,8 @@
     color: var(--brand-700);
   }
 }
-
-// ─── History pane ────────────────────────────────────
+/* #endregion */
+/* #region History pane */
 .history-pane {
   padding: 20px 24px;
   overflow-y: auto;
@@ -333,3 +333,4 @@
     transform: rotate(360deg);
   }
 }
+/* #endregion */

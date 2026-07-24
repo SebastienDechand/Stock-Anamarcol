@@ -36,7 +36,7 @@
     </div>
 
     <div class="panel__body">
-      <!-- ── Étape 1 ── -->
+      <!-- #region Step 1 -->
       @if (step() === 1) {
         <div class="step-content">
           <p class="step-content__heading">
@@ -209,8 +209,9 @@
           </div>
         </div>
       }
+      <!-- #endregion -->
 
-      <!-- ── Étape 2 ── -->
+      <!-- #region Step 2 -->
       @if (step() === 2) {
         <div class="step-content">
           <p class="step-content__heading">
@@ -279,6 +280,7 @@
           </div>
         </div>
       }
+      <!-- #endregion -->
     </div>
   </div>
 </div>

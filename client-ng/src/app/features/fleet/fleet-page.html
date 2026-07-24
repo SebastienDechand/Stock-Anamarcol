@@ -12,7 +12,7 @@
     }
   </app-page-hero>
 
-  <!-- ─── Filters ─── -->
+  <!-- #region Filters -->
   <div class="filters-bar">
     <div class="search-box">
       <lucide-icon [img]="search" [size]="16" class="search-box__icon" />
@@ -30,11 +30,12 @@
       <option value="nissan">{{ 'FLEET.BRAND_NISSAN' | translate }}</option>
     </select>
   </div>
+  <!-- #endregion -->
 
   @if (isLoading$ | async) {
     <div class="page-spinner"><app-spinner /></div>
   } @else if (vehicles$ | async; as vehicles) {
-    <!-- ─── Desktop : table ─── -->
+    <!-- #region Desktop table -->
     <div class="desktop-only">
       <div class="vehicles-table-wrap">
         @if (vehicles.length === 0) {
@@ -187,8 +188,9 @@
         }
       </div>
     </div>
+    <!-- #endregion -->
 
-    <!-- ─── Mobile : compact rows ─── -->
+    <!-- #region Mobile compact rows -->
     <div class="mobile-only">
       @if (vehicles.length === 0) {
         <div class="empty-state">
@@ -310,6 +312,7 @@
         }
       }
     </div>
+    <!-- #endregion -->
   }
 </div>
 

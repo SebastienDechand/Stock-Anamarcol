@@ -20,7 +20,7 @@
   padding: 48px 0;
 }
 
-// ─── Header ──────────────────────────────────────────────────────────────────
+/* #region Header */
 
 .page-header {
   display: flex;
@@ -87,8 +87,8 @@
   color: var(--surface-400);
   margin: 2px 0 0;
 }
-
-// ─── Tabs ────────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Tabs */
 
 .tabs {
   display: flex;
@@ -148,8 +148,8 @@
     line-height: 1;
   }
 }
-
-// ─── Card ────────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Card */
 
 .card {
   background: #fff;
@@ -165,8 +165,8 @@
     gap: 16px;
   }
 }
-
-// ─── Quick strip ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Quick strip */
 
 .quick-strip {
   display: grid;
@@ -202,8 +202,8 @@
     @include truncate;
   }
 }
-
-// ─── Fiche body ──────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Client file body */
 
 .fiche-body {
   display: grid;
@@ -234,8 +234,8 @@
     grid-template-columns: 1fr 1fr;
   }
 }
-
-// ─── Info columns ────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Info columns */
 
 .info-col {
   display: flex;
@@ -300,8 +300,8 @@
   font-family: monospace;
   font-weight: 600;
 }
-
-// ─── Map ─────────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Map */
 
 .map-panel {
   display: flex;
@@ -340,8 +340,8 @@
   text-align: center;
   padding: 16px;
 }
-
-// ─── Empty state ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Empty state */
 
 .empty-state {
   display: flex;
@@ -381,8 +381,8 @@
     color: var(--color-text);
   }
 }
-
-// ─── Rapport tech ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Tech report */
 
 .report-actions {
   display: flex;
@@ -488,8 +488,8 @@
     margin: 4px 0 0;
   }
 }
-
-// ─── KPI strip ───────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region KPI strip */
 
 .kpi-strip {
   display: grid;
@@ -542,8 +542,8 @@
     }
   }
 }
-
-// ─── Shipments table ─────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Shipments table */
 
 .ship-table {
   width: 100%;
@@ -591,8 +591,8 @@
   justify-content: flex-end;
   gap: 6px;
 }
-
-// ─── Shipment cards (mobile) ──────────────────────────────────────────────────
+/* #endregion */
+/* #region Shipment cards (mobile) */
 
 .ship-cards {
   display: flex;
@@ -642,8 +642,8 @@
     margin: 0;
   }
 }
-
-// ─── Status badges ───────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Status badges */
 
 .status {
   display: inline-flex;
@@ -708,8 +708,8 @@
     background: #a7f3d0;
   }
 }
-
-// ─── Documents ───────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Documents */
 
 .docs-header {
   display: flex;
@@ -838,8 +838,8 @@
   padding: 24px 0;
   margin: 0;
 }
-
-// ─── Buttons ─────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Buttons */
 
 .btn-primary {
   @include btn-primary;
@@ -862,8 +862,8 @@
     font-size: 0.8rem;
   }
 }
-
-// ─── Modal ───────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Modal */
 
 .modal-overlay {
   position: fixed;
@@ -939,3 +939,4 @@
   @include btn-icon;
   color: var(--surface-400);
 }
+/* #endregion */

@@ -34,7 +34,7 @@
   }
 }
 
-// ─── Filters ───────────────────────────────────────────────
+/* #region Filters */
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -97,8 +97,8 @@
     color: var(--brand-700);
   }
 }
-
-// ─── User filter dropdown ───────────────────────────────────
+/* #endregion */
+/* #region User filter dropdown */
 .user-filter {
   position: relative;
   display: flex;
@@ -155,8 +155,8 @@
     }
   }
 }
-
-// ─── Events list ───────────────────────────────────────────
+/* #endregion */
+/* #region Events list */
 .events-list {
   display: flex;
   flex-direction: column;
@@ -229,8 +229,8 @@
     flex-shrink: 0;
   }
 }
-
-// ─── Misc ──────────────────────────────────────────────────
+/* #endregion */
+/* #region Misc */
 .page-spinner {
   display: flex;
   justify-content: center;
@@ -266,8 +266,8 @@
     cursor: not-allowed;
   }
 }
-
-// ─── Modal purge ───────────────────────────────────────────
+/* #endregion */
+/* #region Modal purge */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -358,3 +358,4 @@
     cursor: not-allowed;
   }
 }
+/* #endregion */

@@ -1,5 +1,5 @@
 @if (fluxCamera() !== undefined) {
-  <!-- Mode flux seul - ?flux=camera_id : affichage plein écran, sans chrome -->
+  <!-- Single-stream mode - ?flux=camera_id: full-screen display, no chrome -->
   @if (fluxCamera(); as camera) {
     <div class="flux-mode">
       <app-camera-card
