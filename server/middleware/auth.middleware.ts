@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import UserModel from "../models/user.model";
 import type { DecodedToken } from "../types/auth";
 import { Role } from "../constants";
+import { ErrorCode } from "../constants/errorCodes";
 
 // Resolves user from JWT and applies SUPERADMIN_EMAIL override
 async function resolveUser(token: string) {
@@ -58,21 +59,27 @@ export const requireAuth = (
 ): void => {
   const token = req.cookies.jwt;
   if (!token) {
-    res.status(401).json({ message: "Authentification requise" });
+    res
+      .status(401)
+      .json({ message: "Authentication required", code: ErrorCode.AUTH_REQUIRED });
     return;
   }
 
   resolveUser(token)
     .then((user) => {
       if (!user) {
-        res.status(401).json({ message: "Utilisateur introuvable" });
+        res
+          .status(401)
+          .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
         return;
       }
       res.locals.user = user;
       next();
     })
     .catch(() => {
-      res.status(401).json({ message: "Token invalide ou expiré" });
+      res
+        .status(401)
+        .json({ message: "Invalid or expired token", code: ErrorCode.INVALID_TOKEN });
     });
 };
 
@@ -84,14 +91,18 @@ export const requireAdmin = (
 ): void => {
   const token = req.cookies.jwt;
   if (!token) {
-    res.status(401).json({ message: "Authentification requise" });
+    res
+      .status(401)
+      .json({ message: "Authentication required", code: ErrorCode.AUTH_REQUIRED });
     return;
   }
 
   resolveUser(token)
     .then((user) => {
       if (!user) {
-        res.status(401).json({ message: "Utilisateur introuvable" });
+        res
+          .status(401)
+          .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
         return;
       }
       if (
@@ -100,14 +111,19 @@ export const requireAdmin = (
           user.roles?.includes(Role.SUPERADMIN)
         )
       ) {
-        res.status(403).json({ message: "Accès refusé - admin requis" });
+        res.status(403).json({
+          message: "Access denied - admin required",
+          code: ErrorCode.ACCESS_DENIED_ADMIN,
+        });
         return;
       }
       res.locals.user = user;
       next();
     })
     .catch(() => {
-      res.status(401).json({ message: "Token invalide ou expiré" });
+      res
+        .status(401)
+        .json({ message: "Invalid or expired token", code: ErrorCode.INVALID_TOKEN });
     });
 };
 
@@ -119,14 +135,18 @@ export const requireHotline = (
 ): void => {
   const token = req.cookies.jwt;
   if (!token) {
-    res.status(401).json({ message: "Authentification requise" });
+    res
+      .status(401)
+      .json({ message: "Authentication required", code: ErrorCode.AUTH_REQUIRED });
     return;
   }
 
   resolveUser(token)
     .then((user) => {
       if (!user) {
-        res.status(401).json({ message: "Utilisateur introuvable" });
+        res
+          .status(401)
+          .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
         return;
       }
       if (
@@ -136,16 +156,19 @@ export const requireHotline = (
           user.roles?.includes(Role.SUPERADMIN)
         )
       ) {
-        res
-          .status(403)
-          .json({ message: "Accès refusé - hotline ou admin requis" });
+        res.status(403).json({
+          message: "Access denied - hotline or admin required",
+          code: ErrorCode.ACCESS_DENIED_HOTLINE,
+        });
         return;
       }
       res.locals.user = user;
       next();
     })
     .catch(() => {
-      res.status(401).json({ message: "Token invalide ou expiré" });
+      res
+        .status(401)
+        .json({ message: "Invalid or expired token", code: ErrorCode.INVALID_TOKEN });
     });
 };
 
@@ -157,14 +180,18 @@ export const requireMonteur = (
 ): void => {
   const token = req.cookies.jwt;
   if (!token) {
-    res.status(401).json({ message: "Authentification requise" });
+    res
+      .status(401)
+      .json({ message: "Authentication required", code: ErrorCode.AUTH_REQUIRED });
     return;
   }
 
   resolveUser(token)
     .then((user) => {
       if (!user) {
-        res.status(401).json({ message: "Utilisateur introuvable" });
+        res
+          .status(401)
+          .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
         return;
       }
       if (
@@ -174,16 +201,19 @@ export const requireMonteur = (
           user.roles?.includes(Role.SUPERADMIN)
         )
       ) {
-        res
-          .status(403)
-          .json({ message: "Accès refusé - monteur ou admin requis" });
+        res.status(403).json({
+          message: "Access denied - monteur or admin required",
+          code: ErrorCode.ACCESS_DENIED_MONTEUR,
+        });
         return;
       }
       res.locals.user = user;
       next();
     })
     .catch(() => {
-      res.status(401).json({ message: "Token invalide ou expiré" });
+      res
+        .status(401)
+        .json({ message: "Invalid or expired token", code: ErrorCode.INVALID_TOKEN });
     });
 };
 
@@ -195,24 +225,33 @@ export const requireSuperAdmin = (
 ): void => {
   const token = req.cookies.jwt;
   if (!token) {
-    res.status(401).json({ message: "Authentification requise" });
+    res
+      .status(401)
+      .json({ message: "Authentication required", code: ErrorCode.AUTH_REQUIRED });
     return;
   }
 
   resolveUser(token)
     .then((user) => {
       if (!user) {
-        res.status(401).json({ message: "Utilisateur introuvable" });
+        res
+          .status(401)
+          .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
         return;
       }
       if (!user.roles?.includes(Role.SUPERADMIN)) {
-        res.status(403).json({ message: "Accès refusé - superadmin requis" });
+        res.status(403).json({
+          message: "Access denied - superadmin required",
+          code: ErrorCode.ACCESS_DENIED_SUPERADMIN,
+        });
         return;
       }
       res.locals.user = user;
       next();
     })
     .catch(() => {
-      res.status(401).json({ message: "Token invalide ou expiré" });
+      res
+        .status(401)
+        .json({ message: "Invalid or expired token", code: ErrorCode.INVALID_TOKEN });
     });
 };

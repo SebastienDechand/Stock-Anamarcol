@@ -87,7 +87,8 @@ describe("Auth Middleware", () => {
       requireAuth(req as Request, res as Response, next);
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Authentification requise",
+        message: "Authentication required",
+        code: "AUTH_REQUIRED",
       });
     });
 
@@ -143,7 +144,8 @@ describe("Auth Middleware", () => {
 
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Accès refusé - admin requis",
+        message: "Access denied - admin required",
+        code: "ACCESS_DENIED_ADMIN",
       });
     });
   });
@@ -154,7 +156,8 @@ describe("Auth Middleware", () => {
       requireSuperAdmin(req as Request, res as Response, next);
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Authentification requise",
+        message: "Authentication required",
+        code: "AUTH_REQUIRED",
       });
     });
 
@@ -180,7 +183,8 @@ describe("Auth Middleware", () => {
 
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Accès refusé - superadmin requis",
+        message: "Access denied - superadmin required",
+        code: "ACCESS_DENIED_SUPERADMIN",
       });
     });
   });
@@ -191,7 +195,8 @@ describe("Auth Middleware", () => {
       requireHotline(req as Request, res as Response, next);
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Authentification requise",
+        message: "Authentication required",
+        code: "AUTH_REQUIRED",
       });
     });
 
@@ -207,7 +212,8 @@ describe("Auth Middleware", () => {
 
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Accès refusé - hotline ou admin requis",
+        message: "Access denied - hotline or admin required",
+        code: "ACCESS_DENIED_HOTLINE",
       });
     });
   });
@@ -218,7 +224,8 @@ describe("Auth Middleware", () => {
       requireMonteur(req as Request, res as Response, next);
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Authentification requise",
+        message: "Authentication required",
+        code: "AUTH_REQUIRED",
       });
     });
 
@@ -244,7 +251,8 @@ describe("Auth Middleware", () => {
 
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Accès refusé - monteur ou admin requis",
+        message: "Access denied - monteur or admin required",
+        code: "ACCESS_DENIED_MONTEUR",
       });
     });
   });

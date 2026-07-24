@@ -105,7 +105,8 @@ describe("User Controller", () => {
       await deleteUser(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Sucessfully deleted.",
+        message: "Successfully deleted",
+        code: "DELETED",
       });
     });
   });
@@ -313,7 +314,10 @@ describe("User Controller", () => {
       req.body = { role: "hacker" };
       await setRole(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "Role invalide" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Invalid role",
+        code: "INVALID_ROLE",
+      });
     });
 
     it("should return 404 when user not found", async () => {
@@ -425,7 +429,10 @@ describe("User Controller", () => {
       req.body = { roles: Role.ADMIN };
       await setRoles(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "Roles invalides" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Invalid roles",
+        code: "INVALID_ROLE",
+      });
     });
 
     it("should return 400 when roles array contains invalid values", async () => {

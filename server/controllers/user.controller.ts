@@ -3,6 +3,7 @@ import UserModel, { IUser } from "../models/user.model";
 import { validateObjectId } from "../utils/validate.utils";
 import { logEvent } from "../utils/audit.utils";
 import { Role, ROLES } from "../constants";
+import { ErrorCode } from "../constants/errorCodes";
 
 // Map a single role to canonical roles array
 const ROLE_TO_ROLES: Record<Role, Role[]> = {
@@ -19,14 +20,18 @@ export const setRole = async (req: Request, res: Response): Promise<void> => {
 
   const { role } = req.body as { role?: string };
   if (!role || !ROLES.includes(role as Role)) {
-    res.status(400).json({ message: "Role invalide" });
+    res
+      .status(400)
+      .json({ message: "Invalid role", code: ErrorCode.INVALID_ROLE });
     return;
   }
 
   try {
     const user = await UserModel.findById(req.params.id);
     if (!user) {
-      res.status(404).json({ message: "Utilisateur introuvable" });
+      res
+        .status(404)
+        .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
       return;
     }
     user.roles = ROLE_TO_ROLES[role as Role] ?? [Role.USER];
@@ -39,13 +44,16 @@ export const setRole = async (req: Request, res: Response): Promise<void> => {
       { roles: user.roles },
     );
     res.status(200).json({
-      message: "Rôles mis à jour",
+      message: "Roles updated",
+      code: ErrorCode.ROLES_UPDATED,
       user: updated._id,
       roles: user.roles,
     });
   } catch (err) {
     console.error("Error setting role:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -55,14 +63,18 @@ export const setRoles = async (req: Request, res: Response): Promise<void> => {
 
   const { roles } = req.body as { roles?: unknown };
   if (!Array.isArray(roles) || !roles.every((r) => ROLES.includes(r as Role))) {
-    res.status(400).json({ message: "Roles invalides" });
+    res
+      .status(400)
+      .json({ message: "Invalid roles", code: ErrorCode.INVALID_ROLE });
     return;
   }
 
   try {
     const user = await UserModel.findById(req.params.id);
     if (!user) {
-      res.status(404).json({ message: "Utilisateur introuvable" });
+      res
+        .status(404)
+        .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
       return;
     }
     user.roles = roles as Role[];
@@ -74,10 +86,14 @@ export const setRoles = async (req: Request, res: Response): Promise<void> => {
       res.locals.user?.username,
       { roles },
     );
-    res.status(200).json({ message: "Rôles mis à jour", roles });
+    res
+      .status(200)
+      .json({ message: "Roles updated", code: ErrorCode.ROLES_UPDATED, roles });
   } catch (err) {
     console.error("Error setting roles:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -99,13 +115,17 @@ export const userInfo = async (req: Request, res: Response): Promise<void> => {
       .select("-password")
       .lean();
     if (!user) {
-      res.status(404).json({ message: "Utilisateur introuvable" });
+      res
+        .status(404)
+        .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
       return;
     }
     res.status(200).json(user);
   } catch (err) {
     console.error("Error fetching user:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -125,7 +145,10 @@ export const updateUser = async (
   // Admins can update anyone; everyone else can only update their own record
   // (and even then, only the self-service fields below - see isAdmin gates).
   if (!isSelf && !isAdmin) {
-    res.status(403).json({ message: "Accès refusé - admin requis" });
+    res.status(403).json({
+      message: "Access denied - admin required",
+      code: ErrorCode.ACCESS_DENIED_ADMIN,
+    });
     return;
   }
 
@@ -133,7 +156,9 @@ export const updateUser = async (
     const user = await UserModel.findById(req.params.id);
 
     if (!user) {
-      res.status(404).json({ message: "Utilisateur introuvable" });
+      res
+        .status(404)
+        .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
       return;
     }
 
@@ -208,7 +233,7 @@ export const updateUser = async (
     console.error("Error updating user:", err);
     res
       .status(500)
-      .json({ message: (err as Error).message || "Internal Server Error" });
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -247,11 +272,13 @@ export const deleteUser = async (
     } catch (err) {
       console.error("logEvent delete user error:", err);
     }
-    res.status(200).json({ message: "Sucessfully deleted." });
+    res
+      .status(200)
+      .json({ message: "Successfully deleted", code: ErrorCode.DELETED });
   } catch (err) {
     console.error("Error deleting user:", err);
     res
       .status(500)
-      .json({ message: (err as Error).message || "Internal Server Error" });
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };

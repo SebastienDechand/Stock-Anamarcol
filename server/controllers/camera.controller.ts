@@ -5,13 +5,16 @@ import {
   CAMERA_BASE_URL,
   CAMERA_CREDENTIALS,
 } from "../constants/cameras";
+import { ErrorCode } from "../constants/errorCodes";
 
 export const getCameraStream = (req: Request, res: Response): void => {
   const cameraId = req.params.cameraId as string;
   const camera = CAMERAS_CONFIG.find((c) => c.id === cameraId);
 
   if (!camera) {
-    res.status(404).json({ message: "Caméra introuvable" });
+    res
+      .status(404)
+      .json({ message: "Camera not found", code: ErrorCode.CAMERA_NOT_FOUND });
     return;
   }
 
@@ -35,7 +38,9 @@ export const getCameraStream = (req: Request, res: Response): void => {
         );
         cameraRes.resume();
         if (!res.headersSent)
-          res.status(503).json({ message: "Erreur caméra" });
+          res
+            .status(503)
+            .json({ message: "Camera error", code: ErrorCode.CAMERA_ERROR });
         return;
       }
 
@@ -66,7 +71,10 @@ export const getCameraStream = (req: Request, res: Response): void => {
   request.on("error", (error) => {
     console.error(`[Caméra ${cameraId}] Erreur:`, error.message);
     if (!res.headersSent) {
-      res.status(503).json({ message: "Caméra inaccessible" });
+      res.status(503).json({
+        message: "Camera unreachable",
+        code: ErrorCode.CAMERA_UNREACHABLE,
+      });
     }
   });
 

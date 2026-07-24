@@ -127,6 +127,7 @@
     "FOOTER": "ANAMARCOL - Stock Manager",
     "SERVER_ERROR": "The server is temporarily unavailable. Please try again in a few moments.",
     "INVALID_CREDENTIALS": "The credentials are incorrect. Please try again.",
+    "TOO_MANY_ATTEMPTS": "Too many attempts, please try again later.",
     "UNEXPECTED_ERROR": "An unexpected error occurred."
   },
 

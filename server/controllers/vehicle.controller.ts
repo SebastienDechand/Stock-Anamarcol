@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 import VehicleModel from "../models/vehicle.model";
 import UserModel from "../models/user.model";
 import { logEvent } from "../utils/audit.utils";
+import { ErrorCode } from "../constants/errorCodes";
 
 // ─── GET All Vehicles ────────────────────────────────
 export const getAllVehicles = async (req: Request, res: Response) => {
@@ -14,7 +15,9 @@ export const getAllVehicles = async (req: Request, res: Response) => {
     res.status(200).json(vehicles);
   } catch (error) {
     console.error("Error fetching vehicles:", error);
-    res.status(500).json({ message: "Error fetching vehicles" });
+    res
+      .status(500)
+      .json({ message: "Error fetching vehicles", code: ErrorCode.VEHICLE_FETCH_ERROR });
   }
 };
 
@@ -28,13 +31,17 @@ export const getVehicleById = async (req: Request, res: Response) => {
     );
 
     if (!vehicle) {
-      return res.status(404).json({ message: "Vehicle not found" });
+      return res
+        .status(404)
+        .json({ message: "Vehicle not found", code: ErrorCode.VEHICLE_NOT_FOUND });
     }
 
     res.status(200).json(vehicle);
   } catch (error) {
     console.error("Error fetching vehicle:", error);
-    res.status(500).json({ message: "Error fetching vehicle" });
+    res
+      .status(500)
+      .json({ message: "Error fetching vehicle", code: ErrorCode.VEHICLE_FETCH_ERROR });
   }
 };
 
@@ -60,6 +67,7 @@ export const createVehicle = async (req: Request, res: Response) => {
       return res.status(400).json({
         message:
           "Missing required fields: brand, model, format, licensePlate",
+        code: ErrorCode.VEHICLE_MISSING_FIELDS,
       });
     }
 
@@ -70,6 +78,7 @@ export const createVehicle = async (req: Request, res: Response) => {
     if (existingVehicle) {
       return res.status(400).json({
         message: "Vehicle with this licensePlate already exists",
+        code: ErrorCode.VEHICLE_LICENSE_PLATE_DUPLICATE,
       });
     }
 
@@ -90,7 +99,10 @@ export const createVehicle = async (req: Request, res: Response) => {
     if (assignedTo) {
       const user = await UserModel.findById(assignedTo);
       if (!user) {
-        return res.status(404).json({ message: "Assigned user not found" });
+        return res.status(404).json({
+          message: "Assigned user not found",
+          code: ErrorCode.VEHICLE_ASSIGNED_USER_NOT_FOUND,
+        });
       }
       assignedToName = user.username;
     }
@@ -127,7 +139,9 @@ export const createVehicle = async (req: Request, res: Response) => {
     res.status(201).json(newVehicle);
   } catch (error) {
     console.error("Error creating vehicle:", error);
-    res.status(500).json({ message: "Error creating vehicle" });
+    res
+      .status(500)
+      .json({ message: "Error creating vehicle", code: ErrorCode.VEHICLE_CREATE_ERROR });
   }
 };
 
@@ -151,7 +165,9 @@ export const updateVehicle = async (req: Request, res: Response) => {
 
     const vehicle = await VehicleModel.findById(id);
     if (!vehicle) {
-      return res.status(404).json({ message: "Vehicle not found" });
+      return res
+        .status(404)
+        .json({ message: "Vehicle not found", code: ErrorCode.VEHICLE_NOT_FOUND });
     }
 
     // Check licensePlate uniqueness if changed
@@ -172,11 +188,13 @@ export const updateVehicle = async (req: Request, res: Response) => {
       if (brand === "mercedes" && !["citan", "vito"].includes(model)) {
         return res.status(400).json({
           message: "Mercedes vehicles must be Citan or Vito",
+          code: ErrorCode.VEHICLE_INVALID_MERCEDES_MODEL,
         });
       }
       if (brand === "nissan" && model !== "navara") {
         return res.status(400).json({
           message: "Nissan vehicles must be Navara",
+          code: ErrorCode.VEHICLE_INVALID_NISSAN_MODEL,
         });
       }
     }
@@ -189,7 +207,10 @@ export const updateVehicle = async (req: Request, res: Response) => {
       } else {
         const user = await UserModel.findById(assignedTo);
         if (!user) {
-          return res.status(404).json({ message: "Assigned user not found" });
+          return res.status(404).json({
+          message: "Assigned user not found",
+          code: ErrorCode.VEHICLE_ASSIGNED_USER_NOT_FOUND,
+        });
         }
         vehicle.assignedTo = assignedTo;
         vehicle.assignedToName = user.username;
@@ -218,7 +239,9 @@ export const updateVehicle = async (req: Request, res: Response) => {
     res.status(200).json(updated);
   } catch (error) {
     console.error("Error updating vehicle:", error);
-    res.status(500).json({ message: "Error updating vehicle" });
+    res
+      .status(500)
+      .json({ message: "Error updating vehicle", code: ErrorCode.VEHICLE_UPDATE_ERROR });
   }
 };
 
@@ -229,17 +252,23 @@ export const deleteVehicle = async (req: Request, res: Response) => {
     const vehicle = await VehicleModel.findByIdAndDelete(id);
 
     if (!vehicle) {
-      return res.status(404).json({ message: "Vehicle not found" });
+      return res
+        .status(404)
+        .json({ message: "Vehicle not found", code: ErrorCode.VEHICLE_NOT_FOUND });
     }
 
     await logEvent("delete", "vehicle", id as string, res.locals.user?.username, {
       licensePlate: vehicle.licensePlate,
     });
 
-    res.status(200).json({ message: "Vehicle deleted successfully" });
+    res
+      .status(200)
+      .json({ message: "Vehicle deleted successfully", code: ErrorCode.VEHICLE_DELETED });
   } catch (error) {
     console.error("Error deleting vehicle:", error);
-    res.status(500).json({ message: "Error deleting vehicle" });
+    res
+      .status(500)
+      .json({ message: "Error deleting vehicle", code: ErrorCode.VEHICLE_DELETE_ERROR });
   }
 };
 
@@ -268,7 +297,9 @@ export const searchVehicles = async (req: Request, res: Response) => {
     res.status(200).json(vehicles);
   } catch (error) {
     console.error("Error searching vehicles:", error);
-    res.status(500).json({ message: "Error searching vehicles" });
+    res
+      .status(500)
+      .json({ message: "Error searching vehicles", code: ErrorCode.VEHICLE_SEARCH_ERROR });
   }
 };
 
@@ -280,12 +311,17 @@ export const uploadDocument = async (req: Request, res: Response) => {
     const file = req.file;
 
     if (!file || !docType) {
-      return res.status(400).json({ message: "File and docType are required" });
+      return res.status(400).json({
+        message: "File and docType are required",
+        code: ErrorCode.VEHICLE_DOC_MISSING_FIELDS,
+      });
     }
 
     const vehicle = await VehicleModel.findById(id);
     if (!vehicle) {
-      return res.status(404).json({ message: "Vehicle not found" });
+      return res
+        .status(404)
+        .json({ message: "Vehicle not found", code: ErrorCode.VEHICLE_NOT_FOUND });
     }
 
     const doc = {
@@ -314,7 +350,10 @@ export const uploadDocument = async (req: Request, res: Response) => {
     res.status(200).json(vehicle);
   } catch (error) {
     console.error("Error uploading document:", error);
-    res.status(500).json({ message: "Error uploading document" });
+    res.status(500).json({
+      message: "Error uploading document",
+      code: ErrorCode.VEHICLE_DOC_UPLOAD_ERROR,
+    });
   }
 };
 
@@ -330,7 +369,9 @@ export const deleteDocument = async (req: Request, res: Response) => {
     ).populate("assignedTo", "username email position");
 
     if (!vehicle) {
-      return res.status(404).json({ message: "Vehicle not found" });
+      return res
+        .status(404)
+        .json({ message: "Vehicle not found", code: ErrorCode.VEHICLE_NOT_FOUND });
     }
 
     await logEvent(
@@ -346,6 +387,9 @@ export const deleteDocument = async (req: Request, res: Response) => {
     res.status(200).json(vehicle);
   } catch (error) {
     console.error("Error deleting document:", error);
-    res.status(500).json({ message: "Error deleting document" });
+    res.status(500).json({
+      message: "Error deleting document",
+      code: ErrorCode.VEHICLE_DOC_DELETE_ERROR,
+    });
   }
 };

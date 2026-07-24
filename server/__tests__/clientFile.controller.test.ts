@@ -137,7 +137,8 @@ describe("ClientFile Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Fiche client introuvable",
+        message: "Client file not found",
+        code: "CLIENT_FILE_NOT_FOUND",
       });
     });
 
@@ -286,7 +287,10 @@ describe("ClientFile Controller", () => {
       await deleteClientFile(req as Request, res as Response);
 
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ message: "Fiche supprimée" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Client file deleted",
+        code: "CLIENT_FILE_DELETED",
+      });
     });
   });
 
@@ -304,7 +308,8 @@ describe("ClientFile Controller", () => {
       await uploadDocument(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Aucun fichier fourni",
+        message: "No file provided",
+        code: "NO_FILE_PROVIDED",
       });
     });
 
@@ -320,7 +325,8 @@ describe("ClientFile Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Fiche client introuvable",
+        message: "Client file not found",
+        code: "CLIENT_FILE_NOT_FOUND",
       });
     });
 
@@ -384,7 +390,8 @@ describe("ClientFile Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Fiche client introuvable",
+        message: "Client file not found",
+        code: "CLIENT_FILE_NOT_FOUND",
       });
     });
 
@@ -397,7 +404,8 @@ describe("ClientFile Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Document introuvable",
+        message: "Document not found",
+        code: "DOCUMENT_NOT_FOUND",
       });
     });
 

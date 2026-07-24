@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import InterventionReportModel from "../models/interventionReport.model";
 import { validateObjectId } from "../utils/validate.utils";
+import { ErrorCode } from "../constants/errorCodes";
 
 // ─── List all reports (optionally filter by clientFile) ───────────────────────
 export const getInterventionReports = async (
@@ -18,7 +19,9 @@ export const getInterventionReports = async (
     res.status(200).json(reports);
   } catch (err) {
     console.error("Error fetching intervention reports:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -34,13 +37,17 @@ export const getInterventionReport = async (
       .populate("clientFile", "lastName firstName company postalCode city")
       .lean();
     if (!report) {
-      res.status(404).json({ message: "Rapport introuvable" });
+      res
+        .status(404)
+        .json({ message: "Report not found", code: ErrorCode.REPORT_NOT_FOUND });
       return;
     }
     res.status(200).json(report);
   } catch (err) {
     console.error("Error fetching intervention report:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -55,7 +62,10 @@ export const createInterventionReport = async (
     res.status(201).json({ interventionReport: report._id });
   } catch (err) {
     console.error("Error creating intervention report:", err);
-    res.status(400).json({ message: "Erreur lors de la création du rapport" });
+    res.status(400).json({
+      message: "Error creating report",
+      code: ErrorCode.REPORT_CREATE_ERROR,
+    });
   }
 };
 
@@ -69,7 +79,9 @@ export const updateInterventionReport = async (
   try {
     const report = await InterventionReportModel.findById(req.params.id);
     if (!report) {
-      res.status(404).json({ message: "Rapport introuvable" });
+      res
+        .status(404)
+        .json({ message: "Report not found", code: ErrorCode.REPORT_NOT_FOUND });
       return;
     }
 
@@ -95,7 +107,10 @@ export const updateInterventionReport = async (
     res.status(200).json(updated);
   } catch (err) {
     console.error("Error updating intervention report:", err);
-    res.status(400).json({ message: "Erreur lors de la mise à jour" });
+    res.status(400).json({
+      message: "Error updating report",
+      code: ErrorCode.REPORT_UPDATE_ERROR,
+    });
   }
 };
 
@@ -111,12 +126,18 @@ export const deleteInterventionReport = async (
       req.params.id,
     );
     if (!report) {
-      res.status(404).json({ message: "Rapport introuvable" });
+      res
+        .status(404)
+        .json({ message: "Report not found", code: ErrorCode.REPORT_NOT_FOUND });
       return;
     }
-    res.status(200).json({ message: "Rapport supprimé" });
+    res
+      .status(200)
+      .json({ message: "Report deleted", code: ErrorCode.REPORT_DELETED });
   } catch (err) {
     console.error("Error deleting intervention report:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };

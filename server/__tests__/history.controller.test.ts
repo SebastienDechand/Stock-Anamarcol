@@ -33,7 +33,10 @@ describe("History Controller", () => {
       req.params = { id: "invalid" };
       await getItemHistory(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "ID invalide" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Invalid ID",
+        code: "INVALID_ID",
+      });
     });
 
     it("should return item history sorted by createdAt desc", async () => {
@@ -86,7 +89,8 @@ describe("History Controller", () => {
       await getItemHistory(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Erreur interne du serveur",
+        message: "Internal server error",
+        code: "INTERNAL_ERROR",
       });
     });
   });

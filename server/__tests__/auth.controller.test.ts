@@ -190,7 +190,8 @@ describe("Auth Controller", () => {
       expect(res.cookie).toHaveBeenCalledWith("jwt", "", { maxAge: 1 });
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Déconnexion réussie",
+        message: "Logged out successfully",
+        code: "LOGOUT_SUCCESS",
       });
     });
   });

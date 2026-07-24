@@ -6,6 +6,7 @@ import ClientFileModel from "../models/clientFile.model";
 import type { ClientFileDocType } from "../models/clientFile.model";
 import { validateObjectId } from "../utils/validate.utils";
 import { logEvent } from "../utils/audit.utils";
+import { ErrorCode } from "../constants/errorCodes";
 
 // ─── Multer config for client file documents ───────────────────────────────────
 const UPLOAD_DIR = path.join(process.cwd(), "uploads", "client-files");
@@ -35,7 +36,7 @@ export const docUpload = multer({
     else
       cb(
         new Error(
-          "Type de fichier non supporté (PDF, image, XLS ou XLSX uniquement)",
+          "Unsupported file type (PDF, image, XLS or XLSX only)",
         ),
       );
   },
@@ -54,7 +55,9 @@ export const getClientFiles = async (
     res.status(200).json(files);
   } catch (err) {
     console.error("Error fetching client files:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -70,13 +73,18 @@ export const getClientFile = async (
       .populate("contactRef", "name email phone")
       .lean();
     if (!file) {
-      res.status(404).json({ message: "Fiche client introuvable" });
+      res.status(404).json({
+        message: "Client file not found",
+        code: ErrorCode.CLIENT_FILE_NOT_FOUND,
+      });
       return;
     }
     res.status(200).json(file);
   } catch (err) {
     console.error("Error fetching client file:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -97,7 +105,8 @@ export const createClientFile = async (
       }).lean();
       if (bySiretAddr) {
         res.status(409).json({
-          message: "Une fiche client avec ce SIRET et cette adresse existe déjà",
+          message: "A client file with this SIRET and address already exists",
+          code: ErrorCode.CLIENT_FILE_DUPLICATE_SIRET,
           duplicate: { _id: bySiretAddr._id, lastName: bySiretAddr.lastName, company: bySiretAddr.company },
         });
         return;
@@ -111,7 +120,8 @@ export const createClientFile = async (
       }).lean();
       if (byAddr) {
         res.status(409).json({
-          message: "Une fiche client avec ce nom et cette adresse existe déjà",
+          message: "A client file with this name and address already exists",
+          code: ErrorCode.CLIENT_FILE_DUPLICATE_NAME,
           duplicate: { _id: byAddr._id, lastName: byAddr.lastName, company: byAddr.company },
         });
         return;
@@ -129,7 +139,10 @@ export const createClientFile = async (
     res.status(201).json({ clientFile: file._id });
   } catch (err) {
     console.error("Error creating client file:", err);
-    res.status(400).json({ message: "Erreur lors de la création de la fiche" });
+    res.status(400).json({
+      message: "Error creating client file",
+      code: ErrorCode.CLIENT_FILE_CREATE_ERROR,
+    });
   }
 };
 
@@ -143,7 +156,10 @@ export const updateClientFile = async (
   try {
     const file = await ClientFileModel.findById(req.params.id);
     if (!file) {
-      res.status(404).json({ message: "Fiche client introuvable" });
+      res.status(404).json({
+        message: "Client file not found",
+        code: ErrorCode.CLIENT_FILE_NOT_FOUND,
+      });
       return;
     }
 
@@ -189,7 +205,10 @@ export const updateClientFile = async (
     res.status(200).json(updated);
   } catch (err) {
     console.error("Error updating client file:", err);
-    res.status(400).json({ message: "Erreur lors de la mise à jour" });
+    res.status(400).json({
+      message: "Error updating client file",
+      code: ErrorCode.CLIENT_FILE_UPDATE_ERROR,
+    });
   }
 };
 
@@ -203,7 +222,10 @@ export const deleteClientFile = async (
   try {
     const file = await ClientFileModel.findByIdAndDelete(req.params.id);
     if (!file) {
-      res.status(404).json({ message: "Fiche client introuvable" });
+      res.status(404).json({
+        message: "Client file not found",
+        code: ErrorCode.CLIENT_FILE_NOT_FOUND,
+      });
       return;
     }
     await logEvent(
@@ -213,10 +235,15 @@ export const deleteClientFile = async (
       res.locals.user?.username,
       { entityName: `${file.lastName} ${file.firstName ?? ""}`.trim() },
     );
-    res.status(200).json({ message: "Fiche supprimée" });
+    res.status(200).json({
+      message: "Client file deleted",
+      code: ErrorCode.CLIENT_FILE_DELETED,
+    });
   } catch (err) {
     console.error("Error deleting client file:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -227,14 +254,19 @@ export const uploadDocument = async (
 ): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
   if (!req.file) {
-    res.status(400).json({ message: "Aucun fichier fourni" });
+    res
+      .status(400)
+      .json({ message: "No file provided", code: ErrorCode.NO_FILE_PROVIDED });
     return;
   }
 
   try {
     const file = await ClientFileModel.findById(req.params.id);
     if (!file) {
-      res.status(404).json({ message: "Fiche client introuvable" });
+      res.status(404).json({
+        message: "Client file not found",
+        code: ErrorCode.CLIENT_FILE_NOT_FOUND,
+      });
       return;
     }
 
@@ -253,7 +285,10 @@ export const uploadDocument = async (
     res.status(201).json(updated);
   } catch (err) {
     console.error("Error uploading document:", err);
-    res.status(500).json({ message: "Erreur lors de l'upload" });
+    res.status(500).json({
+      message: "Error uploading document",
+      code: ErrorCode.CLIENT_FILE_UPLOAD_ERROR,
+    });
   }
 };
 
@@ -268,7 +303,10 @@ export const deleteDocument = async (
   try {
     const file = await ClientFileModel.findById(req.params.id);
     if (!file) {
-      res.status(404).json({ message: "Fiche client introuvable" });
+      res.status(404).json({
+        message: "Client file not found",
+        code: ErrorCode.CLIENT_FILE_NOT_FOUND,
+      });
       return;
     }
 
@@ -276,7 +314,9 @@ export const deleteDocument = async (
       (d) => d._id.toString() === req.params.docId,
     );
     if (!doc) {
-      res.status(404).json({ message: "Document introuvable" });
+      res
+        .status(404)
+        .json({ message: "Document not found", code: ErrorCode.DOCUMENT_NOT_FOUND });
       return;
     }
 
@@ -294,6 +334,9 @@ export const deleteDocument = async (
     res.status(200).json(updated);
   } catch (err) {
     console.error("Error deleting document:", err);
-    res.status(500).json({ message: "Erreur lors de la suppression" });
+    res.status(500).json({
+      message: "Error deleting document",
+      code: ErrorCode.DOCUMENT_DELETE_ERROR,
+    });
   }
 };

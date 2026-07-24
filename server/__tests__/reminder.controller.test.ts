@@ -53,7 +53,8 @@ describe("Reminder Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
-        message: "2 rappel(s) envoyé(s) avec succès",
+        message: "2 reminder(s) sent successfully",
+        code: "REMINDERS_SENT",
         reminders: mockReminders,
       });
     });
@@ -65,7 +66,8 @@ describe("Reminder Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Aucun rappel à envoyer (aucune échéance dans 30j ou 7j)",
+        message: "No reminders to send (no deadline within 30 or 7 days)",
+        code: "NO_REMINDERS_DUE",
         reminders: [],
       });
     });
@@ -78,8 +80,8 @@ describe("Reminder Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Erreur lors de l'envoi des rappels",
-        error: "Service error",
+        message: "Error sending reminders",
+        code: "REMINDER_SEND_ERROR",
       });
     });
 
@@ -90,8 +92,8 @@ describe("Reminder Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Erreur lors de l'envoi des rappels",
-        error: "Unknown error",
+        message: "Error sending reminders",
+        code: "REMINDER_SEND_ERROR",
       });
     });
   });

@@ -127,6 +127,7 @@
     "FOOTER": "ANAMARCOL - Stock Manager",
     "SERVER_ERROR": "Le serveur est temporairement indisponible. Veuillez réessayer dans quelques instants.",
     "INVALID_CREDENTIALS": "Les identifiants sont erronés. Veuillez réessayer.",
+    "TOO_MANY_ATTEMPTS": "Trop de tentatives, veuillez réessayer plus tard.",
     "UNEXPECTED_ERROR": "Une erreur inattendue s’est produite."
   },
 

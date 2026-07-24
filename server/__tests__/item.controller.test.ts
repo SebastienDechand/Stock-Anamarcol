@@ -291,7 +291,8 @@ describe("Item Controller", () => {
       await deleteItem(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Sucessfully deleted.",
+        message: "Successfully deleted",
+        code: "DELETED",
       });
     });
   });
@@ -302,14 +303,20 @@ describe("Item Controller", () => {
       req.body = { prepa: "invalid", operation: "decrement" };
       await prepaBatch(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "Prépa invalide" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Invalid prepa",
+        code: "INVALID_PREPA",
+      });
     });
 
     it("should return 400 when operation is invalid", async () => {
       req.body = { prepa: "cgKit", operation: "multiply" };
       await prepaBatch(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ message: "Opération invalide" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Invalid operation",
+        code: "INVALID_OPERATION",
+      });
     });
 
     it("should decrement quantities for matching items", async () => {

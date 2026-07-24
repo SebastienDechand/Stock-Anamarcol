@@ -25,7 +25,10 @@ describe("validateObjectId", () => {
     const result = validateObjectId("invalid", res as Response);
     expect(result).toBe(false);
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: "ID invalide" });
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Invalid ID",
+      code: "INVALID_ID",
+    });
   });
 
   it("should return false for an empty string", () => {

@@ -9,6 +9,7 @@ import {
 } from "../utils/history.utils";
 import { logEvent } from "../utils/audit.utils";
 import { invalidateStatsCache } from "./stats.controller";
+import { ErrorCode } from "../constants/errorCodes";
 
 export const itemInfo = async (req: Request, res: Response): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
@@ -16,13 +17,17 @@ export const itemInfo = async (req: Request, res: Response): Promise<void> => {
   try {
     const item = await ItemModel.findById(req.params.id).lean();
     if (!item) {
-      res.status(404).json({ message: "Article introuvable" });
+      res
+        .status(404)
+        .json({ message: "Item not found", code: ErrorCode.ITEM_NOT_FOUND });
       return;
     }
     res.status(200).json(item);
   } catch (err) {
     console.error("Error fetching item:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -126,7 +131,9 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json(response);
   } catch (err) {
     console.error("Error fetching items:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -183,7 +190,9 @@ export const updateItem = async (
     const item = await ItemModel.findById(req.params.id);
 
     if (!item) {
-      res.status(404).json({ message: "Article introuvable" });
+      res
+        .status(404)
+        .json({ message: "Item not found", code: ErrorCode.ITEM_NOT_FOUND });
       return;
     }
 
@@ -233,7 +242,7 @@ export const updateItem = async (
     console.error("Error updating item:", err);
     res
       .status(500)
-      .json({ message: (err as Error).message || "Internal Server Error" });
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -271,12 +280,14 @@ export const deleteItem = async (
     }
 
     invalidateStatsCache();
-    res.status(200).json({ message: "Sucessfully deleted." });
+    res
+      .status(200)
+      .json({ message: "Successfully deleted", code: ErrorCode.DELETED });
   } catch (err) {
     console.error("Error deleting item:", err);
     res
       .status(500)
-      .json({ message: (err as Error).message || "Internal Server Error" });
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -301,11 +312,15 @@ export const prepaBatch = async (
       : 1;
 
   if (!prepa || !["cgKit", "tpvKit"].includes(prepa)) {
-    res.status(400).json({ message: "Prépa invalide" });
+    res
+      .status(400)
+      .json({ message: "Invalid prepa", code: ErrorCode.INVALID_PREPA });
     return;
   }
   if (!operation || !["increment", "decrement"].includes(operation)) {
-    res.status(400).json({ message: "Opération invalide" });
+    res
+      .status(400)
+      .json({ message: "Invalid operation", code: ErrorCode.INVALID_OPERATION });
     return;
   }
 
@@ -351,11 +366,15 @@ export const prepaBatch = async (
     });
 
     invalidateStatsCache();
-    res
-      .status(200)
-      .json({ message: `${updated} articles mis à jour`, updated });
+    res.status(200).json({
+      message: `${updated} items updated`,
+      code: ErrorCode.ITEMS_UPDATED,
+      updated,
+    });
   } catch (err) {
     console.error("Error in prepa batch:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };

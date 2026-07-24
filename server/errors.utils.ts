@@ -11,14 +11,14 @@ export const signUpErrors = (err: MongoError): SignUpError => {
   const errors: SignUpError = { username: "", email: "", password: "" };
 
   if (err.message.includes("username"))
-    errors.username = "Pseudo incorrect ou déjà pris";
-  if (err.message.includes("email")) errors.email = "Email incorrect";
+    errors.username = "Invalid or already taken username";
+  if (err.message.includes("email")) errors.email = "Invalid email";
   if (err.message.includes("password"))
-    errors.password = "Le mot de passe doit faire 6 caractères minimum";
+    errors.password = "Password must be at least 6 characters";
   if (err.code === 11000 && Object.keys(err.keyValue!)[0].includes("username"))
-    errors.username = "Ce pseudo est déjà pris";
+    errors.username = "This username is already taken";
   if (err.code === 11000 && Object.keys(err.keyValue!)[0].includes("email"))
-    errors.email = "Cet email est déjà enregistré";
+    errors.email = "This email is already registered";
 
   return errors;
 };
@@ -49,11 +49,11 @@ export const uploadErrors = (
     const detectedMimeMessage = detectedMimeType
       ? `Detected MIME type: ${detectedMimeType}.`
       : "";
-    errors.format = `Format incompatible. ${detectedMimeMessage} `;
+    errors.format = `Unsupported file format. ${detectedMimeMessage} `;
   }
 
   if (err.message.includes("Max size")) {
-    errors.maxSize = "Le fichier est trop volumineux, maximum 2.5Mo";
+    errors.maxSize = "File is too large, maximum 2.5MB";
   }
 
   console.error("Detected MIME Type:", detectedMimeType);
@@ -72,13 +72,13 @@ export const createItemErrors = (err: Error): CreateItemError => {
   };
 
   if (err.message.includes("name"))
-    errors.name = "Dénomination incorrect ou déjà prise";
+    errors.name = "Invalid or already taken name";
   if (err.message.includes("supplier"))
-    errors.supplier = "Nommez un fournisseur valide";
+    errors.supplier = "Enter a valid supplier";
   if (err.message.includes("status"))
-    errors.status = "L'état de la pièce doit être NEW ou RMA";
+    errors.status = "Status must be NEW or RMA";
   if (err.message.includes("quantity"))
-    errors.quantity = "La quantité attendue est un nombre";
+    errors.quantity = "Quantity must be a number";
 
   console.error(err);
   return errors;

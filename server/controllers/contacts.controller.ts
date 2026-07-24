@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import ContactModel, { IContact } from "../models/contact.model";
 import { validateObjectId } from "../utils/validate.utils";
 import { logEvent } from "../utils/audit.utils";
+import { ErrorCode } from "../constants/errorCodes";
 
 export const getContacts = async (
   _req: Request,
@@ -20,13 +21,17 @@ export const contactInfo = async (
   try {
     const contact = await ContactModel.findById(req.params.id).lean();
     if (!contact) {
-      res.status(404).json({ message: "Contact introuvable" });
+      res
+        .status(404)
+        .json({ message: "Contact not found", code: ErrorCode.CONTACT_NOT_FOUND });
       return;
     }
     res.status(200).json(contact);
   } catch (err) {
     console.error("Error fetching contact:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -48,7 +53,10 @@ export const createContact = async (
     );
     res.status(200).json({ contact: contact._id });
   } catch (err) {
-    res.status(400).json({ message: "Erreur lors de la création du contact" });
+    res.status(400).json({
+      message: "Error creating contact",
+      code: ErrorCode.CONTACT_CREATE_ERROR,
+    });
   }
 };
 
@@ -62,7 +70,9 @@ export const updateContact = async (
     const contact = await ContactModel.findById(req.params.id);
 
     if (!contact) {
-      res.status(404).json({ message: "Contact introuvable" });
+      res
+        .status(404)
+        .json({ message: "Contact not found", code: ErrorCode.CONTACT_NOT_FOUND });
       return;
     }
 
@@ -113,7 +123,7 @@ export const updateContact = async (
     console.error("Error updating contact:", err);
     res
       .status(500)
-      .json({ message: (err as Error).message || "Internal Server Error" });
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -148,11 +158,13 @@ export const deleteContact = async (
     } catch (err) {
       console.error("logEvent delete contact error:", err);
     }
-    res.status(200).json({ message: "Sucessfully deleted." });
+    res
+      .status(200)
+      .json({ message: "Successfully deleted", code: ErrorCode.DELETED });
   } catch (err) {
     console.error("Error deleting contact:", err);
     res
       .status(500)
-      .json({ message: (err as Error).message || "Internal Server Error" });
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
