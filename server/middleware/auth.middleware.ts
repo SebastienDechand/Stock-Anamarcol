@@ -51,207 +51,77 @@ export const checkUser = (
     });
 };
 
-// Authentication required (blocking - returns 401)
-export const requireAuth = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
-  const token = req.cookies.jwt;
-  if (!token) {
-    res
-      .status(401)
-      .json({ message: "Authentication required", code: ErrorCode.AUTH_REQUIRED });
-    return;
-  }
+interface AccessDenied {
+  message: string;
+  code: ErrorCode;
+}
 
-  resolveUser(token)
-    .then((user) => {
-      if (!user) {
-        res
-          .status(401)
-          .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
-        return;
-      }
-      res.locals.user = user;
-      next();
-    })
-    .catch(() => {
+function requireRole(
+  roles: Role[],
+  accessDenied?: AccessDenied,
+) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const token = req.cookies.jwt;
+    if (!token) {
       res
         .status(401)
-        .json({ message: "Invalid or expired token", code: ErrorCode.INVALID_TOKEN });
-    });
-};
+        .json({ message: "Authentication required", code: ErrorCode.AUTH_REQUIRED });
+      return;
+    }
 
-// Requires admin or superadmin role
-export const requireAdmin = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
-  const token = req.cookies.jwt;
-  if (!token) {
-    res
-      .status(401)
-      .json({ message: "Authentication required", code: ErrorCode.AUTH_REQUIRED });
-    return;
-  }
-
-  resolveUser(token)
-    .then((user) => {
-      if (!user) {
+    resolveUser(token)
+      .then((user) => {
+        if (!user) {
+          res
+            .status(401)
+            .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
+          return;
+        }
+        if (
+          accessDenied &&
+          !roles.some((role) => user.roles?.includes(role))
+        ) {
+          res.status(403).json(accessDenied);
+          return;
+        }
+        res.locals.user = user;
+        next();
+      })
+      .catch(() => {
         res
           .status(401)
-          .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
-        return;
-      }
-      if (
-        !(
-          user.roles?.includes(Role.ADMIN) ||
-          user.roles?.includes(Role.SUPERADMIN)
-        )
-      ) {
-        res.status(403).json({
-          message: "Access denied - admin required",
-          code: ErrorCode.ACCESS_DENIED_ADMIN,
-        });
-        return;
-      }
-      res.locals.user = user;
-      next();
-    })
-    .catch(() => {
-      res
-        .status(401)
-        .json({ message: "Invalid or expired token", code: ErrorCode.INVALID_TOKEN });
-    });
-};
+          .json({ message: "Invalid or expired token", code: ErrorCode.INVALID_TOKEN });
+      });
+  };
+}
+
+export const requireAuth = requireRole([]);
+
+export const requireAdmin = requireRole([Role.ADMIN, Role.SUPERADMIN], {
+  message: "Access denied - admin required",
+  code: ErrorCode.ACCESS_DENIED_ADMIN,
+});
 
 // Requires hotline OR admin/superadmin role
-export const requireHotline = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
-  const token = req.cookies.jwt;
-  if (!token) {
-    res
-      .status(401)
-      .json({ message: "Authentication required", code: ErrorCode.AUTH_REQUIRED });
-    return;
-  }
-
-  resolveUser(token)
-    .then((user) => {
-      if (!user) {
-        res
-          .status(401)
-          .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
-        return;
-      }
-      if (
-        !(
-          user.roles?.includes(Role.HOTLINE) ||
-          user.roles?.includes(Role.ADMIN) ||
-          user.roles?.includes(Role.SUPERADMIN)
-        )
-      ) {
-        res.status(403).json({
-          message: "Access denied - hotline or admin required",
-          code: ErrorCode.ACCESS_DENIED_HOTLINE,
-        });
-        return;
-      }
-      res.locals.user = user;
-      next();
-    })
-    .catch(() => {
-      res
-        .status(401)
-        .json({ message: "Invalid or expired token", code: ErrorCode.INVALID_TOKEN });
-    });
-};
+export const requireHotline = requireRole(
+  [Role.HOTLINE, Role.ADMIN, Role.SUPERADMIN],
+  {
+    message: "Access denied - hotline or admin required",
+    code: ErrorCode.ACCESS_DENIED_HOTLINE,
+  },
+);
 
 // Requires monteur OR admin/superadmin role
-export const requireMonteur = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
-  const token = req.cookies.jwt;
-  if (!token) {
-    res
-      .status(401)
-      .json({ message: "Authentication required", code: ErrorCode.AUTH_REQUIRED });
-    return;
-  }
-
-  resolveUser(token)
-    .then((user) => {
-      if (!user) {
-        res
-          .status(401)
-          .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
-        return;
-      }
-      if (
-        !(
-          user.roles?.includes(Role.MONTEUR) ||
-          user.roles?.includes(Role.ADMIN) ||
-          user.roles?.includes(Role.SUPERADMIN)
-        )
-      ) {
-        res.status(403).json({
-          message: "Access denied - monteur or admin required",
-          code: ErrorCode.ACCESS_DENIED_MONTEUR,
-        });
-        return;
-      }
-      res.locals.user = user;
-      next();
-    })
-    .catch(() => {
-      res
-        .status(401)
-        .json({ message: "Invalid or expired token", code: ErrorCode.INVALID_TOKEN });
-    });
-};
+export const requireMonteur = requireRole(
+  [Role.MONTEUR, Role.ADMIN, Role.SUPERADMIN],
+  {
+    message: "Access denied - monteur or admin required",
+    code: ErrorCode.ACCESS_DENIED_MONTEUR,
+  },
+);
 
 // Requires superadmin role only
-export const requireSuperAdmin = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void => {
-  const token = req.cookies.jwt;
-  if (!token) {
-    res
-      .status(401)
-      .json({ message: "Authentication required", code: ErrorCode.AUTH_REQUIRED });
-    return;
-  }
-
-  resolveUser(token)
-    .then((user) => {
-      if (!user) {
-        res
-          .status(401)
-          .json({ message: "User not found", code: ErrorCode.USER_NOT_FOUND });
-        return;
-      }
-      if (!user.roles?.includes(Role.SUPERADMIN)) {
-        res.status(403).json({
-          message: "Access denied - superadmin required",
-          code: ErrorCode.ACCESS_DENIED_SUPERADMIN,
-        });
-        return;
-      }
-      res.locals.user = user;
-      next();
-    })
-    .catch(() => {
-      res
-        .status(401)
-        .json({ message: "Invalid or expired token", code: ErrorCode.INVALID_TOKEN });
-    });
-};
+export const requireSuperAdmin = requireRole([Role.SUPERADMIN], {
+  message: "Access denied - superadmin required",
+  code: ErrorCode.ACCESS_DENIED_SUPERADMIN,
+});
