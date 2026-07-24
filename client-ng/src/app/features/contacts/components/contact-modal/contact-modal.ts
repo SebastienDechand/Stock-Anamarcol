@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Contact } from '../../../../shared/models/contact.model';
+import { Contact, ContactCategory } from '../../../../shared/models/contact.model';
 
 @Component({
   selector: 'app-contact-modal',
@@ -18,7 +18,7 @@ export class ContactModal implements OnInit {
   pictureUploaded = output<{ id: string; formData: FormData }>();
   cancelled = output<void>();
 
-  form = { name: '', email: '', phone: '', position: '', link: '' };
+  form = { name: '', email: '', phone: '', position: '', link: '', category: 'external' as ContactCategory };
 
   ngOnInit() {
     this.form = {
@@ -27,6 +27,7 @@ export class ContactModal implements OnInit {
       phone: this.contact().phone ?? '',
       position: this.contact().position ?? '',
       link: this.contact().link ?? '',
+      category: this.contact().category ?? 'external',
     };
   }
 

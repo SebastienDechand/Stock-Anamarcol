@@ -601,6 +601,9 @@
     "EMPTY": "No contacts",
     "EXTERNAL": "External Contacts",
     "SUPPLIERS": "External Suppliers",
+    "CATEGORY": "Category",
+    "CATEGORY_EXTERNAL": "External contact",
+    "CATEGORY_SUPPLIER": "Supplier",
     "WEBSITE": "Website",
     "CHANGE_PHOTO": "Change photo"
   },

@@ -39,10 +39,17 @@ export const createContact = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const { name, email, link, position, phone } = req.body;
+  const { name, email, link, position, phone, category } = req.body;
 
   try {
-    const contact = await ContactModel.create({ name, email, link, position, phone });
+    const contact = await ContactModel.create({
+      name,
+      email,
+      link,
+      position,
+      phone,
+      category,
+    });
     // Audit
     await logEvent(
       "create",
@@ -83,6 +90,7 @@ export const updateContact = async (
     if (req.body.position) contact.position = req.body.position;
     if (req.body.phone) contact.phone = req.body.phone;
     if (req.body.picture) contact.picture = req.body.picture;
+    if (req.body.category) contact.category = req.body.category;
 
     const updatedContact = await contact.save();
     // Audit: record updated fields
@@ -95,6 +103,7 @@ export const updateContact = async (
         "position",
         "phone",
         "picture",
+        "category",
       ];
       const oldObj = old as Partial<Record<keyof IContact, unknown>>;
       const newObj = updatedContact as Partial<Record<keyof IContact, unknown>>;
