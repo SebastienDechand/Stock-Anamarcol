@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { signUpErrors, signInErrors } from "../errors.utils";
 import { JWT_MAX_AGE, COOKIE_MAX_AGE, Role } from "../constants";
 import { logEvent } from "../utils/audit.utils";
+import { ErrorCode } from "../constants/errorCodes";
 
 // Create a JWT token
 const createToken = (id: string): string => {
@@ -72,5 +73,7 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
 // Sign out
 export const logout = async (_req: Request, res: Response): Promise<void> => {
   res.cookie("jwt", "", { maxAge: 1 });
-  res.status(200).json({ message: "Déconnexion réussie" });
+  res
+    .status(200)
+    .json({ message: "Logged out successfully", code: ErrorCode.LOGOUT_SUCCESS });
 };

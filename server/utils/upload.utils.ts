@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import multer from "multer";
 import { uploadErrors } from "../errors.utils";
 import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "../constants";
+import { ErrorCode } from "../constants/errorCodes";
 
 // Shared multer instance for single-image uploads (profile/item/contact
 // pictures) - rejects oversized/wrong-type files before buffering them
@@ -28,7 +29,9 @@ export const imageUpload = multer({
 export function validateUploadedFile(req: Request, res: Response): boolean {
   const file = req.file;
   if (!file) {
-    res.status(400).json({ message: "No file provided" });
+    res
+      .status(400)
+      .json({ message: "No file provided", code: ErrorCode.NO_FILE_PROVIDED });
     return false;
   }
 

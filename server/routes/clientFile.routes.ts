@@ -5,6 +5,7 @@ import {
   requireAdmin,
   requireMonteur,
 } from "../middleware/auth.middleware";
+import { ErrorCode } from "../constants/errorCodes";
 
 const router = Router();
 
@@ -23,7 +24,10 @@ router.post(
   (req, res, next) => {
     clientFileController.docUpload.single("file")(req, res, (err) => {
       if (err) {
-        res.status(400).json({ message: (err as Error).message });
+        res.status(400).json({
+          message: (err as Error).message,
+          code: ErrorCode.CLIENT_FILE_UPLOAD_ERROR,
+        });
         return;
       }
       next();

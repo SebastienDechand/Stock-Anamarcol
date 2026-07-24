@@ -5,6 +5,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { Eye, EyeOff, Package } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthFacade } from '../../store/auth/auth.facade';
+import { LanguageService } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-login-page',
@@ -15,6 +16,7 @@ import { AuthFacade } from '../../store/auth/auth.facade';
 })
 export class LoginPage {
   protected authFacade = inject(AuthFacade);
+  protected languageService = inject(LanguageService);
 
   readonly Eye = Eye;
   readonly EyeOff = EyeOff;
@@ -33,5 +35,9 @@ export class LoginPage {
 
   togglePassword() {
     this.showPassword.update((v) => !v);
+  }
+
+  toggleLanguage() {
+    this.languageService.toggle();
   }
 }

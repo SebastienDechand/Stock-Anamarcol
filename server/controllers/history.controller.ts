@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import HistoryModel from "../models/history.model";
 import { validateObjectId } from "../utils/validate.utils";
+import { ErrorCode } from "../constants/errorCodes";
 
 export const getItemHistory = async (
   req: Request,
@@ -17,6 +18,8 @@ export const getItemHistory = async (
     res.status(200).json(history);
   } catch (err) {
     console.error("Error fetching item history:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };

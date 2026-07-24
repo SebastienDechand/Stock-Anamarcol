@@ -51,10 +51,10 @@ describe('AuthEffects', () => {
       expect(result).toEqual(AuthActions.loginSuccess());
     });
 
-    it('should surface the server message on a 429 rate-limit error', async () => {
+    it('should show the too-many-attempts message on a 429 rate-limit error', async () => {
       const err = new HttpErrorResponse({
         status: 429,
-        error: { message: 'Trop de tentatives, réessayez plus tard.' },
+        error: { message: 'Too many attempts, try again later', code: 'TOO_MANY_REQUESTS' },
       });
       authService.login.mockReturnValue(throwError(() => err));
 
@@ -63,7 +63,7 @@ describe('AuthEffects', () => {
       const result = await promise;
 
       expect(result).toEqual(
-        AuthActions.loginFailure({ error: 'Trop de tentatives, réessayez plus tard.' }),
+        AuthActions.loginFailure({ error: 'LOGIN.TOO_MANY_ATTEMPTS' }),
       );
     });
 

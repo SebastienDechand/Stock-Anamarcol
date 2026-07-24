@@ -5,6 +5,7 @@ import ShipmentArchiveModel from "../models/shipmentArchive.model";
 import type { IShipmentArchive } from "../models/shipmentArchive.model";
 import PDFDocument from "pdfkit";
 import * as XLSX from "xlsx";
+import { ErrorCode } from "../constants/errorCodes";
 
 /**
  * Archive shipments for a specific calendar month.
@@ -232,7 +233,9 @@ export const getShipments = async (
     res.status(200).json(shipments);
   } catch (err) {
     console.error("Error fetching shipments:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -267,9 +270,10 @@ export const createShipment = async (
   if (!company) missing.push("company");
   if (!part) missing.push("part");
   if (missing.length > 0) {
-    res
-      .status(400)
-      .json({ message: `Champs requis manquants : ${missing.join(", ")}` });
+    res.status(400).json({
+      message: `Missing required fields: ${missing.join(", ")}`,
+      code: ErrorCode.SHIPMENT_MISSING_FIELDS,
+    });
     return;
   }
 
@@ -294,7 +298,9 @@ export const createShipment = async (
     res.status(201).json(created);
   } catch (err) {
     console.error("Error creating shipment:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -303,7 +309,10 @@ export const markSent = async (req: Request, res: Response): Promise<void> => {
     const id = req.params.id;
     const shipment = await ShipmentModel.findById(id);
     if (!shipment) {
-      res.status(404).json({ message: "Envoi introuvable" });
+      res.status(404).json({
+        message: "Shipment not found",
+        code: ErrorCode.SHIPMENT_NOT_FOUND,
+      });
       return;
     }
     shipment.sent = true;
@@ -313,7 +322,9 @@ export const markSent = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json(updated);
   } catch (err) {
     console.error("Error marking shipment sent:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -324,10 +335,14 @@ export const deleteShipment = async (
   try {
     const id = req.params.id;
     await ShipmentModel.deleteOne({ _id: id }).exec();
-    res.status(200).json({ message: "Supprimé" });
+    res
+      .status(200)
+      .json({ message: "Deleted", code: ErrorCode.SHIPMENT_DELETED });
   } catch (err) {
     console.error("Error deleting shipment:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -346,7 +361,10 @@ export const createArchive = async (
       now.getMonth(),
     );
     if (!archive) {
-      res.status(400).json({ message: "Aucun envoi à archiver" });
+      res.status(400).json({
+        message: "No shipments to archive",
+        code: ErrorCode.NO_SHIPMENTS_TO_ARCHIVE,
+      });
       return;
     }
     res.status(201).json({
@@ -359,7 +377,9 @@ export const createArchive = async (
     });
   } catch (err) {
     console.error("Error creating shipment archive:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -378,7 +398,9 @@ export const getArchives = async (
     res.status(200).json(archives);
   } catch (err) {
     console.error("Error fetching archives:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
 
@@ -393,7 +415,9 @@ export const downloadArchive = async (
   try {
     const archive = await ShipmentArchiveModel.findById(req.params.id).lean();
     if (!archive) {
-      res.status(404).json({ message: "Archive introuvable" });
+      res
+        .status(404)
+        .json({ message: "Archive not found", code: ErrorCode.ARCHIVE_NOT_FOUND });
       return;
     }
 
@@ -405,9 +429,10 @@ export const downloadArchive = async (
 
     if (format === "xlsx") {
       if (!archive.rawData || archive.rawData.length === 0) {
-        res
-          .status(400)
-          .json({ message: "Données XLSX non disponibles pour cette archive" });
+        res.status(400).json({
+          message: "XLSX data not available for this archive",
+          code: ErrorCode.ARCHIVE_XLSX_UNAVAILABLE,
+        });
         return;
       }
       const ws = XLSX.utils.json_to_sheet(archive.rawData);
@@ -442,6 +467,8 @@ export const downloadArchive = async (
     }
   } catch (err) {
     console.error("Error downloading archive:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };

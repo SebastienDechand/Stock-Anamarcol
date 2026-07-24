@@ -10,8 +10,8 @@ import { AuthActions } from './auth.actions';
 
 function loginErrorMessage(err: unknown, translate: TranslateService): string {
   if (err instanceof HttpErrorResponse) {
-    if (err.status === 429 && err.error?.message) {
-      return err.error.message;
+    if (err.status === 429) {
+      return translate.instant('LOGIN.TOO_MANY_ATTEMPTS');
     }
     if (err.status === 0 || [500, 502, 503, 504].includes(err.status)) {
       return translate.instant('LOGIN.SERVER_ERROR');

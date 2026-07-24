@@ -15,7 +15,7 @@ describe("errors.utils", () => {
         keyValue?: Record<string, unknown>;
       };
       const result = signUpErrors(err);
-      expect(result.username).toBe("Pseudo incorrect ou déjà pris");
+      expect(result.username).toBe("Invalid or already taken username");
       expect(result.email).toBe("");
       expect(result.password).toBe("");
     });
@@ -26,7 +26,7 @@ describe("errors.utils", () => {
         keyValue?: Record<string, unknown>;
       };
       const result = signUpErrors(err);
-      expect(result.email).toBe("Email incorrect");
+      expect(result.email).toBe("Invalid email");
     });
 
     it("should detect a password error", () => {
@@ -36,7 +36,7 @@ describe("errors.utils", () => {
       };
       const result = signUpErrors(err);
       expect(result.password).toBe(
-        "Le mot de passe doit faire 6 caractères minimum",
+        "Password must be at least 6 characters",
       );
     });
 
@@ -50,7 +50,7 @@ describe("errors.utils", () => {
         keyValue: Record<string, unknown>;
       };
       const result = signUpErrors(err);
-      expect(result.username).toBe("Ce pseudo est déjà pris");
+      expect(result.username).toBe("This username is already taken");
     });
 
     it("should detect a duplicate email (code 11000)", () => {
@@ -63,7 +63,7 @@ describe("errors.utils", () => {
         keyValue: Record<string, unknown>;
       };
       const result = signUpErrors(err);
-      expect(result.email).toBe("Cet email est déjà enregistré");
+      expect(result.email).toBe("This email is already registered");
     });
   });
 
@@ -89,7 +89,7 @@ describe("errors.utils", () => {
     it("should detect an invalid file format", () => {
       const err = new Error("Invalid file format");
       const result = uploadErrors(err, "application/pdf", "test.pdf");
-      expect(result.format).toContain("Format incompatible");
+      expect(result.format).toContain("Unsupported file format");
       expect(result.format).toContain("application/pdf");
     });
 
@@ -97,14 +97,14 @@ describe("errors.utils", () => {
       const err = new Error("Max size exceeded");
       const result = uploadErrors(err, null, "big.jpg");
       expect(result.maxSize).toBe(
-        "Le fichier est trop volumineux, maximum 2.5Mo",
+        "File is too large, maximum 2.5MB",
       );
     });
 
     it("should handle missing detected MIME type", () => {
       const err = new Error("Invalid file");
       const result = uploadErrors(err, null, "file.xyz");
-      expect(result.format).toContain("Format incompatible");
+      expect(result.format).toContain("Unsupported file format");
       expect(result.format).not.toContain("Detected MIME type");
     });
   });
@@ -114,25 +114,25 @@ describe("errors.utils", () => {
     it("should detect a name error", () => {
       const err = new Error("name required");
       const result = createItemErrors(err);
-      expect(result.name).toBe("Dénomination incorrect ou déjà prise");
+      expect(result.name).toBe("Invalid or already taken name");
     });
 
     it("should detect a supplier error", () => {
       const err = new Error("supplier required");
       const result = createItemErrors(err);
-      expect(result.supplier).toBe("Nommez un fournisseur valide");
+      expect(result.supplier).toBe("Enter a valid supplier");
     });
 
     it("should detect a status error", () => {
       const err = new Error("status required");
       const result = createItemErrors(err);
-      expect(result.status).toBe("L'état de la pièce doit être NEW ou RMA");
+      expect(result.status).toBe("Status must be NEW or RMA");
     });
 
     it("should detect a quantity error", () => {
       const err = new Error("quantity invalid");
       const result = createItemErrors(err);
-      expect(result.quantity).toBe("La quantité attendue est un nombre");
+      expect(result.quantity).toBe("Quantity must be a number");
     });
 
     it("should return empty fields when no matching errors", () => {

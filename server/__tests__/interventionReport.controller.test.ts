@@ -146,7 +146,8 @@ describe("InterventionReport Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Rapport introuvable",
+        message: "Report not found",
+        code: "REPORT_NOT_FOUND",
       });
     });
 
@@ -279,7 +280,10 @@ describe("InterventionReport Controller", () => {
       await deleteInterventionReport(req as Request, res as Response);
 
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ message: "Rapport supprimé" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Report deleted",
+        code: "REPORT_DELETED",
+      });
     });
   });
 });
