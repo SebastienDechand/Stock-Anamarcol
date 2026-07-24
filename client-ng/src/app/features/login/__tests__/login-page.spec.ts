@@ -1,11 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
 import { LoginPage } from '../login-page';
 import { AuthFacade } from '../../../store/auth/auth.facade';
 import { initialAuthState } from '../../../store/auth/auth.state';
-import { LanguageService } from '../../../core/services/language.service';
 
 const initialState = { auth: initialAuthState };
 
@@ -18,13 +16,7 @@ describe('LoginPage', () => {
 
     await TestBed.configureTestingModule({
       imports: [LoginPage],
-      providers: [
-        provideMockStore({ initialState }),
-        {
-          provide: LanguageService,
-          useValue: { lang$: of('fr'), current: 'fr', toggle: vi.fn(), set: vi.fn() },
-        },
-      ],
+      providers: [provideMockStore({ initialState })],
     }).compileComponents();
 
     authFacade = TestBed.inject(AuthFacade);
@@ -36,14 +28,6 @@ describe('LoginPage', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  describe('toggleLanguage()', () => {
-    it('should call languageService.toggle()', () => {
-      const toggleSpy = vi.spyOn(component['languageService'], 'toggle');
-      component.toggleLanguage();
-      expect(toggleSpy).toHaveBeenCalled();
-    });
   });
 
   describe('togglePassword()', () => {

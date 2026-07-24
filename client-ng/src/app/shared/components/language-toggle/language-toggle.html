@@ -1,0 +1,40 @@
+@let lang = lang$ | async;
+
+<button
+  class="language-toggle language-toggle--{{ variant() }}"
+  type="button"
+  (click)="toggle()"
+  [title]="
+    lang === 'fr'
+      ? ('TOPBAR.MENU.SWITCH_TO_EN' | translate)
+      : ('TOPBAR.MENU.SWITCH_TO_FR' | translate)
+  "
+>
+  <span class="language-toggle__flag">
+    @if (lang === 'fr') {
+      <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg">
+        <rect width="20" height="14" fill="#ED2939" />
+        <rect width="13" height="14" fill="#fff" />
+        <rect width="6.5" height="14" fill="#002395" />
+      </svg>
+    } @else {
+      <svg viewBox="0 0 20 14" xmlns="http://www.w3.org/2000/svg">
+        <rect width="20" height="14" fill="#012169" />
+        <path d="M0,0 L20,14 M0,14 L20,0" stroke="#fff" stroke-width="4" />
+        <path d="M0,0 L20,14 M0,14 L20,0" stroke="#C8102E" stroke-width="2" />
+        <rect x="8" y="0" width="4" height="14" fill="#fff" />
+        <rect x="0" y="5" width="20" height="4" fill="#fff" />
+        <rect x="9" y="0" width="2" height="14" fill="#C8102E" />
+        <rect x="0" y="6" width="20" height="2" fill="#C8102E" />
+      </svg>
+    }
+  </span>
+
+  @if (variant() === 'menu-item') {
+    <span class="language-toggle__label">{{
+      lang === 'fr'
+        ? ('TOPBAR.MENU.LANGUAGE_FR' | translate)
+        : ('TOPBAR.MENU.LANGUAGE_EN' | translate)
+    }}</span>
+  }
+</button>

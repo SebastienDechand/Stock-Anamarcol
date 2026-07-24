@@ -13,13 +13,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { AuthFacade } from '../../../store/auth/auth.facade';
 import { UiFacade } from '../../../store/ui/ui.facade';
 import { ThemeService } from '../../services/theme.service';
-import { LanguageService } from '../../services/language.service';
+import { LanguageToggle } from '../../../shared/components/language-toggle/language-toggle';
 import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [AsyncPipe, RouterLink, LucideAngularModule, TranslatePipe],
+  imports: [AsyncPipe, RouterLink, LucideAngularModule, TranslatePipe, LanguageToggle],
   templateUrl: './topbar.html',
   styleUrl: './topbar.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,7 +29,6 @@ export class Topbar {
   protected authFacade = inject(AuthFacade);
   protected uiFacade = inject(UiFacade);
   readonly themeService = inject(ThemeService);
-  readonly languageService = inject(LanguageService);
 
   readonly icons = { User, LogOut, Menu, Moon, Sun };
   readonly apiUrl = environment.apiUrl;
@@ -55,11 +54,6 @@ export class Topbar {
 
   closeMenu(): void {
     this.menuOpen.set(false);
-  }
-
-  toggleLanguage(): void {
-    this.languageService.toggle();
-    this.closeMenu();
   }
 
   toggleTheme(): void {
