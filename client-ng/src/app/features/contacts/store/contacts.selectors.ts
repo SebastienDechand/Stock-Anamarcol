@@ -18,8 +18,8 @@ export const selectContactsLoading = createSelector(
 );
 export const selectContactsLoaded = createSelector(selectContactsState, (state) => state.loaded);
 export const selectExterieurs = createSelector(selectAllContacts, (contacts) =>
-  contacts.slice(0, 3),
+  contacts.filter((contact) => (contact.category ?? 'external') === 'external'),
 );
 export const selectFournisseurs = createSelector(selectAllContacts, (contacts) =>
-  contacts.slice(3, 6),
+  contacts.filter((contact) => contact.category === 'supplier'),
 );

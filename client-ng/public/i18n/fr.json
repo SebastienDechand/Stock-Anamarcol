@@ -601,6 +601,9 @@
     "EMPTY": "Aucun contact",
     "EXTERNAL": "Contacts Extérieurs",
     "SUPPLIERS": "Fournisseurs Extérieurs",
+    "CATEGORY": "Catégorie",
+    "CATEGORY_EXTERNAL": "Contact extérieur",
+    "CATEGORY_SUPPLIER": "Fournisseur",
     "WEBSITE": "Site web",
     "CHANGE_PHOTO": "Changer la photo"
   },

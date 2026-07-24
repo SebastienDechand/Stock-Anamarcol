@@ -1,5 +1,7 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 
+export type ContactCategory = "external" | "supplier";
+
 export interface IContact extends Document {
   name: string;
   email?: string;
@@ -7,6 +9,7 @@ export interface IContact extends Document {
   picture?: string;
   position?: string;
   phone?: string;
+  category: ContactCategory;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,6 +20,12 @@ const contactSchema = new Schema<IContact>(
       type: String,
       required: true,
       trim: true,
+    },
+    category: {
+      type: String,
+      enum: ["external", "supplier"],
+      default: "external",
+      required: true,
     },
     email: {
       type: String,

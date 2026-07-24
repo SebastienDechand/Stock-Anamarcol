@@ -41,6 +41,13 @@
             <label class="form-label">{{ 'CONTACTS.PHONE' | translate }}</label>
             <input class="form-input" [(ngModel)]="form.phone" name="phone" />
           </div>
+          <div class="form-row">
+            <label class="form-label">{{ 'CONTACTS.CATEGORY' | translate }}</label>
+            <select class="form-input" [(ngModel)]="form.category" name="category">
+              <option value="external">{{ 'CONTACTS.CATEGORY_EXTERNAL' | translate }}</option>
+              <option value="supplier">{{ 'CONTACTS.CATEGORY_SUPPLIER' | translate }}</option>
+            </select>
+          </div>
         </div>
         <div class="form-row website">
           <label class="form-label website">{{ 'CONTACTS.WEBSITE' | translate }}</label>

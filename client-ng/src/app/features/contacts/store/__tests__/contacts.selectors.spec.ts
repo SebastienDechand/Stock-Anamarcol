@@ -11,20 +11,25 @@ import {
 import { initialContactsState } from '../contacts.state';
 import type { Contact } from '../../../../shared/models/contact.model';
 
-const makeContact = (id: string, name: string): Contact => ({
+const makeContact = (
+  id: string,
+  name: string,
+  category?: Contact['category'],
+): Contact => ({
   _id: id,
   name,
   email: `${name.toLowerCase()}@example.com`,
+  category,
 });
 
 const contacts: Contact[] = [
-  makeContact('1', 'Dupont'),
-  makeContact('2', 'Martin'),
-  makeContact('3', 'Bernard'),
-  makeContact('4', 'Moreau'),
-  makeContact('5', 'Simon'),
-  makeContact('6', 'Laurent'),
-  makeContact('7', 'Michel'),
+  makeContact('1', 'Dupont', 'external'),
+  makeContact('2', 'Martin', 'external'),
+  makeContact('3', 'Bernard', 'supplier'),
+  makeContact('4', 'Moreau', 'supplier'),
+  makeContact('5', 'Simon', 'external'),
+  makeContact('6', 'Laurent', 'supplier'),
+  makeContact('7', 'Michel', 'external'),
 ];
 
 describe('Contacts Selectors', () => {
@@ -98,15 +103,19 @@ describe('Contacts Selectors', () => {
       expect(selectExterieurs(state)).toEqual([]);
     });
 
-    it('should return first 3 contacts', () => {
+    it('should return only contacts categorized as external', () => {
       const state = { contacts: { ...initialContactsState, contacts } };
-      expect(selectExterieurs(state)).toEqual(contacts.slice(0, 3));
+      expect(selectExterieurs(state)).toEqual(
+        contacts.filter((c) => c.category === 'external'),
+      );
     });
 
-    it('should return all contacts when fewer than 3', () => {
-      const twoContacts = contacts.slice(0, 2);
-      const state = { contacts: { ...initialContactsState, contacts: twoContacts } };
-      expect(selectExterieurs(state)).toEqual(twoContacts);
+    it('should treat contacts with no category as external', () => {
+      const uncategorized = makeContact('8', 'Petit');
+      const state = {
+        contacts: { ...initialContactsState, contacts: [uncategorized] },
+      };
+      expect(selectExterieurs(state)).toEqual([uncategorized]);
     });
   });
 
@@ -116,13 +125,18 @@ describe('Contacts Selectors', () => {
       expect(selectFournisseurs(state)).toEqual([]);
     });
 
-    it('should return contacts at indices 3 to 5', () => {
+    it('should return only contacts categorized as supplier', () => {
       const state = { contacts: { ...initialContactsState, contacts } };
-      expect(selectFournisseurs(state)).toEqual(contacts.slice(3, 6));
+      expect(selectFournisseurs(state)).toEqual(
+        contacts.filter((c) => c.category === 'supplier'),
+      );
     });
 
-    it('should return empty array when fewer than 4 contacts', () => {
-      const state = { contacts: { ...initialContactsState, contacts: contacts.slice(0, 3) } };
+    it('should not include uncategorized contacts', () => {
+      const uncategorized = makeContact('8', 'Petit');
+      const state = {
+        contacts: { ...initialContactsState, contacts: [uncategorized] },
+      };
       expect(selectFournisseurs(state)).toEqual([]);
     });
   });
