@@ -1,4 +1,4 @@
-export const FOURNISSEURS = [
+export const SUPPLIERS = [
   'Amazon',
   'CashGuard',
   'LDLC',
@@ -11,9 +11,9 @@ export const FOURNISSEURS = [
   'VNE',
 ] as const;
 
-export type Fournisseur = (typeof FOURNISSEURS)[number];
+export type Supplier = (typeof SUPPLIERS)[number];
 
-export const ETATS = ['Neuf', 'SAV'] as const;
-export type Etat = (typeof ETATS)[number];
+export const STATUSES = ['NEW', 'RMA'] as const;
+export type Status = (typeof STATUSES)[number];
 
 export const LOW_STOCK_THRESHOLD = 5;

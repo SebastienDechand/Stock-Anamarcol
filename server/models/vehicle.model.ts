@@ -30,7 +30,7 @@ export interface IVehicle extends Omit<Document, "model"> {
   antiPollutionExpiryDate?: Date;
 
   // Assignment
-  assignedTo?: any;
+  assignedTo?: Types.ObjectId | string | null;
   assignedToName?: string;
 
   // Documents

@@ -7,7 +7,7 @@ import { ErrorCode } from "../constants/errorCodes";
  * Manually triggers vehicle reminder emails. Superadmin only.
  */
 export const sendVehicleReminders = async (
-  req: Request,
+  _req: Request,
   res: Response,
 ): Promise<void> => {
   try {

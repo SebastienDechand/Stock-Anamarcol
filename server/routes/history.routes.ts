@@ -1,10 +1,6 @@
 import { Router } from "express";
 import * as auditController from "../controllers/audit.controller";
-import {
-  requireAuth,
-  requireAdmin,
-  requireSuperAdmin,
-} from "../middleware/auth.middleware";
+import { requireAdmin, requireSuperAdmin } from "../middleware/auth.middleware";
 
 const router = Router();
 

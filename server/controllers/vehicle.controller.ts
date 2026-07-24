@@ -6,7 +6,7 @@ import { logEvent } from "../utils/audit.utils";
 import { ErrorCode } from "../constants/errorCodes";
 
 // #region GET All Vehicles
-export const getAllVehicles = async (req: Request, res: Response) => {
+export const getAllVehicles = async (_req: Request, res: Response) => {
   try {
     const vehicles = await VehicleModel.find()
       .populate("assignedTo", "username email position")

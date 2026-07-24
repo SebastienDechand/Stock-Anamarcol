@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ETATS, FOURNISSEURS } from '../../../../shared/constants';
+import { STATUSES, SUPPLIERS } from '../../../../shared/constants';
 import { NewItem } from '../../../../shared/models/item.model';
 
 @Component({
@@ -18,8 +18,8 @@ export class AddItemModal {
   submitted = output<NewItem>();
   cancelled = output<void>();
 
-  suppliers = FOURNISSEURS;
-  statuses = ETATS;
+  suppliers = SUPPLIERS;
+  statuses = STATUSES;
 
   form = {
     name: '',
