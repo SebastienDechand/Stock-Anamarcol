@@ -5,18 +5,17 @@ import { LucideAngularModule } from 'lucide-angular';
 import { Eye, EyeOff, Package } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthFacade } from '../../store/auth/auth.facade';
-import { LanguageService } from '../../core/services/language.service';
+import { LanguageToggle } from '../../shared/components/language-toggle/language-toggle';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [FormsModule, AsyncPipe, LucideAngularModule, TranslatePipe],
+  imports: [FormsModule, AsyncPipe, LucideAngularModule, TranslatePipe, LanguageToggle],
   templateUrl: './login-page.html',
   styleUrl: './login-page.scss',
 })
 export class LoginPage {
   protected authFacade = inject(AuthFacade);
-  protected languageService = inject(LanguageService);
 
   readonly Eye = Eye;
   readonly EyeOff = EyeOff;
@@ -35,9 +34,5 @@ export class LoginPage {
 
   togglePassword() {
     this.showPassword.update((v) => !v);
-  }
-
-  toggleLanguage() {
-    this.languageService.toggle();
   }
 }

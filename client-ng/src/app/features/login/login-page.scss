@@ -33,25 +33,6 @@
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 28px;
-  height: 20px;
-  padding: 0;
-  border: none;
-  border-radius: 3px;
-  overflow: hidden;
-  cursor: pointer;
-  opacity: 0.85;
-  transition: opacity 0.15s;
-
-  svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
-  &:hover {
-    opacity: 1;
-  }
 }
 
 .login__icon-wrap {
