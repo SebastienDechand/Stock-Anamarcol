@@ -5,6 +5,7 @@ import ShipmentArchiveModel from "../models/shipmentArchive.model";
 import type { IShipmentArchive } from "../models/shipmentArchive.model";
 import PDFDocument from "pdfkit";
 import * as XLSX from "xlsx";
+import { validateObjectId } from "../utils/validate.utils";
 import { ErrorCode } from "../constants/errorCodes";
 
 /**
@@ -307,7 +308,9 @@ export const createShipment = async (
 
 export const markSent = async (req: Request, res: Response): Promise<void> => {
   try {
-    const id = req.params.id;
+    const id = req.params.id as string;
+    if (!validateObjectId(id, res)) return;
+
     const shipment = await ShipmentModel.findById(id);
     if (!shipment) {
       res.status(404).json({
@@ -334,7 +337,9 @@ export const deleteShipment = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const id = req.params.id;
+    const id = req.params.id as string;
+    if (!validateObjectId(id, res)) return;
+
     await ShipmentModel.deleteOne({ _id: id }).exec();
     res
       .status(200)
@@ -414,6 +419,8 @@ export const downloadArchive = async (
   res: Response,
 ): Promise<void> => {
   try {
+    if (!validateObjectId(req.params.id as string, res)) return;
+
     const archive = await ShipmentArchiveModel.findById(req.params.id).lean();
     if (!archive) {
       res
