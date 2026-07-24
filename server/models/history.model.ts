@@ -43,21 +43,28 @@ const HistorySchema = new Schema<IHistory>(
 );
 
 HistorySchema.index({ itemId: 1, createdAt: -1 });
-// Auto-purge after 60 days (TTL index)
-HistorySchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 24 * 3600 });
 
 const HistoryModel: Model<IHistory> = mongoose.model<IHistory>(
   "history",
   HistorySchema,
 );
 
-// Ensure TTL index is properly created on connection
-HistoryModel.collection.dropIndex("createdAt_1").catch(() => {
-  // Index might not exist, that's fine
+// Auto-purge after 60 days.
+Promise.all(
+  ["createdAt_1", "createdAt_ttl"].map((name) =>
+    HistoryModel.collection.dropIndex(name).catch(() => {
+      // Index might not exist, that's fine
+    }),
+  ),
+).then(() => {
+  HistoryModel.collection
+    .createIndex(
+      { createdAt: 1 },
+      { expireAfterSeconds: 60 * 24 * 3600, name: "createdAt_ttl" },
+    )
+    .catch((err) => {
+      console.error("Failed to (re)create history TTL index:", err);
+    });
 });
-HistoryModel.collection.createIndex(
-  { createdAt: 1 },
-  { expireAfterSeconds: 30 * 24 * 3600, name: "createdAt_ttl" },
-);
 
 export default HistoryModel;
