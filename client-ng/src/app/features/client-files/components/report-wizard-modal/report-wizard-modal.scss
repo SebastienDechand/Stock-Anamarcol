@@ -59,7 +59,7 @@
   }
 }
 
-// ─── Steps ───────────────────────────────────────────────────────────────────
+/* #region Steps */
 
 .steps {
   display: flex;
@@ -121,8 +121,8 @@
   @include btn-icon;
   color: var(--surface-400);
 }
-
-// ─── Step content ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Step content */
 
 .step-content {
   padding: 20px;
@@ -144,8 +144,8 @@
 .step-content__icon {
   color: var(--brand-600);
 }
-
-// ─── Section ─────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Section */
 
 .section {
   display: flex;
@@ -183,8 +183,8 @@
     color: var(--color-text);
   }
 }
-
-// ─── TW grid ─────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region TW grid */
 
 .tw-grid {
   display: grid;
@@ -205,8 +205,8 @@
     flex: 1;
   }
 }
-
-// ─── Units ───────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Units */
 
 .units {
   display: flex;
@@ -295,8 +295,8 @@
     background: #fee2e2;
   }
 }
-
-// ─── Form helpers ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Form helpers */
 
 .form-label {
   @include label-base;
@@ -334,8 +334,8 @@
     cursor: pointer;
   }
 }
-
-// ─── Recap ───────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Recap */
 
 .recap {
   border-radius: 10px;
@@ -358,8 +358,8 @@
     font-weight: 600;
   }
 }
-
-// ─── Step footer ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Step footer */
 
 .step-footer {
   display: flex;
@@ -386,3 +386,4 @@
 .btn-secondary {
   @include btn-secondary;
 }
+/* #endregion */

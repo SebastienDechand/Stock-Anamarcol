@@ -1,6 +1,6 @@
 <div class="items-page">
   @let canDecrementMap = canDecrement$ | async;
-  <!-- ─── Toolbar sticky ─────────────────────────────── -->
+  <!-- #region Sticky toolbar -->
   <div class="items-toolbar">
     <div class="items-toolbar__top">
       <div>
@@ -22,7 +22,7 @@
           />
         </div>
 
-        <!-- Bouton filtres : mobile uniquement -->
+        <!-- Filter button: mobile only -->
         <button
           class="btn-icon-action btn-filter-mobile"
           [class.btn-filter-mobile--active]="hasActiveFilters"
@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    <!-- Raccourcis Prépa : mobile uniquement -->
+    <!-- Prep shortcuts: mobile only -->
     <div class="prepa-shortcuts">
       <span class="prepa-shortcuts__label">{{ 'ITEMS.PREPA' | translate }}</span>
       <button
@@ -257,8 +257,9 @@
       </div>
     }
   </div>
+  <!-- #endregion -->
 
-  <!-- ─── Content ─────────────────────────────────────── -->
+  <!-- #region Content -->
   @if (isLoading$ | async) {
     <app-spinner [message]="'ITEMS.LOADING' | translate" />
   } @else {
@@ -328,9 +329,10 @@
       </div>
     }
   }
+  <!-- #endregion -->
 </div>
 
-<!-- ─── Modals ────────────────────────────────────────── -->
+<!-- #region Modals -->
 @if (showAddModal()) {
   <app-add-item-modal
     [posterId]="currentUserId()"
@@ -370,3 +372,4 @@
     (cancelled)="deletingItem.set(null)"
   />
 }
+<!-- #endregion -->

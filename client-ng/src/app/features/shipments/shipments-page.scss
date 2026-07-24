@@ -5,7 +5,7 @@
   @include page-container;
 }
 
-// ─── Buttons ─────────────────────────────────────────────────────────────────
+/* #region Buttons */
 
 .header-actions {
   display: flex;
@@ -47,8 +47,8 @@
     cursor: not-allowed;
   }
 }
-
-// ─── KPI bar ─────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region KPI bar */
 
 .kpi-bar {
   display: grid;
@@ -116,8 +116,8 @@
     }
   }
 }
-
-// ─── Search & filter ─────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Search & filter */
 
 .filter-row {
   display: flex;
@@ -186,8 +186,8 @@
     }
   }
 }
-
-// ─── Creation form ───────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Creation form */
 
 .envoi-form-panel {
   @include card;
@@ -430,8 +430,8 @@
   color: var(--text-secondary);
   pointer-events: none;
 }
-
-// ─── Desktop table ────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Desktop table */
 
 .table-wrap {
   display: none;
@@ -563,8 +563,8 @@
     background: #fef2f2;
   }
 }
-
-// ─── Badges ───────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Badges */
 
 .badge {
   display: inline-flex;
@@ -596,8 +596,8 @@
     }
   }
 }
-
-// ─── Mobile cards ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Mobile cards */
 
 .mobile-cards {
   display: flex;
@@ -696,8 +696,8 @@
     padding-top: 4px;
   }
 }
-
-// ─── Pagination ───────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Pagination */
 
 .pagination {
   display: flex;
@@ -711,8 +711,8 @@
     color: var(--text-secondary);
   }
 }
-
-// ─── Empty states ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Empty states */
 
 .page-spinner {
   display: flex;
@@ -752,8 +752,8 @@
     margin: 0;
   }
 }
-
-// ─── Detail modal ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Detail modal */
 
 .modal-overlay {
   position: fixed;
@@ -829,3 +829,4 @@
     word-break: break-all;
   }
 }
+/* #endregion */

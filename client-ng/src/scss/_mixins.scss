@@ -1,4 +1,4 @@
-// ─── Breakpoints ─────────────────────────────────────────────────────────────
+/* #region Breakpoints */
 @mixin sm {
   @media (min-width: 640px) {
     @content;
@@ -24,8 +24,8 @@
     @content;
   }
 }
-
-// ─── Layout ──────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Layout */
 @mixin flex-center {
   display: flex;
   align-items: center;
@@ -53,8 +53,8 @@
     gap: $gap;
   }
 }
-
-// ─── Card ────────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Card */
 @mixin card {
   background: var(--bg-card);
   border-radius: var(--radius-lg);
@@ -78,8 +78,8 @@
     transform: translateY(-1px);
   }
 }
-
-// ─── Boutons ─────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Buttons */
 @mixin btn-base {
   display: inline-flex;
   align-items: center;
@@ -163,8 +163,8 @@
     color: var(--text-primary);
   }
 }
-
-// ─── Formulaires ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Forms */
 @mixin input-base {
   width: 100%;
   padding: 0.625rem var(--space-3);
@@ -194,7 +194,7 @@
     cursor: not-allowed;
   }
 
-  // ─── Date input ────────────────────────────────────────
+  // Date input
   &[type='date'] {
     cursor: pointer;
     color-scheme: light;
@@ -230,8 +230,8 @@
 @mixin form-group {
   @include flex-col(var(--space-1));
 }
-
-// ─── Texte ───────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Text */
 @mixin truncate {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -244,8 +244,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-
-// ─── Scroll ──────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Scroll */
 @mixin scrollbar-thin {
   scrollbar-width: thin;
   scrollbar-color: var(--surface-300) transparent;
@@ -262,8 +262,8 @@
     border-radius: 3px;
   }
 }
-
-// ─── Overlay / Modal ─────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Overlay / Modal */
 @mixin overlay-backdrop {
   position: fixed;
   inset: 0;
@@ -282,8 +282,8 @@
   overflow-y: auto;
   @include scrollbar-thin;
 }
-
-// ─── Badge ───────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Badge */
 @mixin badge-base {
   display: inline-flex;
   align-items: center;
@@ -293,8 +293,8 @@
   font-weight: 600;
   white-space: nowrap;
 }
-
-// ─── Page ────────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Page */
 @mixin page-container {
   padding: var(--space-4);
 
@@ -308,3 +308,4 @@
   margin-bottom: var(--space-6);
   gap: var(--space-4);
 }
+/* #endregion */

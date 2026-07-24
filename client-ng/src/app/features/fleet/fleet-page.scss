@@ -5,7 +5,7 @@
   @include page-container;
 }
 
-// ─── Filters ─────────────────────────────────────────────────────────────────
+/* #region Filters */
 
 .filters-bar {
   display: flex;
@@ -50,8 +50,8 @@
   flex-shrink: 0;
   cursor: pointer;
 }
-
-// ─── Loading ──────────────────────────────────────────────────────────────────
+/* #endregion */
+// Loading
 
 .page-spinner {
   display: flex;
@@ -59,7 +59,7 @@
   padding: 48px 0;
 }
 
-// ─── Responsive visibility ───────────────────────────────────────────────────
+/* #region Responsive visibility */
 
 .desktop-only {
   display: none;
@@ -76,8 +76,8 @@
     display: none;
   }
 }
-
-// ─── Empty state ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Empty state */
 
 .empty-state {
   display: flex;
@@ -96,8 +96,8 @@
     opacity: 0.4;
   }
 }
-
-// ─── Desktop table ───────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Desktop table */
 
 .vehicles-table-wrap {
   background: #fff;
@@ -141,8 +141,8 @@
     }
   }
 }
-
-// ─── Section header row ───────────────────────────────────────────────────────
+/* #endregion */
+/* #region Section header row */
 
 .section-row {
   background: var(--surface-50);
@@ -177,8 +177,8 @@
     }
   }
 }
-
-// ─── Vehicle row ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Vehicle row */
 
 .vehicle-row {
   border-top: 1px solid var(--surface-100);
@@ -258,8 +258,8 @@
   align-items: center;
   justify-content: center;
 }
-
-// ─── Shared badge ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Shared badge */
 
 .count-badge {
   display: inline-flex;
@@ -294,8 +294,8 @@
     color: #c2410c;
   }
 }
-
-// ─── Mobile sections ──────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Mobile sections */
 
 .mobile-section {
   background: #fff;
@@ -408,8 +408,8 @@
     font-weight: 500;
   }
 }
-
-// ─── Document panel ───────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Document panel */
 
 .overlay-backdrop {
   @include overlay-backdrop;
@@ -450,8 +450,8 @@
     flex: 1;
   }
 }
-
-// ─── Utility buttons ─────────────────────────────────────────────────────────
+/* #endregion */
+// Utility buttons
 
 .btn-primary {
   @include btn-primary;

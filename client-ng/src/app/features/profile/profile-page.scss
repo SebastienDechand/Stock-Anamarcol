@@ -4,7 +4,7 @@
   @include m.page-container;
 }
 
-// ─── 2 colonnes ───────────────────────────────────────────────────────────────
+/* #region 2 columns */
 .profile-cols {
   display: grid;
   grid-template-columns: 1fr;
@@ -14,8 +14,8 @@
     grid-template-columns: 1fr 320px;
   }
 }
-
-// ─── Card générique (photo | sep | infos) ─────────────────────────────────────
+/* #endregion */
+/* #region Generic card (photo | separator | info) */
 .profile-card {
   @include m.card;
   display: flex;
@@ -70,8 +70,8 @@
     }
   }
 }
-
-// ─── Avatar ───────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Avatar */
 .avatar-wrap {
   position: relative;
   width: 110px;
@@ -131,8 +131,8 @@
   text-align: center;
   margin-top: 8px;
 }
-
-// ─── Section title ────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Section title */
 .profile-section__title {
   display: flex;
   align-items: center;
@@ -148,8 +148,8 @@
     color: var(--brand-600);
   }
 }
-
-// ─── Info grid ────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Info grid */
 .info-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -215,8 +215,8 @@
     height: 28px;
   }
 }
-
-// ─── Véhicule ─────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Vehicle */
 .vehicle-detail {
   display: flex;
   flex-direction: column;
@@ -276,3 +276,4 @@
     font-style: italic;
   }
 }
+/* #endregion */

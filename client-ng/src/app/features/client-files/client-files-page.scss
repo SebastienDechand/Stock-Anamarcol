@@ -5,7 +5,7 @@
   @include page-container;
 }
 
-// ─── Search row ──────────────────────────────────────────────────────────────
+/* #region Search row */
 
 .search-row {
   display: flex;
@@ -36,8 +36,8 @@
     width: 100%;
   }
 }
-
-// ─── Buttons ─────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Buttons */
 
 .btn-primary {
   @include btn-primary;
@@ -66,8 +66,8 @@
     display: none;
   }
 }
-
-// ─── States ──────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region States */
 
 .page-spinner {
   display: flex;
@@ -89,8 +89,8 @@
     opacity: 0.3;
   }
 }
-
-// ─── Grid ────────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Grid */
 
 .block {
   display: block;
@@ -110,8 +110,8 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
-
-// ─── Card ────────────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Card */
 
 .file-card {
   background: #fff;
@@ -133,7 +133,7 @@
     transform: translateY(-1px);
   }
 
-  // ─── Header
+  // Header
 
   &__header {
     display: flex;
@@ -177,7 +177,7 @@
     max-width: 90px;
   }
 
-  // ─── Details
+  // Details
 
   &__details {
     display: flex;
@@ -205,7 +205,7 @@
     color: var(--surface-400);
   }
 
-  // ─── Date
+  // Date
 
   &__date {
     font-size: 0.75rem;
@@ -214,7 +214,7 @@
     margin: 0;
   }
 
-  // ─── Actions
+  // Actions
 
   &__actions {
     display: flex;
@@ -271,8 +271,8 @@
     }
   }
 }
-
-// ─── Equipment badges ─────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Equipment badges */
 
 .file-card__badges {
   display: flex;
@@ -317,8 +317,8 @@
     color: #a16207;
   }
 }
-
-// ─── Pagination ───────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Pagination */
 
 .pagination {
   display: flex;
@@ -386,3 +386,4 @@
     line-height: 34px;
   }
 }
+/* #endregion */

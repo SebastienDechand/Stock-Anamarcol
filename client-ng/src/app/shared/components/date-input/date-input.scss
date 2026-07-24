@@ -6,7 +6,7 @@
   width: 100%;
 }
 
-// ─── Input field ──────────────────────────────────────────────────────────────
+/* #region Input field */
 
 .field {
   @include m.input-base;
@@ -80,8 +80,8 @@
   opacity: 0.6;
   transition: opacity 0.12s;
 }
-
-// ─── Picker popup ─────────────────────────────────────────────────────────────
+/* #endregion */
+/* #region Picker popup */
 
 .picker-overlay {
   position: fixed;
@@ -228,3 +228,4 @@
     }
   }
 }
+/* #endregion */

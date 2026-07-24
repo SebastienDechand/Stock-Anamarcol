@@ -4,7 +4,7 @@
   @include m.page-container;
 }
 
-// ─── Toolbar ──────────────────────────────────────────
+/* #region Toolbar */
 .items-toolbar {
   border-radius: var(--radius-lg);
   padding: 0 0 10px;
@@ -124,8 +124,8 @@
     color: white;
   }
 }
-
-// ─── Prépa shortcuts (mobile only) ────────────────────
+/* #endregion */
+/* #region Prepa shortcuts (mobile only) */
 .prepa-shortcuts {
   display: flex;
   align-items: center;
@@ -191,8 +191,8 @@
     color: #fff;
   }
 }
-
-// ─── Prepa Batch Bar ───────────────────────────────────
+/* #endregion */
+/* #region Prepa Batch Bar */
 .prepa-batch {
   display: flex;
   flex-direction: column;
@@ -321,8 +321,8 @@
     }
   }
 }
-
-// ─── Clear all filters ──────────────────────────────────
+/* #endregion */
+/* #region Clear all filters */
 .btn-clear-filters {
   padding: 3px 10px;
   border-radius: 20px;
@@ -338,8 +338,8 @@
     background: #fef2f2;
   }
 }
-
-// ─── Search ────────────────────────────────────────────
+/* #endregion */
+/* #region Search */
 .search-wrap {
   position: relative;
   flex: 1;
@@ -375,8 +375,8 @@
     }
   }
 }
-
-// ─── Filter button (mobile only) ───────────────────────
+/* #endregion */
+/* #region Filter button (mobile only) */
 .btn-filter-mobile {
   position: relative;
   flex-shrink: 0;
@@ -438,8 +438,8 @@
     }
   }
 }
-
-// ─── Grid ──────────────────────────────────────────────
+/* #endregion */
+/* #region Grid */
 .items-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -463,8 +463,8 @@
     grid-template-columns: repeat(6, 1fr);
   }
 }
-
-// ─── Empty ─────────────────────────────────────────────
+/* #endregion */
+/* #region Empty */
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -477,8 +477,8 @@
     font-size: 1rem;
   }
 }
-
-// ─── Pagination ────────────────────────────────────────
+/* #endregion */
+/* #region Pagination */
 .pagination {
   display: flex;
   align-items: center;
@@ -513,3 +513,4 @@
     border-color: var(--brand-600);
   }
 }
+/* #endregion */

@@ -66,7 +66,7 @@
   flex-shrink: 0;
 }
 
-// ─── BDC panel ──────────────────────────────────────────────
+/* #region BDC panel */
 .bdc-panel {
   border-radius: 12px;
   border: 1px solid #fcd34d;
@@ -146,8 +146,8 @@
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
 }
-
-// ─── Form sections ───────────────────────────────────────────
+/* #endregion */
+/* #region Form sections */
 .form-section {
   display: flex;
   flex-direction: column;
@@ -223,8 +223,8 @@
     cursor: pointer;
   }
 }
-
-// ─── Buttons ────────────────────────────────────────────────
+/* #endregion */
+// Buttons
 .btn-primary {
   @include btn-primary;
 }

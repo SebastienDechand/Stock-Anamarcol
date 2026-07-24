@@ -2,7 +2,7 @@
   @if (isLoading$ | async) {
     <div class="page-spinner"><app-spinner /></div>
   } @else if (file$ | async; as file) {
-    <!-- ── Header ──────────────────────────────────────────────────────────── -->
+    <!-- #region Header -->
     <div class="page-header">
       <div class="page-header__left">
         <button class="btn-back" (click)="goBack()" [title]="'CLIENT_FILES.BACK' | translate">
@@ -27,8 +27,9 @@
         </div>
       </div>
     </div>
+    <!-- #endregion -->
 
-    <!-- ── Tabs ────────────────────────────────────────────────────────────── -->
+    <!-- #region Tabs -->
     <div class="tabs">
       @for (tab of TABS; track tab.key) {
         <button
@@ -75,7 +76,7 @@
         <!-- Details + Map -->
         <div class="fiche-body">
           <div class="fiche-grid">
-            <!-- Identité -->
+            <!-- Identity -->
             <div class="info-col">
               <p class="info-col__title">{{ 'CLIENT_FILES.IDENTITY_SHORT' | translate }}</p>
               @if (file.legalName) {
@@ -116,7 +117,7 @@
               }
             </div>
 
-            <!-- Coordonnées -->
+            <!-- Contact details -->
             <div class="info-col">
               <p class="info-col__title">{{ 'CLIENT_FILES.COORDINATES_SHORT' | translate }}</p>
               @if (file.address) {
@@ -204,7 +205,7 @@
               }
             </div>
 
-            <!-- Équipements -->
+            <!-- Equipment -->
             <div class="info-col">
               <p class="info-col__title">{{ 'CLIENT_FILES.ORDERED_EQUIP' | translate }}</p>
               <div class="equip-grid">
@@ -708,9 +709,10 @@
   } @else {
     <p class="page-empty">{{ 'CLIENT_FILES.NOT_FOUND_FILE' | translate }}</p>
   }
+  <!-- #endregion -->
 </div>
 
-<!-- ── Wizard modal ─────────────────────────────────────────────────────────── -->
+<!-- #region Wizard modal -->
 @if (wizardOpen() && (file$ | async); as file) {
   <app-report-wizard-modal
     [clientFileId]="file._id"
@@ -720,8 +722,9 @@
     (closed)="wizardOpen.set(false)"
   />
 }
+<!-- #endregion -->
 
-<!-- ── Delete report confirm ─────────────────────────────────────────────────── -->
+<!-- #region Delete report confirm -->
 @if (deleteReportId()) {
   <app-confirm-dialog
     [title]="'CLIENT_FILES.CONFIRM_DELETE' | translate"
@@ -731,8 +734,9 @@
     (cancelled)="deleteReportId.set(null)"
   />
 }
+<!-- #endregion -->
 
-<!-- ── Delete doc confirm ────────────────────────────────────────────────────── -->
+<!-- #region Delete doc confirm -->
 @if (deleteDocId() && (file$ | async); as file) {
   <app-confirm-dialog
     [title]="'CLIENT_FILES.CONFIRM_DELETE' | translate"
@@ -742,8 +746,9 @@
     (cancelled)="deleteDocId.set(null)"
   />
 }
+<!-- #endregion -->
 
-<!-- ── Shipment detail modal ─────────────────────────────────────────────────── -->
+<!-- #region Shipment detail modal -->
 @if (detailShipment(); as s) {
   <div class="modal-overlay" (click)="detailShipment.set(null)">
     <div class="modal-box" (click)="$event.stopPropagation()">
@@ -823,3 +828,4 @@
     </div>
   </div>
 }
+<!-- #endregion -->
