@@ -42,7 +42,7 @@ describe('FleetPage', () => {
     expect(component).toBeTruthy();
   });
 
-  // ── vehiclesBySection ──────────────────────────────────────────────────────
+  // #region vehiclesBySection
 
   describe('vehiclesBySection()', () => {
     const vehicles: Vehicle[] = [
@@ -64,8 +64,9 @@ describe('FleetPage', () => {
       expect(result[0]._id).toBe('v1');
     });
   });
+  // #endregion
 
-  // ── toggleSection / isSectionCollapsed ────────────────────────────────────
+  // #region toggleSection / isSectionCollapsed
 
   describe('toggleSection()', () => {
     it('should add the key on the first call so isSectionCollapsed returns true', () => {
@@ -79,6 +80,7 @@ describe('FleetPage', () => {
       expect(component.isSectionCollapsed('vito')).toBe(false);
     });
   });
+  // #endregion
 
   describe('isSectionCollapsed()', () => {
     it('should return false for a key that has never been toggled', () => {
@@ -86,7 +88,7 @@ describe('FleetPage', () => {
     });
   });
 
-  // ── formatDate ────────────────────────────────────────────────────────────
+  // #region formatDate
 
   describe('formatDate()', () => {
     it('should return "-" when date is undefined', () => {
@@ -99,8 +101,9 @@ describe('FleetPage', () => {
       expect(result).not.toBe('-');
     });
   });
+  // #endregion
 
-  // ── dateStatus ────────────────────────────────────────────────────────────
+  // #region dateStatus
 
   describe('dateStatus()', () => {
     it('should return "none" when date is undefined', () => {
@@ -122,8 +125,9 @@ describe('FleetPage', () => {
       expect(component.dateStatus(soon)).toBe('soon');
     });
   });
+  // #endregion
 
-  // ── openAdd ───────────────────────────────────────────────────────────────
+  // #region openAdd
 
   describe('openAdd()', () => {
     it('should set editingVehicle to null and showAddModal to true', () => {
@@ -133,8 +137,9 @@ describe('FleetPage', () => {
       expect(component.showAddModal()).toBe(true);
     });
   });
+  // #endregion
 
-  // ── openEdit ──────────────────────────────────────────────────────────────
+  // #region openEdit
 
   describe('openEdit()', () => {
     it('should set editingVehicle to the given vehicle and showAddModal to true', () => {
@@ -143,8 +148,9 @@ describe('FleetPage', () => {
       expect(component.showAddModal()).toBe(true);
     });
   });
+  // #endregion
 
-  // ── closeModal ────────────────────────────────────────────────────────────
+  // #region closeModal
 
   describe('closeModal()', () => {
     it('should set showAddModal to false and editingVehicle to null', () => {
@@ -155,8 +161,9 @@ describe('FleetPage', () => {
       expect(component.editingVehicle()).toBeNull();
     });
   });
+  // #endregion
 
-  // ── onSave ────────────────────────────────────────────────────────────────
+  // #region onSave
 
   describe('onSave()', () => {
     const form: VehicleForm = {
@@ -188,8 +195,9 @@ describe('FleetPage', () => {
       expect(component.editingVehicle()).toBeNull();
     });
   });
+  // #endregion
 
-  // ── openDeleteConfirm ─────────────────────────────────────────────────────
+  // #region openDeleteConfirm
 
   describe('openDeleteConfirm()', () => {
     it('should set deletingVehicle to the given vehicle', () => {
@@ -197,8 +205,9 @@ describe('FleetPage', () => {
       expect(component.deletingVehicle()).toEqual(mockVehicle);
     });
   });
+  // #endregion
 
-  // ── confirmDelete ─────────────────────────────────────────────────────────
+  // #region confirmDelete
 
   describe('confirmDelete()', () => {
     it('should call facade.delete with the vehicle id and clear the signal', () => {
@@ -222,8 +231,9 @@ describe('FleetPage', () => {
       expect(component.deletingVehicle()).toBeNull();
     });
   });
+  // #endregion
 
-  // ── openDocuments ─────────────────────────────────────────────────────────
+  // #region openDocuments
 
   describe('openDocuments()', () => {
     it('should set docVehicle to the given vehicle', () => {
@@ -231,4 +241,5 @@ describe('FleetPage', () => {
       expect(component.docVehicle()).toEqual(mockVehicle);
     });
   });
+  // #endregion
 });

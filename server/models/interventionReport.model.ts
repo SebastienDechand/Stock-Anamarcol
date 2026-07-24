@@ -1,6 +1,6 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
-// ─── CashGuard unit sub-document ─────────────────────────────────────────────
+// #region CashGuard unit sub-document
 export interface ICashguardUnit {
   serialNumber?: string;
   up?: string;
@@ -9,11 +9,12 @@ export interface ICashguardUnit {
   assignedRegisters: string[]; // e.g. ["CAISSE 1", "CAISSE 2"]
   hasPc: boolean;
 }
+// #endregion
 
-// ─── Main interface ───────────────────────────────────────────────────────────
+// #region Main interface
 export interface IInterventionReport extends Document {
   clientFile: Types.ObjectId;
-  // TW codes entered by tech préparateur
+  // TW codes entered by the prep technician
   twRegister1?: string;
   twRegister2?: string;
   twRegister3?: string;
@@ -29,6 +30,7 @@ export interface IInterventionReport extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+// #endregion
 
 const cashguardUnitSchema = new Schema<ICashguardUnit>(
   {

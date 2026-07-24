@@ -3,7 +3,7 @@ import InterventionReportModel from "../models/interventionReport.model";
 import { validateObjectId } from "../utils/validate.utils";
 import { ErrorCode } from "../constants/errorCodes";
 
-// ─── List all reports (optionally filter by clientFile) ───────────────────────
+// #region List all reports (optionally filter by clientFile)
 export const getInterventionReports = async (
   req: Request,
   res: Response,
@@ -24,8 +24,9 @@ export const getInterventionReports = async (
       .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
+// #endregion
 
-// ─── Get one report ───────────────────────────────────────────────────────────
+// #region Get one report
 export const getInterventionReport = async (
   req: Request,
   res: Response,
@@ -50,8 +51,9 @@ export const getInterventionReport = async (
       .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
+// #endregion
 
-// ─── Create report ────────────────────────────────────────────────────────────
+// #region Create report
 export const createInterventionReport = async (
   req: Request,
   res: Response,
@@ -68,8 +70,9 @@ export const createInterventionReport = async (
     });
   }
 };
+// #endregion
 
-// ─── Update report ────────────────────────────────────────────────────────────
+// #region Update report
 export const updateInterventionReport = async (
   req: Request,
   res: Response,
@@ -113,8 +116,9 @@ export const updateInterventionReport = async (
     });
   }
 };
+// #endregion
 
-// ─── Delete report ────────────────────────────────────────────────────────────
+// #region Delete report
 export const deleteInterventionReport = async (
   req: Request,
   res: Response,
@@ -141,3 +145,4 @@ export const deleteInterventionReport = async (
       .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
+// #endregion

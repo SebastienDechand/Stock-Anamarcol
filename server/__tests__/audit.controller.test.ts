@@ -68,7 +68,7 @@ describe("Audit Controller", () => {
     vi.restoreAllMocks();
   });
 
-  // ─── getHistory ──────────────────────────────────────
+  // #region getHistory
   describe("getHistory", () => {
     it("should return merged events with status 200", async () => {
       mockHistoryModel.find.mockReturnValue({
@@ -182,8 +182,9 @@ describe("Audit Controller", () => {
       expect(responseData[0].details.entityName).toBe("Test Item");
     });
   });
+  // #endregion
 
-  // ─── purgeAllHistoryAndAudit ─────────────────────────
+  // #region purgeAllHistoryAndAudit
   describe("purgeAllHistoryAndAudit", () => {
     it("should delete all audit and history docs", async () => {
       mockAuditModel.deleteMany.mockResolvedValue({ deletedCount: 10 });
@@ -221,4 +222,5 @@ describe("Audit Controller", () => {
       });
     });
   });
+  // #endregion
 });

@@ -7,7 +7,7 @@ import {
 } from "../errors.utils";
 
 describe("errors.utils", () => {
-  // ─── signUpErrors ───────────────────────────────────────
+  // #region signUpErrors
   describe("signUpErrors", () => {
     it("should detect a username error", () => {
       const err = { message: "username validation failed", code: 0 } as Error & {
@@ -66,8 +66,9 @@ describe("errors.utils", () => {
       expect(result.email).toBe("This email is already registered");
     });
   });
+  // #endregion
 
-  // ─── signInErrors ───────────────────────────────────────
+  // #region signInErrors
   describe("signInErrors", () => {
     it("returns the same generic message for an unknown email", () => {
       const err = new Error("Incorrect email");
@@ -83,8 +84,9 @@ describe("errors.utils", () => {
       expect(result.password).toBe("Email ou mot de passe incorrect");
     });
   });
+  // #endregion
 
-  // ─── uploadErrors ──────────────────────────────────────
+  // #region uploadErrors
   describe("uploadErrors", () => {
     it("should detect an invalid file format", () => {
       const err = new Error("Invalid file format");
@@ -108,8 +110,9 @@ describe("errors.utils", () => {
       expect(result.format).not.toContain("Detected MIME type");
     });
   });
+  // #endregion
 
-  // ─── createItemErrors ──────────────────────────────────
+  // #region createItemErrors
   describe("createItemErrors", () => {
     it("should detect a name error", () => {
       const err = new Error("name required");
@@ -144,4 +147,5 @@ describe("errors.utils", () => {
       expect(result.quantity).toBe("");
     });
   });
+  // #endregion
 });

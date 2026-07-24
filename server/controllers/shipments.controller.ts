@@ -33,7 +33,7 @@ async function performArchiveForMonth(
   });
   const title = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
-  // ── Generate PDF ──
+  // #region Generate PDF
   const buffer = await new Promise<Buffer>((resolve, reject) => {
     const doc = new PDFDocument({
       size: "A4",
@@ -151,6 +151,7 @@ async function performArchiveForMonth(
 
     doc.end();
   });
+  // #endregion
 
   // Build raw data rows for future XLSX export
   const rawData = shipments.map((s: IShipment) => ({

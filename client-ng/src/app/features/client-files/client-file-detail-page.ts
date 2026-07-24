@@ -82,7 +82,6 @@ export class ClientFileDetailPage implements OnInit {
   private toast = inject(ToastService);
   private sanitizer = inject(DomSanitizer);
 
-  // ─── Streams ─────────────────────────────────────────────────────────────
   isLoading$ = this.filesFacade.isLoading$;
   file$ = this.filesFacade.selectedFile$;
   reports$ = this.interventionReportsFacade.reports$;
@@ -90,7 +89,6 @@ export class ClientFileDetailPage implements OnInit {
   isAdmin$ = this.authFacade.isAdmin$;
   isHotline$ = this.authFacade.isHotline$;
 
-  // ─── Icons ───────────────────────────────────────────────────────────────
   readonly arrowLeft = ArrowLeft;
   readonly building2 = Building2;
   readonly mapPin = MapPin;
@@ -113,7 +111,6 @@ export class ClientFileDetailPage implements OnInit {
   readonly fileDown = FileDown;
   readonly chevLeft = ChevronLeft;
 
-  // ─── Local State ─────────────────────────────────────────────────────────
   activeTab = signal<ClientFileDetailTab>('fiche');
   wizardOpen = signal(false);
   editReport = signal<InterventionReport | null>(null);
@@ -138,7 +135,6 @@ export class ClientFileDetailPage implements OnInit {
 
   private fileId: string | null = null;
 
-  // ─── Tabs config ─────────────────────────────────────────────────────────
   readonly TABS: { key: ClientFileDetailTab; label: string; icon: typeof ClipboardList }[] = [
     { key: 'fiche', label: 'CLIENT_FILES.TAB_FICHE', icon: ClipboardList },
     { key: 'technique', label: 'CLIENT_FILES.TAB_TECHNIQUE', icon: Wrench },
@@ -146,7 +142,6 @@ export class ClientFileDetailPage implements OnInit {
     { key: 'documents', label: 'CLIENT_FILES.TAB_DOCUMENTS', icon: FileText },
   ];
 
-  // ─── Lifecycle ───────────────────────────────────────────────────────────
   ngOnInit(): void {
     this.fileId = this.route.snapshot.paramMap.get('id');
     if (this.fileId) {
@@ -156,7 +151,6 @@ export class ClientFileDetailPage implements OnInit {
     }
   }
 
-  // ─── Data loading ────────────────────────────────────────────────────────
   private loadShipments(): void {
     if (!this.fileId) return;
     this.shipmentsLoading.set(true);
@@ -172,12 +166,10 @@ export class ClientFileDetailPage implements OnInit {
       });
   }
 
-  // ─── Navigation ──────────────────────────────────────────────────────────
   goBack(): void {
     this.router.navigate(['/client-files']);
   }
 
-  // ─── Fiche technique ─────────────────────────────────────────────────────
   openWizard(report: InterventionReport | null = null): void {
     this.editReport.set(report);
     this.wizardOpen.set(true);
@@ -195,7 +187,6 @@ export class ClientFileDetailPage implements OnInit {
     this.deleteReportId.set(null);
   }
 
-  // ─── Envois ──────────────────────────────────────────────────────────────
   markSent(shipmentId: string): void {
     this.api
       .put<Shipment>(`api/shipments/${shipmentId}/sent`, {})
@@ -209,7 +200,6 @@ export class ClientFileDetailPage implements OnInit {
       });
   }
 
-  // ─── Documents ───────────────────────────────────────────────────────────
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.uploadFile.set(input.files?.[0] ?? null);
@@ -259,7 +249,6 @@ export class ClientFileDetailPage implements OnInit {
       });
   }
 
-  // ─── Helpers ─────────────────────────────────────────────────────────────
   formatDate(date: string | undefined): string {
     if (!date) return '-';
     return new Date(date).toLocaleDateString('fr-FR');
@@ -288,8 +277,6 @@ export class ClientFileDetailPage implements OnInit {
   getTwRegisters(report: InterventionReport): string[] {
     return report.twRegisters?.length
       ? report.twRegisters
-      : ([report.twRegister1, report.twRegister2, report.twRegister3].filter(
-          Boolean,
-        ) as string[]);
+      : ([report.twRegister1, report.twRegister2, report.twRegister3].filter(Boolean) as string[]);
   }
 }

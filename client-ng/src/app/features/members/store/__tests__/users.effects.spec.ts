@@ -91,7 +91,7 @@ describe('UsersEffects', () => {
     store.resetSelectors();
   });
 
-  // ─── loadAll$ ───────────────────────────────────────────────────────────────
+  // #region loadAll$
 
   describe('loadAll$', () => {
     it('should dispatch loadAllUsersSuccess on success', async () => {
@@ -124,8 +124,9 @@ describe('UsersEffects', () => {
       expect(result).toEqual(UsersActions.loadAllUsersFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ─── addUser$ ────────────────────────────────────────────────────────────────
+  // #region addUser$
 
   describe('addUser$', () => {
     it('should dispatch addUserSuccess and call toast.success on success', async () => {
@@ -162,8 +163,9 @@ describe('UsersEffects', () => {
       expect(toast.error).toHaveBeenCalledWith('TOAST.MEMBER_ADD_ERROR');
     });
   });
+  // #endregion
 
-  // ─── reloadAfterAdd$ ─────────────────────────────────────────────────────────
+  // #region reloadAfterAdd$
 
   describe('reloadAfterAdd$', () => {
     it('should dispatch loadAllUsers after addUserSuccess', async () => {
@@ -174,8 +176,9 @@ describe('UsersEffects', () => {
       expect(result).toEqual(UsersActions.loadAllUsers());
     });
   });
+  // #endregion
 
-  // ─── deleteUser$ ─────────────────────────────────────────────────────────────
+  // #region deleteUser$
 
   describe('deleteUser$', () => {
     it('should dispatch deleteUserSuccess and call toast.success on success', async () => {
@@ -210,8 +213,9 @@ describe('UsersEffects', () => {
       expect(result).toEqual(UsersActions.deleteUserFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ─── updateUser$ ─────────────────────────────────────────────────────────────
+  // #region updateUser$
 
   describe('updateUser$', () => {
     it('should dispatch updateUserSuccess and call toast.success on success', async () => {
@@ -246,8 +250,9 @@ describe('UsersEffects', () => {
       expect(result).toEqual(UsersActions.updateUserFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ─── updateRoles$ ────────────────────────────────────────────────────────────
+  // #region updateRoles$
 
   describe('updateRoles$', () => {
     const newRoles: Role[] = [Role.ADMIN, Role.HOTLINE];
@@ -320,8 +325,9 @@ describe('UsersEffects', () => {
       );
     });
   });
+  // #endregion
 
-  // ─── uploadPicture$ ──────────────────────────────────────────────────────────
+  // #region uploadPicture$
 
   describe('uploadPicture$', () => {
     it('should dispatch uploadPictureSuccess and call toast.success on success', async () => {
@@ -361,4 +367,5 @@ describe('UsersEffects', () => {
       expect(result).toEqual(UsersActions.uploadPictureFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 });

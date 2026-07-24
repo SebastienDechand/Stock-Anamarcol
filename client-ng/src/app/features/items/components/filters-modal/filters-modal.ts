@@ -31,13 +31,11 @@ export class FiltersModal implements OnInit {
   readonly suppliers = FOURNISSEURS;
   readonly statuses = ETATS;
 
-  // ─── Local State ────────────────────────────────────
   localSuppliers = signal<string[]>([]);
   localStatuses = signal<string[]>([]);
   localCgKit = signal(false);
   localTpvKit = signal(false);
 
-  // ─── Side Effects ────────────────────────────────────
   ngOnInit() {
     this.localSuppliers.set([...this.selectedSuppliers()]);
     this.localStatuses.set([...this.selectedStatuses()]);
@@ -45,7 +43,6 @@ export class FiltersModal implements OnInit {
     this.localTpvKit.set(this.tpvKit());
   }
 
-  // ─── Handlers ────────────────────────────────────────
   toggleSupplier(supplier: string) {
     const current = this.localSuppliers();
     this.localSuppliers.set(
@@ -63,10 +60,7 @@ export class FiltersModal implements OnInit {
   }
 
   togglePrepa(prepa: 'CashGuard' | 'Caisse TPV') {
-    const next = togglePrepaFilter(
-      { cgKit: this.localCgKit(), tpvKit: this.localTpvKit() },
-      prepa,
-    );
+    const next = togglePrepaFilter({ cgKit: this.localCgKit(), tpvKit: this.localTpvKit() }, prepa);
     this.localCgKit.set(next.cgKit);
     this.localTpvKit.set(next.tpvKit);
   }

@@ -5,7 +5,7 @@ import UserModel from "../models/user.model";
 import { logEvent } from "../utils/audit.utils";
 import { ErrorCode } from "../constants/errorCodes";
 
-// ─── GET All Vehicles ────────────────────────────────
+// #region GET All Vehicles
 export const getAllVehicles = async (req: Request, res: Response) => {
   try {
     const vehicles = await VehicleModel.find()
@@ -20,8 +20,9 @@ export const getAllVehicles = async (req: Request, res: Response) => {
       .json({ message: "Error fetching vehicles", code: ErrorCode.VEHICLE_FETCH_ERROR });
   }
 };
+// #endregion
 
-// ─── GET Vehicle by ID ───────────────────────────────
+// #region GET Vehicle by ID
 export const getVehicleById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -44,8 +45,9 @@ export const getVehicleById = async (req: Request, res: Response) => {
       .json({ message: "Error fetching vehicle", code: ErrorCode.VEHICLE_FETCH_ERROR });
   }
 };
+// #endregion
 
-// ─── CREATE Vehicle ──────────────────────────────────
+// #region CREATE Vehicle
 export const createVehicle = async (req: Request, res: Response) => {
   try {
     const {
@@ -86,11 +88,13 @@ export const createVehicle = async (req: Request, res: Response) => {
     if (brand === "mercedes" && !["citan", "vito"].includes(model)) {
       return res.status(400).json({
         message: "Mercedes vehicles must be Citan or Vito",
+        code: ErrorCode.VEHICLE_INVALID_MERCEDES_MODEL,
       });
     }
     if (brand === "nissan" && model !== "navara") {
       return res.status(400).json({
         message: "Nissan vehicles must be Navara",
+        code: ErrorCode.VEHICLE_INVALID_NISSAN_MODEL,
       });
     }
 
@@ -144,8 +148,9 @@ export const createVehicle = async (req: Request, res: Response) => {
       .json({ message: "Error creating vehicle", code: ErrorCode.VEHICLE_CREATE_ERROR });
   }
 };
+// #endregion
 
-// ─── UPDATE Vehicle ──────────────────────────────────
+// #region UPDATE Vehicle
 export const updateVehicle = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -179,6 +184,7 @@ export const updateVehicle = async (req: Request, res: Response) => {
       if (existing) {
         return res.status(400).json({
           message: "Vehicle with this licensePlate already exists",
+          code: ErrorCode.VEHICLE_LICENSE_PLATE_DUPLICATE,
         });
       }
     }
@@ -208,9 +214,9 @@ export const updateVehicle = async (req: Request, res: Response) => {
         const user = await UserModel.findById(assignedTo);
         if (!user) {
           return res.status(404).json({
-          message: "Assigned user not found",
-          code: ErrorCode.VEHICLE_ASSIGNED_USER_NOT_FOUND,
-        });
+            message: "Assigned user not found",
+            code: ErrorCode.VEHICLE_ASSIGNED_USER_NOT_FOUND,
+          });
         }
         vehicle.assignedTo = assignedTo;
         vehicle.assignedToName = user.username;
@@ -244,8 +250,9 @@ export const updateVehicle = async (req: Request, res: Response) => {
       .json({ message: "Error updating vehicle", code: ErrorCode.VEHICLE_UPDATE_ERROR });
   }
 };
+// #endregion
 
-// ─── DELETE Vehicle ──────────────────────────────────
+// #region DELETE Vehicle
 export const deleteVehicle = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -271,8 +278,9 @@ export const deleteVehicle = async (req: Request, res: Response) => {
       .json({ message: "Error deleting vehicle", code: ErrorCode.VEHICLE_DELETE_ERROR });
   }
 };
+// #endregion
 
-// ─── SEARCH Vehicles ─────────────────────────────────
+// #region SEARCH Vehicles
 export const searchVehicles = async (req: Request, res: Response) => {
   try {
     const { q, brand, model, assignedTo } = req.query;
@@ -302,8 +310,9 @@ export const searchVehicles = async (req: Request, res: Response) => {
       .json({ message: "Error searching vehicles", code: ErrorCode.VEHICLE_SEARCH_ERROR });
   }
 };
+// #endregion
 
-// ─── UPLOAD Document ─────────────────────────────────
+// #region UPLOAD Document
 export const uploadDocument = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -356,8 +365,9 @@ export const uploadDocument = async (req: Request, res: Response) => {
     });
   }
 };
+// #endregion
 
-// ─── DELETE Document ─────────────────────────────────
+// #region DELETE Document
 export const deleteDocument = async (req: Request, res: Response) => {
   try {
     const { id, docId } = req.params;
@@ -393,3 +403,4 @@ export const deleteDocument = async (req: Request, res: Response) => {
     });
   }
 };
+// #endregion

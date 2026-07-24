@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { Role, ROLES, SUPPLIERS, STATUSES } from "../constants";
 
 describe("Constants", () => {
-  // ─── Role enum ───────────────────────────────────────
+  // #region Role enum
   describe("Role enum", () => {
     it("should have exactly 5 members", () => {
       expect(ROLES).toHaveLength(5);
@@ -33,8 +33,9 @@ describe("Constants", () => {
       expect(ROLES.includes("" as Role)).toBe(false);
     });
   });
+  // #endregion
 
-  // ─── SUPPLIERS ───────────────────────────────────────
+  // #region SUPPLIERS
   describe("SUPPLIERS", () => {
     it("should be a non-empty readonly array", () => {
       expect(SUPPLIERS.length).toBeGreaterThan(0);
@@ -46,11 +47,13 @@ describe("Constants", () => {
       expect(SUPPLIERS).toContain("LDLC");
     });
   });
+  // #endregion
 
-  // ─── STATUSES ────────────────────────────────────────
+  // #region STATUSES
   describe("STATUSES", () => {
     it("should contain NEW and RMA", () => {
       expect(STATUSES).toEqual(["NEW", "RMA"]);
     });
   });
+  // #endregion
 });

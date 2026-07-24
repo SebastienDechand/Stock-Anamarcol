@@ -12,7 +12,7 @@ import { ApiService } from '../../../../core/http/api.service';
 import { ToastService } from '../../../../core/toast/toast.service';
 import { Item, ItemHistory, NewItem } from '../../../../shared/models/item.model';
 
-// ─── Realistic test data ────────────────────────────────────────────────────
+// #region Realistic test data
 
 const mockItem: Item = {
   _id: 'item-001',
@@ -24,6 +24,7 @@ const mockItem: Item = {
   cgKit: false,
   tpvKit: false,
 };
+// #endregion
 
 const mockItem2: Item = {
   _id: 'item-002',
@@ -66,7 +67,7 @@ const mockHistory: ItemHistory[] = [
   },
 ];
 
-// ─── Tests ──────────────────────────────────────────────────────────────────
+// #region Tests
 
 describe('ItemsEffects', () => {
   let effects: ItemsEffects;
@@ -109,7 +110,7 @@ describe('ItemsEffects', () => {
     effects = TestBed.inject(ItemsEffects);
   });
 
-  // ── loadAllItems$ ──────────────────────────────────────────────────────────
+  // #region loadAllItems$
 
   describe('loadAllItems$', () => {
     it('should dispatch loadAllItemsSuccess when API returns paginated object', async () => {
@@ -159,8 +160,9 @@ describe('ItemsEffects', () => {
       expect(result).toEqual(ItemsActions.loadAllItemsFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ── fetchItems$ ────────────────────────────────────────────────────────────
+  // #region fetchItems$
 
   describe('fetchItems$', () => {
     it('should dispatch fetchItemsSuccess with paginated data', async () => {
@@ -255,8 +257,9 @@ describe('ItemsEffects', () => {
       expect(result).toEqual(ItemsActions.fetchItemsFailure({ error: 'Timeout' }));
     });
   });
+  // #endregion
 
-  // ── createItem$ ────────────────────────────────────────────────────────────
+  // #region createItem$
 
   describe('createItem$', () => {
     it('should dispatch createItemSuccess and show success toast', async () => {
@@ -292,8 +295,9 @@ describe('ItemsEffects', () => {
       expect(result).toEqual(ItemsActions.createItemFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ── updateItem$ ────────────────────────────────────────────────────────────
+  // #region updateItem$
 
   describe('updateItem$', () => {
     it('should dispatch updateItemSuccess and show success toast', async () => {
@@ -319,8 +323,9 @@ describe('ItemsEffects', () => {
       expect(toast.error).toHaveBeenCalledWith('TOAST.ITEM_UPDATE_ERROR');
     });
   });
+  // #endregion
 
-  // ── deleteItem$ ────────────────────────────────────────────────────────────
+  // #region deleteItem$
 
   describe('deleteItem$', () => {
     it('should dispatch deleteItemSuccess and show success toast', async () => {
@@ -355,8 +360,9 @@ describe('ItemsEffects', () => {
       expect(result).toEqual(ItemsActions.deleteItemFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ── updateQuantity$ ───────────────────────────────────────────────────────
+  // #region updateQuantity$
 
   describe('updateQuantity$', () => {
     it('should dispatch updateQuantitySuccess and show success toast', async () => {
@@ -414,8 +420,9 @@ describe('ItemsEffects', () => {
       expect(result).toEqual(ItemsActions.updateQuantityFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ── uploadPicture$ ─────────────────────────────────────────────────────────
+  // #region uploadPicture$
 
   describe('uploadPicture$', () => {
     it('should dispatch uploadItemPictureSuccess and show success toast', async () => {
@@ -467,8 +474,9 @@ describe('ItemsEffects', () => {
       expect(result).toEqual(ItemsActions.uploadItemPictureFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ── prepaBatch$ ────────────────────────────────────────────────────────────
+  // #region prepaBatch$
 
   describe('prepaBatch$', () => {
     it('should dispatch prepaBatchSuccess then refetch items for cgKit increment', async () => {
@@ -522,8 +530,9 @@ describe('ItemsEffects', () => {
       expect(toast.error).toHaveBeenCalledWith('TOAST.ITEM_BATCH_ERROR');
     });
   });
+  // #endregion
 
-  // ── loadHistory$ ───────────────────────────────────────────────────────────
+  // #region loadHistory$
 
   describe('loadHistory$', () => {
     it('should dispatch loadItemHistorySuccess with history entries', async () => {
@@ -546,4 +555,6 @@ describe('ItemsEffects', () => {
       expect(result).toEqual(ItemsActions.loadItemHistorySuccess({ history: [] }));
     });
   });
+  // #endregion
 });
+// #endregion

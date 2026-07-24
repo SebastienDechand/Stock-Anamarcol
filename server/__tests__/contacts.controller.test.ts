@@ -55,7 +55,7 @@ describe("Contacts Controller", () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  // ── getContacts ──
+  // #region getContacts
   describe("getContacts", () => {
     it("should return all contacts", async () => {
       const contacts = [{ _id: "c1", name: "Dupont" }];
@@ -65,8 +65,9 @@ describe("Contacts Controller", () => {
       expect(res.json).toHaveBeenCalledWith(contacts);
     });
   });
+  // #endregion
 
-  // ── contactInfo ──
+  // #region contactInfo
   describe("contactInfo", () => {
     it("should return 400 for invalid ObjectId", async () => {
       req.params = { id: "bad" };
@@ -103,8 +104,9 @@ describe("Contacts Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
+  // #endregion
 
-  // ── createContact ──
+  // #region createContact
   describe("createContact", () => {
     it("should create a contact and log audit event", async () => {
       req.body = { name: "Dupont", email: "test@test.com" };
@@ -131,8 +133,9 @@ describe("Contacts Controller", () => {
       expect(res.status).toHaveBeenCalledWith(400);
     });
   });
+  // #endregion
 
-  // ── updateContact ──
+  // #region updateContact
   describe("updateContact", () => {
     it("should return 400 for invalid ObjectId", async () => {
       req.params = { id: "bad" };
@@ -181,8 +184,9 @@ describe("Contacts Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
+  // #endregion
 
-  // ── deleteContact ──
+  // #region deleteContact
   describe("deleteContact", () => {
     it("should return 400 for invalid ObjectId", async () => {
       req.params = { id: "bad" };
@@ -219,4 +223,5 @@ describe("Contacts Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
+  // #endregion
 });

@@ -54,13 +54,11 @@ function getItemsPerPage(): number {
   styleUrl: './items-page.scss',
 })
 export class ItemsPage implements OnInit {
-  // ─── Context & Redux ────────────────────────────────
   private destroyRef = inject(DestroyRef);
   protected facade = inject(ItemsFacade);
   private authFacade = inject(AuthFacade);
   private itemsPerPage = signal(getItemsPerPage());
 
-  // ─── Streams ─────────────────────────────────────────
   isAdmin$ = this.authFacade.isAdmin$;
   isLoading$ = this.facade.isLoading$;
   items$ = this.facade.items$;
@@ -70,12 +68,10 @@ export class ItemsPage implements OnInit {
   canDecrement$ = this.facade.canDecrement$;
   allItems$ = this.facade.allItems$;
 
-  // ─── Constants ───────────────────────────────────────
   readonly suppliers = FOURNISSEURS;
   readonly statuses = ETATS;
   readonly preps = ['CashGuard', 'Caisse TPV'] as const;
 
-  // ─── Local State (Signals) ───────────────────────────
   showAddModal = signal(false);
   showExportModal = signal(false);
   showFiltersModal = signal(false);
@@ -91,12 +87,10 @@ export class ItemsPage implements OnInit {
   cgKitCount = signal(1);
   tpvKitCount = signal(1);
 
-  // ─── Search ───────────────────────────────────────────
   private searchSubject = new Subject<string>();
   private currentSearch = '';
   private currentPage = 1;
 
-  // ─── Side Effects ─────────────────────────────────────
   ngOnInit() {
     this.loadPage(1);
 
@@ -123,7 +117,6 @@ export class ItemsPage implements OnInit {
       });
   }
 
-  // ─── Handlers ────────────────────────────────────────
   onSearchInput(event: Event) {
     this.searchSubject.next((event.target as HTMLInputElement).value);
   }
@@ -266,11 +259,7 @@ export class ItemsPage implements OnInit {
   onPrepaBatch(prep: 'CashGuard' | 'Caisse TPV', operation: 'increment' | 'decrement') {
     const field = prep === 'CashGuard' ? 'cgKit' : 'tpvKit';
     const count =
-      operation === 'decrement'
-        ? 1
-        : prep === 'CashGuard'
-          ? this.cgKitCount()
-          : this.tpvKitCount();
+      operation === 'decrement' ? 1 : prep === 'CashGuard' ? this.cgKitCount() : this.tpvKitCount();
     this.facade.prepaBatch(field, operation, count, this.buildFetchParams(this.currentPage));
   }
 }

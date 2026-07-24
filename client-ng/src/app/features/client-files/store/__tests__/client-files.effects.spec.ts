@@ -11,7 +11,7 @@ import { ClientFile } from '../../../../shared/models/client-file.model';
 import { ClientFilesEffects } from '../client-files.effects';
 import { ClientFilesActions } from '../client-files.actions';
 
-// ─── Fixtures ────────────────────────────────────────────────────────────────
+// #region Fixtures
 
 const mockEquipement = {
   cashguardCount: 1,
@@ -28,6 +28,7 @@ const mockEquipement = {
   electronicLabels: false,
   loyaltyCard: true,
 };
+// #endregion
 
 const mockFile: ClientFile = {
   _id: 'file-001',
@@ -71,7 +72,7 @@ const mockFormData: Partial<typeof mockFile> = {
   equipment: mockEquipement,
 };
 
-// ─── Suite ───────────────────────────────────────────────────────────────────
+// #region Suite
 
 describe('ClientFilesEffects', () => {
   let effects: ClientFilesEffects;
@@ -109,7 +110,7 @@ describe('ClientFilesEffects', () => {
     effects = TestBed.inject(ClientFilesEffects);
   });
 
-  // ── loadAll$ ──────────────────────────────────────────────────────────────
+  // #region loadAll$
 
   describe('loadAll$', () => {
     it('should dispatch loadAllSuccess with files on success', async () => {
@@ -145,8 +146,9 @@ describe('ClientFilesEffects', () => {
       expect(result).toEqual(ClientFilesActions.loadAllFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ── loadOne$ ──────────────────────────────────────────────────────────────
+  // #region loadOne$
 
   describe('loadOne$', () => {
     it('should dispatch loadOneSuccess with the file on success', async () => {
@@ -181,8 +183,9 @@ describe('ClientFilesEffects', () => {
       expect(result).toEqual(ClientFilesActions.loadOneFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ── create$ ───────────────────────────────────────────────────────────────
+  // #region create$
 
   describe('create$', () => {
     it('should dispatch createFileSuccess and show success toast on success', async () => {
@@ -219,8 +222,9 @@ describe('ClientFilesEffects', () => {
       expect(result).toEqual(ClientFilesActions.createFileFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ── update$ ───────────────────────────────────────────────────────────────
+  // #region update$
 
   describe('update$', () => {
     const updatedData = { lastName: 'Dupont-Durand', firstName: 'Marie' };
@@ -260,8 +264,9 @@ describe('ClientFilesEffects', () => {
       expect(result).toEqual(ClientFilesActions.updateFileFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ── delete$ ───────────────────────────────────────────────────────────────
+  // #region delete$
 
   describe('delete$', () => {
     it('should dispatch deleteFileSuccess and show success toast on success', async () => {
@@ -298,8 +303,9 @@ describe('ClientFilesEffects', () => {
       expect(result).toEqual(ClientFilesActions.deleteFileFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ── uploadDoc$ ────────────────────────────────────────────────────────────
+  // #region uploadDoc$
 
   describe('uploadDoc$', () => {
     it('should dispatch uploadDocumentSuccess and show success toast on success', async () => {
@@ -355,8 +361,9 @@ describe('ClientFilesEffects', () => {
       expect(result).toEqual(ClientFilesActions.uploadDocumentFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ── deleteDoc$ ────────────────────────────────────────────────────────────
+  // #region deleteDoc$
 
   describe('deleteDoc$', () => {
     it('should dispatch deleteDocumentSuccess and show success toast on success', async () => {
@@ -396,4 +403,6 @@ describe('ClientFilesEffects', () => {
       expect(result).toEqual(ClientFilesActions.deleteDocumentFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 });
+// #endregion

@@ -4,8 +4,7 @@ import { ErrorCode } from "../constants/errorCodes";
 
 /**
  * POST /api/reminders/vehicles/send
- * Déclenche manuellement l'envoi des rappels véhicules
- * Superadmin uniquement
+ * Manually triggers vehicle reminder emails. Superadmin only.
  */
 export const sendVehicleReminders = async (
   req: Request,

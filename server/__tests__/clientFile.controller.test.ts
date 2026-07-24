@@ -84,7 +84,7 @@ describe("ClientFile Controller", () => {
     vi.restoreAllMocks();
   });
 
-  // ─── getClientFiles ────────────────────────────────────
+  // #region getClientFiles
   describe("getClientFiles", () => {
     it("should return all client files with 200", async () => {
       const files = [mockFile];
@@ -116,8 +116,9 @@ describe("ClientFile Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
+  // #endregion
 
-  // ─── getClientFile ─────────────────────────────────────
+  // #region getClientFile
   describe("getClientFile", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "invalid" };
@@ -156,8 +157,9 @@ describe("ClientFile Controller", () => {
       expect(res.json).toHaveBeenCalledWith(mockFile);
     });
   });
+  // #endregion
 
-  // ─── createClientFile ──────────────────────────────────
+  // #region createClientFile
   describe("createClientFile", () => {
     it("should create a client file and return 201", async () => {
       req.body = { lastName: "DUPONT", firstName: "Jean" };
@@ -188,8 +190,9 @@ describe("ClientFile Controller", () => {
       expect(res.status).toHaveBeenCalledWith(400);
     });
   });
+  // #endregion
 
-  // ─── updateClientFile ──────────────────────────────────
+  // #region updateClientFile
   describe("updateClientFile", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "invalid" };
@@ -262,8 +265,9 @@ describe("ClientFile Controller", () => {
       expect(res.status).toHaveBeenCalledWith(400);
     });
   });
+  // #endregion
 
-  // ─── deleteClientFile ──────────────────────────────────
+  // #region deleteClientFile
   describe("deleteClientFile", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "invalid" };
@@ -293,8 +297,9 @@ describe("ClientFile Controller", () => {
       });
     });
   });
+  // #endregion
 
-  // ─── uploadDocument ────────────────────────────────────
+  // #region uploadDocument
   describe("uploadDocument", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "invalid" };
@@ -367,8 +372,9 @@ describe("ClientFile Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
+  // #endregion
 
-  // ─── deleteDocument ────────────────────────────────────
+  // #region deleteDocument
   describe("deleteDocument", () => {
     it("should return 400 when client file ID is invalid", async () => {
       req.params = { id: "invalid", docId: VALID_DOC_ID };
@@ -436,4 +442,5 @@ describe("ClientFile Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
+  // #endregion
 });

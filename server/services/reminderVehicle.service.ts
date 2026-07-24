@@ -12,7 +12,7 @@ export interface ReminderCheck {
 }
 
 /**
- * Calcul du nombre de jours jusqu'à l'échéance
+ * Computes the number of days until the due date.
  */
 function getDaysUntilDue(dueDate: Date | undefined | null): number | null {
   if (!dueDate) return null;
@@ -24,11 +24,11 @@ function getDaysUntilDue(dueDate: Date | undefined | null): number | null {
 }
 
 /**
- * Détermine le type de rappel selon les jours restants
- * Retourne le type de rappel pour les dates exactes :
- * - 0 jour : "jour_du_controle"
- * - 7 jours avant : "1_week"
- * - 30 jours avant : "1_month"
+ * Determines the reminder type based on the remaining days.
+ * Returns the reminder type for the exact trigger points:
+ * - 0 days: "jour_du_controle"
+ * - 7 days before: "1_week"
+ * - 30 days before: "1_month"
  */
 function getReminderType(
   daysUntil: number | null,
@@ -41,7 +41,7 @@ function getReminderType(
 }
 
 /**
- * Récupère tous les superadmins
+ * Fetches all superadmins.
  */
 async function getSuperAdmins() {
   return UserModel.find(
@@ -56,24 +56,24 @@ async function getSuperAdmins() {
 }
 
 /**
- * Vérifie les dates d'échéance et envoie les rappels appropriés
- * Retourne les rappels envoyés
+ * Checks due dates and sends the appropriate reminders.
+ * Returns the reminders that were sent.
  */
 export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
   const reminders: ReminderCheck[] = [];
 
-  // Récupère tous les superadmins
+  // Fetch all superadmins
   const superAdmins = await getSuperAdmins();
   if (superAdmins.length === 0) {
-    console.warn("[Reminder] Aucun superadmin trouvé pour envoyer les rappels");
+    console.warn("[Reminder] No superadmin found to send reminders to");
     return [];
   }
 
-  // Récupère tous les véhicules
+  // Fetch all vehicles
   const vehicles = await VehicleModel.find().lean();
 
   for (const vehicle of vehicles) {
-    // ─── Révision (anniversaire annuel) ───
+    // #region Service (annual anniversary)
     const revisionDays = getDaysUntilDue(
       vehicle.serviceDate
         ? new Date(
@@ -92,7 +92,7 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
         daysUntilDue: revisionDays,
         reminderType,
       });
-      // Envoie au superadmin
+      // Send to superadmins
       for (const admin of superAdmins) {
         const nextRevisionDate = vehicle.serviceDate
           ? new Date(
@@ -107,14 +107,15 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
           type: "revision",
         }).catch((err) => {
           console.error(
-            `[Reminder] Erreur envoi rappel révision pour ${vehicle.licensePlate}:`,
+            `[Reminder] Error sending service reminder for ${vehicle.licensePlate}:`,
             err,
           );
         });
       }
     }
+    // #endregion
 
-    // ─── CT (expiration) ───
+    // #region Inspection (expiry)
     const ctDays = getDaysUntilDue(
       vehicle.inspectionExpiryDate ? new Date(vehicle.inspectionExpiryDate) : null,
     );
@@ -128,7 +129,7 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
         daysUntilDue: ctDays,
         reminderType,
       });
-      // Envoie au superadmin
+      // Send to superadmins
       for (const admin of superAdmins) {
         await sendVehicleReminder(admin.email, {
           vehicleName: `${vehicle.brand.toUpperCase()} ${vehicle.model} (${vehicle.licensePlate})`,
@@ -139,14 +140,15 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
           type: "ct",
         }).catch((err) => {
           console.error(
-            `[Reminder] Erreur envoi rappel CT pour ${vehicle.licensePlate}:`,
+            `[Reminder] Error sending inspection reminder for ${vehicle.licensePlate}:`,
             err,
           );
         });
       }
     }
+    // #endregion
 
-    // ─── Anti-pollution (expiration) ───
+    // #region Anti-pollution (expiry)
     const antiPollutionDays = getDaysUntilDue(
       vehicle.antiPollutionExpiryDate
         ? new Date(vehicle.antiPollutionExpiryDate)
@@ -162,7 +164,7 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
         daysUntilDue: antiPollutionDays,
         reminderType,
       });
-      // Envoie au superadmin
+      // Send to superadmins
       for (const admin of superAdmins) {
         await sendVehicleReminder(admin.email, {
           vehicleName: `${vehicle.brand.toUpperCase()} ${vehicle.model} (${vehicle.licensePlate})`,
@@ -173,17 +175,18 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
           type: "anti_pollution",
         }).catch((err) => {
           console.error(
-            `[Reminder] Erreur envoi rappel anti-pollution pour ${vehicle.licensePlate}:`,
+            `[Reminder] Error sending anti-pollution reminder for ${vehicle.licensePlate}:`,
             err,
           );
         });
       }
     }
+    // #endregion
   }
 
   if (reminders.length > 0) {
     console.log(
-      `[Reminder] ${reminders.length} rappel(s) envoyé(s) au superadmin`,
+      `[Reminder] ${reminders.length} reminder(s) sent to superadmins`,
     );
   }
 

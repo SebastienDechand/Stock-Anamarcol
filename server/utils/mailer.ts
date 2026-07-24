@@ -9,7 +9,7 @@ const getResendClient = (): Resend => {
   return resend;
 };
 
-// ─── Vehicle Reminder Emails ──────────────────────────
+// #region Vehicle Reminder Emails
 export interface VehicleReminderData {
   vehicleName: string;
   daysUntil: number;
@@ -77,7 +77,7 @@ export const sendVehicleReminder = async (
   data: VehicleReminderData,
 ): Promise<void> => {
   if (!process.env.RESEND_API_KEY) {
-    console.warn("[Mailer] RESEND_API_KEY non configuré - email ignoré");
+    console.warn("[Mailer] RESEND_API_KEY not configured - email skipped");
     return;
   }
 
@@ -195,3 +195,4 @@ export const sendVehicleReminder = async (
     `,
   });
 };
+// #endregion

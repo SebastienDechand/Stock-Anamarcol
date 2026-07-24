@@ -34,35 +34,29 @@ const ROLE_COLUMNS: { role: Role; labelKey: string }[] = ROLE_DISPLAY_ORDER.map(
   styleUrl: './admin-roles-page.scss',
 })
 export class AdminRolesPage implements OnInit {
-  // ─── Context & Redux ────────────────────────────────
   protected facade = inject(UsersFacade);
   private authFacade = inject(AuthFacade);
 
-  // ─── Streams ─────────────────────────────────────────
   users$ = this.facade.users$;
   isLoading$ = this.facade.isLoading$;
   isSuperadmin$ = this.authFacade.isSuperadmin$;
   readonly savingRoleIds = toSignal(this.facade.savingRoleIds$, { initialValue: [] as string[] });
 
-  // ─── Local State ────────────────────────────────────
   searchTerm = signal('');
 
   readonly roleColumns = ROLE_COLUMNS;
   readonly roleUser = Role.USER;
 
-  // ─── Side Effects ─────────────────────────────────────
   ngOnInit() {
     this.facade.loadAll();
   }
 
-  // ─── Helpers ─────────────────────────────────────────
   filterUsers(users: User[]): User[] {
     const searchTerm = this.searchTerm().toLowerCase();
     if (!searchTerm) return users;
     return users.filter(
       (u) =>
-        u.username.toLowerCase().includes(searchTerm) ||
-        u.email.toLowerCase().includes(searchTerm),
+        u.username.toLowerCase().includes(searchTerm) || u.email.toLowerCase().includes(searchTerm),
     );
   }
 
@@ -80,7 +74,6 @@ export class AdminRolesPage implements OnInit {
     return this.savingRoleIds().includes(userId);
   }
 
-  // ─── Handlers ────────────────────────────────────────
   toggleRole(user: User, role: Role) {
     if (role === Role.USER) return;
     if (this.isSaving(user._id)) return;

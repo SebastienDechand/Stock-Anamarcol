@@ -45,7 +45,7 @@ describe("Stats Controller", () => {
 
   afterEach(() => vi.restoreAllMocks());
 
-  // ── Helper to set up aggregate / find mocks for getDashboardStats ──
+  // #region Helper to set up aggregate / find mocks for getDashboardStats
   function setupDashboardMocks(overrides?: {
     globalStats?: Record<string, unknown>[];
     suppliersStats?: Record<string, unknown>[];
@@ -89,8 +89,9 @@ describe("Stats Controller", () => {
       .mockReturnValueOnce(chainLean(cgItems))
       .mockReturnValueOnce(chainLean(tpvItems));
   }
+  // #endregion
 
-  // ── getDashboardStats ──
+  // #region getDashboardStats
   describe("getDashboardStats", () => {
     it("should return full dashboard data", async () => {
       setupDashboardMocks();
@@ -231,8 +232,9 @@ describe("Stats Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
+  // #endregion
 
-  // ── Legacy endpoints ──
+  // #region Legacy endpoints
   describe("getNumberOfArticles", () => {
     it("should return count", async () => {
       mockItemModel.countDocuments.mockResolvedValue(42);
@@ -247,6 +249,7 @@ describe("Stats Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
+  // #endregion
 
   describe("getTotalStock", () => {
     it("should return total stock", async () => {

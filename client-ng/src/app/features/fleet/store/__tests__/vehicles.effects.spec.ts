@@ -75,7 +75,7 @@ describe('VehiclesEffects', () => {
     effects = TestBed.inject(VehiclesEffects);
   });
 
-  // ─── loadAll$ ───────────────────────────────────────────────────────────────
+  // #region loadAll$
 
   describe('loadAll$', () => {
     it('should dispatch loadAllSuccess on success', async () => {
@@ -110,8 +110,9 @@ describe('VehiclesEffects', () => {
       expect(result).toEqual(VehiclesActions.loadAllFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ─── loadOne$ ───────────────────────────────────────────────────────────────
+  // #region loadOne$
 
   describe('loadOne$', () => {
     it('should dispatch loadOneSuccess on success', async () => {
@@ -135,8 +136,9 @@ describe('VehiclesEffects', () => {
       expect(result).toEqual(VehiclesActions.loadAllFailure({ error: 'Erreur chargement' }));
     });
   });
+  // #endregion
 
-  // ─── search$ ────────────────────────────────────────────────────────────────
+  // #region search$
 
   describe('search$', () => {
     it('should dispatch searchSuccess with results on success', async () => {
@@ -161,8 +163,9 @@ describe('VehiclesEffects', () => {
       expect(result).toEqual(VehiclesActions.searchSuccess({ vehicles: [] }));
     });
   });
+  // #endregion
 
-  // ─── create$ ────────────────────────────────────────────────────────────────
+  // #region create$
 
   describe('create$', () => {
     it('should dispatch createVehicleSuccess and call toast.success on success', async () => {
@@ -211,8 +214,9 @@ describe('VehiclesEffects', () => {
       expect(postedBody['notes']).toBeNull();
     });
   });
+  // #endregion
 
-  // ─── update$ ────────────────────────────────────────────────────────────────
+  // #region update$
 
   describe('update$', () => {
     it('should dispatch updateVehicleSuccess and call toast.success on success', async () => {
@@ -253,8 +257,9 @@ describe('VehiclesEffects', () => {
       expect(result).toEqual(VehiclesActions.updateVehicleFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ─── delete$ ────────────────────────────────────────────────────────────────
+  // #region delete$
 
   describe('delete$', () => {
     it('should dispatch deleteVehicleSuccess and call toast.success on success', async () => {
@@ -290,8 +295,9 @@ describe('VehiclesEffects', () => {
       expect(result).toEqual(VehiclesActions.deleteVehicleFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ─── uploadDoc$ ─────────────────────────────────────────────────────────────
+  // #region uploadDoc$
 
   describe('uploadDoc$', () => {
     it('should dispatch uploadDocumentSuccess and call toast.success on success', async () => {
@@ -343,8 +349,9 @@ describe('VehiclesEffects', () => {
       expect(result).toEqual(VehiclesActions.uploadDocumentFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ─── deleteDoc$ ─────────────────────────────────────────────────────────────
+  // #region deleteDoc$
 
   describe('deleteDoc$', () => {
     it('should dispatch deleteDocumentSuccess and call toast.success on success', async () => {
@@ -381,4 +388,5 @@ describe('VehiclesEffects', () => {
       expect(result).toEqual(VehiclesActions.deleteDocumentFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 });

@@ -75,7 +75,7 @@ describe("InterventionReport Controller", () => {
     vi.restoreAllMocks();
   });
 
-  // ─── getInterventionReports ────────────────────────────
+  // #region getInterventionReports
   describe("getInterventionReports", () => {
     it("should return all reports with 200", async () => {
       const reports = [mockReport];
@@ -125,8 +125,9 @@ describe("InterventionReport Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
+  // #endregion
 
-  // ─── getInterventionReport ─────────────────────────────
+  // #region getInterventionReport
   describe("getInterventionReport", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "invalid" };
@@ -165,8 +166,9 @@ describe("InterventionReport Controller", () => {
       expect(res.json).toHaveBeenCalledWith(mockReport);
     });
   });
+  // #endregion
 
-  // ─── createInterventionReport ──────────────────────────
+  // #region createInterventionReport
   describe("createInterventionReport", () => {
     it("should create a report and return 201", async () => {
       req.body = {
@@ -202,8 +204,9 @@ describe("InterventionReport Controller", () => {
       expect(res.status).toHaveBeenCalledWith(400);
     });
   });
+  // #endregion
 
-  // ─── updateInterventionReport ──────────────────────────
+  // #region updateInterventionReport
   describe("updateInterventionReport", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "invalid" };
@@ -255,8 +258,9 @@ describe("InterventionReport Controller", () => {
       expect(report.updatedBy).toBe("monteur1");
     });
   });
+  // #endregion
 
-  // ─── deleteInterventionReport ──────────────────────────
+  // #region deleteInterventionReport
   describe("deleteInterventionReport", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "invalid" };
@@ -286,4 +290,5 @@ describe("InterventionReport Controller", () => {
       });
     });
   });
+  // #endregion
 });

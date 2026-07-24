@@ -46,7 +46,7 @@ describe("User Controller", () => {
     vi.restoreAllMocks();
   });
 
-  // ─── getAllUsers ────────────────────────────────────────
+  // #region getAllUsers
   describe("getAllUsers", () => {
     it("should return all users", async () => {
       const mockUsers = [
@@ -62,8 +62,9 @@ describe("User Controller", () => {
       expect(res.json).toHaveBeenCalledWith(mockUsers);
     });
   });
+  // #endregion
 
-  // ─── userInfo ──────────────────────────────────────────
+  // #region userInfo
   describe("userInfo", () => {
     it("should return 400 when ID is invalid", () => {
       req.params = { id: "invalid" };
@@ -87,8 +88,9 @@ describe("User Controller", () => {
       userInfo(req as Request, res as Response);
     });
   });
+  // #endregion
 
-  // ─── deleteUser ────────────────────────────────────────
+  // #region deleteUser
   describe("deleteUser", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "invalid" };
@@ -110,8 +112,9 @@ describe("User Controller", () => {
       });
     });
   });
+  // #endregion
 
-  // ─── updateUser ────────────────────────────────────────
+  // #region updateUser
   describe("updateUser", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "invalid" };
@@ -299,8 +302,9 @@ describe("User Controller", () => {
       expect(mockUser.save).toHaveBeenCalled();
     });
   });
+  // #endregion
 
-  // ─── setRole ─────────────────────────────────────────
+  // #region setRole
   describe("setRole", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "invalid" };
@@ -414,8 +418,9 @@ describe("User Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
+  // #endregion
 
-  // ─── setRoles ─────────────────────────────────────────
+  // #region setRoles
   describe("setRoles", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "invalid" };
@@ -498,4 +503,5 @@ describe("User Controller", () => {
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });
+  // #endregion
 });

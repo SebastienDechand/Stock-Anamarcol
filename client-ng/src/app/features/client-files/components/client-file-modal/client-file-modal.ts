@@ -18,7 +18,7 @@ import {
 } from '../../../../shared/models/client-file.model';
 import { ToastService } from '../../../../core/toast/toast.service';
 
-// ─── BDC parsing ─────────────────────────────────────────────────────────────
+// #region BDC parsing
 
 type BDCEntry =
   | { type: 'str'; key: keyof ClientFileForm }
@@ -188,8 +188,9 @@ async function parseXlsxBDC(file: File): Promise<BDCPatch> {
 
   return applyBDCEntries(entries.filter((e) => e.value !== ''));
 }
+// #endregion
 
-// ─── Empty form ───────────────────────────────────────────────────────────────
+// #region Empty form
 
 const emptyEquipement: Equipement = {
   cashguardCount: 0,
@@ -236,8 +237,9 @@ function emptyForm(): ClientFileForm {
     notes: '',
   };
 }
+// #endregion
 
-// ─── Component ────────────────────────────────────────────────────────────────
+// #region Component
 
 @Component({
   selector: 'app-client-file-modal',
@@ -413,3 +415,4 @@ export class ClientFileModal implements OnChanges {
     this.save.emit({ id: this.file()?._id, data: { ...this.form } });
   }
 }
+// #endregion

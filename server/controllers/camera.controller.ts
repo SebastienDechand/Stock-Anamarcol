@@ -34,7 +34,7 @@ export const getCameraStream = (req: Request, res: Response): void => {
     (cameraRes) => {
       if (cameraRes.statusCode && cameraRes.statusCode >= 400) {
         console.error(
-          `[Caméra ${cameraId}] Erreur upstream: ${cameraRes.statusCode}`,
+          `[Camera ${cameraId}] Upstream error: ${cameraRes.statusCode}`,
         );
         cameraRes.resume();
         if (!res.headersSent)
@@ -69,7 +69,7 @@ export const getCameraStream = (req: Request, res: Response): void => {
   });
 
   request.on("error", (error) => {
-    console.error(`[Caméra ${cameraId}] Erreur:`, error.message);
+    console.error(`[Camera ${cameraId}] Error:`, error.message);
     if (!res.headersSent) {
       res.status(503).json({
         message: "Camera unreachable",

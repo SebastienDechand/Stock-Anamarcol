@@ -3,7 +3,7 @@ import * as cameraController from "../controllers/camera.controller";
 
 const router = Router();
 
-// Proxy pour les flux des caméras (HTTPS → HTTP)
+// Proxy for camera streams (HTTPS → HTTP)
 router.get("/stream/:cameraId", cameraController.getCameraStream);
 
 export default router;
