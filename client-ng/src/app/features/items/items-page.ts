@@ -18,7 +18,7 @@ import { ExportModal } from './components/export-modal/export-modal';
 import { FiltersModal, FiltersApplied } from './components/filters-modal/filters-modal';
 import { Item, FetchItemsParams, NewItem } from '../../shared/models/item.model';
 import { User } from '../../shared/models/user.model';
-import { FOURNISSEURS, ETATS } from '../../shared/constants';
+import { SUPPLIERS, STATUSES } from '../../shared/constants';
 import { togglePrepaFilter } from '../../shared/utils/prepa-filter.utils';
 
 function getItemsPerPage(): number {
@@ -68,8 +68,8 @@ export class ItemsPage implements OnInit {
   canDecrement$ = this.facade.canDecrement$;
   allItems$ = this.facade.allItems$;
 
-  readonly suppliers = FOURNISSEURS;
-  readonly statuses = ETATS;
+  readonly suppliers = SUPPLIERS;
+  readonly statuses = STATUSES;
   readonly preps = ['CashGuard', 'Caisse TPV'] as const;
 
   showAddModal = signal(false);

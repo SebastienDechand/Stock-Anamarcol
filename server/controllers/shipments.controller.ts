@@ -352,7 +352,7 @@ export const deleteShipment = async (
  * stored in DB, then purge them. Admin / superadmin only.
  */
 export const createArchive = async (
-  req: Request,
+  _req: Request,
   res: Response,
 ): Promise<void> => {
   try {
@@ -388,7 +388,7 @@ export const createArchive = async (
  * List all archives (without the file buffer).
  */
 export const getArchives = async (
-  req: Request,
+  _req: Request,
   res: Response,
 ): Promise<void> => {
   try {

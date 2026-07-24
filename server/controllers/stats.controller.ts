@@ -41,7 +41,7 @@ export const getDashboardStats = async (
             numberOfArticles: { $sum: 1 },
             totalStock: { $sum: "$quantity" },
             numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantity", 5] }, 1, 0] },
+              $sum: { $cond: [{ $lt: ["$quantity", LOW_STOCK_THRESHOLD] }, 1, 0] },
             },
             suppliers: { $addToSet: "$supplier" },
           },
@@ -54,7 +54,7 @@ export const getDashboardStats = async (
             numberOfArticles: { $sum: 1 },
             totalStock: { $sum: "$quantity" },
             numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantity", 5] }, 1, 0] },
+              $sum: { $cond: [{ $lt: ["$quantity", LOW_STOCK_THRESHOLD] }, 1, 0] },
             },
           },
         },
@@ -67,13 +67,13 @@ export const getDashboardStats = async (
             numberOfArticles: { $sum: 1 },
             totalStock: { $sum: "$quantity" },
             numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantity", 5] }, 1, 0] },
+              $sum: { $cond: [{ $lt: ["$quantity", LOW_STOCK_THRESHOLD] }, 1, 0] },
             },
           },
         },
         { $sort: { _id: 1 } },
       ]),
-      ItemModel.find({ quantity: { $lt: 5 } })
+      ItemModel.find({ quantity: { $lt: LOW_STOCK_THRESHOLD } })
         .sort({ quantity: 1, name: 1 })
         .lean(),
       ItemModel.find({ cgKit: true }).select("name quantity").lean(),
@@ -200,7 +200,7 @@ export const getNumberOfArticlesWithStockBelow5 = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const count = await ItemModel.countDocuments({ quantity: { $lt: 5 } });
+    const count = await ItemModel.countDocuments({ quantity: { $lt: LOW_STOCK_THRESHOLD } });
     res.status(200).json({ numberOfLowStockArticles: count });
   } catch (error) {
     res
@@ -214,7 +214,7 @@ export const getArticlesWithLowStock = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const articles = await ItemModel.find({ quantity: { $lt: 5 } })
+    const articles = await ItemModel.find({ quantity: { $lt: LOW_STOCK_THRESHOLD } })
       .sort({ quantity: 1, name: 1 })
       .lean();
     res.json(articles);
@@ -254,7 +254,7 @@ export const getStatisticsForSupplier = async (
             _id: null,
             totalStock: { $sum: "$quantity" },
             numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantity", 5] }, 1, 0] },
+              $sum: { $cond: [{ $lt: ["$quantity", LOW_STOCK_THRESHOLD] }, 1, 0] },
             },
           },
         },
@@ -298,7 +298,7 @@ export const getStatisticsForStatus = async (
             _id: null,
             totalStock: { $sum: "$quantity" },
             numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantity", 5] }, 1, 0] },
+              $sum: { $cond: [{ $lt: ["$quantity", LOW_STOCK_THRESHOLD] }, 1, 0] },
             },
           },
         },

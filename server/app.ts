@@ -94,7 +94,7 @@ app.use("/api/cameras", cameraRoutes);
 app.use("/api/reminders", reminderRoutes);
 
 // JWT - returns the user ID and roles
-app.get("/jwtid", requireAuth, (req: Request, res: Response) => {
+app.get("/jwtid", requireAuth, (_req: Request, res: Response) => {
   const u = res.locals.user;
   const roles: string[] = u.roles?.length ? u.roles : [u.role || "user"];
   res.status(200).json({

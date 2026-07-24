@@ -16,8 +16,8 @@ import { map } from 'rxjs';
 
 import {
   ACCEPTED_IMAGE_TYPES,
-  ETATS,
-  FOURNISSEURS,
+  STATUSES,
+  SUPPLIERS,
   MAX_FILE_SIZE,
 } from '../../../../shared/constants';
 import { Item, ItemHistory } from '../../../../shared/models/item.model';
@@ -42,8 +42,8 @@ export class EditItemModal implements OnInit, OnDestroy {
   private authFacade = inject(AuthFacade);
   private translate = inject(TranslateService);
 
-  suppliers = FOURNISSEURS;
-  statuses = ETATS;
+  suppliers = SUPPLIERS;
+  statuses = STATUSES;
 
   readonly isAdmin = toSignal(this.authFacade.isAdmin$, { initialValue: false });
   readonly currentUser = toSignal(this.authFacade.user$, { initialValue: null });

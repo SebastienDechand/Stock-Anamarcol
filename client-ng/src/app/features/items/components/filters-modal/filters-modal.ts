@@ -2,7 +2,7 @@ import { Component, OnInit, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { FOURNISSEURS, ETATS } from '../../../../shared/constants';
+import { SUPPLIERS, STATUSES } from '../../../../shared/constants';
 import { togglePrepaFilter } from '../../../../shared/utils/prepa-filter.utils';
 
 export interface FiltersApplied {
@@ -28,8 +28,8 @@ export class FiltersModal implements OnInit {
   applied = output<FiltersApplied>();
   cancelled = output<void>();
 
-  readonly suppliers = FOURNISSEURS;
-  readonly statuses = ETATS;
+  readonly suppliers = SUPPLIERS;
+  readonly statuses = STATUSES;
 
   localSuppliers = signal<string[]>([]);
   localStatuses = signal<string[]>([]);

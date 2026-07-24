@@ -1,4 +1,4 @@
-import VehicleModel, { IVehicle } from "../models/vehicle.model";
+import VehicleModel from "../models/vehicle.model";
 import UserModel from "../models/user.model";
 import { sendVehicleReminder } from "../utils/mailer";
 import { Role } from "../constants";

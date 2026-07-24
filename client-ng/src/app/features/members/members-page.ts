@@ -16,14 +16,13 @@ import { NewUserData, UpdateUserData } from './store/users.actions';
 import { User } from '../../shared/models/user.model';
 import { Role } from '../../shared/constants/roles.constants';
 import {
-  ALL_DEPARTMENT_LABELS,
   DEPARTMENT_MANAGEMENT,
   DEPARTMENT_SITE_MANAGEMENT,
   DEPARTMENT_WAREHOUSE,
 } from '../../shared/constants/poles.constants';
 
 function getUserDepartment(user: User): string {
-  return user.department ?? 'autre';
+  return user.department ?? 'Other';
 }
 
 @Component({
