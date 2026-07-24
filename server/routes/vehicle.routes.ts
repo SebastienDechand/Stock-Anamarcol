@@ -44,15 +44,16 @@ const upload = multer({
   },
 });
 
-// ─── Public Routes (require authentication) ──────────
+// #region Vehicle routes (require authentication)
 router.get("/", requireAdmin, getAllVehicles);
 router.get("/search", requireAdmin, searchVehicles);
 router.get("/:id", requireAdmin, getVehicleById);
 router.post("/", requireAdmin, createVehicle);
 router.put("/:id", requireAdmin, updateVehicle);
 router.delete("/:id", requireAdmin, deleteVehicle);
+// #endregion
 
-// ─── Document Routes ──────────────────────────────────
+// #region Document routes
 router.post(
   "/:id/documents",
   requireAdmin,
@@ -60,5 +61,6 @@ router.post(
   uploadDocument,
 );
 router.delete("/:id/documents/:docId", requireAdmin, deleteDocument);
+// #endregion
 
 export default router;

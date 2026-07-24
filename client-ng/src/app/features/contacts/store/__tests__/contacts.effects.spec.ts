@@ -70,7 +70,7 @@ describe('ContactsEffects', () => {
     effects = TestBed.inject(ContactsEffects);
   });
 
-  // ─── loadAll$ ────────────────────────────────────────────────────────────
+  // #region loadAll$
 
   describe('loadAll$', () => {
     it('should dispatch loadAllSuccess on success', async () => {
@@ -105,8 +105,9 @@ describe('ContactsEffects', () => {
       expect(result).toEqual(ContactsActions.loadAllFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ─── loadOne$ ────────────────────────────────────────────────────────────
+  // #region loadOne$
 
   describe('loadOne$', () => {
     it('should dispatch loadOneSuccess on success', async () => {
@@ -141,8 +142,9 @@ describe('ContactsEffects', () => {
       expect(result).toEqual(ContactsActions.loadOneFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ─── update$ ─────────────────────────────────────────────────────────────
+  // #region update$
 
   describe('update$', () => {
     const updateData: Partial<Contact> = { name: 'Dupont Updated', position: 'Lead Dev' };
@@ -181,8 +183,9 @@ describe('ContactsEffects', () => {
       expect(result).toEqual(ContactsActions.updateContactFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 
-  // ─── uploadPicture$ ───────────────────────────────────────────────────────
+  // #region uploadPicture$
 
   describe('uploadPicture$', () => {
     let formData: FormData;
@@ -243,4 +246,5 @@ describe('ContactsEffects', () => {
       expect(result).toEqual(ContactsActions.uploadPictureFailure({ error: 'Erreur' }));
     });
   });
+  // #endregion
 });

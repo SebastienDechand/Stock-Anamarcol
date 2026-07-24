@@ -1,6 +1,6 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
-// ─── Document sub-document ───────────────────────────────────────────────────
+// #region Document sub-document
 export type ClientFileDocType =
   | "purchase_order"
   | "report"
@@ -16,8 +16,9 @@ export interface IClientFileDoc {
   uploadedAt: Date;
   uploadedBy?: string;
 }
+// #endregion
 
-// ─── Equipment sub-document ───────────────────────────────────────────────────
+// #region Equipment sub-document
 export interface IEquipement {
   cashguardCount: number;
   fusionCount: number;
@@ -33,8 +34,9 @@ export interface IEquipement {
   electronicLabels: boolean;
   loyaltyCard: boolean;
 }
+// #endregion
 
-// ─── Main interface ───────────────────────────────────────────────────────────
+// #region Main interface
 export interface IClientFile extends Document {
   // Identity
   company?: string;
@@ -69,7 +71,7 @@ export interface IClientFile extends Document {
   documents: IClientFileDoc[];
   // Link to existing contact (optional)
   contactRef?: Types.ObjectId;
-  // Installation dates (filled by installer via rapport)
+  // Installation dates (filled in by the installer via the intervention report)
   dateInstallation?: Date;
   dateRenouvellement?: Date;
   // Meta
@@ -77,6 +79,7 @@ export interface IClientFile extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+// #endregion
 
 const equipementSchema = new Schema<IEquipement>(
   {

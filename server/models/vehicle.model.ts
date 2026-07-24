@@ -1,6 +1,6 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
-// ─── Document sub-document pour factures et documents ──
+// #region Document sub-document (for invoices and documents)
 export interface IVehicleDoc {
   _id: Types.ObjectId;
   name: string;
@@ -9,8 +9,9 @@ export interface IVehicleDoc {
   uploadedAt: Date;
   uploadedBy?: string;
 }
+// #endregion
 
-// ─── Main interface ───────────────────────────────────
+// #region Main interface
 // `Omit<Document, "model">` avoids a naming collision with Mongoose's own
 // `Document.model()` method, which our `model` field would otherwise clash
 // with (Document, unlike Schema, uses "model" as a reserved instance method).
@@ -41,8 +42,9 @@ export interface IVehicle extends Omit<Document, "model"> {
   createdAt: Date;
   updatedAt: Date;
 }
+// #endregion
 
-// ─── Schema ──────────────────────────────────────────
+// #region Schema
 const vehicleDocSchema = new Schema<IVehicleDoc>(
   {
     name: { type: String, required: true },
@@ -111,6 +113,7 @@ const VehicleModel: Model<IVehicle> = mongoose.model<IVehicle>(
   "vehicle",
   vehicleSchema,
 );
+// #endregion
 
 // Drop legacy index left over from when the field was named "immatriculation"
 VehicleModel.collection.dropIndex("immatriculation_1").catch(() => {

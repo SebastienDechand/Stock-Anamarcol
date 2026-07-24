@@ -27,7 +27,7 @@ describe("history.utils", () => {
     vi.restoreAllMocks();
   });
 
-  // ─── logItemCreate ─────────────────────────────────────
+  // #region logItemCreate
   describe("logItemCreate", () => {
     it("should create a history entry with action 'create'", async () => {
       mockCreate.mockResolvedValue({});
@@ -48,8 +48,9 @@ describe("history.utils", () => {
       expect(console.error).toHaveBeenCalled();
     });
   });
+  // #endregion
 
-  // ─── logItemDelete ─────────────────────────────────────
+  // #region logItemDelete
   describe("logItemDelete", () => {
     it("should create a history entry with action 'delete'", async () => {
       mockCreate.mockResolvedValue({});
@@ -73,8 +74,9 @@ describe("history.utils", () => {
       ).resolves.toBeUndefined();
     });
   });
+  // #endregion
 
-  // ─── logItemChanges ────────────────────────────────────
+  // #region logItemChanges
   describe("logItemChanges", () => {
     it("should track quantity change", async () => {
       mockInsertMany.mockResolvedValue([]);
@@ -172,4 +174,5 @@ describe("history.utils", () => {
       expect(console.error).toHaveBeenCalled();
     });
   });
+  // #endregion
 });

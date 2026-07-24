@@ -40,7 +40,7 @@ describe("Reminder Vehicle Service", () => {
     vi.useRealTimers();
   });
 
-  // ─── No superadmins ────────────────────────────────────
+  // #region No superadmins
   describe("checkAndSendVehicleReminders", () => {
     it("should return empty array and warn when no superadmins found", async () => {
       mockUserFind.mockReturnValue({
@@ -51,11 +51,11 @@ describe("Reminder Vehicle Service", () => {
 
       expect(result).toEqual([]);
       expect(console.warn).toHaveBeenCalledWith(
-        "[Reminder] Aucun superadmin trouvé pour envoyer les rappels",
+        "[Reminder] No superadmin found to send reminders to",
       );
     });
 
-    // ─── Find vehicles and check reminders ──────────────
+    // #region Find vehicles and check reminders
     it("should detect and send revision reminder at 30 days", async () => {
       // serviceDate is the last service date, next service = serviceDate + 365 days
       // If today is 2026-04-23, then next service should be 30 days from now = 2026-05-23
@@ -98,6 +98,7 @@ describe("Reminder Vehicle Service", () => {
       });
       expect(mockSendVehicleReminder).toHaveBeenCalled();
     });
+    // #endregion
 
     it("should detect and send CT reminder at 7 days", async () => {
       const ctDate = new Date("2026-04-30"); // 7 days from now
@@ -286,14 +287,12 @@ describe("Reminder Vehicle Service", () => {
 
       expect(result).toHaveLength(1);
       expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining("[Reminder] Erreur envoi rappel CT"),
+        expect.stringContaining("[Reminder] Error sending inspection reminder"),
         expect.any(Error),
       );
     });
 
     it("should detect multiple reminders for same vehicle", async () => {
-      // Revision: lastRevision = 2025-05-23 → next = 2026-05-23 (30 days from now: 2026-04-23)
-      // CT: expires 2026-04-30 (7 days from now)
       const lastRevisionDate = new Date("2025-05-23");
       const ctExpirationDate = new Date("2026-04-30");
 
@@ -330,4 +329,5 @@ describe("Reminder Vehicle Service", () => {
       expect(result[1].reminderType).toBe("1_week");
     });
   });
+  // #endregion
 });

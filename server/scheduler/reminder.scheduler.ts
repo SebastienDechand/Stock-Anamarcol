@@ -2,29 +2,29 @@ import cron from "node-cron";
 import { checkAndSendVehicleReminders } from "../services/reminderVehicle.service";
 
 /**
- * Démarre le scheduler pour les rappels véhicules
- * Exécute chaque jour à 08:00 (Europe/Paris)
+ * Starts the vehicle reminders scheduler.
+ * Runs every day at 08:00 (Europe/Paris).
  */
 export function startReminderScheduler(): void {
-  // Expression cron : "0 8 * * *" = chaque jour à 08:00
+  // Cron expression: "0 8 * * *" = every day at 08:00
   cron.schedule(
     "0 8 * * *",
     async () => {
       console.log(
-        "[Scheduler] Démarrage de la vérification des rappels véhicules...",
+        "[Scheduler] Starting vehicle reminders check...",
       );
       try {
         const reminders = await checkAndSendVehicleReminders();
         if (reminders.length > 0) {
           console.log(
-            `[Scheduler] ${reminders.length} rappel(s) envoyé(s) avec succès`,
+            `[Scheduler] ${reminders.length} reminder(s) sent successfully`,
           );
         } else {
-          console.log("[Scheduler] Aucun rappel à envoyer aujourd'hui");
+          console.log("[Scheduler] No reminders to send today");
         }
       } catch (error) {
         console.error(
-          "[Scheduler] Erreur lors de la vérification des rappels:",
+          "[Scheduler] Error while checking reminders:",
           error,
         );
       }
@@ -35,6 +35,6 @@ export function startReminderScheduler(): void {
   );
 
   console.log(
-    "[Scheduler] Rappels véhicules activés (chaque jour à 08:00 CET)",
+    "[Scheduler] Vehicle reminders enabled (every day at 08:00 CET)",
   );
 }

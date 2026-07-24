@@ -123,20 +123,22 @@ describe('ClientFileDetailPage', () => {
     fixture.detectChanges();
   });
 
-  // ─── Smoke test ──────────────────────────────────────────────────────────────
+  // #region Smoke test
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  // #endregion
 
-  // ─── ngOnInit ────────────────────────────────────────────────────────────────
+  // #region ngOnInit
 
   it('ngOnInit calls filesFacade.loadOne and interventionReportsFacade.loadByClientFile with the route id', () => {
     expect(filesFacade.loadOne).toHaveBeenCalledWith('file-id-1');
     expect(interventionReportsFacade.loadByClientFile).toHaveBeenCalledWith('file-id-1');
   });
+  // #endregion
 
-  // ─── openWizard() ────────────────────────────────────────────────────────────
+  // #region openWizard()
 
   describe('openWizard()', () => {
     it('sets wizardOpen to true and editReport to null when called without argument', () => {
@@ -158,8 +160,9 @@ describe('ClientFileDetailPage', () => {
       expect(component.editReport()).toBe(report);
     });
   });
+  // #endregion
 
-  // ─── onWizardSaved() ─────────────────────────────────────────────────────────
+  // #region onWizardSaved()
 
   describe('onWizardSaved()', () => {
     it('sets wizardOpen to false and editReport to null', () => {
@@ -180,8 +183,9 @@ describe('ClientFileDetailPage', () => {
       expect(interventionReportsFacade.loadByClientFile).toHaveBeenCalledWith('file-id-1');
     });
   });
+  // #endregion
 
-  // ─── confirmDeleteReport() ───────────────────────────────────────────────────
+  // #region confirmDeleteReport()
 
   describe('confirmDeleteReport()', () => {
     it('calls interventionReportsFacade.delete with the deleteReportId and clears the signal', () => {
@@ -203,8 +207,9 @@ describe('ClientFileDetailPage', () => {
       expect(interventionReportsFacade.delete).not.toHaveBeenCalled();
     });
   });
+  // #endregion
 
-  // ─── formatDate() ────────────────────────────────────────────────────────────
+  // #region formatDate()
 
   describe('formatDate()', () => {
     it('returns "-" for undefined', () => {
@@ -217,8 +222,9 @@ describe('ClientFileDetailPage', () => {
       expect(result).toMatch(/15.06.2024/);
     });
   });
+  // #endregion
 
-  // ─── getClientLabel() ────────────────────────────────────────────────────────
+  // #region getClientLabel()
 
   describe('getClientLabel()', () => {
     it('returns "NOM firstName - company" when all fields are set', () => {
@@ -237,8 +243,9 @@ describe('ClientFileDetailPage', () => {
       expect(label).toBe('DUPONT');
     });
   });
+  // #endregion
 
-  // ─── hasSlots() ──────────────────────────────────────────────────────────────
+  // #region hasSlots()
 
   describe('hasSlots()', () => {
     it('returns true when at least one cassetteSlot is non-empty', () => {
@@ -268,8 +275,9 @@ describe('ClientFileDetailPage', () => {
       expect(component.hasSlots(unit)).toBe(true);
     });
   });
+  // #endregion
 
-  // ─── getTwRegisters() ────────────────────────────────────────────────────────
+  // #region getTwRegisters()
 
   describe('getTwRegisters()', () => {
     it('returns twRegisters array when it has items', () => {
@@ -295,8 +303,9 @@ describe('ClientFileDetailPage', () => {
       expect(component.getTwRegisters(report)).toEqual([]);
     });
   });
+  // #endregion
 
-  // ─── sentCount / pendingCount ─────────────────────────────────────────────────
+  // #region sentCount / pendingCount
 
   describe('sentCount and pendingCount computed signals', () => {
     it('reflects correct counts from the shipments signal', () => {
@@ -319,4 +328,5 @@ describe('ClientFileDetailPage', () => {
       expect(component.pendingCount()).toBe(0);
     });
   });
+  // #endregion
 });

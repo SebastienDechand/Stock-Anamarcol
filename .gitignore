@@ -1,5 +1,4 @@
 o2switch.txt
-.claude
 *.env
 .env*
 node_modules/

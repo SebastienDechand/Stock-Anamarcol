@@ -6,8 +6,7 @@ const router = Router();
 
 /**
  * POST /api/reminders/vehicles/send
- * Déclenche l'envoi des rappels véhicules
- * Requiert rôle SUPERADMIN
+ * Triggers vehicle reminder emails. Requires SUPERADMIN role.
  */
 router.post("/vehicles/send", requireSuperAdmin, sendVehicleReminders);
 

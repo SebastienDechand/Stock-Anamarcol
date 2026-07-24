@@ -61,7 +61,7 @@ describe("Item Controller", () => {
     vi.restoreAllMocks();
   });
 
-  // ─── itemInfo ──────────────────────────────────────────
+  // #region itemInfo
   describe("itemInfo", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "invalid-id" };
@@ -97,8 +97,9 @@ describe("Item Controller", () => {
       expect(res.json).toHaveBeenCalledWith(mockItem);
     });
   });
+  // #endregion
 
-  // ─── readItem ──────────────────────────────────────────
+  // #region readItem
   describe("readItem", () => {
     it("should return paginated items", async () => {
       req.query = { page: "1", limit: "10" };
@@ -171,8 +172,9 @@ describe("Item Controller", () => {
       );
     });
   });
+  // #endregion
 
-  // ─── createItem ────────────────────────────────────────
+  // #region createItem
   describe("createItem", () => {
     it("should create an item successfully", async () => {
       req.body = {
@@ -202,8 +204,9 @@ describe("Item Controller", () => {
       expect(res.status).toHaveBeenCalledWith(400);
     });
   });
+  // #endregion
 
-  // ─── updateItem ────────────────────────────────────────
+  // #region updateItem
   describe("updateItem", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "bad-id" };
@@ -267,8 +270,9 @@ describe("Item Controller", () => {
       expect(mockItem.quantity).toBe(0);
     });
   });
+  // #endregion
 
-  // ─── deleteItem ────────────────────────────────────────
+  // #region deleteItem
   describe("deleteItem", () => {
     it("should return 400 when ID is invalid", async () => {
       req.params = { id: "bad-id" };
@@ -296,8 +300,9 @@ describe("Item Controller", () => {
       });
     });
   });
+  // #endregion
 
-  // ─── prepaBatch ──────────────────────────────────────
+  // #region prepaBatch
   describe("prepaBatch", () => {
     it("should return 400 when prepa is invalid", async () => {
       req.body = { prepa: "invalid", operation: "decrement" };
@@ -382,4 +387,5 @@ describe("Item Controller", () => {
       expect(mockItems[0].save).not.toHaveBeenCalled();
     });
   });
+  // #endregion
 });

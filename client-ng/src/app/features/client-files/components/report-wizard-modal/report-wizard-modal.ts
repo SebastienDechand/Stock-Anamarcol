@@ -67,7 +67,6 @@ export class ReportWizardModal implements OnChanges {
   readonly chevDown = ChevronDown;
   readonly chevUp = ChevronUp;
 
-  // ─── State ───────────────────────────────────────────────────────────────────
   step = signal<1 | 2>(1);
   twRegisters = signal<string[]>(['']);
   twPc = signal('');
@@ -97,7 +96,6 @@ export class ReportWizardModal implements OnChanges {
     };
   }
 
-  // ─── Lifecycle ───────────────────────────────────────────────────────────────
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['existing']) {
       const e = this.existing();
@@ -124,7 +122,6 @@ export class ReportWizardModal implements OnChanges {
     }
   }
 
-  // ─── TW Registers ────────────────────────────────────────────────────────────
   addRegister(): void {
     this.twRegisters.update((previous) => [...previous, '']);
   }
@@ -139,7 +136,6 @@ export class ReportWizardModal implements OnChanges {
     );
   }
 
-  // ─── CashGuard units ─────────────────────────────────────────────────────────
   addUnit(): void {
     this.units.update((previous) => [...previous, emptyUnit()]);
     this.expandedUnit.set(this.units().length - 1);
@@ -182,7 +178,6 @@ export class ReportWizardModal implements OnChanges {
     this.setUnitField(index, 'assignedRegisters', list);
   }
 
-  // ─── Submit ──────────────────────────────────────────────────────────────────
   submit(): void {
     if (this.loading()) return;
     this.loading.set(true);

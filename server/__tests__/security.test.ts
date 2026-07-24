@@ -36,13 +36,14 @@ beforeAll(() => {
 });
 
 describe("Security - Route protection", () => {
-  // ─── User routes require auth ────────────────────────
+  // #region User routes require auth
   describe("GET /api/user/ (list all users)", () => {
     it("should return 401 without JWT", async () => {
       const res = await request(app).get("/api/user/");
       expect(res.status).toBe(401);
     });
   });
+  // #endregion
 
   describe("GET /api/user/:id (user info)", () => {
     it("should return 401 without JWT", async () => {
@@ -69,31 +70,34 @@ describe("Security - Route protection", () => {
     });
   });
 
-  // ─── Item routes require auth ────────────────────────
+  // #region Item routes require auth
   describe("GET /api/item/ (list items)", () => {
     it("should return 401 without JWT", async () => {
       const res = await request(app).get("/api/item/");
       expect(res.status).toBe(401);
     });
   });
+  // #endregion
 
-  // ─── Contacts routes require auth ────────────────────
+  // #region Contacts routes require auth
   describe("GET /api/contacts/ (list contacts)", () => {
     it("should return 401 without JWT", async () => {
       const res = await request(app).get("/api/contacts/");
       expect(res.status).toBe(401);
     });
   });
+  // #endregion
 
-  // ─── Statistics routes require auth ──────────────────
+  // #region Statistics routes require auth
   describe("GET /api/statistics/dashboard", () => {
     it("should return 401 without JWT", async () => {
       const res = await request(app).get("/api/statistics/dashboard");
       expect(res.status).toBe(401);
     });
   });
+  // #endregion
 
-  // ─── Admin-only routes return 401 ────────────────────
+  // #region Admin-only routes return 401
   describe("DELETE /api/user/:id (delete user)", () => {
     it("should return 401 without JWT", async () => {
       const res = await request(app).delete(
@@ -102,6 +106,7 @@ describe("Security - Route protection", () => {
       expect(res.status).toBe(401);
     });
   });
+  // #endregion
 
   describe("DELETE /api/item/:id (delete item)", () => {
     it("should return 401 without JWT", async () => {

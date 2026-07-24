@@ -44,27 +44,22 @@ function getUserDepartment(user: User): string {
   styleUrl: './members-page.scss',
 })
 export class MembersPage {
-  // ─── Context & Redux ────────────────────────────────
   protected facade = inject(UsersFacade);
   private authFacade = inject(AuthFacade);
 
-  // ─── Streams ─────────────────────────────────────────
   users$ = this.facade.users$;
   isLoading$ = this.facade.isLoading$;
   readonly isAdmin = toSignal(this.authFacade.isAdmin$, { initialValue: false });
   readonly isSuperadmin = toSignal(this.authFacade.isSuperadmin$, { initialValue: false });
 
-  // ─── Local State ────────────────────────────────────
   showAddModal = signal(false);
   editingUser = signal<User | null>(null);
   deletingUser = signal<User | null>(null);
 
-  // ─── Constants ───────────────────────────────────────
   readonly departmentManagement = DEPARTMENT_MANAGEMENT;
   readonly departmentSiteManagement = DEPARTMENT_SITE_MANAGEMENT;
   readonly departmentWarehouse = DEPARTMENT_WAREHOUSE;
 
-  // ─── Helpers ─────────────────────────────────────────
   byDepartment(users: User[], department: string): User[] {
     return users.filter((user) => getUserDepartment(user) === department);
   }
@@ -79,7 +74,6 @@ export class MembersPage {
     return this.isAdmin() || this.isSuperadmin();
   }
 
-  // ─── Handlers ────────────────────────────────────────
   openEditModal(user: User) {
     this.editingUser.set(user);
   }

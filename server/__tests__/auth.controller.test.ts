@@ -39,7 +39,7 @@ describe("Auth Controller", () => {
     vi.restoreAllMocks();
   });
 
-  // ─── signUp ────────────────────────────────────────────
+  // #region signUp
   describe("signUp", () => {
     it("should create a user and return 200 with user ID", async () => {
       req.body = {
@@ -132,8 +132,9 @@ describe("Auth Controller", () => {
       expect(res.status).toHaveBeenCalledWith(400);
     });
   });
+  // #endregion
 
-  // ─── signIn ────────────────────────────────────────────
+  // #region signIn
   describe("signIn", () => {
     it("should login, set cookie, and return user ID + role", async () => {
       req.body = { email: "test@test.com", password: "Password1" };
@@ -181,8 +182,9 @@ describe("Auth Controller", () => {
       expect(res.status).toHaveBeenCalledWith(400);
     });
   });
+  // #endregion
 
-  // ─── logout ────────────────────────────────────────────
+  // #region logout
   describe("logout", () => {
     it("should clear the JWT cookie and return 200", async () => {
       await logout(req as Request, res as Response);
@@ -195,4 +197,5 @@ describe("Auth Controller", () => {
       });
     });
   });
+  // #endregion
 });

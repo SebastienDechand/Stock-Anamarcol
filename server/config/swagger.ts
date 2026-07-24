@@ -81,7 +81,7 @@ const options: swaggerJsdoc.Options = {
     },
     security: [{ cookieAuth: [] }],
     paths: {
-      // ─── Auth ───
+      // #region Auth
       "/api/user/register": {
         post: {
           tags: ["Auth"],
@@ -148,7 +148,8 @@ const options: swaggerJsdoc.Options = {
           },
         },
       },
-      // ─── Users ───
+      // #endregion
+      // #region Users
       "/api/user": {
         get: {
           tags: ["Users"],
@@ -283,7 +284,8 @@ const options: swaggerJsdoc.Options = {
           },
         },
       },
-      // ─── Items ───
+      // #endregion
+      // #region Items
       "/api/item": {
         get: {
           tags: ["Items"],
@@ -469,7 +471,8 @@ const options: swaggerJsdoc.Options = {
           },
         },
       },
-      // ─── Contacts ───
+      // #endregion
+      // #region Contacts
       "/api/contacts": {
         get: {
           tags: ["Contacts"],
@@ -558,7 +561,8 @@ const options: swaggerJsdoc.Options = {
           responses: { 200: { description: "OK" } },
         },
       },
-      // ─── History / Audit ───
+      // #endregion
+      // #region History
       "/api/history": {
         get: {
           tags: ["History"],
@@ -577,7 +581,8 @@ const options: swaggerJsdoc.Options = {
           },
         },
       },
-      // ─── Shipments / Envois ───
+      // #endregion
+      // #region Shipments
       "/api/shipments": {
         get: {
           tags: ["Shipments"],
@@ -676,7 +681,8 @@ const options: swaggerJsdoc.Options = {
           },
         },
       },
-      // ─── Statistics ───
+      // #endregion
+      // #region Statistics
       "/api/statistics/dashboard": {
         get: {
           tags: ["Statistics"],
@@ -763,6 +769,7 @@ const options: swaggerJsdoc.Options = {
           responses: { 200: { description: "OK" } },
         },
       },
+      // #endregion
     },
   },
   apis: [],

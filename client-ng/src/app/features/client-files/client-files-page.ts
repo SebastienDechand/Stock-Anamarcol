@@ -45,18 +45,15 @@ const ITEMS_PER_PAGE = 9;
   styleUrl: './client-files-page.scss',
 })
 export class ClientFilesPage implements OnInit {
-  // ─── Context & Redux ────────────────────────────────
   protected facade = inject(ClientFilesFacade);
   private authFacade = inject(AuthFacade);
   private router = inject(Router);
 
-  // ─── Streams ─────────────────────────────────────────
   isLoading$ = this.facade.isLoading$;
   clientFiles$ = this.facade.clientFiles$;
   isMonteur$ = this.authFacade.isMonteur$;
   isAdmin$ = this.authFacade.isAdmin$;
 
-  // ─── Icons ───────────────────────────────────────────
   readonly plus = Plus;
   readonly search = Search;
   readonly folderOpen = FolderOpen;
@@ -70,19 +67,16 @@ export class ClientFilesPage implements OnInit {
   readonly phone = Phone;
   readonly mail = Mail;
 
-  // ─── Local State ────────────────────────────────────
   searchTerm = signal('');
   currentPage = signal(1);
   modalOpen = signal(false);
   editTarget = signal<ClientFile | null>(null);
   deletingFile = signal<ClientFile | null>(null);
 
-  // ─── Side Effects ─────────────────────────────────────
   ngOnInit(): void {
     this.facade.loadAll();
   }
 
-  // ─── Helpers ─────────────────────────────────────────
   filter(files: ClientFile[]): ClientFile[] {
     const q = this.searchTerm().toLowerCase().trim();
     const sorted = [...files].sort((a, b) =>
@@ -125,7 +119,6 @@ export class ClientFilesPage implements OnInit {
     return file.company ? `${parts} - ${file.company}` : parts;
   }
 
-  // ─── Handlers ────────────────────────────────────────
   openDossier(file: ClientFile): void {
     this.facade.setSelected(file);
     this.router.navigate(['/client-files', file._id]);

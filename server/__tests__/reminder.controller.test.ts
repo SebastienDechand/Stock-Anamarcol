@@ -28,7 +28,7 @@ describe("Reminder Controller", () => {
     vi.restoreAllMocks();
   });
 
-  // ─── sendVehicleReminders ──────────────────────────────
+  // #region sendVehicleReminders
   describe("sendVehicleReminders", () => {
     it("should return 200 with reminders when checks find results", async () => {
       const mockReminders = [
@@ -97,4 +97,5 @@ describe("Reminder Controller", () => {
       });
     });
   });
+  // #endregion
 });

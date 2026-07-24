@@ -49,7 +49,7 @@ describe("Auth Middleware", () => {
     vi.clearAllMocks();
   });
 
-  // ─── checkUser ─────────────────────────────────────────
+  // #region checkUser
   describe("checkUser", () => {
     it("should call next with user = null when no token", () => {
       checkUser(req as Request, res as Response, next);
@@ -80,8 +80,9 @@ describe("Auth Middleware", () => {
       expect(next).toHaveBeenCalled();
     });
   });
+  // #endregion
 
-  // ─── requireAuth ───────────────────────────────────────
+  // #region requireAuth
   describe("requireAuth", () => {
     it("should return 401 when no token is provided", () => {
       requireAuth(req as Request, res as Response, next);
@@ -114,8 +115,9 @@ describe("Auth Middleware", () => {
       expect(next).toHaveBeenCalled();
     });
   });
+  // #endregion
 
-  // ─── requireAdmin ──────────────────────────────────────
+  // #region requireAdmin
   describe("requireAdmin", () => {
     it("should return 401 when no token is provided", () => {
       requireAdmin(req as Request, res as Response, next);
@@ -149,8 +151,9 @@ describe("Auth Middleware", () => {
       });
     });
   });
+  // #endregion
 
-  // ─── requireSuperAdmin ───────────────────────────────
+  // #region requireSuperAdmin
   describe("requireSuperAdmin", () => {
     it("should return 401 when no token is provided", () => {
       requireSuperAdmin(req as Request, res as Response, next);
@@ -188,8 +191,9 @@ describe("Auth Middleware", () => {
       });
     });
   });
+  // #endregion
 
-  // ─── requireHotline ───────────────────────────────
+  // #region requireHotline
   describe("requireHotline", () => {
     it("should return 401 when no token is provided", () => {
       requireHotline(req as Request, res as Response, next);
@@ -217,8 +221,9 @@ describe("Auth Middleware", () => {
       });
     });
   });
+  // #endregion
 
-  // ─── requireMonteur ───────────────────────────────
+  // #region requireMonteur
   describe("requireMonteur", () => {
     it("should return 401 when no token is provided", () => {
       requireMonteur(req as Request, res as Response, next);
@@ -256,4 +261,5 @@ describe("Auth Middleware", () => {
       });
     });
   });
+  // #endregion
 });

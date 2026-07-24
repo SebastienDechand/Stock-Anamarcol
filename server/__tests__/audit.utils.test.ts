@@ -24,7 +24,7 @@ describe("audit.utils", () => {
     vi.restoreAllMocks();
   });
 
-  // ─── logEvent ──────────────────────────────────────────
+  // #region logEvent
   describe("logEvent", () => {
     it("should create an audit entry with all fields", async () => {
       mockCreate.mockResolvedValue({});
@@ -67,8 +67,9 @@ describe("audit.utils", () => {
       );
     });
   });
+  // #endregion
 
-  // ─── getRecentEvents ──────────────────────────────────
+  // #region getRecentEvents
   describe("getRecentEvents", () => {
     it("should query with default limit and empty filter", async () => {
       const mockLean = vi.fn().mockResolvedValue([{ action: "login" }]);
@@ -96,4 +97,5 @@ describe("audit.utils", () => {
       expect(mockLimit).toHaveBeenCalledWith(50);
     });
   });
+  // #endregion
 });

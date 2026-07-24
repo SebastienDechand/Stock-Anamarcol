@@ -1,7 +1,7 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
 
 export interface IShipment extends Document {
-  /* ── Client card ── */
+  // #region Client card
   lastName: string;
   firstName: string;
   phone?: string;
@@ -12,7 +12,8 @@ export interface IShipment extends Document {
   city: string;
   companyOrRole: string;
   company: string;
-  /* ── Shipment ── */
+  // #endregion
+  // #region Shipment
   part: string;
   clientFile?: Types.ObjectId;
   requestDate?: Date;
@@ -23,6 +24,7 @@ export interface IShipment extends Document {
   sentBy?: string;
   createdAt: Date;
   updatedAt: Date;
+  // #endregion
 }
 
 const ShipmentSchema = new Schema<IShipment>(

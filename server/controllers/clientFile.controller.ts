@@ -8,7 +8,7 @@ import { validateObjectId } from "../utils/validate.utils";
 import { logEvent } from "../utils/audit.utils";
 import { ErrorCode } from "../constants/errorCodes";
 
-// ─── Multer config for client file documents ───────────────────────────────────
+// #region Multer config for client file documents
 const UPLOAD_DIR = path.join(process.cwd(), "uploads", "client-files");
 
 export const docUpload = multer({
@@ -41,8 +41,9 @@ export const docUpload = multer({
       );
   },
 });
+// #endregion
 
-// ─── List all client files ────────────────────────────────────────────────────
+// #region List all client files
 export const getClientFiles = async (
   _req: Request,
   res: Response,
@@ -60,8 +61,9 @@ export const getClientFiles = async (
       .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
+// #endregion
 
-// ─── Get one client file ──────────────────────────────────────────────────────
+// #region Get one client file
 export const getClientFile = async (
   req: Request,
   res: Response,
@@ -87,8 +89,9 @@ export const getClientFile = async (
       .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
+// #endregion
 
-// ─── Create client file ───────────────────────────────────────────────────────
+// #region Create client file
 export const createClientFile = async (
   req: Request,
   res: Response,
@@ -96,8 +99,8 @@ export const createClientFile = async (
   try {
     const data = { ...req.body, createdBy: res.locals.user?.username };
 
-    // ─── Duplicate check ─────────────────────────────────────────────────────
-    // 1. SIRET + address (même enseigne, même boutique)
+    // Duplicate check
+    // 1. SIRET + address (same brand, same store)
     if (data.siret?.trim() && data.address?.trim()) {
       const bySiretAddr = await ClientFileModel.findOne({
         siret: data.siret.trim(),
@@ -145,8 +148,9 @@ export const createClientFile = async (
     });
   }
 };
+// #endregion
 
-// ─── Update client file ───────────────────────────────────────────────────────
+// #region Update client file
 export const updateClientFile = async (
   req: Request,
   res: Response,
@@ -211,8 +215,9 @@ export const updateClientFile = async (
     });
   }
 };
+// #endregion
 
-// ─── Delete client file ───────────────────────────────────────────────────────
+// #region Delete client file
 export const deleteClientFile = async (
   req: Request,
   res: Response,
@@ -246,8 +251,9 @@ export const deleteClientFile = async (
       .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
   }
 };
+// #endregion
 
-// ─── Upload a document to a client file ───────────────────────────────────────
+// #region Upload a document to a client file
 export const uploadDocument = async (
   req: Request,
   res: Response,
@@ -291,8 +297,9 @@ export const uploadDocument = async (
     });
   }
 };
+// #endregion
 
-// ─── Delete a document from a client file ─────────────────────────────────────
+// #region Delete a document from a client file
 export const deleteDocument = async (
   req: Request,
   res: Response,
@@ -340,3 +347,4 @@ export const deleteDocument = async (
     });
   }
 };
+// #endregion

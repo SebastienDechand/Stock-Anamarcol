@@ -11,7 +11,7 @@ process.on("unhandledRejection", (reason) => {
   console.error("Unhandled rejection (suppressed):", reason);
 });
 
-// ── DNS-over-HTTPS resolver (port 443, never blocked by VPNs) ──
+// #region DNS-over-HTTPS resolver (port 443, never blocked by VPNs)
 
 interface DoHAnswer {
   data: string;
@@ -71,8 +71,9 @@ async function resolveSrvViaDoH(): Promise<string> {
 
   return `mongodb://${encodedCreds}@${hosts.join(",")}/${DB_NAME}?tls=true${txtOptions}`;
 }
+// #endregion
 
-// ── Connection strategy ──
+// #region Connection strategy
 
 /**
  * 1. Try standard SRV resolution (works on normal networks)
@@ -132,5 +133,6 @@ mongoose.connection.on("disconnected", () => {
 mongoose.connection.on("error", (err) => {
   console.error("MongoDB connection error:", err.message);
 });
+// #endregion
 
 export const connectDB = connectWithRetry;

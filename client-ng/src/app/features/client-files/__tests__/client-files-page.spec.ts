@@ -96,7 +96,7 @@ describe('ClientFilesPage', () => {
     expect(facade.loadAll).toHaveBeenCalledTimes(1);
   });
 
-  // ─── filter() ────────────────────────────────────────────────────────────────
+  // #region filter()
 
   describe('filter()', () => {
     it('returns files sorted by lastName when no searchTerm', () => {
@@ -139,8 +139,9 @@ describe('ClientFilesPage', () => {
       expect(result[0].company).toBe('SARL Dupont');
     });
   });
+  // #endregion
 
-  // ─── paginate() ───────────────────────────────────────────────────────────────
+  // #region paginate()
 
   describe('paginate()', () => {
     it('returns the first 9 items for page 1', () => {
@@ -165,8 +166,9 @@ describe('ClientFilesPage', () => {
       expect(result[5]._id).toBe('14');
     });
   });
+  // #endregion
 
-  // ─── totalPages() ─────────────────────────────────────────────────────────────
+  // #region totalPages()
 
   describe('totalPages()', () => {
     it('returns 1 for 9 or fewer items', () => {
@@ -183,8 +185,9 @@ describe('ClientFilesPage', () => {
       expect(component.totalPages(files)).toBe(2);
     });
   });
+  // #endregion
 
-  // ─── displayName() ────────────────────────────────────────────────────────────
+  // #region displayName()
 
   describe('displayName()', () => {
     it('returns "NOM firstName" when no company', () => {
@@ -197,8 +200,9 @@ describe('ClientFilesPage', () => {
       expect(component.displayName(file)).toBe('DUPONT Jean - SARL Dupont');
     });
   });
+  // #endregion
 
-  // ─── openCreate() ─────────────────────────────────────────────────────────────
+  // #region openCreate()
 
   describe('openCreate()', () => {
     it('sets editTarget to null and opens the modal', () => {
@@ -212,8 +216,9 @@ describe('ClientFilesPage', () => {
       expect(component.modalOpen()).toBe(true);
     });
   });
+  // #endregion
 
-  // ─── onModalClose() ───────────────────────────────────────────────────────────
+  // #region onModalClose()
 
   describe('onModalClose()', () => {
     it('closes the modal and clears editTarget', () => {
@@ -226,8 +231,9 @@ describe('ClientFilesPage', () => {
       expect(component.editTarget()).toBeNull();
     });
   });
+  // #endregion
 
-  // ─── onModalSave() ────────────────────────────────────────────────────────────
+  // #region onModalSave()
 
   describe('onModalSave()', () => {
     it('calls facade.update and not facade.create when id is provided', () => {
@@ -263,8 +269,9 @@ describe('ClientFilesPage', () => {
       expect(component.editTarget()).toBeNull();
     });
   });
+  // #endregion
 
-  // ─── confirmDelete() ──────────────────────────────────────────────────────────
+  // #region confirmDelete()
 
   describe('confirmDelete()', () => {
     it('calls facade.delete with the file id when deletingFile is set', () => {
@@ -295,8 +302,9 @@ describe('ClientFilesPage', () => {
       expect(facade.delete).not.toHaveBeenCalled();
     });
   });
+  // #endregion
 
-  // ─── onSearchChange() ─────────────────────────────────────────────────────────
+  // #region onSearchChange()
 
   describe('onSearchChange()', () => {
     it('resets currentPage to 1', () => {
@@ -307,4 +315,5 @@ describe('ClientFilesPage', () => {
       expect(component.currentPage()).toBe(1);
     });
   });
+  // #endregion
 });
