@@ -164,15 +164,21 @@ describe("Shipments Controller", () => {
   });
 
   describe("markSent", () => {
-    it("should return 404 when not found", async () => {
+    it("should return 400 for invalid ObjectId", async () => {
       req.params = { id: "bad" };
+      await markSent(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+    });
+
+    it("should return 404 when not found", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
       mockShipmentModel.findById.mockResolvedValue(null);
       await markSent(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
     it("should mark as sent", async () => {
-      req.params = { id: "s2" };
+      req.params = { id: "507f1f77bcf86cd799439012" };
       const mockShipment: any = {
         sent: false,
         save: vi.fn().mockResolvedValue({ sent: true }),
@@ -186,8 +192,14 @@ describe("Shipments Controller", () => {
   });
 
   describe("deleteShipment", () => {
+    it("should return 400 for invalid ObjectId", async () => {
+      req.params = { id: "bad" };
+      await deleteShipment(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+    });
+
     it("should delete and respond 200", async () => {
-      req.params = { id: "s3" };
+      req.params = { id: "507f1f77bcf86cd799439013" };
       mockShipmentModel.deleteOne.mockReturnValue({
         exec: vi.fn().mockResolvedValue({ deletedCount: 1 }),
       });
@@ -267,8 +279,14 @@ describe("Shipments Controller", () => {
   });
 
   describe("downloadArchive", () => {
+    it("should return 400 for invalid ObjectId", async () => {
+      req.params = { id: "bad" };
+      await downloadArchive(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(400);
+    });
+
     it("should return 404 when archive not found", async () => {
-      req.params = { id: "missing" };
+      req.params = { id: "507f1f77bcf86cd799439014" };
       mockShipmentArchiveModel.findById.mockReturnValue({
         lean: vi.fn().mockResolvedValue(null),
       });
@@ -277,11 +295,11 @@ describe("Shipments Controller", () => {
     });
 
     it("should send PDF buffer", async () => {
-      req.params = { id: "arc1" };
+      req.params = { id: "507f1f77bcf86cd799439015" };
       const buf = Buffer.from("pdf-data");
       mockShipmentArchiveModel.findById.mockReturnValue({
         lean: vi.fn().mockResolvedValue({
-          _id: "arc1",
+          _id: "507f1f77bcf86cd799439015",
           title: "Janvier 2026",
           fileBuffer: buf,
         }),
@@ -295,12 +313,12 @@ describe("Shipments Controller", () => {
     });
 
     it("should send XLSX buffer when format=xlsx", async () => {
-      req.params = { id: "arc1" };
+      req.params = { id: "507f1f77bcf86cd799439015" };
       req.query = { format: "xlsx" };
       const rawData = [{ Nom: "DUPONT", Prénom: "JEAN" }];
       mockShipmentArchiveModel.findById.mockReturnValue({
         lean: vi.fn().mockResolvedValue({
-          _id: "arc1",
+          _id: "507f1f77bcf86cd799439015",
           title: "Janvier 2026",
           rawData,
           fileBuffer: Buffer.from("pdf"),
@@ -316,11 +334,11 @@ describe("Shipments Controller", () => {
     });
 
     it("should return 400 when xlsx requested but no rawData", async () => {
-      req.params = { id: "arc1" };
+      req.params = { id: "507f1f77bcf86cd799439015" };
       req.query = { format: "xlsx" };
       mockShipmentArchiveModel.findById.mockReturnValue({
         lean: vi.fn().mockResolvedValue({
-          _id: "arc1",
+          _id: "507f1f77bcf86cd799439015",
           title: "Janvier 2026",
           rawData: [],
           fileBuffer: Buffer.from("pdf"),
@@ -331,7 +349,7 @@ describe("Shipments Controller", () => {
     });
 
     it("should return 500 on error", async () => {
-      req.params = { id: "arc1" };
+      req.params = { id: "507f1f77bcf86cd799439015" };
       mockShipmentArchiveModel.findById.mockReturnValue({
         lean: vi.fn().mockRejectedValue(new Error("DB error")),
       });
@@ -342,7 +360,7 @@ describe("Shipments Controller", () => {
 
   describe("markSent – additional", () => {
     it("should set sentAt and sentBy when marking sent", async () => {
-      req.params = { id: "s4" };
+      req.params = { id: "507f1f77bcf86cd799439016" };
       const mockShipment: Record<string, unknown> = {
         sent: false,
         sentAt: undefined,
@@ -361,7 +379,7 @@ describe("Shipments Controller", () => {
     });
 
     it("should return 500 on save error", async () => {
-      req.params = { id: "s5" };
+      req.params = { id: "507f1f77bcf86cd799439017" };
       const mockShipment = {
         sent: false,
         save: vi.fn().mockRejectedValue(new Error("save fail")),
@@ -393,7 +411,7 @@ describe("Shipments Controller", () => {
 
   describe("deleteShipment – additional", () => {
     it("should return 500 on delete error", async () => {
-      req.params = { id: "s6" };
+      req.params = { id: "507f1f77bcf86cd799439018" };
       mockShipmentModel.deleteOne.mockReturnValue({
         exec: vi.fn().mockRejectedValue(new Error("delete fail")),
       });

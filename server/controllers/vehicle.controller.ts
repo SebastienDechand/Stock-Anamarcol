@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 import VehicleModel from "../models/vehicle.model";
 import UserModel from "../models/user.model";
 import { logEvent } from "../utils/audit.utils";
+import { validateObjectId } from "../utils/validate.utils";
 import { ErrorCode } from "../constants/errorCodes";
 
 // #region GET All Vehicles
@@ -26,6 +27,8 @@ export const getAllVehicles = async (_req: Request, res: Response) => {
 export const getVehicleById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    if (!validateObjectId(id as string, res)) return;
+
     const vehicle = await VehicleModel.findById(id).populate(
       "assignedTo",
       "username email position",
@@ -154,6 +157,8 @@ export const createVehicle = async (req: Request, res: Response) => {
 export const updateVehicle = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    if (!validateObjectId(id as string, res)) return;
+
     const {
       brand,
       model,
@@ -256,6 +261,8 @@ export const updateVehicle = async (req: Request, res: Response) => {
 export const deleteVehicle = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    if (!validateObjectId(id as string, res)) return;
+
     const vehicle = await VehicleModel.findByIdAndDelete(id);
 
     if (!vehicle) {
@@ -316,6 +323,8 @@ export const searchVehicles = async (req: Request, res: Response) => {
 export const uploadDocument = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    if (!validateObjectId(id as string, res)) return;
+
     const { docType, docName } = req.body;
     const file = req.file;
 
@@ -371,6 +380,8 @@ export const uploadDocument = async (req: Request, res: Response) => {
 export const deleteDocument = async (req: Request, res: Response) => {
   try {
     const { id, docId } = req.params;
+    if (!validateObjectId(id as string, res) || !validateObjectId(docId as string, res))
+      return;
 
     const vehicle = await VehicleModel.findByIdAndUpdate(
       id,
