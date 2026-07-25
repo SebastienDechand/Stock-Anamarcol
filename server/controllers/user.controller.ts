@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import UserModel, { IUser } from "../models/user.model";
 import { validateObjectId } from "../utils/validate.utils";
 import { logEvent } from "../utils/audit.utils";
+import { handleError } from "../utils/response.utils";
 import { Role, ROLES } from "../constants";
 import { ErrorCode } from "../constants/errorCodes";
 
@@ -50,10 +51,7 @@ export const setRole = async (req: Request, res: Response): Promise<void> => {
       roles: user.roles,
     });
   } catch (err) {
-    console.error("Error setting role:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error setting role:");
   }
 };
 
@@ -90,10 +88,7 @@ export const setRoles = async (req: Request, res: Response): Promise<void> => {
       .status(200)
       .json({ message: "Roles updated", code: ErrorCode.ROLES_UPDATED, roles });
   } catch (err) {
-    console.error("Error setting roles:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error setting roles:");
   }
 };
 
@@ -122,10 +117,7 @@ export const userInfo = async (req: Request, res: Response): Promise<void> => {
     }
     res.status(200).json(user);
   } catch (err) {
-    console.error("Error fetching user:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error fetching user:");
   }
 };
 
@@ -230,10 +222,7 @@ export const updateUser = async (
 
     res.send(updatedUser);
   } catch (err) {
-    console.error("Error updating user:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error updating user:");
   }
 };
 
@@ -276,9 +265,6 @@ export const deleteUser = async (
       .status(200)
       .json({ message: "Successfully deleted", code: ErrorCode.DELETED });
   } catch (err) {
-    console.error("Error deleting user:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error deleting user:");
   }
 };

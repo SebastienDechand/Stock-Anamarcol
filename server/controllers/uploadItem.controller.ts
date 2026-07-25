@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import ItemModel from "../models/item.model";
 import { validateUploadedFile, uploadToImgBB } from "../utils/upload.utils";
-import { ErrorCode } from "../constants/errorCodes";
+import { handleError } from "../utils/response.utils";
 
 export const uploadItem = async (
   req: Request,
@@ -23,9 +23,6 @@ export const uploadItem = async (
 
     res.json(updatedItem);
   } catch (err) {
-    console.error("File upload or database update error:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "File upload or database update error:");
   }
 };

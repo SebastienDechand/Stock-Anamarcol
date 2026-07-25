@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import ItemModel from "../models/item.model";
 import { LOW_STOCK_THRESHOLD } from "../constants";
-import { ErrorCode } from "../constants/errorCodes";
+import { handleError } from "../utils/response.utils";
 import type { DashboardResult, LowStockItemResult } from "../types/stats";
 
 // Simple in-memory cache (invalidated on each mutation)
@@ -140,10 +140,7 @@ export const getDashboardStats = async (
 
     res.status(200).json(result);
   } catch (error) {
-    console.error("Dashboard stats error:", error);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, error, "Dashboard stats error:");
   }
 };
 
@@ -159,9 +156,7 @@ export const getNumberOfArticles = async (
     const numberOfArticles = await ItemModel.countDocuments();
     res.status(200).json({ numberOfArticles });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, error, "Error fetching number of articles:");
   }
 };
 
@@ -175,9 +170,7 @@ export const getTotalStock = async (
     ]);
     res.status(200).json({ totalStock: result[0]?.totalStock || 0 });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, error, "Error fetching total stock:");
   }
 };
 
@@ -189,9 +182,7 @@ export const getNumberOfSuppliers = async (
     const list = await ItemModel.distinct("supplier");
     res.status(200).json({ numberOfSuppliers: list.length });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, error, "Error fetching number of suppliers:");
   }
 };
 
@@ -203,9 +194,7 @@ export const getNumberOfArticlesWithStockBelow5 = async (
     const count = await ItemModel.countDocuments({ quantity: { $lt: LOW_STOCK_THRESHOLD } });
     res.status(200).json({ numberOfLowStockArticles: count });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, error, "Error fetching number of low-stock articles:");
   }
 };
 
@@ -219,9 +208,7 @@ export const getArticlesWithLowStock = async (
       .lean();
     res.json(articles);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, error, "Error fetching low-stock articles:");
   }
 };
 
@@ -233,9 +220,7 @@ export const getSuppliersList = async (
     const suppliersList = await ItemModel.distinct("supplier");
     res.status(200).json({ suppliersList });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, error, "Error fetching suppliers list:");
   }
 };
 
@@ -263,9 +248,7 @@ export const getStatisticsForSupplier = async (
     const s = stats[0] || { totalStock: 0, numberOfLowStockArticles: 0 };
     res.status(200).json({ numberOfArticles: count, ...s });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, error, "Error fetching statistics for supplier:");
   }
 };
 
@@ -277,9 +260,7 @@ export const getStatusesList = async (
     const statusesList = await ItemModel.distinct("status");
     res.status(200).json({ statusesList });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, error, "Error fetching statuses list:");
   }
 };
 
@@ -307,8 +288,6 @@ export const getStatisticsForStatus = async (
     const s = stats[0] || { totalStock: 0, numberOfLowStockArticles: 0 };
     res.status(200).json({ numberOfArticles: count, ...s });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, error, "Error fetching statistics for status:");
   }
 };

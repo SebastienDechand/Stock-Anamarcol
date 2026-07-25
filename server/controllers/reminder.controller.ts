@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { checkAndSendVehicleReminders } from "../services/reminderVehicle.service";
+import { handleError } from "../utils/response.utils";
 import { ErrorCode } from "../constants/errorCodes";
 
 /**
@@ -28,10 +29,12 @@ export const sendVehicleReminders = async (
       reminders,
     });
   } catch (error) {
-    console.error("[Controller] Error sending reminders:", error);
-    res.status(500).json({
-      message: "Error sending reminders",
-      code: ErrorCode.REMINDER_SEND_ERROR,
-    });
+    handleError(
+      res,
+      error,
+      "[Controller] Error sending reminders:",
+      "Error sending reminders",
+      ErrorCode.REMINDER_SEND_ERROR,
+    );
   }
 };

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import ContactModel, { IContact } from "../models/contact.model";
 import { validateObjectId } from "../utils/validate.utils";
 import { logEvent } from "../utils/audit.utils";
+import { handleError } from "../utils/response.utils";
 import { ErrorCode } from "../constants/errorCodes";
 
 export const getContacts = async (
@@ -28,10 +29,7 @@ export const contactInfo = async (
     }
     res.status(200).json(contact);
   } catch (err) {
-    console.error("Error fetching contact:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error fetching contact:");
   }
 };
 
@@ -129,10 +127,7 @@ export const updateContact = async (
 
     res.send(updatedContact);
   } catch (err) {
-    console.error("Error updating contact:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error updating contact:");
   }
 };
 
@@ -171,9 +166,6 @@ export const deleteContact = async (
       .status(200)
       .json({ message: "Successfully deleted", code: ErrorCode.DELETED });
   } catch (err) {
-    console.error("Error deleting contact:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error deleting contact:");
   }
 };
