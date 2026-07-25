@@ -341,7 +341,7 @@ describe('UsersEffects', () => {
 
       expect(api.postFormData).toHaveBeenCalledWith('api/user/upload', formData);
       expect(result).toEqual(UsersActions.uploadPictureSuccess({ user: updatedUser }));
-      expect(toast.success).toHaveBeenCalledWith('TOAST.PROFIL_PHOTO_UPDATED');
+      expect(toast.success).toHaveBeenCalledWith('TOAST.PROFILE_PHOTO_UPDATED');
     });
 
     it('should dispatch uploadPictureFailure and call toast.error on error', async () => {
@@ -353,7 +353,7 @@ describe('UsersEffects', () => {
       const result = await uploadPicturePromise;
 
       expect(result).toEqual(UsersActions.uploadPictureFailure({ error: 'Upload failed' }));
-      expect(toast.error).toHaveBeenCalledWith('TOAST.PROFIL_PHOTO_ERROR');
+      expect(toast.error).toHaveBeenCalledWith('TOAST.PROFILE_PHOTO_ERROR');
     });
 
     it('should use fallback error message when err.message is absent', async () => {

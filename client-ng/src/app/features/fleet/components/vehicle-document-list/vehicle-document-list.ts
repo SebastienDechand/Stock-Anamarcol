@@ -10,10 +10,10 @@ import { LanguageService } from '../../../../core/services/language/language.ser
 import { resolveLocale } from '../../../../shared/utils/date/date.utils';
 
 const DOC_TYPE_LABEL_KEYS: Record<DocumentType, string> = {
-  service_invoice: 'FLEET.DOC_TYPE_FACTURE_REVISION',
-  inspection: 'FLEET.DOC_TYPE_CT',
+  service_invoice: 'FLEET.DOC_TYPE_SERVICE_INVOICE',
+  inspection: 'FLEET.DOC_TYPE_INSPECTION',
   anti_pollution: 'FLEET.DOC_TYPE_ANTI_POLLUTION',
-  other: 'FLEET.DOC_TYPE_AUTRE',
+  other: 'FLEET.DOC_TYPE_OTHER',
 };
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;

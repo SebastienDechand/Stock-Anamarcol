@@ -30,7 +30,7 @@
             [size]="14"
             class="pole-header__icon pole-header__icon--direction"
           />
-          <span class="pole-header__label">{{ 'MEMBERS.POLE_DIRECTION' | translate }}</span>
+          <span class="pole-header__label">{{ 'MEMBERS.DEPARTMENT_MANAGEMENT' | translate }}</span>
         </div>
         <div class="member-list member-list--single">
           @let directionUsers = byDepartment(allUsers, departmentManagement);
@@ -61,7 +61,7 @@
                 [size]="14"
                 class="pole-header__icon pole-header__icon--hotline"
               />
-              <span class="pole-header__label">{{ 'MEMBERS.POLE_HOTLINE' | translate }}</span>
+              <span class="pole-header__label">{{ 'MEMBERS.DEPARTMENT_HOTLINE' | translate }}</span>
             </div>
             <div class="member-list">
               @let hotlineUsers = byDepartment(allUsers, 'Hotline');
@@ -88,7 +88,7 @@
                 [size]="14"
                 class="pole-header__icon pole-header__icon--entrepot"
               />
-              <span class="pole-header__label">{{ 'MEMBERS.POLE_WAREHOUSE' | translate }}</span>
+              <span class="pole-header__label">{{ 'MEMBERS.DEPARTMENT_WAREHOUSE' | translate }}</span>
             </div>
             <div class="member-list">
               @let entrepotUsers = byDepartment(allUsers, departmentWarehouse);
@@ -117,7 +117,7 @@
               [size]="14"
               class="pole-header__icon pole-header__icon--monteur"
             />
-            <span class="pole-header__label">{{ 'MEMBERS.POLE_TECHNICIAN' | translate }}</span>
+            <span class="pole-header__label">{{ 'MEMBERS.DEPARTMENT_TECHNICIAN' | translate }}</span>
           </div>
           <div class="member-list">
             @let monteurUsers = byDepartment(allUsers, 'Installer');
@@ -145,7 +145,7 @@
               [size]="14"
               class="pole-header__icon pole-header__icon--gestion"
             />
-            <span class="pole-header__label">{{ 'MEMBERS.POLE_MANAGEMENT' | translate }}</span>
+            <span class="pole-header__label">{{ 'MEMBERS.DEPARTMENT_SITE_MANAGEMENT' | translate }}</span>
           </div>
           <div class="member-list">
             @let gestionUsers = byDepartment(allUsers, departmentSiteManagement);

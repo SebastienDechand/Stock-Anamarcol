@@ -29,52 +29,52 @@ describe('ItemsPage', () => {
     fixture.detectChanges();
   });
 
-  describe('togglePrepa() - sélection exclusive', () => {
+  describe('togglePreparation() - sélection exclusive', () => {
     it('should activate CashGuard and leave TPV off', () => {
-      component.togglePrepa('CashGuard');
+      component.togglePreparation('CashGuard');
       expect(component.cgKit()).toBe(true);
       expect(component.tpvKit()).toBe(false);
     });
 
     it('should activate Caisse TPV and leave CG off', () => {
-      component.togglePrepa('Caisse TPV');
+      component.togglePreparation('Caisse TPV');
       expect(component.cgKit()).toBe(false);
       expect(component.tpvKit()).toBe(true);
     });
 
     it('should deactivate CashGuard when already active', () => {
-      component.togglePrepa('CashGuard');
-      component.togglePrepa('CashGuard');
+      component.togglePreparation('CashGuard');
+      component.togglePreparation('CashGuard');
       expect(component.cgKit()).toBe(false);
       expect(component.tpvKit()).toBe(false);
     });
 
     it('should deactivate Caisse TPV when already active', () => {
-      component.togglePrepa('Caisse TPV');
-      component.togglePrepa('Caisse TPV');
+      component.togglePreparation('Caisse TPV');
+      component.togglePreparation('Caisse TPV');
       expect(component.cgKit()).toBe(false);
       expect(component.tpvKit()).toBe(false);
     });
 
     it('should switch from CashGuard to Caisse TPV exclusively', () => {
-      component.togglePrepa('CashGuard');
-      component.togglePrepa('Caisse TPV');
+      component.togglePreparation('CashGuard');
+      component.togglePreparation('Caisse TPV');
       expect(component.cgKit()).toBe(false);
       expect(component.tpvKit()).toBe(true);
     });
 
     it('should switch from Caisse TPV to CashGuard exclusively', () => {
-      component.togglePrepa('Caisse TPV');
-      component.togglePrepa('CashGuard');
+      component.togglePreparation('Caisse TPV');
+      component.togglePreparation('CashGuard');
       expect(component.cgKit()).toBe(true);
       expect(component.tpvKit()).toBe(false);
     });
   });
 
-  describe('onPrepaBatch() - mapping du champ backend', () => {
-    it('should call prepaBatch with "cgKit" for CashGuard', () => {
-      const spy = vi.spyOn(facade, 'prepaBatch').mockImplementation(() => {});
-      component.onPrepaBatch('CashGuard', 'increment');
+  describe('onPreparationBatch() - mapping du champ backend', () => {
+    it('should call preparationBatch with "cgKit" for CashGuard', () => {
+      const spy = vi.spyOn(facade, 'preparationBatch').mockImplementation(() => {});
+      component.onPreparationBatch('CashGuard', 'increment');
       expect(spy).toHaveBeenCalledWith(
         'cgKit',
         'increment',
@@ -83,9 +83,9 @@ describe('ItemsPage', () => {
       );
     });
 
-    it('should call prepaBatch with "tpvKit" for Caisse TPV', () => {
-      const spy = vi.spyOn(facade, 'prepaBatch').mockImplementation(() => {});
-      component.onPrepaBatch('Caisse TPV', 'increment');
+    it('should call preparationBatch with "tpvKit" for Caisse TPV', () => {
+      const spy = vi.spyOn(facade, 'preparationBatch').mockImplementation(() => {});
+      component.onPreparationBatch('Caisse TPV', 'increment');
       expect(spy).toHaveBeenCalledWith(
         'tpvKit',
         'increment',

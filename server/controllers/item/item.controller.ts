@@ -83,13 +83,13 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
       ItemModel.countDocuments(filter),
     ];
 
-    // If a prepa filter is active, check if decrement is possible
-    const prepaFields: string[] = [];
-    if (cgKit === "true") prepaFields.push("cgKit");
-    if (tpvKit === "true") prepaFields.push("tpvKit");
+    // If a preparation filter is active, check if decrement is possible
+    const preparationFields: string[] = [];
+    if (cgKit === "true") preparationFields.push("cgKit");
+    if (tpvKit === "true") preparationFields.push("tpvKit");
 
-    if (prepaFields.length > 0) {
-      for (const field of prepaFields) {
+    if (preparationFields.length > 0) {
+      for (const field of preparationFields) {
         // An item blocks decrement if qty=0, or for CG+cassette if qty<4
         queries.push(
           ItemModel.countDocuments({
@@ -121,9 +121,9 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
       totalPages: Math.ceil(totalCount / parseInt(limit as string)),
     };
 
-    if (prepaFields.length > 0) {
+    if (preparationFields.length > 0) {
       const canDecrement: Record<string, boolean> = {};
-      prepaFields.forEach((field, i) => {
+      preparationFields.forEach((field, i) => {
         canDecrement[field] = (results[2 + i] as number) === 0;
       });
       response.canDecrement = canDecrement;
@@ -297,17 +297,17 @@ export const deleteItem = async (
   }
 };
 
-// Batch operation on a prepa set: +1/-1 on all items (CG: cassettes = -4/+4)
-export const prepaBatch = async (
+// Batch operation on a preparation set: +1/-1 on all items (CG: cassettes = -4/+4)
+export const preparationBatch = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   const {
-    prepa,
+    preparation,
     operation,
     count: rawCount,
   } = req.body as {
-    prepa?: string;
+    preparation?: string;
     operation?: string;
     count?: number;
   };
@@ -317,10 +317,10 @@ export const prepaBatch = async (
       ? Math.max(1, Math.floor(Number(rawCount) || 1))
       : 1;
 
-  if (!prepa || !["cgKit", "tpvKit"].includes(prepa)) {
+  if (!preparation || !["cgKit", "tpvKit"].includes(preparation)) {
     res
       .status(400)
-      .json({ message: "Invalid prepa", code: ErrorCode.INVALID_PREPA });
+      .json({ message: "Invalid preparation", code: ErrorCode.INVALID_PREPARATION });
     return;
   }
   if (!operation || !["increment", "decrement"].includes(operation)) {
@@ -331,7 +331,7 @@ export const prepaBatch = async (
   }
 
   try {
-    const items = await ItemModel.find({ [prepa]: true });
+    const items = await ItemModel.find({ [preparation]: true });
     const userName = res.locals.user?.username || "Admin";
     let updated = 0;
 
@@ -340,7 +340,7 @@ export const prepaBatch = async (
 
       // For CG: cassettes change by 4, the rest by 1 - multiplied by count
       let delta = 1 * count;
-      if (prepa === "cgKit" && item.name.toLowerCase().includes("cassette")) {
+      if (preparation === "cgKit" && item.name.toLowerCase().includes("cassette")) {
         delta = 4 * count;
       }
 
@@ -363,10 +363,10 @@ export const prepaBatch = async (
       }
     }
 
-    const prepaLabel = prepa === "cgKit" ? "CashGuard" : "Caisse TPV";
+    const preparationLabel = preparation === "cgKit" ? "CashGuard" : "Caisse TPV";
     await logEvent("update", "item", undefined, userName, {
       batch: true,
-      prepa: prepaLabel,
+      preparation: preparationLabel,
       operation,
       count: updated,
     });
@@ -378,6 +378,6 @@ export const prepaBatch = async (
       updated,
     });
   } catch (err) {
-    handleError(res, err, "Error in prepa batch:");
+    handleError(res, err, "Error in preparation batch:");
   }
 };

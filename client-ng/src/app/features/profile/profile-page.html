@@ -55,8 +55,10 @@
 
             @if (currentUser.department) {
               <div class="info-cell">
-                <p class="info-cell__label">{{ 'PROFILE.POLE' | translate }}</p>
-                <p class="info-cell__value">{{ currentUser.department }}</p>
+                <p class="info-cell__label">{{ 'PROFILE.DEPARTMENT' | translate }}</p>
+                <p class="info-cell__value">
+                  {{ departmentLabelKeys[currentUser.department] | translate }}
+                </p>
               </div>
             }
 
@@ -124,7 +126,7 @@
                 {{ vehicle.brand | titlecase }} {{ vehicle.model | titlecase }}
               </p>
               <p class="vehicle-detail__immat">{{ vehicle.licensePlate }}</p>
-              <span class="vehicle-detail__badge">{{ vehicle.format | titlecase }}</span>
+              <span class="vehicle-detail__badge">{{ vehicleFormatLabelKeys[vehicle.format] | translate }}</span>
             </div>
           } @else {
             <div class="vehicle-empty">

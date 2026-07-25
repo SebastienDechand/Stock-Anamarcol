@@ -697,21 +697,6 @@
   }
 }
 /* #endregion */
-/* #region Pagination */
-
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 16px 0;
-
-  &__info {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-  }
-}
-/* #endregion */
 /* #region Empty states */
 
 .page-spinner {

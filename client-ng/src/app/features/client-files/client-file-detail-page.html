@@ -53,7 +53,7 @@
     <!-- ══════════════════════════════════════════════════════════════════════
          TAB : FICHE CLIENT
     ══════════════════════════════════════════════════════════════════════ -->
-    @if (activeTab() === 'fiche') {
+    @if (activeTab() === 'info') {
       <div class="card">
         <!-- Quick strip -->
         <div class="quick-strip">
@@ -128,7 +128,7 @@
               }
               @if (file.postalCode || file.city) {
                 <div class="info-row">
-                  <span>{{ 'CLIENT_FILES.CP_CITY' | translate }}</span
+                  <span>{{ 'CLIENT_FILES.ZIP_CITY' | translate }}</span
                   ><span>{{ file.postalCode }} {{ file.city }}</span>
                 </div>
               }
@@ -218,7 +218,7 @@
                   }
                   @if (file.equipment.registerCount) {
                     <div class="info-row">
-                      <span>{{ 'CLIENT_FILES.CAISSES_LABEL' | translate }}</span
+                      <span>{{ 'CLIENT_FILES.REGISTERS_LABEL' | translate }}</span
                       ><span>{{ file.equipment.registerCount }}</span>
                     </div>
                   }
@@ -248,7 +248,7 @@
                   }
                   @if (file.equipment.centralizationPcCount) {
                     <div class="info-row">
-                      <span>{{ 'CLIENT_FILES.PC_CENTRALISATION' | translate }}</span
+                      <span>{{ 'CLIENT_FILES.PC_CENTRALIZATION' | translate }}</span
                       ><span>{{ file.equipment.centralizationPcCount }}</span>
                     </div>
                   }
@@ -268,25 +268,25 @@
                   }
                   @if (file.equipment.allergenKiosk) {
                     <div class="info-row">
-                      <span>{{ 'CLIENT_FILES.BORNE_ALLERGENE' | translate }}</span
+                      <span>{{ 'CLIENT_FILES.ALLERGEN_KIOSK' | translate }}</span
                       ><span>{{ 'COMMON.YES' | translate }}</span>
                     </div>
                   }
                   @if (file.equipment.orderKiosk) {
                     <div class="info-row">
-                      <span>{{ 'CLIENT_FILES.BORNE_COMMANDE' | translate }}</span
+                      <span>{{ 'CLIENT_FILES.ORDER_KIOSK' | translate }}</span
                       ><span>{{ 'COMMON.YES' | translate }}</span>
                     </div>
                   }
                   @if (file.equipment.electronicLabels) {
                     <div class="info-row">
-                      <span>{{ 'CLIENT_FILES.ETIQUETTES' | translate }}</span
+                      <span>{{ 'CLIENT_FILES.ELEC_LABELS' | translate }}</span
                       ><span>{{ 'COMMON.YES' | translate }}</span>
                     </div>
                   }
                   @if (file.equipment.loyaltyCard) {
                     <div class="info-row">
-                      <span>{{ 'CLIENT_FILES.CARTE_FIDELITE' | translate }}</span
+                      <span>{{ 'CLIENT_FILES.LOYALTY_CARD' | translate }}</span
                       ><span>{{ 'COMMON.YES' | translate }}</span>
                     </div>
                   }
@@ -325,12 +325,12 @@
     <!-- ══════════════════════════════════════════════════════════════════════
          TAB : FICHE TECHNIQUE
     ══════════════════════════════════════════════════════════════════════ -->
-    @if (activeTab() === 'technique') {
+    @if (activeTab() === 'technical') {
       @if (reports$ | async; as reports) {
         @if (!reports.length) {
           <div class="empty-state">
             <lucide-icon [img]="wrench" [size]="40" class="empty-state__icon" />
-            <p>{{ 'CLIENT_FILES.NO_TECHNIQUE' | translate }}</p>
+            <p>{{ 'CLIENT_FILES.NO_TECHNICAL' | translate }}</p>
             @if (isMonteur$ | async) {
               <button
                 class="btn-link"
@@ -503,7 +503,7 @@
             <thead>
               <tr>
                 <th>{{ 'COMMON.STATUS' | translate }}</th>
-                <th>{{ 'SHIPMENTS.PIECE' | translate }}</th>
+                <th>{{ 'SHIPMENTS.PART' | translate }}</th>
                 <th>{{ 'SHIPMENTS.COMPANY' | translate }}</th>
                 <th>{{ 'SHIPMENTS.CREATED_BY' | translate }}</th>
                 <th>{{ 'COMMON.DATE' | translate }}</th>
@@ -772,7 +772,7 @@
           }}</span>
         </div>
         <div class="modal-detail-row">
-          <span class="modal-detail-row__label">{{ 'SHIPMENTS.PIECE' | translate }}</span>
+          <span class="modal-detail-row__label">{{ 'SHIPMENTS.PART' | translate }}</span>
           <span class="modal-detail-row__value">{{ s.part }}</span>
         </div>
         <div class="modal-detail-row">

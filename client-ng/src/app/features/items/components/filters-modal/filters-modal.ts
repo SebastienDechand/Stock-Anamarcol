@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SUPPLIERS, STATUSES } from '../../../../shared/constants';
-import { togglePrepaFilter } from '../../../../shared/utils/prepa-filter/prepa-filter.utils';
+import { togglePreparationFilter } from '../../../../shared/utils/preparation-filter/preparation-filter.utils';
 
 export interface FiltersApplied {
   suppliers: string[];
@@ -59,8 +59,11 @@ export class FiltersModal implements OnInit {
     );
   }
 
-  togglePrepa(prepa: 'CashGuard' | 'Caisse TPV') {
-    const next = togglePrepaFilter({ cgKit: this.localCgKit(), tpvKit: this.localTpvKit() }, prepa);
+  togglePreparation(preparation: 'CashGuard' | 'Caisse TPV') {
+    const next = togglePreparationFilter(
+      { cgKit: this.localCgKit(), tpvKit: this.localTpvKit() },
+      preparation,
+    );
     this.localCgKit.set(next.cgKit);
     this.localTpvKit.set(next.tpvKit);
   }

@@ -128,11 +128,11 @@ export class UsersEffects {
       exhaustMap(({ formData }) =>
         this.api.postFormData<User>('api/user/upload', formData).pipe(
           map((user) => {
-            this.toast.success('TOAST.PROFIL_PHOTO_UPDATED');
+            this.toast.success('TOAST.PROFILE_PHOTO_UPDATED');
             return UsersActions.uploadPictureSuccess({ user });
           }),
           catchError((error) => {
-            this.toast.error('TOAST.PROFIL_PHOTO_ERROR');
+            this.toast.error('TOAST.PROFILE_PHOTO_ERROR');
             return of(UsersActions.uploadPictureFailure({ error: error?.message ?? 'Erreur' }));
           }),
         ),

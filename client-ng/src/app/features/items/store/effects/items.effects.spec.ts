@@ -476,57 +476,57 @@ describe('ItemsEffects', () => {
   });
   // #endregion
 
-  // #region prepaBatch$
+  // #region preparationBatch$
 
-  describe('prepaBatch$', () => {
-    it('should dispatch prepaBatchSuccess then refetch items for cgKit increment', async () => {
+  describe('preparationBatch$', () => {
+    it('should dispatch preparationBatchSuccess then refetch items for cgKit increment', async () => {
       api.post.mockReturnValue(of({ updated: 3, message: 'ok' }));
       const params = { page: 1, cgKit: true };
 
-      const resultsPromise = firstValueFrom(effects.prepaBatch$.pipe(take(2), toArray()));
+      const resultsPromise = firstValueFrom(effects.preparationBatch$.pipe(take(2), toArray()));
       actions$.next(
-        ItemsActions.prepaBatch({ field: 'cgKit', operation: 'increment', count: 3, params }),
+        ItemsActions.preparationBatch({ field: 'cgKit', operation: 'increment', count: 3, params }),
       );
       const results = await resultsPromise;
 
       expect(results).toEqual([
-        ItemsActions.prepaBatchSuccess(),
+        ItemsActions.preparationBatchSuccess(),
         ItemsActions.fetchItems({ params }),
       ]);
-      expect(toast.success).toHaveBeenCalledWith('ITEMS.PREPA_BATCH_CG_INCREMENTED', {
+      expect(toast.success).toHaveBeenCalledWith('ITEMS.PREPARATION_BATCH_CG_INCREMENTED', {
         count: 3,
       });
     });
 
-    it('should dispatch prepaBatchSuccess then refetch items for non-cgKit decrement', async () => {
+    it('should dispatch preparationBatchSuccess then refetch items for non-cgKit decrement', async () => {
       api.post.mockReturnValue(of({ updated: 5, message: 'ok' }));
       const params = { page: 1, tpvKit: true };
 
-      const resultsPromise = firstValueFrom(effects.prepaBatch$.pipe(take(2), toArray()));
+      const resultsPromise = firstValueFrom(effects.preparationBatch$.pipe(take(2), toArray()));
       actions$.next(
-        ItemsActions.prepaBatch({ field: 'tpvKit', operation: 'decrement', count: 5, params }),
+        ItemsActions.preparationBatch({ field: 'tpvKit', operation: 'decrement', count: 5, params }),
       );
       const results = await resultsPromise;
 
       expect(results).toEqual([
-        ItemsActions.prepaBatchSuccess(),
+        ItemsActions.preparationBatchSuccess(),
         ItemsActions.fetchItems({ params }),
       ]);
-      expect(toast.success).toHaveBeenCalledWith('ITEMS.PREPA_BATCH_TPV_DECREMENTED', {
+      expect(toast.success).toHaveBeenCalledWith('ITEMS.PREPARATION_BATCH_TPV_DECREMENTED', {
         count: 5,
       });
     });
 
-    it('should dispatch only prepaBatchSuccess and show error toast on API error', async () => {
+    it('should dispatch only preparationBatchSuccess and show error toast on API error', async () => {
       api.post.mockReturnValue(throwError(() => new Error('Batch failed')));
 
-      const prepaBatchPromise = firstValueFrom(effects.prepaBatch$);
+      const preparationBatchPromise = firstValueFrom(effects.preparationBatch$);
       actions$.next(
-        ItemsActions.prepaBatch({ field: 'cgKit', operation: 'increment', count: 2, params: {} }),
+        ItemsActions.preparationBatch({ field: 'cgKit', operation: 'increment', count: 2, params: {} }),
       );
-      const result = await prepaBatchPromise;
+      const result = await preparationBatchPromise;
 
-      expect(result).toEqual(ItemsActions.prepaBatchSuccess());
+      expect(result).toEqual(ItemsActions.preparationBatchSuccess());
       expect(toast.error).toHaveBeenCalledWith('TOAST.ITEM_BATCH_ERROR');
     });
   });

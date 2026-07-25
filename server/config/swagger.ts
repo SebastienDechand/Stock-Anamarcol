@@ -446,10 +446,10 @@ const options: swaggerJsdoc.Options = {
           responses: { 200: { description: "OK" } },
         },
       },
-      "/api/item/prepa-batch": {
+      "/api/item/preparation-batch": {
         post: {
           tags: ["Items"],
-          summary: "Opérations prepa en lot (cgKit / tpvKit)",
+          summary: "Opérations de préparation en lot (cgKit / tpvKit)",
           requestBody: {
             content: {
               "application/json": {

@@ -43,13 +43,13 @@ export const ItemsActions = createActionGroup({
     'Upload Item Picture Success': props<{ item: Item }>(),
     'Upload Item Picture Failure': props<{ error: string }>(),
 
-    'Prepa Batch': props<{
+    'Preparation Batch': props<{
       field: string;
       operation: string;
       count: number;
       params: FetchItemsParams;
     }>(),
-    'Prepa Batch Success': emptyProps(),
+    'Preparation Batch Success': emptyProps(),
 
     'Set Selected Item Id': props<{ id: string | null }>(),
     'Load Item History': props<{ id: string }>(),

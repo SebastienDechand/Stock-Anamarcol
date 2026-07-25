@@ -188,38 +188,11 @@
 
       <!-- Pagination -->
       @if (pages > 1) {
-        <div class="pagination">
-          <button
-            class="pagination__btn"
-            [disabled]="currentPage() === 1"
-            (click)="currentPage.update((p) => p - 1)"
-            [title]="'COMMON.PREVIOUS' | translate"
-          >
-            <lucide-icon [img]="chevLeft" [size]="16" />
-          </button>
-          @for (p of pageNumbers(pages); track $index) {
-            @if (p === '...') {
-              <span class="pagination__ellipsis">…</span>
-            } @else {
-              <button
-                class="pagination__page"
-                [class.pagination__page--active]="currentPage() === p"
-                (click)="currentPage.set(+p)"
-                [title]="'Page ' + p"
-              >
-                {{ p }}
-              </button>
-            }
-          }
-          <button
-            class="pagination__btn"
-            [disabled]="currentPage() === pages"
-            (click)="currentPage.update((p) => p + 1)"
-            [title]="'COMMON.NEXT' | translate"
-          >
-            <lucide-icon [img]="chevRight" [size]="16" />
-          </button>
-        </div>
+        <app-pagination
+          [currentPage]="currentPage()"
+          [totalPages]="pages"
+          (pageChange)="currentPage.set($event)"
+        />
       }
     }
   }

@@ -272,20 +272,20 @@ export class ClientFileModal implements OnChanges {
   readonly equipNumFields: { key: keyof Equipement; label: string }[] = [
     { key: 'cashguardCount', label: 'CLIENT_FILES.NB_CASHGUARD' },
     { key: 'fusionCount', label: 'CLIENT_FILES.NB_FUSION' },
-    { key: 'registerCount', label: 'CLIENT_FILES.NB_CAISSES' },
+    { key: 'registerCount', label: 'CLIENT_FILES.NB_REGISTERS' },
     { key: 'otherEquipmentCount', label: 'CLIENT_FILES.NB_OTHER' },
     { key: 'scaleCount', label: 'CLIENT_FILES.NB_SCALES' },
     { key: 'tactisLicenses', label: 'CLIENT_FILES.LICENCES_TACTIS' },
     { key: 'innoLicenses', label: 'CLIENT_FILES.LICENCES_INNO' },
     { key: 'backofficePcCount', label: 'CLIENT_FILES.PC_BACKOFFICE' },
-    { key: 'centralizationPcCount', label: 'CLIENT_FILES.PC_CENTRALISATION' },
+    { key: 'centralizationPcCount', label: 'CLIENT_FILES.PC_CENTRALIZATION' },
   ];
 
   readonly equipBoolFields: { key: keyof Equipement; label: string }[] = [
-    { key: 'allergenKiosk', label: 'CLIENT_FILES.BORNE_ALLERGENE' },
-    { key: 'orderKiosk', label: 'CLIENT_FILES.BORNE_COMMANDE' },
-    { key: 'electronicLabels', label: 'CLIENT_FILES.ETIQUETTES' },
-    { key: 'loyaltyCard', label: 'CLIENT_FILES.CARTE_FIDELITE' },
+    { key: 'allergenKiosk', label: 'CLIENT_FILES.ALLERGEN_KIOSK' },
+    { key: 'orderKiosk', label: 'CLIENT_FILES.ORDER_KIOSK' },
+    { key: 'electronicLabels', label: 'CLIENT_FILES.ELEC_LABELS' },
+    { key: 'loyaltyCard', label: 'CLIENT_FILES.LOYALTY_CARD' },
   ];
 
   get isEdit(): boolean {
@@ -394,9 +394,9 @@ export class ClientFileModal implements OnChanges {
       const count =
         Object.keys(patch).filter((k) => k !== 'equipment').length +
         Object.keys(patch.equipment ?? {}).length;
-      this.toast.success('TOAST.BDC_UPDATED', { count });
+      this.toast.success('TOAST.PURCHASE_ORDER_UPDATED', { count });
     } catch {
-      this.toast.error('TOAST.BDC_ERROR');
+      this.toast.error('TOAST.PURCHASE_ORDER_ERROR');
     } finally {
       this.xlsxImporting.set(false);
     }

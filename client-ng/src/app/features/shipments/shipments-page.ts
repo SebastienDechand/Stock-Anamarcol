@@ -36,6 +36,7 @@ import { ShipmentExportModal } from './components/shipment-export-modal/shipment
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
+import { Pagination } from '../../shared/components/pagination/pagination';
 import { Shipment, ShipmentForm } from '../../shared/models/shipment/shipment.model';
 import { ClientFile } from '../../shared/models/client-file/client-file.model';
 import { User as UserModel } from '../../shared/models/user/user.model';
@@ -110,6 +111,7 @@ const ITEMS_PER_PAGE = 20;
     ShipmentHistoryModal,
     ShipmentExportModal,
     PageHero,
+    Pagination,
   ],
   templateUrl: './shipments-page.html',
   styleUrl: './shipments-page.scss',

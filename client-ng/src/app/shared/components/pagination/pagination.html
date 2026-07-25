@@ -1,0 +1,40 @@
+@if (totalPages() > 1) {
+  <div class="pagination">
+    <button
+      class="pagination__btn"
+      [disabled]="currentPage() === 1"
+      (click)="goTo(currentPage() - 1)"
+      [title]="'COMMON.PREVIOUS' | translate"
+    >
+      <lucide-icon [img]="chevronLeft" [size]="16" />
+    </button>
+
+    @for (p of pages(); track $index) {
+      @if (p === '...') {
+        <span class="pagination__ellipsis">…</span>
+      } @else {
+        <button
+          class="pagination__page"
+          [class.pagination__page--active]="currentPage() === p"
+          (click)="goTo(p)"
+          [title]="('ITEMS.PAGE' | translate) + ' ' + p"
+        >
+          {{ p }}
+        </button>
+      }
+    }
+
+    <button
+      class="pagination__btn"
+      [disabled]="currentPage() === totalPages()"
+      (click)="goTo(currentPage() + 1)"
+      [title]="'COMMON.NEXT' | translate"
+    >
+      <lucide-icon [img]="chevronRight" [size]="16" />
+    </button>
+
+    @if (countLabel()) {
+      <span class="pagination__count">{{ countLabel() }}</span>
+    }
+  </div>
+}

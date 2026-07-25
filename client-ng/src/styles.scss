@@ -287,32 +287,32 @@ html[data-theme='dark'] {
       color: #fff;
     }
 
-    &.chip--active-prepa {
+    &.chip--active-preparation {
       background: #7c3aed;
       border-color: #7c3aed;
       color: #fff;
     }
   }
 
-  // Articles - prepa bar + mobile shortcuts (light purple background → translucent)
-  .prepa-batch,
-  .prepa-shortcuts {
+  // Articles - preparation bar + mobile shortcuts (light purple background → translucent)
+  .preparation-batch,
+  .preparation-shortcuts {
     background: rgb(124 58 237 / 0.12);
     border-color: rgb(124 58 237 / 0.25);
   }
-  .prepa-batch__label,
-  .prepa-shortcuts__label {
+  .preparation-batch__label,
+  .preparation-shortcuts__label {
     color: #a78bfa;
   }
-  .prepa-batch__count {
+  .preparation-batch__count {
     background: var(--bg-input);
     border-color: rgb(124 58 237 / 0.3);
   }
-  .prepa-batch__btn--add {
+  .preparation-batch__btn--add {
     background: transparent;
     color: #a78bfa;
   }
-  .prepa-shortcut {
+  .preparation-shortcut {
     background: transparent;
     border-color: rgb(124 58 237 / 0.4);
     color: #c4b5fd;
@@ -321,13 +321,13 @@ html[data-theme='dark'] {
       background: rgb(124 58 237 / 0.2);
     }
 
-    &.prepa-shortcut--active {
+    &.preparation-shortcut--active {
       background: #7c3aed;
       border-color: #7c3aed;
       color: #fff;
     }
   }
-  .prepa-shortcuts__clear {
+  .preparation-shortcuts__clear {
     color: #a78bfa;
 
     &:hover {

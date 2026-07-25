@@ -48,14 +48,14 @@ import { environment } from '../../../environments/environment';
 import { LanguageService } from '../../core/services/language/language.service';
 import { resolveLocale } from '../../shared/utils/date/date.utils';
 
-type ClientFileDetailTab = 'fiche' | 'technique' | 'shipments' | 'documents';
+type ClientFileDetailTab = 'info' | 'technical' | 'shipments' | 'documents';
 
 const DOC_TYPE_LABELS: Record<ClientFileDocType, string> = {
-  purchase_order: 'CLIENT_FILES.DOC_TYPE_BDC',
-  report: 'CLIENT_FILES.DOC_TYPE_RAPPORT',
-  acceptance_report: 'CLIENT_FILES.DOC_TYPE_PVRECETTE',
-  visit: 'CLIENT_FILES.DOC_TYPE_VISITE',
-  other: 'CLIENT_FILES.DOC_TYPE_AUTRE',
+  purchase_order: 'CLIENT_FILES.DOC_TYPE_PURCHASE_ORDER',
+  report: 'CLIENT_FILES.DOC_TYPE_REPORT',
+  acceptance_report: 'CLIENT_FILES.DOC_TYPE_ACCEPTANCE_REPORT',
+  visit: 'CLIENT_FILES.DOC_TYPE_VISIT',
+  other: 'CLIENT_FILES.DOC_TYPE_OTHER',
 };
 
 @Component({
@@ -114,7 +114,7 @@ export class ClientFileDetailPage implements OnInit {
   readonly fileDown = FileDown;
   readonly chevLeft = ChevronLeft;
 
-  activeTab = signal<ClientFileDetailTab>('fiche');
+  activeTab = signal<ClientFileDetailTab>('info');
   wizardOpen = signal(false);
   editReport = signal<InterventionReport | null>(null);
   deleteReportId = signal<string | null>(null);
@@ -139,8 +139,8 @@ export class ClientFileDetailPage implements OnInit {
   private fileId: string | null = null;
 
   readonly TABS: { key: ClientFileDetailTab; label: string; icon: typeof ClipboardList }[] = [
-    { key: 'fiche', label: 'CLIENT_FILES.TAB_FICHE', icon: ClipboardList },
-    { key: 'technique', label: 'CLIENT_FILES.TAB_TECHNIQUE', icon: Wrench },
+    { key: 'info', label: 'CLIENT_FILES.TAB_INFO', icon: ClipboardList },
+    { key: 'technical', label: 'CLIENT_FILES.TAB_TECHNICAL', icon: Wrench },
     { key: 'shipments', label: 'SHIPMENTS.TITLE', icon: Truck },
     { key: 'documents', label: 'CLIENT_FILES.TAB_DOCUMENTS', icon: FileText },
   ];

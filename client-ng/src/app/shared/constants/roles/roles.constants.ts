@@ -19,7 +19,7 @@ export const ROLE_DISPLAY_ORDER: Role[] = [
 export const ROLE_LABEL_KEYS: Record<Role, string> = {
   [Role.USER]: 'ROLES.USER',
   [Role.HOTLINE]: 'ROLES.HOTLINE',
-  [Role.MONTEUR]: 'ROLES.MONTEUR',
+  [Role.MONTEUR]: 'ROLES.TECHNICIAN',
   [Role.ADMIN]: 'ROLES.ADMIN',
   [Role.SUPERADMIN]: 'ROLES.SUPERADMIN',
 };
