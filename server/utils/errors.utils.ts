@@ -4,7 +4,7 @@ import type {
   UploadError,
   CreateItemError,
   MongoError,
-} from "./types/errors";
+} from "../types/errors";
 
 // Sign-up validation errors
 export const signUpErrors = (err: MongoError): SignUpError => {
@@ -24,8 +24,6 @@ export const signUpErrors = (err: MongoError): SignUpError => {
 };
 
 // Sign-in validation errors
-// Same generic message regardless of which check failed, to avoid
-// leaking whether an email is registered (account enumeration).
 export const signInErrors = (err: Error): SignInError => {
   const errors: SignInError = { email: "", password: "" };
 
