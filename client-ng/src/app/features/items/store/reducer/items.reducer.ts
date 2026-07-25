@@ -27,11 +27,13 @@ export const itemsReducer = createReducer(
     totalPages,
     canDecrement,
     isLoading: false,
+    pageLoaded: true,
     error: null,
   })),
   on(ItemsActions.fetchItemsFailure, (state, { error }) => ({
     ...state,
     isLoading: false,
+    pageLoaded: true,
     error,
   })),
 

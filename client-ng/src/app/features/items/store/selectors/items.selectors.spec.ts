@@ -7,6 +7,7 @@ import {
   selectTotalPages,
   selectItemsLoading,
   selectItemsLoaded,
+  selectItemsPageLoaded,
   selectSelectedItemId,
   selectCanDecrement,
   selectSelectedItem,
@@ -127,6 +128,18 @@ describe('Items Selectors', () => {
     it('should return true when loaded', () => {
       const state = { items: { ...initialItemsState, loaded: true } };
       expect(selectItemsLoaded(state)).toBe(true);
+    });
+  });
+
+  describe('selectItemsPageLoaded', () => {
+    it('should return false from initial state', () => {
+      const state = { items: initialItemsState };
+      expect(selectItemsPageLoaded(state)).toBe(false);
+    });
+
+    it('should return true once the paginated grid has resolved at least once', () => {
+      const state = { items: { ...initialItemsState, pageLoaded: true } };
+      expect(selectItemsPageLoaded(state)).toBe(true);
     });
   });
 

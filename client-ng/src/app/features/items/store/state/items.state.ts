@@ -6,7 +6,8 @@ export interface ItemsState {
   total: number;
   page: number;
   totalPages: number;
-  loaded: boolean;
+  loaded: boolean; // allItems (bulk, export-only) has resolved at least once
+  pageLoaded: boolean; // items (paginated grid) has resolved at least once
   isLoading: boolean;
   selectedItemId: string | null;
   canDecrement: Record<string, boolean>;
@@ -22,6 +23,7 @@ export const initialItemsState: ItemsState = {
   page: 1,
   totalPages: 0,
   loaded: false,
+  pageLoaded: false,
   isLoading: false,
   selectedItemId: null,
   canDecrement: {},

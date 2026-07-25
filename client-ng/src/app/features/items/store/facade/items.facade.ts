@@ -10,6 +10,7 @@ import {
   selectIsLoadingHistory,
   selectItemsLoaded,
   selectItemsLoading,
+  selectItemsPageLoaded,
   selectPage,
   selectPageItems,
   selectSelectedItem,
@@ -29,8 +30,8 @@ export class ItemsFacade {
   totalPages$ = this.store.select(selectTotalPages);
   isLoading$ = combineLatest([
     this.store.select(selectItemsLoading),
-    this.store.select(selectItemsLoaded),
-  ]).pipe(map(([loading, loaded]) => loading && !loaded));
+    this.store.select(selectItemsPageLoaded),
+  ]).pipe(map(([loading, pageLoaded]) => loading && !pageLoaded));
   selectedItemId$ = this.store.select(selectSelectedItemId);
   selectedItem$ = this.store.select(selectSelectedItem);
   canDecrement$ = this.store.select(selectCanDecrement);
@@ -75,13 +76,13 @@ export class ItemsFacade {
   setSelectedItemId(id: string | null) {
     this.store.dispatch(ItemsActions.setSelectedItemId({ id }));
   }
-  prepaBatch(
+  preparationBatch(
     field: string,
     operation: 'increment' | 'decrement',
     count: number,
     params: FetchItemsParams,
   ) {
-    this.store.dispatch(ItemsActions.prepaBatch({ field, operation, count, params }));
+    this.store.dispatch(ItemsActions.preparationBatch({ field, operation, count, params }));
   }
   loadHistory(id: string) {
     this.store.dispatch(ItemsActions.loadItemHistory({ id }));
