@@ -167,6 +167,11 @@ export class ItemsPage implements OnInit {
     this.loadPage(page);
   }
 
+  openExportModal() {
+    this.facade.loadAllItemsIfNeeded();
+    this.showExportModal.set(true);
+  }
+
   onAddSubmit(item: NewItem) {
     this.facade.createItem(item);
     this.showAddModal.set(false);

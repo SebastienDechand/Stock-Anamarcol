@@ -34,7 +34,6 @@ import { selectAuthStatus } from './store/auth/auth.selectors';
 
 import { itemsReducer } from './features/items/store/items.reducer';
 import { ItemsEffects } from './features/items/store/items.effects';
-import { ItemsActions } from './features/items/store/items.actions';
 
 import { usersReducer } from './features/members/store/users.reducer';
 import { UsersEffects } from './features/members/store/users.effects';
@@ -135,7 +134,6 @@ export const appConfig: ApplicationConfig = {
             take(1),
           )
           .subscribe(() => {
-            store.dispatch(ItemsActions.loadAllItems());
             store.dispatch(UsersActions.loadAllUsers());
             store.dispatch(ContactsActions.loadAll());
             store.dispatch(VehiclesActions.loadAll());
