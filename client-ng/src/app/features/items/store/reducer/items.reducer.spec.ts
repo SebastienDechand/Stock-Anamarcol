@@ -65,6 +65,7 @@ describe('itemsReducer', () => {
     expect(state.totalPages).toBe(5);
     expect(state.canDecrement).toEqual({ '1': true });
     expect(state.isLoading).toBe(false);
+    expect(state.pageLoaded).toBe(true);
     expect(state.error).toBeNull();
   });
 
@@ -74,6 +75,7 @@ describe('itemsReducer', () => {
       ItemsActions.fetchItemsFailure({ error: 'oops' }),
     );
     expect(state.isLoading).toBe(false);
+    expect(state.pageLoaded).toBe(true);
     expect(state.error).toBe('oops');
   });
 
