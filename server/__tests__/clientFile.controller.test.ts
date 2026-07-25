@@ -8,17 +8,17 @@ vi.mock("fs", async () => ({
   unlink: vi.fn((_p: string, cb: (err: null) => void) => cb(null)),
 }));
 
-const mockClientFileModel = vi.hoisted(() => ({
-  find: vi.fn(),
-  findById: vi.fn(),
-  create: vi.fn(),
-  findByIdAndDelete: vi.fn(),
+const mockClientFileService = vi.hoisted(() => ({
+  listClientFiles: vi.fn(),
+  findClientFileById: vi.fn(),
+  findClientFileDocument: vi.fn(),
+  findClientFileBySiretAndAddress: vi.fn(),
+  findClientFileByNameAndAddress: vi.fn(),
+  createClientFile: vi.fn(),
+  deleteClientFileById: vi.fn(),
 }));
 
-vi.mock("../models/clientFile.model", () => ({
-  __esModule: true,
-  default: mockClientFileModel,
-}));
+vi.mock("../services/clientFile.service", () => mockClientFileService);
 
 vi.mock("../utils/audit.utils", () => ({
   logEvent: vi.fn().mockResolvedValue(undefined),
@@ -88,13 +88,7 @@ describe("ClientFile Controller", () => {
   describe("getClientFiles", () => {
     it("should return all client files with 200", async () => {
       const files = [mockFile];
-      mockClientFileModel.find.mockReturnValue({
-        sort: vi.fn().mockReturnValue({
-          populate: vi.fn().mockReturnValue({
-            lean: vi.fn().mockResolvedValue(files),
-          }),
-        }),
-      });
+      mockClientFileService.listClientFiles.mockResolvedValue(files);
 
       await getClientFiles(req as Request, res as Response);
 
@@ -103,13 +97,7 @@ describe("ClientFile Controller", () => {
     });
 
     it("should return 500 on error", async () => {
-      mockClientFileModel.find.mockReturnValue({
-        sort: vi.fn().mockReturnValue({
-          populate: vi.fn().mockReturnValue({
-            lean: vi.fn().mockRejectedValue(new Error("DB error")),
-          }),
-        }),
-      });
+      mockClientFileService.listClientFiles.mockRejectedValue(new Error("DB error"));
 
       await getClientFiles(req as Request, res as Response);
 
@@ -128,11 +116,7 @@ describe("ClientFile Controller", () => {
 
     it("should return 404 when file not found", async () => {
       req.params = { id: VALID_ID };
-      mockClientFileModel.findById.mockReturnValue({
-        populate: vi.fn().mockReturnValue({
-          lean: vi.fn().mockResolvedValue(null),
-        }),
-      });
+      mockClientFileService.findClientFileById.mockResolvedValue(null);
 
       await getClientFile(req as Request, res as Response);
 
@@ -145,11 +129,7 @@ describe("ClientFile Controller", () => {
 
     it("should return the file with 200", async () => {
       req.params = { id: VALID_ID };
-      mockClientFileModel.findById.mockReturnValue({
-        populate: vi.fn().mockReturnValue({
-          lean: vi.fn().mockResolvedValue(mockFile),
-        }),
-      });
+      mockClientFileService.findClientFileById.mockResolvedValue(mockFile);
 
       await getClientFile(req as Request, res as Response);
 
@@ -163,14 +143,14 @@ describe("ClientFile Controller", () => {
   describe("createClientFile", () => {
     it("should create a client file and return 201", async () => {
       req.body = { lastName: "DUPONT", firstName: "Jean" };
-      mockClientFileModel.create.mockResolvedValue({
+      mockClientFileService.createClientFile.mockResolvedValue({
         ...mockFile,
         _id: { toString: () => VALID_ID },
       });
 
       await createClientFile(req as Request, res as Response);
 
-      expect(mockClientFileModel.create).toHaveBeenCalledWith(
+      expect(mockClientFileService.createClientFile).toHaveBeenCalledWith(
         expect.objectContaining({ lastName: "DUPONT", createdBy: "admin" }),
       );
       expect(res.status).toHaveBeenCalledWith(201);
@@ -179,9 +159,27 @@ describe("ClientFile Controller", () => {
       });
     });
 
+    it("should return 409 when a duplicate SIRET+address is found", async () => {
+      req.body = { siret: "12345", address: "1 rue de la Paix" };
+      mockClientFileService.findClientFileBySiretAndAddress.mockResolvedValue({
+        _id: "existing1",
+        lastName: "MARTIN",
+        company: "TestCorp",
+      });
+
+      await createClientFile(req as Request, res as Response);
+
+      expect(mockClientFileService.findClientFileBySiretAndAddress).toHaveBeenCalledWith(
+        "12345",
+        "1 rue de la Paix",
+      );
+      expect(res.status).toHaveBeenCalledWith(409);
+      expect(mockClientFileService.createClientFile).not.toHaveBeenCalled();
+    });
+
     it("should return 400 on validation error", async () => {
       req.body = {};
-      mockClientFileModel.create.mockRejectedValue(
+      mockClientFileService.createClientFile.mockRejectedValue(
         new Error("validation failed"),
       );
 
@@ -202,7 +200,7 @@ describe("ClientFile Controller", () => {
 
     it("should return 404 when file not found", async () => {
       req.params = { id: VALID_ID };
-      mockClientFileModel.findById.mockResolvedValue(null);
+      mockClientFileService.findClientFileDocument.mockResolvedValue(null);
 
       await updateClientFile(req as Request, res as Response);
 
@@ -217,7 +215,7 @@ describe("ClientFile Controller", () => {
         ...mockFile,
         save: vi.fn().mockResolvedValue({ ...mockFile, lastName: "MARTIN" }),
       };
-      mockClientFileModel.findById.mockResolvedValue(file);
+      mockClientFileService.findClientFileDocument.mockResolvedValue(file);
 
       await updateClientFile(req as Request, res as Response);
 
@@ -235,7 +233,7 @@ describe("ClientFile Controller", () => {
       };
 
       const file = { ...mockFile, save: vi.fn().mockResolvedValue(mockFile) };
-      mockClientFileModel.findById.mockResolvedValue(file);
+      mockClientFileService.findClientFileDocument.mockResolvedValue(file);
 
       await updateClientFile(req as Request, res as Response);
 
@@ -258,7 +256,7 @@ describe("ClientFile Controller", () => {
         ...mockFile,
         save: vi.fn().mockRejectedValue(new Error("save failed")),
       };
-      mockClientFileModel.findById.mockResolvedValue(file);
+      mockClientFileService.findClientFileDocument.mockResolvedValue(file);
 
       await updateClientFile(req as Request, res as Response);
 
@@ -277,7 +275,7 @@ describe("ClientFile Controller", () => {
 
     it("should return 404 when file not found", async () => {
       req.params = { id: VALID_ID };
-      mockClientFileModel.findByIdAndDelete.mockResolvedValue(null);
+      mockClientFileService.deleteClientFileById.mockResolvedValue(null);
 
       await deleteClientFile(req as Request, res as Response);
 
@@ -286,7 +284,7 @@ describe("ClientFile Controller", () => {
 
     it("should delete file and return 200", async () => {
       req.params = { id: VALID_ID };
-      mockClientFileModel.findByIdAndDelete.mockResolvedValue(mockFile);
+      mockClientFileService.deleteClientFileById.mockResolvedValue(mockFile);
 
       await deleteClientFile(req as Request, res as Response);
 
@@ -324,7 +322,7 @@ describe("ClientFile Controller", () => {
         originalname: "test.pdf",
         filename: "123-test.pdf",
       } as Express.Multer.File;
-      mockClientFileModel.findById.mockResolvedValue(null);
+      mockClientFileService.findClientFileDocument.mockResolvedValue(null);
 
       await uploadDocument(req as Request, res as Response);
 
@@ -348,7 +346,7 @@ describe("ClientFile Controller", () => {
         documents: { push: vi.fn() },
         save: vi.fn().mockResolvedValue(mockFile),
       };
-      mockClientFileModel.findById.mockResolvedValue(file);
+      mockClientFileService.findClientFileDocument.mockResolvedValue(file);
 
       await uploadDocument(req as Request, res as Response);
 
@@ -365,7 +363,7 @@ describe("ClientFile Controller", () => {
         originalname: "x.pdf",
         filename: "x.pdf",
       } as Express.Multer.File;
-      mockClientFileModel.findById.mockRejectedValue(new Error("DB crash"));
+      mockClientFileService.findClientFileDocument.mockRejectedValue(new Error("DB crash"));
 
       await uploadDocument(req as Request, res as Response);
 
@@ -390,7 +388,7 @@ describe("ClientFile Controller", () => {
 
     it("should return 404 when client file not found", async () => {
       req.params = { id: VALID_ID, docId: VALID_DOC_ID };
-      mockClientFileModel.findById.mockResolvedValue(null);
+      mockClientFileService.findClientFileDocument.mockResolvedValue(null);
 
       await deleteDocument(req as Request, res as Response);
 
@@ -404,7 +402,7 @@ describe("ClientFile Controller", () => {
     it("should return 404 when document not found in the file", async () => {
       req.params = { id: VALID_ID, docId: VALID_DOC_ID };
       const file = { ...mockFile, documents: [] }; // no documents
-      mockClientFileModel.findById.mockResolvedValue(file);
+      mockClientFileService.findClientFileDocument.mockResolvedValue(file);
 
       await deleteDocument(req as Request, res as Response);
 
@@ -423,7 +421,7 @@ describe("ClientFile Controller", () => {
         documents: [mockDoc],
         save: vi.fn().mockResolvedValue(mockFile),
       };
-      mockClientFileModel.findById.mockResolvedValue(file);
+      mockClientFileService.findClientFileDocument.mockResolvedValue(file);
 
       await deleteDocument(req as Request, res as Response);
 
@@ -435,7 +433,7 @@ describe("ClientFile Controller", () => {
 
     it("should return 500 on unexpected error", async () => {
       req.params = { id: VALID_ID, docId: VALID_DOC_ID };
-      mockClientFileModel.findById.mockRejectedValue(new Error("crash"));
+      mockClientFileService.findClientFileDocument.mockRejectedValue(new Error("crash"));
 
       await deleteDocument(req as Request, res as Response);
 

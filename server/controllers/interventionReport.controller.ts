@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import InterventionReportModel from "../models/interventionReport.model";
+import * as interventionReportService from "../services/interventionReport.service";
 import { validateObjectId } from "../utils/validate.utils";
 import { handleError } from "../utils/response.utils";
 import { ErrorCode } from "../constants/errorCodes";
@@ -13,10 +13,7 @@ export const getInterventionReports = async (
     const filter = req.query.clientFileId
       ? { clientFile: req.query.clientFileId }
       : {};
-    const reports = await InterventionReportModel.find(filter)
-      .sort({ createdAt: -1 })
-      .populate("clientFile", "lastName firstName company postalCode city")
-      .lean();
+    const reports = await interventionReportService.listInterventionReports(filter);
     res.status(200).json(reports);
   } catch (err) {
     handleError(res, err, "Error fetching intervention reports:");
@@ -32,9 +29,9 @@ export const getInterventionReport = async (
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
-    const report = await InterventionReportModel.findById(req.params.id)
-      .populate("clientFile", "lastName firstName company postalCode city")
-      .lean();
+    const report = await interventionReportService.findInterventionReportById(
+      req.params.id as string,
+    );
     if (!report) {
       res
         .status(404)
@@ -55,7 +52,7 @@ export const createInterventionReport = async (
 ): Promise<void> => {
   try {
     const data = { ...req.body, createdBy: res.locals.user?.username };
-    const report = await InterventionReportModel.create(data);
+    const report = await interventionReportService.createInterventionReport(data);
     res.status(201).json({ interventionReport: report._id });
   } catch (err) {
     console.error("Error creating intervention report:", err);
@@ -75,7 +72,9 @@ export const updateInterventionReport = async (
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
-    const report = await InterventionReportModel.findById(req.params.id);
+    const report = await interventionReportService.findInterventionReportDocument(
+      req.params.id as string,
+    );
     if (!report) {
       res
         .status(404)
@@ -121,8 +120,8 @@ export const deleteInterventionReport = async (
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
-    const report = await InterventionReportModel.findByIdAndDelete(
-      req.params.id,
+    const report = await interventionReportService.deleteInterventionReportById(
+      req.params.id as string,
     );
     if (!report) {
       res

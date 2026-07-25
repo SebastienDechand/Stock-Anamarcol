@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import ContactModel, { IContact } from "../models/contact.model";
+import { IContact } from "../models/contact.model";
+import * as contactsService from "../services/contacts.service";
 import { validateObjectId } from "../utils/validate.utils";
 import { logEvent } from "../utils/audit.utils";
 import { handleError } from "../utils/response.utils";
@@ -9,7 +10,7 @@ export const getContacts = async (
   _req: Request,
   res: Response,
 ): Promise<void> => {
-  const contacts = await ContactModel.find();
+  const contacts = await contactsService.listContacts();
   res.status(200).json(contacts);
 };
 
@@ -20,7 +21,7 @@ export const contactInfo = async (
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
-    const contact = await ContactModel.findById(req.params.id).lean();
+    const contact = await contactsService.findContactById(req.params.id as string);
     if (!contact) {
       res
         .status(404)
@@ -40,7 +41,7 @@ export const createContact = async (
   const { name, email, link, position, phone, category } = req.body;
 
   try {
-    const contact = await ContactModel.create({
+    const contact = await contactsService.createContact({
       name,
       email,
       link,
@@ -72,7 +73,7 @@ export const updateContact = async (
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
-    const contact = await ContactModel.findById(req.params.id);
+    const contact = await contactsService.findContactDocument(req.params.id as string);
 
     if (!contact) {
       res
@@ -138,18 +139,8 @@ export const deleteContact = async (
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
-    const maybeQuery = ContactModel.findById(req.params.id as string);
-    let toDelete: unknown = undefined;
-    if (maybeQuery) {
-      if (typeof maybeQuery.lean === "function") {
-        toDelete = await maybeQuery.lean();
-      } else if (
-        typeof (maybeQuery as { then?: unknown }).then === "function"
-      ) {
-        toDelete = await maybeQuery;
-      }
-    }
-    await ContactModel.deleteOne({ _id: req.params.id }).exec();
+    const toDelete = await contactsService.findContactById(req.params.id as string);
+    await contactsService.deleteContactById(req.params.id as string);
     // Audit
     try {
       await logEvent(
