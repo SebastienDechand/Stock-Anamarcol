@@ -134,7 +134,7 @@ server/
 | `POST` | `/login`    | Public | Login → JWT cookie                                      |
 | `GET`  | `/logout`   | Public | Logout (cookie removal)                                 |
 
-> `/register` is not self-service sign-up: only an admin can create an account (same handler and route as `POST /api/user`, see below).
+> `/register` is not self-service sign-up: only an admin can create an account.
 
 ### Users - `/api/user`
 
@@ -142,7 +142,6 @@ server/
 | -------- | ------------- | :---: | ----------------------------------------------------------------- |
 | `GET`    | `/`           |  🔒   | List of all users                                                  |
 | `GET`    | `/:id`        |  🔒   | User details                                                       |
-| `POST`   | `/`           | Admin | Create a user                                                     |
 | `PUT`    | `/:id`        |  🔒   | Update a user (self, or anyone if admin)                          |
 | `DELETE` | `/:id`        | Admin | Delete a user                                                     |
 | `PUT`    | `/:id/role`   | Admin | Change a user's single role (legacy)                              |

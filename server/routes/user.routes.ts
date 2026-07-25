@@ -16,8 +16,6 @@ router.get("/logout", authController.logout);
 // User DB (authenticated)
 router.get("/", requireAuth, userController.getAllUsers);
 router.get("/:id", requireAuth, userController.userInfo);
-// Admins can create users (add members)
-router.post("/", requireAdmin, authController.signUp);
 // Admins can update any user; a user can also update their own profile
 // (self-service fields only - see authorization check inside the controller)
 router.put("/:id", requireAuth, userController.updateUser);
