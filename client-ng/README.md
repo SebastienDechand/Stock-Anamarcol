@@ -197,7 +197,7 @@ npm run format       # Prettier sur src/**
 |                 | Détail                                                              |
 | --------------- | ------------------------------------------------------------------- |
 | **Framework**   | Vitest (`ng test`, configuré via `@angular/build`)                  |
-| **Emplacement** | `__tests__/` à côté de chaque composant/service/guard               |
+| **Emplacement** | Colocalisé : `x.ts` + `x.spec.ts` côte à côte (pas de dossier `__tests__/`) |
 | **Couverture**  | Composants de features, guards, services core, pipes/utils partagés |
 
 ---

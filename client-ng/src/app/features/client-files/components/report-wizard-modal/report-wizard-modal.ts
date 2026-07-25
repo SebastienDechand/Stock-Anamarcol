@@ -24,12 +24,12 @@ import {
 import { TranslatePipe } from '@ngx-translate/core';
 import { Actions, ofType } from '@ngrx/effects';
 import { take } from 'rxjs';
-import { InterventionReportsFacade } from '../../../intervention-reports/store/intervention-reports.facade';
-import { InterventionReportsActions } from '../../../intervention-reports/store/intervention-reports.actions';
+import { InterventionReportsFacade } from '../../../intervention-reports/store/facade/intervention-reports.facade';
+import { InterventionReportsActions } from '../../../intervention-reports/store/actions/intervention-reports.actions';
 import {
   CashguardUnit,
   InterventionReport,
-} from '../../../../shared/models/intervention-report.model';
+} from '../../../../shared/models/intervention-report/intervention-report.model';
 
 function emptyUnit(): CashguardUnit {
   return {

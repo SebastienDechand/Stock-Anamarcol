@@ -5,12 +5,12 @@ import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AuthFacade } from '../../store/auth/auth.facade';
-import { UsersFacade } from '../members/store/users.facade';
-import { DateFrPipe } from '../../shared/pipes/date-fr.pipe';
-import { User } from '../../shared/models/user.model';
-import { Vehicle } from '../../shared/models/vehicle.model';
-import { VehiclesFacade } from '../fleet/store/vehicles.facade';
+import { AuthFacade } from '../../store/auth/facade/auth.facade';
+import { UsersFacade } from '../members/store/facade/users.facade';
+import { DateFrPipe } from '../../shared/pipes/date-fr/date-fr.pipe';
+import { User } from '../../shared/models/user/user.model';
+import { Vehicle } from '../../shared/models/vehicle/vehicle.model';
+import { VehiclesFacade } from '../fleet/store/facade/vehicles.facade';
 import { MAX_FILE_SIZE } from '../../shared/constants';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
 

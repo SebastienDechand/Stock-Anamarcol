@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../../core/http/api.service';
-import { AuditEvent } from '../../shared/models/audit.model';
+import { AuditEvent } from '../../shared/models/audit/audit.model';
 
 @Injectable({ providedIn: 'root' })
 export class HistoryService {

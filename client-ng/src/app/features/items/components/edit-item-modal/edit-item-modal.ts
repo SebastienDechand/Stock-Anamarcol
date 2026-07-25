@@ -19,12 +19,12 @@ import {
   SUPPLIERS,
   MAX_FILE_SIZE,
 } from '../../../../shared/constants';
-import { Item, ItemHistory } from '../../../../shared/models/item.model';
-import { ItemsFacade } from '../../store/items.facade';
-import { UsersFacade } from '../../../members/store/users.facade';
-import { AuthFacade } from '../../../../store/auth/auth.facade';
-import { LanguageService } from '../../../../core/services/language.service';
-import { resolveLocale } from '../../../../shared/utils/date.utils';
+import { Item, ItemHistory } from '../../../../shared/models/item/item.model';
+import { ItemsFacade } from '../../store/facade/items.facade';
+import { UsersFacade } from '../../../members/store/facade/users.facade';
+import { AuthFacade } from '../../../../store/auth/facade/auth.facade';
+import { LanguageService } from '../../../../core/services/language/language.service';
+import { resolveLocale } from '../../../../shared/utils/date/date.utils';
 
 @Component({
   selector: 'app-edit-item-modal',

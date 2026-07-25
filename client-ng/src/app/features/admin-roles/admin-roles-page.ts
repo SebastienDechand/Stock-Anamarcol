@@ -5,13 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { UsersFacade } from '../members/store/users.facade';
-import { AuthFacade } from '../../store/auth/auth.facade';
+import { UsersFacade } from '../members/store/facade/users.facade';
+import { AuthFacade } from '../../store/auth/facade/auth.facade';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { AccessDenied } from '../../shared/components/access-denied/access-denied';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
-import { User } from '../../shared/models/user.model';
-import { Role, ROLE_DISPLAY_ORDER, ROLE_LABEL_KEYS } from '../../shared/constants/roles.constants';
+import { User } from '../../shared/models/user/user.model';
+import { Role, ROLE_DISPLAY_ORDER, ROLE_LABEL_KEYS } from '../../shared/constants/roles/roles.constants';
 
 const ROLE_COLUMNS: { role: Role; labelKey: string }[] = ROLE_DISPLAY_ORDER.map((role) => ({
   role,

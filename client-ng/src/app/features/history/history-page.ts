@@ -30,16 +30,16 @@ import {
   ArrowRightLeft,
   Package,
 } from 'lucide-angular';
-import { AuthFacade } from '../../store/auth/auth.facade';
+import { AuthFacade } from '../../store/auth/facade/auth.facade';
 import { ToastService } from '../../core/toast/toast.service';
 import { HistoryCacheService } from './history-cache.service';
 import { HistoryService } from './history.service';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
-import { AuditEvent } from '../../shared/models/audit.model';
-import { ACTION_MAP, DEFAULT_ACTION, ENTITY_MAP } from '../../shared/constants/audit.constants';
-import { LanguageService } from '../../core/services/language.service';
-import { resolveLocale } from '../../shared/utils/date.utils';
+import { AuditEvent } from '../../shared/models/audit/audit.model';
+import { ACTION_MAP, DEFAULT_ACTION, ENTITY_MAP } from '../../shared/constants/audit/audit.constants';
+import { LanguageService } from '../../core/services/language/language.service';
+import { resolveLocale } from '../../shared/utils/date/date.utils';
 
 const PAGE_LIMIT = 30;
 

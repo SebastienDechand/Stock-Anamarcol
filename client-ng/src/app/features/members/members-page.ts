@@ -4,22 +4,22 @@ import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LucideAngularModule } from 'lucide-angular';
 
-import { UsersFacade } from './store/users.facade';
-import { AuthFacade } from '../../store/auth/auth.facade';
+import { UsersFacade } from './store/facade/users.facade';
+import { AuthFacade } from '../../store/auth/facade/auth.facade';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { MemberCard } from './components/member-card/member-card';
 import { AddMemberModal } from './components/add-member-modal/add-member-modal';
 import { EditMemberModal } from './components/edit-member-modal/edit-member-modal';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
-import { NewUserData, UpdateUserData } from './store/users.actions';
-import { User } from '../../shared/models/user.model';
-import { Role } from '../../shared/constants/roles.constants';
+import { NewUserData, UpdateUserData } from './store/actions/users.actions';
+import { User } from '../../shared/models/user/user.model';
+import { Role } from '../../shared/constants/roles/roles.constants';
 import {
   DEPARTMENT_MANAGEMENT,
   DEPARTMENT_SITE_MANAGEMENT,
   DEPARTMENT_WAREHOUSE,
-} from '../../shared/constants/poles.constants';
+} from '../../shared/constants/poles/poles.constants';
 
 function getUserDepartment(user: User): string {
   return user.department ?? 'Other';

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Contact, ContactCategory } from '../../../../shared/models/contact.model';
+import { Contact, ContactCategory } from '../../../../shared/models/contact/contact.model';
 
 @Component({
   selector: 'app-contact-modal',

@@ -15,7 +15,7 @@ import {
   ClientFile,
   ClientFileForm,
   Equipement,
-} from '../../../../shared/models/client-file.model';
+} from '../../../../shared/models/client-file/client-file.model';
 import { ToastService } from '../../../../core/toast/toast.service';
 
 // #region BDC parsing

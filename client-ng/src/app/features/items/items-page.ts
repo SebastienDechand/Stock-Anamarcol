@@ -7,8 +7,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, debounceTime, distinctUntilChanged, fromEvent } from 'rxjs';
 import { auditTime } from 'rxjs/operators';
 
-import { ItemsFacade } from './store/items.facade';
-import { AuthFacade } from '../../store/auth/auth.facade';
+import { ItemsFacade } from './store/facade/items.facade';
+import { AuthFacade } from '../../store/auth/facade/auth.facade';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { ItemCard } from './components/item-card/item-card';
@@ -16,10 +16,10 @@ import { AddItemModal } from './components/add-item-modal/add-item-modal';
 import { EditItemModal } from './components/edit-item-modal/edit-item-modal';
 import { ExportModal } from './components/export-modal/export-modal';
 import { FiltersModal, FiltersApplied } from './components/filters-modal/filters-modal';
-import { Item, FetchItemsParams, NewItem } from '../../shared/models/item.model';
-import { User } from '../../shared/models/user.model';
+import { Item, FetchItemsParams, NewItem } from '../../shared/models/item/item.model';
+import { User } from '../../shared/models/user/user.model';
 import { SUPPLIERS, STATUSES } from '../../shared/constants';
-import { togglePrepaFilter } from '../../shared/utils/prepa-filter.utils';
+import { togglePrepaFilter } from '../../shared/utils/prepa-filter/prepa-filter.utils';
 
 function getItemsPerPage(): number {
   const w = window.innerWidth;

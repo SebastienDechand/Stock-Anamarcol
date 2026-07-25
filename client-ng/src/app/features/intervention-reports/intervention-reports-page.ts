@@ -3,12 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { LucideAngularModule, Search, FolderOpen } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { InterventionReportsFacade } from './store/intervention-reports.facade';
+import { InterventionReportsFacade } from './store/facade/intervention-reports.facade';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
-import { InterventionReport } from '../../shared/models/intervention-report.model';
-import { LanguageService } from '../../core/services/language.service';
-import { resolveLocale } from '../../shared/utils/date.utils';
+import { InterventionReport } from '../../shared/models/intervention-report/intervention-report.model';
+import { LanguageService } from '../../core/services/language/language.service';
+import { resolveLocale } from '../../shared/utils/date/date.utils';
 
 @Component({
   selector: 'app-intervention-reports-page',

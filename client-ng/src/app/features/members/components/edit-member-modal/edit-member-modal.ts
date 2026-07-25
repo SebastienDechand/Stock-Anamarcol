@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { User } from '../../../../shared/models/user.model';
-import { UpdateUserData } from '../../store/users.actions';
-import { ALL_DEPARTMENT_LABELS } from '../../../../shared/constants/poles.constants';
+import { User } from '../../../../shared/models/user/user.model';
+import { UpdateUserData } from '../../store/actions/users.actions';
+import { ALL_DEPARTMENT_LABELS } from '../../../../shared/constants/poles/poles.constants';
 
 @Component({
   selector: 'app-edit-member-modal',

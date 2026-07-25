@@ -2,12 +2,12 @@ import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Shipment } from '../../../../shared/models/shipment.model';
+import { Shipment } from '../../../../shared/models/shipment/shipment.model';
 import {
   exportShipmentsToCSV,
   exportShipmentsToXLSX,
   exportShipmentsToPDF,
-} from '../../../../shared/utils/shipment-export.utils';
+} from '../../../../shared/utils/shipment-export/shipment-export.utils';
 
 @Component({
   selector: 'app-shipment-export-modal',

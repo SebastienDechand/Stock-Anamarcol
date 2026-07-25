@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule, ZoomIn, ZoomOut, RotateCcw } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { environment } from '../../../../../environments/environment';
-import { CameraConfig } from '../../../../shared/constants/cameras.constants';
+import { CameraConfig } from '../../../../shared/constants/cameras/cameras.constants';
 
 function buildStreamUrl(camera: CameraConfig): string {
   return `${environment.apiUrl}api/cameras/stream/${camera.id}`;

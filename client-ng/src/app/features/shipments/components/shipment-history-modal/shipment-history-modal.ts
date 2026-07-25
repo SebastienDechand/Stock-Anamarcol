@@ -5,9 +5,9 @@ import { LucideAngularModule, X, Archive, AlertTriangle, Download } from 'lucide
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../../../../core/http/api.service';
 import { ToastService } from '../../../../core/toast/toast.service';
-import { ShipmentArchive } from '../../../../shared/models/shipment.model';
-import { LanguageService } from '../../../../core/services/language.service';
-import { resolveLocale } from '../../../../shared/utils/date.utils';
+import { ShipmentArchive } from '../../../../shared/models/shipment/shipment.model';
+import { LanguageService } from '../../../../core/services/language/language.service';
+import { resolveLocale } from '../../../../shared/utils/date/date.utils';
 
 @Component({
   selector: 'app-shipment-history-modal',

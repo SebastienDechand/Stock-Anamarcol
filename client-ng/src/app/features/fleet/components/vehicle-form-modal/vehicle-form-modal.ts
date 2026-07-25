@@ -11,8 +11,8 @@ import {
   VehicleBrand,
   VehicleModel,
   VehicleFormat,
-} from '../../../../shared/models/vehicle.model';
-import { UsersFacade } from '../../../members/store/users.facade';
+} from '../../../../shared/models/vehicle/vehicle.model';
+import { UsersFacade } from '../../../members/store/facade/users.facade';
 
 function addYears(dateStr: string, years: number): string {
   if (!dateStr) return '';

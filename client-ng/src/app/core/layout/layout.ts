@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
-import { UiFacade } from '../../store/ui/ui.facade';
+import { UiFacade } from '../../store/ui/facade/ui.facade';
 import { Sidebar } from './sidebar/sidebar';
 import { Topbar } from './topbar/topbar';
 

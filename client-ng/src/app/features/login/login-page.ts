@@ -4,7 +4,7 @@ import { AsyncPipe } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { Eye, EyeOff, Package } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthFacade } from '../../store/auth/auth.facade';
+import { AuthFacade } from '../../store/auth/facade/auth.facade';
 import { LanguageToggle } from '../../shared/components/language-toggle/language-toggle';
 
 @Component({

@@ -11,9 +11,9 @@ import {
   Clock,
   Eye,
 } from 'lucide-angular';
-import { Shipment } from '../../../../shared/models/shipment.model';
-import { LanguageService } from '../../../../core/services/language.service';
-import { resolveLocale } from '../../../../shared/utils/date.utils';
+import { Shipment } from '../../../../shared/models/shipment/shipment.model';
+import { LanguageService } from '../../../../core/services/language/language.service';
+import { resolveLocale } from '../../../../shared/utils/date/date.utils';
 
 @Component({
   selector: 'app-shipment-card',

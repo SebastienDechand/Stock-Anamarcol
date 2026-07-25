@@ -6,7 +6,7 @@ import { LucideAngularModule, Video } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CameraCard } from './components/camera-card/camera-card';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
-import { CAMERAS_CONFIG, CameraConfig } from '../../shared/constants/cameras.constants';
+import { CAMERAS_CONFIG, CameraConfig } from '../../shared/constants/cameras/cameras.constants';
 
 @Component({
   selector: 'app-surveillance-page',

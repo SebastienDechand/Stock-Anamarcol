@@ -25,42 +25,42 @@ import { ToastrModule } from 'ngx-toastr';
 import { filter, take } from 'rxjs';
 
 import { routes } from './app.routes';
-import { authInterceptor } from './core/auth/auth.interceptor';
-import { authReducer } from './store/auth/auth.reducer';
-import { uiReducer } from './store/ui/ui.reducer';
-import { AuthEffects } from './store/auth/auth.effects';
-import { AuthActions } from './store/auth/auth.actions';
-import { selectAuthStatus } from './store/auth/auth.selectors';
+import { authInterceptor } from './core/auth/auth.interceptor/auth.interceptor';
+import { authReducer } from './store/auth/reducer/auth.reducer';
+import { uiReducer } from './store/ui/reducer/ui.reducer';
+import { AuthEffects } from './store/auth/effects/auth.effects';
+import { AuthActions } from './store/auth/actions/auth.actions';
+import { selectAuthStatus } from './store/auth/selectors/auth.selectors';
 
-import { itemsReducer } from './features/items/store/items.reducer';
-import { ItemsEffects } from './features/items/store/items.effects';
+import { itemsReducer } from './features/items/store/reducer/items.reducer';
+import { ItemsEffects } from './features/items/store/effects/items.effects';
 
-import { usersReducer } from './features/members/store/users.reducer';
-import { UsersEffects } from './features/members/store/users.effects';
-import { UsersActions } from './features/members/store/users.actions';
+import { usersReducer } from './features/members/store/reducer/users.reducer';
+import { UsersEffects } from './features/members/store/effects/users.effects';
+import { UsersActions } from './features/members/store/actions/users.actions';
 
-import { contactsReducer } from './features/contacts/store/contacts.reducer';
-import { ContactsEffects } from './features/contacts/store/contacts.effects';
-import { ContactsActions } from './features/contacts/store/contacts.actions';
+import { contactsReducer } from './features/contacts/store/reducer/contacts.reducer';
+import { ContactsEffects } from './features/contacts/store/effects/contacts.effects';
+import { ContactsActions } from './features/contacts/store/actions/contacts.actions';
 
-import { vehiclesReducer } from './features/fleet/store/vehicles.reducer';
-import { VehiclesEffects } from './features/fleet/store/vehicles.effects';
-import { VehiclesActions } from './features/fleet/store/vehicles.actions';
+import { vehiclesReducer } from './features/fleet/store/reducer/vehicles.reducer';
+import { VehiclesEffects } from './features/fleet/store/effects/vehicles.effects';
+import { VehiclesActions } from './features/fleet/store/actions/vehicles.actions';
 
-import { shipmentsReducer } from './features/shipments/store/shipments.reducer';
-import { ShipmentsEffects } from './features/shipments/store/shipments.effects';
-import { ShipmentsActions } from './features/shipments/store/shipments.actions';
+import { shipmentsReducer } from './features/shipments/store/reducer/shipments.reducer';
+import { ShipmentsEffects } from './features/shipments/store/effects/shipments.effects';
+import { ShipmentsActions } from './features/shipments/store/actions/shipments.actions';
 
-import { clientFilesReducer } from './features/client-files/store/client-files.reducer';
-import { ClientFilesEffects } from './features/client-files/store/client-files.effects';
-import { ClientFilesActions } from './features/client-files/store/client-files.actions';
+import { clientFilesReducer } from './features/client-files/store/reducer/client-files.reducer';
+import { ClientFilesEffects } from './features/client-files/store/effects/client-files.effects';
+import { ClientFilesActions } from './features/client-files/store/actions/client-files.actions';
 
-import { interventionReportsReducer } from './features/intervention-reports/store/intervention-reports.reducer';
-import { InterventionReportsEffects } from './features/intervention-reports/store/intervention-reports.effects';
-import { InterventionReportsActions } from './features/intervention-reports/store/intervention-reports.actions';
+import { interventionReportsReducer } from './features/intervention-reports/store/reducer/intervention-reports.reducer';
+import { InterventionReportsEffects } from './features/intervention-reports/store/effects/intervention-reports.effects';
+import { InterventionReportsActions } from './features/intervention-reports/store/actions/intervention-reports.actions';
 
-import { statisticsReducer } from './features/home/store/statistics.reducer';
-import { StatisticsEffects } from './features/home/store/statistics.effects';
+import { statisticsReducer } from './features/home/store/reducer/statistics.reducer';
+import { StatisticsEffects } from './features/home/store/effects/statistics.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [

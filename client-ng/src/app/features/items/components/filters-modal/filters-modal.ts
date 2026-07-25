@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SUPPLIERS, STATUSES } from '../../../../shared/constants';
-import { togglePrepaFilter } from '../../../../shared/utils/prepa-filter.utils';
+import { togglePrepaFilter } from '../../../../shared/utils/prepa-filter/prepa-filter.utils';
 
 export interface FiltersApplied {
   suppliers: string[];

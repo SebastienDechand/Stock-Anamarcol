@@ -2,14 +2,14 @@ import { Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, AlertCircle, Edit2, Trash2, FileText } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { Vehicle } from '../../../../shared/models/vehicle.model';
-import { LanguageService } from '../../../../core/services/language.service';
+import { Vehicle } from '../../../../shared/models/vehicle/vehicle.model';
+import { LanguageService } from '../../../../core/services/language/language.service';
 import {
   VehicleDateStatus,
   formatVehicleDate,
   vehicleDateStatus,
   vehicleRevisionStatus,
-} from '../../../../shared/utils/vehicle-status.utils';
+} from '../../../../shared/utils/vehicle-status/vehicle-status.utils';
 
 @Component({
   selector: 'app-vehicle-card',
