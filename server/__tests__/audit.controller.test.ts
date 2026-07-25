@@ -129,7 +129,8 @@ describe("Audit Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Erreur interne du serveur",
+        message: "Internal server error",
+        code: "INTERNAL_ERROR",
       });
     });
 
@@ -218,7 +219,8 @@ describe("Audit Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Erreur interne du serveur",
+        message: "Internal server error",
+        code: "INTERNAL_ERROR",
       });
     });
   });

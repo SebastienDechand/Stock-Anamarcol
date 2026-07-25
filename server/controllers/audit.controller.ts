@@ -5,6 +5,7 @@ import AuditModel from "../models/audit.model";
 import ItemModel from "../models/item.model";
 import ContactModel from "../models/contact.model";
 import UserModel from "../models/user.model";
+import { handleError } from "../utils/response.utils";
 import { Role } from "../constants";
 
 export const getHistory = async (
@@ -144,8 +145,7 @@ export const getHistory = async (
 
     res.status(200).json(merged.slice(0, limit));
   } catch (err) {
-    console.error("Error fetching audit history:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    handleError(res, err, "Error fetching audit history:");
   }
 };
 
@@ -180,7 +180,6 @@ export const purgeAllHistoryAndAudit = async (
       deletedHistory: historyRes.deletedCount ?? null,
     });
   } catch (err) {
-    console.error("Error purging audit/history:", err);
-    res.status(500).json({ message: "Erreur interne du serveur" });
+    handleError(res, err, "Error purging audit/history:");
   }
 };
