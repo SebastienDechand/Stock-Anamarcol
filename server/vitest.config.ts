@@ -12,7 +12,6 @@ export default defineConfig({
         "middleware/**/*.ts",
         "utils/**/*.ts",
         "constants/**/*.ts",
-        "errors.utils.ts",
       ],
       exclude: ["**/node_modules/**"],
       reportsDirectory: "./coverage",

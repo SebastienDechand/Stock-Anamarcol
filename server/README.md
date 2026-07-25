@@ -109,12 +109,13 @@ server/
 │
 ├── utils/
 │   ├── audit.utils.ts                    Audit log (logEvent, getRecentEvents)
+│   ├── errors.utils.ts                   Error formatting
 │   ├── history.utils.ts                  Item history (logItemCreate, logItemChanges, logItemDelete)
+│   ├── response.utils.ts                 handleError (shared 500 response helper)
 │   ├── upload.utils.ts                   File validation + ImgBB upload
 │   └── validate.utils.ts                 MongoDB ObjectId validation
 │
 ├── app.ts                             Express config (middleware, routes)
-├── errors.utils.ts                    Error formatting
 ├── index.ts                           Entry point (dotenv, DB, listen)
 └── package.json
 ```
@@ -157,11 +158,13 @@ server/
 | `GET`    | `/`            |     🔒      | Paginated list + filters (search, supplier, status, lowStock, sort)     |
 | `GET`    | `/:id`         |     🔒      | Item details                                                            |
 | `POST`   | `/`            |     🔒      | Create an item                                                          |
-| `PUT`    | `/:id`         |     🔒      | Update (name, supplier, status, quantity, modifierName)                 |
+| `PUT`    | `/:id`         |     🔒      | Update (name, quantity, modifierName; supplier/status require Admin)    |
 | `DELETE` | `/:id`         |    Admin    | Delete an item                                                          |
 | `GET`    | `/history/:id` |     🔒      | Change history of an item                                               |
 | `POST`   | `/prepa-batch` |     🔒      | Batch decrement/increment for prep operations                          |
 | `POST`   | `/upload`      | 🔒 + Multer | Upload item image                                                       |
+
+> `PUT /:id` allows any authenticated user to adjust `quantity` (used by the stock +/- controls); changing `supplier` or `status` returns 403 unless the caller is Admin/Superadmin (enforced in `item.controller.ts`, not at the route level).
 
 ### History - `/api/history`
 

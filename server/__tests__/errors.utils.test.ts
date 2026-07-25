@@ -4,7 +4,7 @@ import {
   signInErrors,
   uploadErrors,
   createItemErrors,
-} from "../errors.utils";
+} from "../utils/errors.utils";
 
 describe("errors.utils", () => {
   // #region signUpErrors

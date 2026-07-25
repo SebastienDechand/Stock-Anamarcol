@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import multer from "multer";
-import { uploadErrors } from "../errors.utils";
+import { uploadErrors } from "./errors.utils";
 import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from "../constants";
 import { ErrorCode } from "../constants/errorCodes";
 

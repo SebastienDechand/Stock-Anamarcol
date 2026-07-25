@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import UserModel from "../models/user.model";
 import jwt from "jsonwebtoken";
-import { signUpErrors, signInErrors } from "../errors.utils";
+import { signUpErrors, signInErrors } from "../utils/errors.utils";
 import { JWT_MAX_AGE, COOKIE_MAX_AGE, Role } from "../constants";
 import { logEvent } from "../utils/audit.utils";
 import { ErrorCode } from "../constants/errorCodes";
