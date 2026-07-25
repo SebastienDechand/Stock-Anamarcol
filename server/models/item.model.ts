@@ -1,13 +1,14 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
+import { SUPPLIERS, STATUSES, Supplier, Status } from "../constants";
 
 export interface IItem extends Document {
   posterId?: string;
   modifierName?: string;
   name: string;
   quantity: number;
-  supplier: string;
+  supplier: Supplier;
   image?: string;
-  status: string;
+  status: Status;
   cgKit?: boolean;
   tpvKit?: boolean;
   createdAt: Date;
@@ -38,6 +39,7 @@ const ItemSchema = new Schema<IItem>(
     supplier: {
       type: String,
       required: true,
+      enum: SUPPLIERS,
       index: true,
     },
     image: {
@@ -47,6 +49,7 @@ const ItemSchema = new Schema<IItem>(
     status: {
       type: String,
       required: true,
+      enum: STATUSES,
       index: true,
     },
     cgKit: {

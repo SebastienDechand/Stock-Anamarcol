@@ -10,6 +10,9 @@ import {
 import { logEvent } from "../utils/audit.utils";
 import { invalidateStatsCache } from "./stats.controller";
 import { ErrorCode } from "../constants/errorCodes";
+import { Role } from "../constants";
+
+const ADMIN_ONLY_FIELDS = ["supplier", "status"] as const;
 
 export const itemInfo = async (req: Request, res: Response): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
@@ -185,6 +188,20 @@ export const updateItem = async (
   res: Response,
 ): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
+
+  const userRoles = res.locals.user?.roles ?? [];
+  const isAdmin =
+    userRoles.includes(Role.ADMIN) || userRoles.includes(Role.SUPERADMIN);
+  const requestsAdminOnlyField = ADMIN_ONLY_FIELDS.some((field) =>
+    Object.prototype.hasOwnProperty.call(req.body, field),
+  );
+  if (requestsAdminOnlyField && !isAdmin) {
+    res.status(403).json({
+      message: "Access denied - admin required",
+      code: ErrorCode.ACCESS_DENIED_ADMIN,
+    });
+    return;
+  }
 
   try {
     const item = await ItemModel.findById(req.params.id);

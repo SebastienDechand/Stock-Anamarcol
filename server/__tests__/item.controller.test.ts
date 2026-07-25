@@ -247,6 +247,39 @@ describe("Item Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
+    it("should return 403 when a non-admin tries to change supplier or status", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { supplier: "Amazon" };
+      res.locals = { user: { username: "user", roles: ["user"] } };
+
+      await updateItem(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(mockItemModel.findById).not.toHaveBeenCalled();
+    });
+
+    it("should allow an admin to change supplier or status", async () => {
+      req.params = { id: "507f1f77bcf86cd799439011" };
+      req.body = { status: "RMA" };
+      res.locals = { user: { username: "admin", roles: ["admin"] } };
+
+      const mockItem = {
+        _id: "507f1f77bcf86cd799439011",
+        status: "NEW",
+        toObject: vi.fn().mockReturnValue({
+          _id: "507f1f77bcf86cd799439011",
+          status: "NEW",
+        }),
+        save: vi.fn().mockResolvedValue({
+          _id: "507f1f77bcf86cd799439011",
+          status: "RMA",
+        }),
+      };
+      mockItemModel.findById.mockResolvedValue(mockItem);
+
+      await updateItem(req as Request, res as Response);
+      expect(res.status).toHaveBeenCalledWith(200);
+    });
+
     it("should prevent negative quantity", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       req.body = { quantity: -5 };
