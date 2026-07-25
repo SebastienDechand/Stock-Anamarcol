@@ -1,0 +1,12 @@
+{
+  "name": "anamarcol",
+  "private": true,
+  "scripts": {
+    "dev": "docker compose up --build",
+    "test:server": "docker compose run --rm server npm run test:ci",
+    "test:client": "docker compose run --rm --no-deps client npm test",
+    "test": "npm run test:server && npm run test:client",
+    "test:e2e": "npm --prefix client-ng run e2e",
+    "ci": "npm run test && npm run test:e2e"
+  }
+}
