@@ -13,6 +13,8 @@ import { Vehicle } from '../../shared/models/vehicle/vehicle.model';
 import { VehiclesFacade } from '../fleet/store/facade/vehicles.facade';
 import { MAX_FILE_SIZE } from '../../shared/constants';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
+import { DEPARTMENT_LABEL_KEYS } from '../../shared/constants/poles/poles.constants';
+import { VEHICLE_FORMAT_LABEL_KEYS } from '../../shared/utils/vehicle-status/vehicle-status.utils';
 
 @Component({
   selector: 'app-profile-page',
@@ -33,6 +35,9 @@ export class ProfilePage implements OnInit {
   phone = signal('');
   uploadError = signal('');
   assignedVehicle = signal<Vehicle | null>(null);
+
+  departmentLabelKeys = DEPARTMENT_LABEL_KEYS;
+  vehicleFormatLabelKeys = VEHICLE_FORMAT_LABEL_KEYS;
 
   ngOnInit() {
     this.vehiclesFacade.loadAll();

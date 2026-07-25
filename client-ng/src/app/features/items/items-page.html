@@ -57,27 +57,27 @@
     </div>
 
     <!-- Prep shortcuts: mobile only -->
-    <div class="prepa-shortcuts">
-      <span class="prepa-shortcuts__label">{{ 'ITEMS.PREPA' | translate }}</span>
+    <div class="preparation-shortcuts">
+      <span class="preparation-shortcuts__label">{{ 'ITEMS.PREPARATION' | translate }}</span>
       <button
-        class="prepa-shortcut"
-        [class.prepa-shortcut--active]="cgKit()"
-        (click)="togglePrepa('CashGuard')"
+        class="preparation-shortcut"
+        [class.preparation-shortcut--active]="cgKit()"
+        (click)="togglePreparation('CashGuard')"
       >
         CashGuard
       </button>
       <button
-        class="prepa-shortcut"
-        [class.prepa-shortcut--active]="tpvKit()"
-        (click)="togglePrepa('Caisse TPV')"
+        class="preparation-shortcut"
+        [class.preparation-shortcut--active]="tpvKit()"
+        (click)="togglePreparation('Caisse TPV')"
       >
         Caisse TPV
       </button>
       @if (cgKit() || tpvKit()) {
         <button
-          class="prepa-shortcuts__clear"
-          (click)="clearPrepa()"
-          [title]="'ITEMS.PREPA_CANCEL' | translate"
+          class="preparation-shortcuts__clear"
+          (click)="clearPreparation()"
+          [title]="'ITEMS.PREPARATION_CANCEL' | translate"
         >
           <lucide-icon name="x" [size]="14" />
         </button>
@@ -112,21 +112,21 @@
           </button>
         }
         <span class="filter-row__label filter-row__label--mid">{{
-          'ITEMS.PREPA' | translate
+          'ITEMS.PREPARATION' | translate
         }}</span>
         <button
           class="chip"
-          [class.chip--active-prepa]="cgKit()"
-          (click)="togglePrepa('CashGuard')"
-          [title]="('ITEMS.PREPA' | translate) + ' : CashGuard'"
+          [class.chip--active-preparation]="cgKit()"
+          (click)="togglePreparation('CashGuard')"
+          [title]="('ITEMS.PREPARATION' | translate) + ' : CashGuard'"
         >
           CashGuard
         </button>
         <button
           class="chip"
-          [class.chip--active-prepa]="tpvKit()"
-          (click)="togglePrepa('Caisse TPV')"
-          [title]="('ITEMS.PREPA' | translate) + ' : Caisse TPV'"
+          [class.chip--active-preparation]="tpvKit()"
+          (click)="togglePreparation('Caisse TPV')"
+          [title]="('ITEMS.PREPARATION' | translate) + ' : Caisse TPV'"
         >
           Caisse TPV
         </button>
@@ -142,57 +142,57 @@
       </div>
     </div>
 
-    <!-- Prepa batch bars -->
+    <!-- Preparation batch bars -->
     @if (cgKit()) {
-      <div class="prepa-batch">
-        <span class="prepa-batch__label">
+      <div class="preparation-batch">
+        <span class="preparation-batch__label">
           <lucide-icon name="layers" [size]="13" />
-          {{ 'ITEMS.PREPA_BATCH_CG_LABEL' | translate }}
+          {{ 'ITEMS.PREPARATION_BATCH_CG_LABEL' | translate }}
         </span>
-        <div class="prepa-batch__cols">
-          <div class="prepa-batch__col">
+        <div class="preparation-batch__cols">
+          <div class="preparation-batch__col">
             <input
               type="number"
-              class="prepa-batch__count prepa-batch__count--disabled"
+              class="preparation-batch__count preparation-batch__count--disabled"
               value="1"
               disabled
             />
-            <span class="prepa-batch__hint">{{ 'ITEMS.ONE_AT_A_TIME' | translate }}</span>
+            <span class="preparation-batch__hint">{{ 'ITEMS.ONE_AT_A_TIME' | translate }}</span>
             <button
-              class="prepa-batch__btn prepa-batch__btn--sub"
-              (click)="onPrepaBatch('CashGuard', 'decrement')"
+              class="preparation-batch__btn preparation-batch__btn--sub"
+              (click)="onPreparationBatch('CashGuard', 'decrement')"
               [disabled]="!(canDecrementMap?.['cgKit'] ?? true)"
               [title]="('ITEMS.DECREMENT' | translate) + ' (CashGuard)'"
             >
               <lucide-icon name="minus" [size]="12" />
-              <span class="prepa-batch__btn-label--mobile">{{
+              <span class="preparation-batch__btn-label--mobile">{{
                 'ITEMS.DECREMENT' | translate
               }}</span>
-              <span class="prepa-batch__btn-label--desktop">{{
-                'ITEMS.PREPA_REMOVE_STOCK' | translate
+              <span class="preparation-batch__btn-label--desktop">{{
+                'ITEMS.PREPARATION_REMOVE_STOCK' | translate
               }}</span>
             </button>
           </div>
-          <div class="prepa-batch__col">
+          <div class="preparation-batch__col">
             <input
               type="number"
-              class="prepa-batch__count"
+              class="preparation-batch__count"
               [value]="cgKitCount()"
               (input)="onCgKitCountChange($event)"
               min="1"
             />
-            <span class="prepa-batch__hint">{{ 'ITEMS.ENTER_QUANTITY' | translate }}</span>
+            <span class="preparation-batch__hint">{{ 'ITEMS.ENTER_QUANTITY' | translate }}</span>
             <button
-              class="prepa-batch__btn prepa-batch__btn--add"
-              (click)="onPrepaBatch('CashGuard', 'increment')"
+              class="preparation-batch__btn preparation-batch__btn--add"
+              (click)="onPreparationBatch('CashGuard', 'increment')"
               [title]="('ITEMS.INCREMENT' | translate) + ' (CashGuard)'"
             >
               <lucide-icon name="plus" [size]="12" />
-              <span class="prepa-batch__btn-label--mobile">{{
+              <span class="preparation-batch__btn-label--mobile">{{
                 'ITEMS.INCREMENT' | translate
               }}</span>
-              <span class="prepa-batch__btn-label--desktop">{{
-                'ITEMS.PREPA_ADD_STOCK' | translate
+              <span class="preparation-batch__btn-label--desktop">{{
+                'ITEMS.PREPARATION_ADD_STOCK' | translate
               }}</span>
             </button>
           </div>
@@ -201,55 +201,55 @@
     }
 
     @if (tpvKit()) {
-      <div class="prepa-batch">
-        <span class="prepa-batch__label">
+      <div class="preparation-batch">
+        <span class="preparation-batch__label">
           <lucide-icon name="layers" [size]="13" />
-          {{ 'ITEMS.PREPA_BATCH_TPV_LABEL' | translate }}
+          {{ 'ITEMS.PREPARATION_BATCH_TPV_LABEL' | translate }}
         </span>
-        <div class="prepa-batch__cols">
-          <div class="prepa-batch__col">
+        <div class="preparation-batch__cols">
+          <div class="preparation-batch__col">
             <input
               type="number"
-              class="prepa-batch__count prepa-batch__count--disabled"
+              class="preparation-batch__count preparation-batch__count--disabled"
               value="1"
               disabled
             />
-            <span class="prepa-batch__hint">{{ 'ITEMS.ONE_AT_A_TIME' | translate }}</span>
+            <span class="preparation-batch__hint">{{ 'ITEMS.ONE_AT_A_TIME' | translate }}</span>
             <button
-              class="prepa-batch__btn prepa-batch__btn--sub"
-              (click)="onPrepaBatch('Caisse TPV', 'decrement')"
+              class="preparation-batch__btn preparation-batch__btn--sub"
+              (click)="onPreparationBatch('Caisse TPV', 'decrement')"
               [disabled]="!(canDecrementMap?.['tpvKit'] ?? true)"
               [title]="('ITEMS.DECREMENT' | translate) + ' (Caisse TPV)'"
             >
               <lucide-icon name="minus" [size]="12" />
-              <span class="prepa-batch__btn-label--mobile">{{
+              <span class="preparation-batch__btn-label--mobile">{{
                 'ITEMS.DECREMENT' | translate
               }}</span>
-              <span class="prepa-batch__btn-label--desktop">{{
-                'ITEMS.PREPA_REMOVE_STOCK' | translate
+              <span class="preparation-batch__btn-label--desktop">{{
+                'ITEMS.PREPARATION_REMOVE_STOCK' | translate
               }}</span>
             </button>
           </div>
-          <div class="prepa-batch__col">
+          <div class="preparation-batch__col">
             <input
               type="number"
-              class="prepa-batch__count"
+              class="preparation-batch__count"
               [value]="tpvKitCount()"
               (input)="onTpvKitCountChange($event)"
               min="1"
             />
-            <span class="prepa-batch__hint">{{ 'ITEMS.ENTER_QUANTITY' | translate }}</span>
+            <span class="preparation-batch__hint">{{ 'ITEMS.ENTER_QUANTITY' | translate }}</span>
             <button
-              class="prepa-batch__btn prepa-batch__btn--add"
-              (click)="onPrepaBatch('Caisse TPV', 'increment')"
+              class="preparation-batch__btn preparation-batch__btn--add"
+              (click)="onPreparationBatch('Caisse TPV', 'increment')"
               [title]="('ITEMS.INCREMENT' | translate) + ' (Caisse TPV)'"
             >
               <lucide-icon name="plus" [size]="12" />
-              <span class="prepa-batch__btn-label--mobile">{{
+              <span class="preparation-batch__btn-label--mobile">{{
                 'ITEMS.INCREMENT' | translate
               }}</span>
-              <span class="prepa-batch__btn-label--desktop">{{
-                'ITEMS.PREPA_ADD_STOCK' | translate
+              <span class="preparation-batch__btn-label--desktop">{{
+                'ITEMS.PREPARATION_ADD_STOCK' | translate
               }}</span>
             </button>
           </div>
@@ -295,38 +295,12 @@
     @let total = total$ | async;
 
     @if (tp && tp > 1) {
-      <div class="pagination">
-        <button
-          class="page-btn"
-          [disabled]="pg === 1"
-          (click)="onPageChange((pg ?? 1) - 1)"
-          [title]="'COMMON.PREVIOUS' | translate"
-        >
-          <lucide-icon name="chevron-left" [size]="16" />
-        </button>
-
-        @for (p of pageRange(tp); track p) {
-          <button
-            class="page-btn"
-            [class.page-btn--active]="p === pg"
-            (click)="onPageChange(p)"
-            [title]="('ITEMS.PAGE' | translate) + ' ' + p"
-          >
-            {{ p }}
-          </button>
-        }
-
-        <button
-          class="page-btn"
-          [disabled]="pg === tp"
-          (click)="onPageChange((pg ?? 1) + 1)"
-          [title]="'COMMON.NEXT' | translate"
-        >
-          <lucide-icon name="chevron-right" [size]="16" />
-        </button>
-
-        <span class="pagination__count">{{ total }} {{ 'COMMON.TOTAL' | translate }}</span>
-      </div>
+      <app-pagination
+        [currentPage]="pg ?? 1"
+        [totalPages]="tp"
+        [countLabel]="total + ' ' + ('COMMON.TOTAL' | translate)"
+        (pageChange)="onPageChange($event)"
+      />
     }
   }
   <!-- #endregion -->

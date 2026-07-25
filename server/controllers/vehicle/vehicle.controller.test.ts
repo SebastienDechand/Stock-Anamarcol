@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Request, Response } from "express";
 
 const mockVehicleService = vi.hoisted(() => ({
@@ -316,6 +316,7 @@ describe("Vehicle Controller", () => {
       const populated = { licensePlate: "AB-123-CD", notes: "Updated notes" };
       const vehicle = {
         licensePlate: "AB-123-CD",
+        notes: undefined as string | undefined,
         save: vi.fn().mockResolvedValue(undefined),
         populate: vi.fn().mockResolvedValue(populated),
       };

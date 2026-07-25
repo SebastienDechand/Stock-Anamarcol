@@ -161,13 +161,13 @@ export class ItemsEffects {
     ),
   );
 
-  prepaBatch$ = createEffect(() =>
+  preparationBatch$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(ItemsActions.prepaBatch),
+      ofType(ItemsActions.preparationBatch),
       exhaustMap(({ field, operation, count, params }) =>
         this.api
-          .post<{ updated: number; message: string }>('api/item/prepa-batch', {
-            prepa: field,
+          .post<{ updated: number; message: string }>('api/item/preparation-batch', {
+            preparation: field,
             operation,
             count,
           })
@@ -176,17 +176,20 @@ export class ItemsEffects {
               const key =
                 field === 'cgKit'
                   ? operation === 'increment'
-                    ? 'ITEMS.PREPA_BATCH_CG_INCREMENTED'
-                    : 'ITEMS.PREPA_BATCH_CG_DECREMENTED'
+                    ? 'ITEMS.PREPARATION_BATCH_CG_INCREMENTED'
+                    : 'ITEMS.PREPARATION_BATCH_CG_DECREMENTED'
                   : operation === 'increment'
-                    ? 'ITEMS.PREPA_BATCH_TPV_INCREMENTED'
-                    : 'ITEMS.PREPA_BATCH_TPV_DECREMENTED';
+                    ? 'ITEMS.PREPARATION_BATCH_TPV_INCREMENTED'
+                    : 'ITEMS.PREPARATION_BATCH_TPV_DECREMENTED';
               this.toast.success(key, { count: response.updated });
-              return of(ItemsActions.prepaBatchSuccess(), ItemsActions.fetchItems({ params }));
+              return of(
+                ItemsActions.preparationBatchSuccess(),
+                ItemsActions.fetchItems({ params }),
+              );
             }),
             catchError(() => {
               this.toast.error('TOAST.ITEM_BATCH_ERROR');
-              return of(ItemsActions.prepaBatchSuccess());
+              return of(ItemsActions.preparationBatchSuccess());
             }),
           ),
       ),

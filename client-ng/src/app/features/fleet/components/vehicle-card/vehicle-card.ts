@@ -5,6 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Vehicle } from '../../../../shared/models/vehicle/vehicle.model';
 import { LanguageService } from '../../../../core/services/language/language.service';
 import {
+  VEHICLE_FORMAT_LABEL_KEYS,
   VehicleDateStatus,
   formatVehicleDate,
   vehicleDateStatus,
@@ -45,12 +46,7 @@ export class VehicleCard {
   }
 
   get formatLabel(): string {
-    const map: Record<string, string> = {
-      van: 'FLEET.FORMAT_UTILITAIRE',
-      pickup: 'FLEET.FORMAT_PICKUP',
-      truck: 'FLEET.FORMAT_CAMION',
-    };
-    return map[this.vehicle().format] ?? this.vehicle().format;
+    return VEHICLE_FORMAT_LABEL_KEYS[this.vehicle().format] ?? this.vehicle().format;
   }
 
   dateStatus(date: string | Date | undefined): VehicleDateStatus {

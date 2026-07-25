@@ -1,13 +1,13 @@
-export interface PrepaFilterState {
+export interface PreparationFilterState {
   cgKit: boolean;
   tpvKit: boolean;
 }
 
-export function togglePrepaFilter(
-  current: PrepaFilterState,
-  prepa: 'CashGuard' | 'Caisse TPV',
-): PrepaFilterState {
-  const isCashGuard = prepa === 'CashGuard';
+export function togglePreparationFilter(
+  current: PreparationFilterState,
+  preparation: 'CashGuard' | 'Caisse TPV',
+): PreparationFilterState {
+  const isCashGuard = preparation === 'CashGuard';
   const wasActive = isCashGuard ? current.cgKit : current.tpvKit;
   return {
     cgKit: isCashGuard ? !wasActive : false,

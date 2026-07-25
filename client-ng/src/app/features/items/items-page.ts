@@ -11,6 +11,7 @@ import { ItemsFacade } from './store/facade/items.facade';
 import { AuthFacade } from '../../store/auth/facade/auth.facade';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
+import { Pagination } from '../../shared/components/pagination/pagination';
 import { ItemCard } from './components/item-card/item-card';
 import { AddItemModal } from './components/add-item-modal/add-item-modal';
 import { EditItemModal } from './components/edit-item-modal/edit-item-modal';
@@ -19,7 +20,7 @@ import { FiltersModal, FiltersApplied } from './components/filters-modal/filters
 import { Item, FetchItemsParams, NewItem } from '../../shared/models/item/item.model';
 import { User } from '../../shared/models/user/user.model';
 import { SUPPLIERS, STATUSES } from '../../shared/constants';
-import { togglePrepaFilter } from '../../shared/utils/prepa-filter/prepa-filter.utils';
+import { togglePreparationFilter } from '../../shared/utils/preparation-filter/preparation-filter.utils';
 
 function getItemsPerPage(): number {
   const w = window.innerWidth;
@@ -43,6 +44,7 @@ function getItemsPerPage(): number {
     LucideAngularModule,
     Spinner,
     ConfirmDialog,
+    Pagination,
     ItemCard,
     AddItemModal,
     EditItemModal,
@@ -139,8 +141,11 @@ export class ItemsPage implements OnInit {
     this.loadPage(1);
   }
 
-  togglePrepa(prepa: 'CashGuard' | 'Caisse TPV') {
-    const next = togglePrepaFilter({ cgKit: this.cgKit(), tpvKit: this.tpvKit() }, prepa);
+  togglePreparation(preparation: 'CashGuard' | 'Caisse TPV') {
+    const next = togglePreparationFilter(
+      { cgKit: this.cgKit(), tpvKit: this.tpvKit() },
+      preparation,
+    );
     this.cgKit.set(next.cgKit);
     this.tpvKit.set(next.tpvKit);
     this.loadPage(1);
@@ -208,10 +213,6 @@ export class ItemsPage implements OnInit {
     this.facade.uploadPicture(event.item._id, formData);
   }
 
-  pageRange(totalPages: number): number[] {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-
   isSupplierActive(supplier: string) {
     return this.selectedSuppliers().includes(supplier);
   }
@@ -228,7 +229,7 @@ export class ItemsPage implements OnInit {
     );
   }
 
-  clearPrepa() {
+  clearPreparation() {
     this.cgKit.set(false);
     this.tpvKit.set(false);
     this.loadPage(1);
@@ -261,10 +262,10 @@ export class ItemsPage implements OnInit {
     this.tpvKitCount.set(parsedValue > 0 ? parsedValue : 1);
   }
 
-  onPrepaBatch(prep: 'CashGuard' | 'Caisse TPV', operation: 'increment' | 'decrement') {
+  onPreparationBatch(prep: 'CashGuard' | 'Caisse TPV', operation: 'increment' | 'decrement') {
     const field = prep === 'CashGuard' ? 'cgKit' : 'tpvKit';
     const count =
       operation === 'decrement' ? 1 : prep === 'CashGuard' ? this.cgKitCount() : this.tpvKitCount();
-    this.facade.prepaBatch(field, operation, count, this.buildFetchParams(this.currentPage));
+    this.facade.preparationBatch(field, operation, count, this.buildFetchParams(this.currentPage));
   }
 }

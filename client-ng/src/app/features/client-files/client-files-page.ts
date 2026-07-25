@@ -11,8 +11,6 @@ import {
   Trash2,
   Pencil,
   ClipboardList,
-  ChevronLeft,
-  ChevronRight,
   Building2,
   MapPin,
   Phone,
@@ -25,6 +23,7 @@ import { Spinner } from '../../shared/components/spinner/spinner';
 import { ClientFile, ClientFileForm } from '../../shared/models/client-file/client-file.model';
 import { ClientFileModal } from './components/client-file-modal/client-file-modal';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
+import { Pagination } from '../../shared/components/pagination/pagination';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -39,6 +38,7 @@ const ITEMS_PER_PAGE = 9;
     ConfirmDialog,
     ClientFileModal,
     PageHero,
+    Pagination,
     TranslatePipe,
   ],
   templateUrl: './client-files-page.html',
@@ -60,8 +60,6 @@ export class ClientFilesPage implements OnInit {
   readonly trash2 = Trash2;
   readonly pencil = Pencil;
   readonly clipboardList = ClipboardList;
-  readonly chevLeft = ChevronLeft;
-  readonly chevRight = ChevronRight;
   readonly building2 = Building2;
   readonly mapPin = MapPin;
   readonly phone = Phone;
@@ -100,18 +98,6 @@ export class ClientFilesPage implements OnInit {
 
   totalPages(files: ClientFile[]): number {
     return Math.ceil(files.length / ITEMS_PER_PAGE);
-  }
-
-  pageNumbers(total: number): (number | '...')[] {
-    const currentPage = this.currentPage();
-    const pages = Array.from({ length: total }, (_, i) => i + 1).filter(
-      (page) => page === 1 || page === total || Math.abs(page - currentPage) <= 1,
-    );
-    return pages.reduce<(number | '...')[]>((result, page, index, pageList) => {
-      if (index > 0 && page - (pageList[index - 1] as number) > 1) result.push('...');
-      result.push(page);
-      return result;
-    }, []);
   }
 
   displayName(file: ClientFile): string {

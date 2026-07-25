@@ -118,15 +118,15 @@
     color: white;
   }
 
-  &--active-prepa {
+  &--active-preparation {
     background: #7c3aed;
     border-color: #7c3aed;
     color: white;
   }
 }
 /* #endregion */
-/* #region Prepa shortcuts (mobile only) */
-.prepa-shortcuts {
+/* #region Preparation shortcuts (mobile only) */
+.preparation-shortcuts {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -170,7 +170,7 @@
   }
 }
 
-.prepa-shortcut {
+.preparation-shortcut {
   padding: 3px 12px;
   border-radius: 20px;
   border: 2px solid #ddd6fe;
@@ -192,8 +192,8 @@
   }
 }
 /* #endregion */
-/* #region Prepa Batch Bar */
-.prepa-batch {
+/* #region Preparation Batch Bar */
+.preparation-batch {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -475,42 +475,6 @@
 
   p {
     font-size: 1rem;
-  }
-}
-/* #endregion */
-/* #region Pagination */
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  flex-wrap: wrap;
-  padding: 16px 0;
-
-  &__count {
-    margin-left: 12px;
-    font-size: 0.875rem;
-    color: var(--text-muted);
-  }
-}
-
-.page-btn {
-  @include m.btn-icon;
-  min-width: 34px;
-  height: 34px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-default);
-  font-size: 0.875rem;
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-
-  &--active {
-    background: var(--brand-600);
-    color: white;
-    border-color: var(--brand-600);
   }
 }
 /* #endregion */

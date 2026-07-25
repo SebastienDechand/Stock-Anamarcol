@@ -129,9 +129,11 @@ html[data-theme='dark'] {
   --border-default: #344e28;
   --border-medium: #406038;
 
-  // Brand (dark)
+  // Brand (dark) - lightened so active/accent states stay readable on --bg-card
   --brand-50: #1e2b15;
   --brand-100: #253618;
+  --brand-600: #8caa5e;
+  --brand-700: #a3c274;
 
   // Stronger shadows
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.4);

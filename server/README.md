@@ -62,7 +62,7 @@ server/
 │   ├── contacts/contacts.controller.ts
 │   ├── history/history.controller.ts
 │   ├── interventionReport/interventionReport.controller.ts
-│   ├── item/item.controller.ts           Item CRUD + prepaBatch
+│   ├── item/item.controller.ts           Item CRUD + preparationBatch
 │   ├── reminder/reminder.controller.ts   Vehicle reminder trigger endpoint
 │   ├── shipments/shipments.controller.ts
 │   ├── stats/stats.controller.ts         Statistics & dashboard
@@ -164,7 +164,7 @@ server/
 | `PUT`    | `/:id`         |     🔒      | Update (name, quantity, modifierName; supplier/status require Admin)    |
 | `DELETE` | `/:id`         |    Admin    | Delete an item                                                          |
 | `GET`    | `/history/:id` |     🔒      | Change history of an item                                               |
-| `POST`   | `/prepa-batch` |     🔒      | Batch decrement/increment for prep operations                          |
+| `POST`   | `/preparation-batch` |     🔒      | Batch decrement/increment for prep operations                          |
 | `POST`   | `/upload`      | 🔒 + Multer | Upload item image                                                       |
 
 > `PUT /:id` allows any authenticated user to adjust `quantity` (used by the stock +/- controls); changing `supplier` or `status` returns 403 unless the caller is Admin/Superadmin (enforced in `item.controller.ts`, not at the route level).
@@ -282,9 +282,8 @@ server/
   supplier: string; // required, indexed
   image: string; // default: "./logo_small.jpg"
   status: string; // required, indexed
-  cgKit: boolean; // Part of the CashGuard prep
-  prepaCaisse: boolean; // Part of the Caisse prep
-  tpvKit: boolean; // Part of the TPV prep
+  cgKit: boolean; // Part of the CashGuard preparation
+  tpvKit: boolean; // Part of the TPV preparation
   timestamps: true;
 }
 
@@ -469,7 +468,7 @@ npm run test:ci     # Tests + coverage (CI)
 | `controllers/contacts/contacts.controller.test.ts`            | Contact CRUD                                                         |
 | `controllers/history/history.controller.test.ts`              | Global history                                                       |
 | `controllers/interventionReport/interventionReport.controller.test.ts` | Intervention report CRUD                                    |
-| `controllers/item/item.controller.test.ts`                    | Item CRUD + `prepaBatch`                                             |
+| `controllers/item/item.controller.test.ts`                    | Item CRUD + `preparationBatch`                                             |
 | `controllers/reminder/reminder.controller.test.ts`            | Vehicle reminder trigger endpoint                                    |
 | `controllers/shipments/shipments.controller.test.ts`          | Shipment CRUD                                                        |
 | `controllers/stats/stats.controller.test.ts`                  | Dashboard and statistics                                             |

@@ -87,7 +87,7 @@ export const getDashboardStats = async (
       suppliers: [],
     };
 
-    // Complete CG prepa = min(qty) of each item, cassettes count qty/4
+    // Complete CG preparation = min(qty) of each item, cassettes count qty/4
     const typedCgItems = cgItems as {
       name: string;
       quantity: number;
@@ -104,7 +104,7 @@ export const getDashboardStats = async (
           )
         : 0;
 
-    // Complete TPV prepa = min(qty) of each item (1 of each)
+    // Complete TPV preparation = min(qty) of each item (1 of each)
     const typedTpvItems = tpvItems as { quantity: number }[];
     const completeTPV =
       typedTpvItems.length > 0

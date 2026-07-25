@@ -3,6 +3,12 @@ import { resolveLocale } from '../date/date.utils';
 
 export type VehicleDateStatus = 'expired' | 'soon' | 'ok' | 'none';
 
+export const VEHICLE_FORMAT_LABEL_KEYS: Record<string, string> = {
+  van: 'FLEET.FORMAT_VAN',
+  pickup: 'FLEET.FORMAT_PICKUP',
+  truck: 'FLEET.FORMAT_TRUCK',
+};
+
 const EXPIRING_SOON_THRESHOLD_DAYS = 30;
 const REVISION_VALIDITY_YEARS = 1;
 

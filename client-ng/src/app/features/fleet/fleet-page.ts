@@ -140,8 +140,8 @@ export class FleetPage implements OnInit {
 
   badge(format: string): { css: string; label: string; icon: LucideIconData } {
     const map: Record<string, { css: string; label: string; icon: LucideIconData }> = {
-      van: { css: 'badge badge--blue', label: 'FLEET.FORMAT_UTILITAIRE', icon: this.truck },
-      truck: { css: 'badge badge--orange', label: 'FLEET.FORMAT_CAMION', icon: this.bus },
+      van: { css: 'badge badge--blue', label: 'FLEET.FORMAT_VAN', icon: this.truck },
+      truck: { css: 'badge badge--orange', label: 'FLEET.FORMAT_TRUCK', icon: this.bus },
       pickup: { css: 'badge badge--green', label: 'FLEET.FORMAT_PICKUP', icon: this.car },
     };
     return map[format] ?? { css: 'badge', label: format, icon: this.truck };

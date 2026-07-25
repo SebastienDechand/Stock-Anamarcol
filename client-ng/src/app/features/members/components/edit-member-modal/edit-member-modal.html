@@ -59,11 +59,11 @@
       </div>
 
       <div class="form-row">
-        <label class="form-label">{{ 'MEMBERS.POLE' | translate }}</label>
+        <label class="form-label">{{ 'MEMBERS.DEPARTMENT' | translate }}</label>
         <select class="form-input" [(ngModel)]="form.department" name="department">
           <option value="">{{ 'MEMBERS.SELECT' | translate }}</option>
           @for (department of departments; track department) {
-            <option [value]="department">{{ department }}</option>
+            <option [value]="department">{{ departmentLabelKeys[department] | translate }}</option>
           }
         </select>
       </div>

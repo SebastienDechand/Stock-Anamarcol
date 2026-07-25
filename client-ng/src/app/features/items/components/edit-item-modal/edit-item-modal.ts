@@ -190,8 +190,8 @@ export class EditItemModal implements OnInit, OnDestroy {
     supplier: 'ITEMS.SUPPLIER',
     status: 'ITEMS.STATE',
     quantity: 'ITEMS.QUANTITY',
-    cgKit: 'ITEMS.PREPA_CG',
-    tpvKit: 'ITEMS.PREPA_TPV',
+    cgKit: 'ITEMS.PREPARATION_CG',
+    tpvKit: 'ITEMS.PREPARATION_TPV',
     image: 'ITEMS.IMAGE',
   };
 }

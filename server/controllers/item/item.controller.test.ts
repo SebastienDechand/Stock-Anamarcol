@@ -34,7 +34,7 @@ import {
   createItem,
   updateItem,
   deleteItem,
-  prepaBatch,
+  preparationBatch,
 } from "./item.controller";
 
 describe("Item Controller", () => {
@@ -335,21 +335,21 @@ describe("Item Controller", () => {
   });
   // #endregion
 
-  // #region prepaBatch
-  describe("prepaBatch", () => {
-    it("should return 400 when prepa is invalid", async () => {
-      req.body = { prepa: "invalid", operation: "decrement" };
-      await prepaBatch(req as Request, res as Response);
+  // #region preparationBatch
+  describe("preparationBatch", () => {
+    it("should return 400 when preparation is invalid", async () => {
+      req.body = { preparation: "invalid", operation: "decrement" };
+      await preparationBatch(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Invalid prepa",
-        code: "INVALID_PREPA",
+        message: "Invalid preparation",
+        code: "INVALID_PREPARATION",
       });
     });
 
     it("should return 400 when operation is invalid", async () => {
-      req.body = { prepa: "cgKit", operation: "multiply" };
-      await prepaBatch(req as Request, res as Response);
+      req.body = { preparation: "cgKit", operation: "multiply" };
+      await preparationBatch(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
         message: "Invalid operation",
@@ -358,7 +358,7 @@ describe("Item Controller", () => {
     });
 
     it("should decrement quantities for matching items", async () => {
-      req.body = { prepa: "cgKit", operation: "decrement" };
+      req.body = { preparation: "cgKit", operation: "decrement" };
 
       const mockItems = [
         {
@@ -371,7 +371,7 @@ describe("Item Controller", () => {
       ];
       mockItemModel.find.mockResolvedValue(mockItems);
 
-      await prepaBatch(req as Request, res as Response);
+      await preparationBatch(req as Request, res as Response);
 
       expect(mockItems[0].quantity).toBe(9);
       expect(mockItems[0].save).toHaveBeenCalled();
@@ -382,7 +382,7 @@ describe("Item Controller", () => {
     });
 
     it("should apply delta of 4 for cassette items in cgKit", async () => {
-      req.body = { prepa: "cgKit", operation: "decrement" };
+      req.body = { preparation: "cgKit", operation: "decrement" };
 
       const mockItems = [
         {
@@ -395,13 +395,13 @@ describe("Item Controller", () => {
       ];
       mockItemModel.find.mockResolvedValue(mockItems);
 
-      await prepaBatch(req as Request, res as Response);
+      await preparationBatch(req as Request, res as Response);
 
       expect(mockItems[0].quantity).toBe(6);
     });
 
     it("should not go below 0 on decrement", async () => {
-      req.body = { prepa: "tpvKit", operation: "decrement" };
+      req.body = { preparation: "tpvKit", operation: "decrement" };
 
       const mockItems = [
         {
@@ -414,7 +414,7 @@ describe("Item Controller", () => {
       ];
       mockItemModel.find.mockResolvedValue(mockItems);
 
-      await prepaBatch(req as Request, res as Response);
+      await preparationBatch(req as Request, res as Response);
 
       expect(mockItems[0].quantity).toBe(0);
       expect(mockItems[0].save).not.toHaveBeenCalled();
