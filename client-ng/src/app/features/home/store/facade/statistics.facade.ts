@@ -1,0 +1,29 @@
+import { inject, Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { combineLatest, map } from 'rxjs';
+import { StatisticsActions } from '../actions/statistics.actions';
+import {
+  selectDashboard,
+  selectSupplierStats,
+  selectGlobalStats,
+  selectLowStockItems,
+  selectStatisticsLoading,
+} from '../selectors/statistics.selectors';
+
+@Injectable({ providedIn: 'root' })
+export class StatisticsFacade {
+  private store = inject(Store);
+
+  dashboard$ = this.store.select(selectDashboard);
+  globalStats$ = this.store.select(selectGlobalStats);
+  supplierStats$ = this.store.select(selectSupplierStats);
+  lowStockItems$ = this.store.select(selectLowStockItems);
+  isLoading$ = combineLatest([
+    this.store.select(selectStatisticsLoading),
+    this.store.select(selectDashboard),
+  ]).pipe(map(([loading, dashboard]) => loading && !dashboard));
+
+  loadDashboard() {
+    this.store.dispatch(StatisticsActions.loadDashboard());
+  }
+}

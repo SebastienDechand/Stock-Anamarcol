@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
-import { Contact } from '../../../../shared/models/contact.model';
+import { Contact } from '../../../../shared/models/contact/contact.model';
 
 @Component({
   selector: 'app-contact-card',

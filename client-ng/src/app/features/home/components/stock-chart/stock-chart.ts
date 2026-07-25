@@ -21,7 +21,7 @@ import {
   DoughnutController,
   BarController,
 } from 'chart.js';
-import { SupplierStats } from '../../../../shared/models/statistics.model';
+import { SupplierStats } from '../../../../shared/models/statistics/statistics.model';
 
 Chart.register(
   ArcElement,

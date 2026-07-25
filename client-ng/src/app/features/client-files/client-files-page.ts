@@ -18,11 +18,11 @@ import {
   Phone,
   Mail,
 } from 'lucide-angular';
-import { ClientFilesFacade } from './store/client-files.facade';
-import { AuthFacade } from '../../store/auth/auth.facade';
+import { ClientFilesFacade } from './store/facade/client-files.facade';
+import { AuthFacade } from '../../store/auth/facade/auth.facade';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { Spinner } from '../../shared/components/spinner/spinner';
-import { ClientFile, ClientFileForm } from '../../shared/models/client-file.model';
+import { ClientFile, ClientFileForm } from '../../shared/models/client-file/client-file.model';
 import { ClientFileModal } from './components/client-file-modal/client-file-modal';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
 

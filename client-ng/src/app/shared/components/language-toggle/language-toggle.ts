@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, inject, input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { LanguageService } from '../../../core/services/language.service';
+import { LanguageService } from '../../../core/services/language/language.service';
 
 export type LanguageToggleVariant = 'icon' | 'menu-item';
 

@@ -29,19 +29,19 @@ import {
   Link,
   Download,
 } from 'lucide-angular';
-import { ShipmentsFacade } from './store/shipments.facade';
-import { AuthFacade } from '../../store/auth/auth.facade';
+import { ShipmentsFacade } from './store/facade/shipments.facade';
+import { AuthFacade } from '../../store/auth/facade/auth.facade';
 import { ShipmentHistoryModal } from './components/shipment-history-modal/shipment-history-modal';
 import { ShipmentExportModal } from './components/shipment-export-modal/shipment-export-modal';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
-import { Shipment, ShipmentForm } from '../../shared/models/shipment.model';
-import { ClientFile } from '../../shared/models/client-file.model';
-import { User as UserModel } from '../../shared/models/user.model';
-import { ClientFilesFacade } from '../client-files/store/client-files.facade';
-import { LanguageService } from '../../core/services/language.service';
-import { resolveLocale } from '../../shared/utils/date.utils';
+import { Shipment, ShipmentForm } from '../../shared/models/shipment/shipment.model';
+import { ClientFile } from '../../shared/models/client-file/client-file.model';
+import { User as UserModel } from '../../shared/models/user/user.model';
+import { ClientFilesFacade } from '../client-files/store/facade/client-files.facade';
+import { LanguageService } from '../../core/services/language/language.service';
+import { resolveLocale } from '../../shared/utils/date/date.utils';
 
 const EMPTY_FORM: ShipmentForm = {
   lastName: '',

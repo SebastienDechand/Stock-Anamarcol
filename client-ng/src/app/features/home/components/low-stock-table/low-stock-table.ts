@@ -1,7 +1,7 @@
 import { Component, input, signal, computed } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { LowStockItem } from '../../../../shared/models/statistics.model';
+import { LowStockItem } from '../../../../shared/models/statistics/statistics.model';
 
 type StockTab = 'all' | 'SAV' | 'Neuf';
 

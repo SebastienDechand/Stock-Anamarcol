@@ -2,13 +2,13 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ContactsFacade } from './store/contacts.facade';
-import { AuthFacade } from '../../store/auth/auth.facade';
+import { ContactsFacade } from './store/facade/contacts.facade';
+import { AuthFacade } from '../../store/auth/facade/auth.facade';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { ContactCard } from './components/contact-card/contact-card';
 import { ContactModal } from './components/contact-modal/contact-modal';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
-import { Contact } from '../../shared/models/contact.model';
+import { Contact } from '../../shared/models/contact/contact.model';
 
 @Component({
   selector: 'app-contacts-page',

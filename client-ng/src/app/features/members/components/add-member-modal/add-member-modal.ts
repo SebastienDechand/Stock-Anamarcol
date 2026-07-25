@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { NewUserData } from '../../store/users.actions';
-import { ALL_DEPARTMENT_LABELS } from '../../../../shared/constants/poles.constants';
+import { NewUserData } from '../../store/actions/users.actions';
+import { ALL_DEPARTMENT_LABELS } from '../../../../shared/constants/poles/poles.constants';
 
 @Component({
   selector: 'app-add-member-modal',

@@ -29,9 +29,9 @@ import {
   FileDown,
   ChevronLeft,
 } from 'lucide-angular';
-import { ClientFilesFacade } from './store/client-files.facade';
-import { InterventionReportsFacade } from '../intervention-reports/store/intervention-reports.facade';
-import { AuthFacade } from '../../store/auth/auth.facade';
+import { ClientFilesFacade } from './store/facade/client-files.facade';
+import { InterventionReportsFacade } from '../intervention-reports/store/facade/intervention-reports.facade';
+import { AuthFacade } from '../../store/auth/facade/auth.facade';
 import { ApiService } from '../../core/http/api.service';
 import { ToastService } from '../../core/toast/toast.service';
 import { Spinner } from '../../shared/components/spinner/spinner';
@@ -41,12 +41,12 @@ import {
   ClientFile,
   ClientFileDoc,
   ClientFileDocType,
-} from '../../shared/models/client-file.model';
-import { CashguardUnit, InterventionReport } from '../../shared/models/intervention-report.model';
-import { Shipment } from '../../shared/models/shipment.model';
+} from '../../shared/models/client-file/client-file.model';
+import { CashguardUnit, InterventionReport } from '../../shared/models/intervention-report/intervention-report.model';
+import { Shipment } from '../../shared/models/shipment/shipment.model';
 import { environment } from '../../../environments/environment';
-import { LanguageService } from '../../core/services/language.service';
-import { resolveLocale } from '../../shared/utils/date.utils';
+import { LanguageService } from '../../core/services/language/language.service';
+import { resolveLocale } from '../../shared/utils/date/date.utils';
 
 type ClientFileDetailTab = 'fiche' | 'technique' | 'shipments' | 'documents';
 

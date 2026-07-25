@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { StatisticsFacade } from './store/statistics.facade';
+import { StatisticsFacade } from './store/facade/statistics.facade';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { KpiGrid } from './components/kpi-grid/kpi-grid';
 import { StockChart } from './components/stock-chart/stock-chart';

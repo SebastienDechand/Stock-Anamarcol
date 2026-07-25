@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { map } from 'rxjs';
-import { AuthFacade } from './store/auth/auth.facade';
+import { AuthFacade } from './store/auth/facade/auth.facade';
 
 @Component({
   selector: 'app-root',

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { STATUSES, SUPPLIERS } from '../../../../shared/constants';
-import { NewItem } from '../../../../shared/models/item.model';
+import { NewItem } from '../../../../shared/models/item/item.model';
 
 @Component({
   selector: 'app-add-item-modal',

@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideAngularModule, Package, ChevronLeft, ChevronRight } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthFacade } from '../../../store/auth/auth.facade';
-import { UiFacade } from '../../../store/ui/ui.facade';
+import { AuthFacade } from '../../../store/auth/facade/auth.facade';
+import { UiFacade } from '../../../store/ui/facade/ui.facade';
 import { combineLatest, map } from 'rxjs';
 
 @Component({

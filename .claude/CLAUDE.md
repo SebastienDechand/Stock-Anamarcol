@@ -30,39 +30,46 @@ Monorepo `client-ng/` (Angular SPA) + `server/` (Express REST API).
 
 ## Structure des dossiers
 
+Les tests sont **colocalisés** : `x.ts` + `x.spec.ts` (frontend) / `x.test.ts`
+(backend) côte à côte, jamais dans un dossier `__tests__/` séparé. Dès qu'un
+dossier contiendrait plusieurs fichiers `.ts` frères du même type (services,
+utils, guards, slices NgRx d'un même store…), chaque fichier reçoit son propre
+sous-dossier portant son nom (ex. `services/contacts/contacts.service.ts` +
+`contacts.service.test.ts`) — voir les sections dédiées plus bas pour le détail
+du nommage par contexte (services/utils/controllers vs slices NgRx).
+
 ```
 client-ng/src/app/
   core/           Singletons applicatifs
-    auth/           Service, guards (role.guard.ts), interceptor
-    http/           api.service.ts (wrapper HTTP générique)
+    auth/           Un sous-dossier par guard/service/interceptor (auth.guard/, auth.service/…)
+    http/           api.service.ts (wrapper HTTP générique) + spec, pas de sous-dossier (fichier unique)
     layout/         layout.ts, sidebar/, topbar/
-    services/       theme.service.ts, language.service.ts
-    toast/          toast.service.ts
+    services/       Un sous-dossier par service (language/, theme/)
+    toast/          toast.service.ts (fichier unique)
   features/       Un dossier par domaine métier
     <feature>/
-      <feature>-page.ts/.html/.scss   Page principale de la feature
-      components/                      Composants/modales locaux à la feature
-      store/                           NgRx (si feature stateful) — voir plus bas
-      __tests__/                       Specs Vitest
+      <feature>-page.ts/.html/.scss/.spec.ts   Page principale de la feature
+      components/                                Composants/modales locaux à la feature
+      store/                                     NgRx (si feature stateful) — voir plus bas
   shared/         Code réutilisable inter-features
-    components/     spinner, page-hero, kpi-card, badge, confirm-dialog…
-    constants/
+    components/     spinner, page-hero, kpi-card, badge, confirm-dialog… (déjà un dossier par composant)
+    constants/      Un sous-dossier par fichier de constantes ; `index.ts` (barrel) reste à plat
     directives/
-    models/         *.model.ts (interfaces TypeScript)
-    pipes/
-    utils/          Fonctions utilitaires pures
+    models/         Un sous-dossier par modèle (*.model.ts) ; `index.ts` (barrel) reste à plat
+    pipes/          Un sous-dossier par pipe
+    utils/          Un sous-dossier par fichier utilitaire
   store/          Slices NgRx globaux (non liés à une feature) : auth/, ui/
 
 server/
   config/         DB, Swagger
-  constants/      Valeurs partagées backend
-  controllers/    Logique métier (handlers Express)
-  middleware/     Auth, rate-limit, sanitize
-  models/         Schémas Mongoose
+  constants/      Valeurs partagées backend (index.ts + errorCodes.ts, cameras.ts)
+  controllers/    Un sous-dossier par contrôleur (ex. contacts/contacts.controller.ts + .test.ts)
+  middleware/     Un sous-dossier par middleware (auth/, rateLimit/, sanitize/)
+  models/         Schémas Mongoose (pas de sous-dossier, pas de tests)
   routes/         Définition des routes Express
   scripts/        Scripts one-off (ex: migrations/) — jamais dans .github/workflows
-  utils/          Fonctions utilitaires (history, audit, upload, validate)
-  __tests__/      Tests Vitest
+  services/       Un sous-dossier par service (couche data-access Mongoose)
+  utils/          Un sous-dossier par fichier utilitaire
 ```
 
 ---
@@ -80,7 +87,7 @@ server/
 | Model Mongoose            | camelCase `.model.ts`                                                                           | `item.model.ts`                                  |
 | Routes                    | camelCase `.routes.ts`                                                                          | `item.routes.ts`                                 |
 | Utils                     | camelCase `.utils.ts`                                                                           | `history.utils.ts`                               |
-| Tests                     | même nom `.spec.ts` (frontend) / `.test.ts` (backend), dans `__tests__/`                        | `item.controller.test.ts`, `items.effects.spec.ts` |
+| Tests                     | même nom `.spec.ts` (frontend) / `.test.ts` (backend), colocalisé à côté du fichier             | `item.controller.test.ts`, `items.effects.spec.ts` |
 | Types                     | camelCase `.ts`                                                                                 | `item.ts`, `user.ts`                             |
 | Constantes                | SCREAMING_SNAKE_CASE                                                                            | `SUPPLIERS`, `USER_ROLES`                        |
 | Fonctions/variables       | camelCase                                                                                       | `fetchItems`, `selectedItemId`                   |
@@ -90,14 +97,16 @@ server/
 
 ## NgRx — Patterns
 
-Chaque feature avec état a un dossier `store/` avec exactement 6 fichiers :
+Chaque feature avec état a un dossier `store/` avec exactement 6 fichiers, chacun dans son propre sous-dossier nommé d'après son suffixe (les 6 fichiers partagent le même préfixe — le nom de la feature — donc c'est le suffixe qui distingue) :
 
-- `*.state.ts` — forme du state de la feature
-- `*.actions.ts` — actions via `createActionGroup` (pas de classes d'action manuelles)
-- `*.reducer.ts` — `createReducer` + `on(...)`
-- `*.effects.ts` — effets (appels API, side-effects)
-- `*.selectors.ts` — sélecteurs via `createSelector`
-- `*.facade.ts` — **obligatoire** : façade `@Injectable({ providedIn: 'root' })` qui expose les observables (`xxx$ = store.select(selector)`) et des méthodes impératives qui dispatchent — les composants ne touchent **jamais** `Store` directement, seulement la façade
+- `state/*.state.ts` — forme du state de la feature
+- `actions/*.actions.ts` — actions via `createActionGroup` (pas de classes d'action manuelles)
+- `reducer/*.reducer.ts` — `createReducer` + `on(...)`
+- `effects/*.effects.ts` — effets (appels API, side-effects)
+- `selectors/*.selectors.ts` — sélecteurs via `createSelector`
+- `facade/*.facade.ts` — **obligatoire** : façade `@Injectable({ providedIn: 'root' })` qui expose les observables (`xxx$ = store.select(selector)`) et des méthodes impératives qui dispatchent — les composants ne touchent **jamais** `Store` directement, seulement la façade
+
+Exemple pour la feature `items` : `store/actions/items.actions.ts`, `store/reducer/items.reducer.ts` (+ `items.reducer.spec.ts` à côté), `store/effects/items.effects.ts`, `store/selectors/items.selectors.ts`, `store/facade/items.facade.ts`, `store/state/items.state.ts`.
 
 `provideStore`/`provideEffects` sont câblés une seule fois dans `app.config.ts` (pas de `provideState` au niveau feature).
 
@@ -215,7 +224,7 @@ Les rôles sont stockés en **tableau** sur le User (`roles: string[]`).
 Rôles disponibles : `SUPERADMIN`, `ADMIN`, `HOTLINE`, `MONTEUR`, `USER`
 
 - Vérifier les rôles côté **backend** via les middlewares (source de vérité)
-- Côté **frontend**, utiliser `AuthFacade` (`store/auth/auth.facade.ts`) — observables `isAdmin$`, `isSuperadmin$`, `isHotline$`, `isMonteur$` — pour l'affichage conditionnel et les guards de routes (`core/auth/role.guard.ts`) uniquement
+- Côté **frontend**, utiliser `AuthFacade` (`store/auth/facade/auth.facade.ts`) — observables `isAdmin$`, `isSuperadmin$`, `isHotline$`, `isMonteur$` — pour l'affichage conditionnel et les guards de routes (`core/auth/role.guard/role.guard.ts`) uniquement
 - Ne jamais faire confiance au frontend pour des décisions de sécurité
 
 ---
@@ -226,7 +235,7 @@ Rôles disponibles : `SUPERADMIN`, `ADMIN`, `HOTLINE`, `MONTEUR`, `USER`
 
 - Mocker les models Mongoose avec `vi.mock()`
 - Tester controllers, middleware et utils
-- Un fichier de test par controller/util, dans `__tests__/`
+- Un fichier de test par controller/service/util, colocalisé à côté (`x.ts` + `x.test.ts` dans le même sous-dossier), jamais dans un dossier `__tests__/`
 
 **Frontend (Vitest, via `ng test`)** :
 
@@ -234,7 +243,7 @@ Rôles disponibles : `SUPERADMIN`, `ADMIN`, `HOTLINE`, `MONTEUR`, `USER`
 - Effects : mockés via `provideMockActions` + `provideMockStore` (`@ngrx/effects/testing`, `@ngrx/store/testing`)
 - Façades/composants : mockés via `vi.fn()`/`vi.mock()` (API Vitest, pas Jest)
 - Tester les fonctions utilitaires pures en priorité
-- Tests dans `__tests__/` à côté du fichier concerné
+- Tests colocalisés à côté du fichier concerné (`x.ts` + `x.spec.ts`), jamais dans un dossier `__tests__/`
 
 **À ne pas faire** : ne pas écrire de tests qui testent l'implémentation interne, tester le comportement observable.
 

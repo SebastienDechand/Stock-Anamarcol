@@ -5,14 +5,14 @@
     "types": ["vitest/globals"]
   },
   "files": [
-    "src/app/features/items/store/items.actions.ts",
-    "src/app/features/items/store/items.effects.ts",
-    "src/app/features/items/store/items.facade.ts",
-    "src/app/features/items/store/items.reducer.ts",
-    "src/app/features/items/store/items.selectors.ts",
-    "src/app/features/items/store/items.state.ts",
-    "src/app/features/items/store/__tests__/items.effects.spec.ts",
-    "src/app/features/items/store/__tests__/items.reducer.spec.ts",
-    "src/app/features/items/store/__tests__/items.selectors.spec.ts"
+    "src/app/features/items/store/actions/items.actions.ts",
+    "src/app/features/items/store/effects/items.effects.ts",
+    "src/app/features/items/store/facade/items.facade.ts",
+    "src/app/features/items/store/reducer/items.reducer.ts",
+    "src/app/features/items/store/selectors/items.selectors.ts",
+    "src/app/features/items/store/state/items.state.ts",
+    "src/app/features/items/store/effects/items.effects.spec.ts",
+    "src/app/features/items/store/reducer/items.reducer.spec.ts",
+    "src/app/features/items/store/selectors/items.selectors.spec.ts"
   ]
 }

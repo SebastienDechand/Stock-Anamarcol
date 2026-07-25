@@ -10,9 +10,9 @@ import {
 import { RouterLink } from '@angular/router';
 import { LucideAngularModule, User, LogOut, Menu, Moon, Sun } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { AuthFacade } from '../../../store/auth/auth.facade';
-import { UiFacade } from '../../../store/ui/ui.facade';
-import { ThemeService } from '../../services/theme.service';
+import { AuthFacade } from '../../../store/auth/facade/auth.facade';
+import { UiFacade } from '../../../store/ui/facade/ui.facade';
+import { ThemeService } from '../../services/theme/theme.service';
 import { LanguageToggle } from '../../../shared/components/language-toggle/language-toggle';
 import { environment } from '../../../../environments/environment';
 

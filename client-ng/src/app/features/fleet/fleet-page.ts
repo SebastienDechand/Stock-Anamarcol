@@ -18,21 +18,21 @@ import {
   Truck,
 } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
-import { VehiclesFacade } from './store/vehicles.facade';
-import { AuthFacade } from '../../store/auth/auth.facade';
+import { VehiclesFacade } from './store/facade/vehicles.facade';
+import { AuthFacade } from '../../store/auth/facade/auth.facade';
 import { VehicleFormModal } from './components/vehicle-form-modal/vehicle-form-modal';
 import { VehicleDocumentList } from './components/vehicle-document-list/vehicle-document-list';
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
-import { Vehicle, VehicleForm } from '../../shared/models/vehicle.model';
-import { LanguageService } from '../../core/services/language.service';
+import { Vehicle, VehicleForm } from '../../shared/models/vehicle/vehicle.model';
+import { LanguageService } from '../../core/services/language/language.service';
 import {
   VehicleDateStatus,
   formatVehicleDate,
   vehicleDateStatus,
   vehicleRevisionStatus,
-} from '../../shared/utils/vehicle-status.utils';
+} from '../../shared/utils/vehicle-status/vehicle-status.utils';
 
 const MODEL_SECTIONS = [
   { key: 'citan', label: 'FLEET.MODEL_CITAN' },
