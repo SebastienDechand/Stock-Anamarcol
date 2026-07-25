@@ -26,6 +26,7 @@ import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-di
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
 import { Vehicle, VehicleForm } from '../../shared/models/vehicle.model';
+import { LanguageService } from '../../core/services/language.service';
 import {
   VehicleDateStatus,
   formatVehicleDate,
@@ -60,6 +61,7 @@ export class FleetPage implements OnInit {
   private destroyRef = inject(DestroyRef);
   protected facade = inject(VehiclesFacade);
   private authFacade = inject(AuthFacade);
+  private languageService = inject(LanguageService);
 
   isLoading$ = this.facade.isLoading$;
   vehicles$ = this.facade.vehicles$;
@@ -125,7 +127,7 @@ export class FleetPage implements OnInit {
   }
 
   formatDate(date: string | Date | undefined): string {
-    return formatVehicleDate(date);
+    return formatVehicleDate(date, this.languageService.current);
   }
 
   dateStatus(date: string | Date | undefined): VehicleDateStatus {

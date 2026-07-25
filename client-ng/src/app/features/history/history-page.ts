@@ -38,6 +38,8 @@ import { Spinner } from '../../shared/components/spinner/spinner';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
 import { AuditEvent } from '../../shared/models/audit.model';
 import { ACTION_MAP, DEFAULT_ACTION, ENTITY_MAP } from '../../shared/constants/audit.constants';
+import { LanguageService } from '../../core/services/language.service';
+import { resolveLocale } from '../../shared/utils/date.utils';
 
 const PAGE_LIMIT = 30;
 
@@ -69,6 +71,7 @@ export class HistoryPage implements OnInit {
   private toast = inject(ToastService);
   private cache = inject(HistoryCacheService);
   private translate = inject(TranslateService);
+  private languageService = inject(LanguageService);
   private destroyRef = inject(DestroyRef);
   private history = inject(HistoryService);
 
@@ -195,7 +198,7 @@ export class HistoryPage implements OnInit {
     if (mins < 60) return this.translate.instant('HISTORY.DATE_MINUTES_AGO', { n: mins });
     const hours = Math.floor(mins / 60);
     if (hours < 24) return this.translate.instant('HISTORY.DATE_HOURS_AGO', { n: hours });
-    return d.toLocaleDateString('fr-FR', {
+    return d.toLocaleDateString(resolveLocale(this.languageService.current), {
       day: 'numeric',
       month: 'short',
       year: 'numeric',

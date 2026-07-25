@@ -1,8 +1,9 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, AlertCircle, Edit2, Trash2, FileText } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Vehicle } from '../../../../shared/models/vehicle.model';
+import { LanguageService } from '../../../../core/services/language.service';
 import {
   VehicleDateStatus,
   formatVehicleDate,
@@ -18,6 +19,8 @@ import {
   styleUrl: './vehicle-card.scss',
 })
 export class VehicleCard {
+  private languageService = inject(LanguageService);
+
   vehicle = input.required<Vehicle>();
   isAdmin = input(false);
   edit = output<Vehicle>();
@@ -29,7 +32,8 @@ export class VehicleCard {
   readonly trash2 = Trash2;
   readonly fileText = FileText;
 
-  formatDate = formatVehicleDate;
+  formatDate = (date: string | Date | undefined): string =>
+    formatVehicleDate(date, this.languageService.current);
 
   get formatBadgeClass(): string {
     const map: Record<string, string> = {

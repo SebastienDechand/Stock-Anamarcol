@@ -6,6 +6,8 @@ import { LucideAngularModule, FileText, Trash2, Upload } from 'lucide-angular';
 import { Vehicle, VehicleDocument, DocumentType } from '../../../../shared/models/vehicle.model';
 import { environment } from '../../../../../environments/environment';
 import { ToastService } from '../../../../core/toast/toast.service';
+import { LanguageService } from '../../../../core/services/language.service';
+import { resolveLocale } from '../../../../shared/utils/date.utils';
 
 const DOC_TYPE_LABEL_KEYS: Record<DocumentType, string> = {
   service_invoice: 'FLEET.DOC_TYPE_FACTURE_REVISION',
@@ -27,6 +29,7 @@ const ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'xlsx', 'xls', 'jpg', 'jpeg', 
 })
 export class VehicleDocumentList {
   private toast = inject(ToastService);
+  private languageService = inject(LanguageService);
 
   vehicle = input.required<Vehicle>();
   isAdmin = input(false);
@@ -54,7 +57,7 @@ export class VehicleDocumentList {
 
   formatDate(date: string | Date | undefined): string {
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('fr-FR');
+    return new Date(date).toLocaleDateString(resolveLocale(this.languageService.current));
   }
 
   onFileChange(event: Event): void {

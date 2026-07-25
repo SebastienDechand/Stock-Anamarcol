@@ -40,6 +40,8 @@ import { Shipment, ShipmentForm } from '../../shared/models/shipment.model';
 import { ClientFile } from '../../shared/models/client-file.model';
 import { User as UserModel } from '../../shared/models/user.model';
 import { ClientFilesFacade } from '../client-files/store/client-files.facade';
+import { LanguageService } from '../../core/services/language.service';
+import { resolveLocale } from '../../shared/utils/date.utils';
 
 const EMPTY_FORM: ShipmentForm = {
   lastName: '',
@@ -117,6 +119,7 @@ export class ShipmentsPage implements OnInit {
   protected facade = inject(ShipmentsFacade);
   private authFacade = inject(AuthFacade);
   private clientFilesFacade = inject(ClientFilesFacade);
+  private languageService = inject(LanguageService);
 
   isLoading$ = this.facade.isLoading$;
   isAdmin$ = this.authFacade.isAdmin$;
@@ -342,7 +345,7 @@ export class ShipmentsPage implements OnInit {
 
   formatDate(date: string | undefined): string {
     if (!date) return '-';
-    return new Date(date).toLocaleString('fr-FR');
+    return new Date(date).toLocaleString(resolveLocale(this.languageService.current));
   }
 
   clientFileLabel(clientFile: ClientFile): string {

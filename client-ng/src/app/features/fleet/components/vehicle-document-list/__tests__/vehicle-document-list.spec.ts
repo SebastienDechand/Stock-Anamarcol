@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { VehicleDocumentList } from '../vehicle-document-list';
 import { ToastService } from '../../../../../core/toast/toast.service';
+import { LanguageService } from '../../../../../core/services/language.service';
 import type { Vehicle } from '../../../../../shared/models/vehicle.model';
 import { environment } from '../../../../../../environments/environment';
 
@@ -29,7 +30,10 @@ describe('VehicleDocumentList', () => {
     TestBed.overrideComponent(VehicleDocumentList, { set: { template: '', imports: [] } });
     TestBed.configureTestingModule({
       imports: [VehicleDocumentList],
-      providers: [{ provide: ToastService, useValue: { success: vi.fn(), error: vi.fn() } }],
+      providers: [
+        { provide: ToastService, useValue: { success: vi.fn(), error: vi.fn() } },
+        { provide: LanguageService, useValue: { current: 'fr' } },
+      ],
     });
 
     const fixture = TestBed.createComponent(VehicleDocumentList);

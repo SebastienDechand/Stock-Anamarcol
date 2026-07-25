@@ -23,6 +23,8 @@ import { Item, ItemHistory } from '../../../../shared/models/item.model';
 import { ItemsFacade } from '../../store/items.facade';
 import { UsersFacade } from '../../../members/store/users.facade';
 import { AuthFacade } from '../../../../store/auth/auth.facade';
+import { LanguageService } from '../../../../core/services/language.service';
+import { resolveLocale } from '../../../../shared/utils/date.utils';
 
 @Component({
   selector: 'app-edit-item-modal',
@@ -40,6 +42,7 @@ export class EditItemModal implements OnInit, OnDestroy {
   private usersFacade = inject(UsersFacade);
   private authFacade = inject(AuthFacade);
   private translate = inject(TranslateService);
+  private languageService = inject(LanguageService);
 
   suppliers = SUPPLIERS;
   statuses = STATUSES;
@@ -163,7 +166,7 @@ export class EditItemModal implements OnInit, OnDestroy {
 
   formatDate(dateStr?: string): string {
     if (!dateStr) return '–';
-    return new Date(dateStr).toLocaleDateString('fr-FR', {
+    return new Date(dateStr).toLocaleDateString(resolveLocale(this.languageService.current), {
       day: 'numeric',
       month: 'long',
       year: 'numeric',

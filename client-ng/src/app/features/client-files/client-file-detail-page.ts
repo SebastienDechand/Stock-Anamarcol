@@ -45,6 +45,8 @@ import {
 import { CashguardUnit, InterventionReport } from '../../shared/models/intervention-report.model';
 import { Shipment } from '../../shared/models/shipment.model';
 import { environment } from '../../../environments/environment';
+import { LanguageService } from '../../core/services/language.service';
+import { resolveLocale } from '../../shared/utils/date.utils';
 
 type ClientFileDetailTab = 'fiche' | 'technique' | 'shipments' | 'documents';
 
@@ -81,6 +83,7 @@ export class ClientFileDetailPage implements OnInit {
   private api = inject(ApiService);
   private toast = inject(ToastService);
   private sanitizer = inject(DomSanitizer);
+  private languageService = inject(LanguageService);
 
   isLoading$ = this.filesFacade.isLoading$;
   file$ = this.filesFacade.selectedFile$;
@@ -251,7 +254,7 @@ export class ClientFileDetailPage implements OnInit {
 
   formatDate(date: string | undefined): string {
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('fr-FR');
+    return new Date(date).toLocaleDateString(resolveLocale(this.languageService.current));
   }
 
   getFileUrl(doc: ClientFileDoc): string {

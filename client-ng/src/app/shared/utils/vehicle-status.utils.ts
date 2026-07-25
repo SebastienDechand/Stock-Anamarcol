@@ -1,3 +1,6 @@
+import { Lang } from '../../core/services/language.service';
+import { resolveLocale } from './date.utils';
+
 export type VehicleDateStatus = 'expired' | 'soon' | 'ok' | 'none';
 
 const EXPIRING_SOON_THRESHOLD_DAYS = 30;
@@ -14,9 +17,9 @@ export function isDateExpiringSoon(date: string | Date | undefined): boolean {
   return days <= EXPIRING_SOON_THRESHOLD_DAYS && days > 0;
 }
 
-export function formatVehicleDate(date: string | Date | undefined): string {
+export function formatVehicleDate(date: string | Date | undefined, lang: Lang = 'fr'): string {
   if (!date) return '-';
-  return new Date(date).toLocaleDateString('fr-FR');
+  return new Date(date).toLocaleDateString(resolveLocale(lang));
 }
 
 export function vehicleDateStatus(date: string | Date | undefined): VehicleDateStatus {

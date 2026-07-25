@@ -5,6 +5,7 @@ import { FleetPage } from '../fleet-page';
 import { VehiclesFacade } from '../store/vehicles.facade';
 import { initialVehiclesState } from '../store/vehicles.state';
 import { initialAuthState } from '../../../store/auth/auth.state';
+import { LanguageService } from '../../../core/services/language.service';
 import type { Vehicle, VehicleForm } from '../../../shared/models/vehicle.model';
 
 const initialState = { vehicles: initialVehiclesState, auth: initialAuthState };
@@ -27,7 +28,10 @@ describe('FleetPage', () => {
 
     await TestBed.configureTestingModule({
       imports: [FleetPage],
-      providers: [provideMockStore({ initialState })],
+      providers: [
+        provideMockStore({ initialState }),
+        { provide: LanguageService, useValue: { current: 'fr' } },
+      ],
     }).compileComponents();
 
     facade = TestBed.inject(VehiclesFacade);
