@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import VehicleModel from "../models/vehicle.model";
-import UserModel from "../models/user.model";
+import * as vehicleService from "../services/vehicle.service";
 import { logEvent } from "../utils/audit.utils";
 import { validateObjectId } from "../utils/validate.utils";
 import { handleError } from "../utils/response.utils";
@@ -10,9 +9,7 @@ import { ErrorCode } from "../constants/errorCodes";
 // #region GET All Vehicles
 export const getAllVehicles = async (_req: Request, res: Response) => {
   try {
-    const vehicles = await VehicleModel.find()
-      .populate("assignedTo", "username email position")
-      .sort({ createdAt: -1 });
+    const vehicles = await vehicleService.listVehicles();
 
     res.status(200).json(vehicles);
   } catch (error) {
@@ -33,10 +30,7 @@ export const getVehicleById = async (req: Request, res: Response) => {
     const { id } = req.params;
     if (!validateObjectId(id as string, res)) return;
 
-    const vehicle = await VehicleModel.findById(id).populate(
-      "assignedTo",
-      "username email position",
-    );
+    const vehicle = await vehicleService.findVehicleById(id as string);
 
     if (!vehicle) {
       return res
@@ -84,9 +78,7 @@ export const createVehicle = async (req: Request, res: Response) => {
     }
 
     // Check if licensePlate already exists
-    const existingVehicle = await VehicleModel.findOne({
-      licensePlate: licensePlate.toUpperCase(),
-    });
+    const existingVehicle = await vehicleService.findVehicleByLicensePlate(licensePlate);
     if (existingVehicle) {
       return res.status(400).json({
         message: "Vehicle with this licensePlate already exists",
@@ -111,7 +103,7 @@ export const createVehicle = async (req: Request, res: Response) => {
     // Get assigned user name if provided
     let assignedToName = undefined;
     if (assignedTo) {
-      const user = await UserModel.findById(assignedTo);
+      const user = await vehicleService.findAssignedUser(assignedTo);
       if (!user) {
         return res.status(404).json({
           message: "Assigned user not found",
@@ -121,7 +113,7 @@ export const createVehicle = async (req: Request, res: Response) => {
       assignedToName = user.username;
     }
 
-    const newVehicle = new VehicleModel({
+    const newVehicle = await vehicleService.createVehicle({
       brand,
       model,
       format,
@@ -137,7 +129,6 @@ export const createVehicle = async (req: Request, res: Response) => {
       createdBy: res.locals.user?.username || "System",
     });
 
-    await newVehicle.save();
     await logEvent(
       "create",
       "vehicle",
@@ -183,7 +174,7 @@ export const updateVehicle = async (req: Request, res: Response) => {
       notes,
     } = req.body;
 
-    const vehicle = await VehicleModel.findById(id);
+    const vehicle = await vehicleService.findVehicleDocument(id as string);
     if (!vehicle) {
       return res
         .status(404)
@@ -192,10 +183,10 @@ export const updateVehicle = async (req: Request, res: Response) => {
 
     // Check licensePlate uniqueness if changed
     if (licensePlate && licensePlate !== vehicle.licensePlate) {
-      const existing = await VehicleModel.findOne({
-        licensePlate: licensePlate.toUpperCase(),
-        _id: { $ne: new Types.ObjectId(id as string) },
-      } as Record<string, unknown>);
+      const existing = await vehicleService.findOtherVehicleByLicensePlate(
+        licensePlate,
+        id as string,
+      );
       if (existing) {
         return res.status(400).json({
           message: "Vehicle with this licensePlate already exists",
@@ -226,7 +217,7 @@ export const updateVehicle = async (req: Request, res: Response) => {
         vehicle.assignedTo = undefined;
         vehicle.assignedToName = undefined;
       } else {
-        const user = await UserModel.findById(assignedTo);
+        const user = await vehicleService.findAssignedUser(assignedTo);
         if (!user) {
           return res.status(404).json({
             message: "Assigned user not found",
@@ -276,7 +267,7 @@ export const deleteVehicle = async (req: Request, res: Response) => {
     const { id } = req.params;
     if (!validateObjectId(id as string, res)) return;
 
-    const vehicle = await VehicleModel.findByIdAndDelete(id);
+    const vehicle = await vehicleService.deleteVehicleById(id as string);
 
     if (!vehicle) {
       return res
@@ -321,9 +312,7 @@ export const searchVehicles = async (req: Request, res: Response) => {
     if (model) filter.model = model;
     if (assignedTo) filter.assignedTo = assignedTo;
 
-    const vehicles = await VehicleModel.find(filter)
-      .populate("assignedTo", "username email position")
-      .sort({ createdAt: -1 });
+    const vehicles = await vehicleService.searchVehicles(filter);
 
     res.status(200).json(vehicles);
   } catch (error) {
@@ -354,7 +343,7 @@ export const uploadDocument = async (req: Request, res: Response) => {
       });
     }
 
-    const vehicle = await VehicleModel.findById(id);
+    const vehicle = await vehicleService.findVehicleDocument(id as string);
     if (!vehicle) {
       return res
         .status(404)
@@ -404,11 +393,7 @@ export const deleteDocument = async (req: Request, res: Response) => {
     if (!validateObjectId(id as string, res) || !validateObjectId(docId as string, res))
       return;
 
-    const vehicle = await VehicleModel.findByIdAndUpdate(
-      id,
-      { $pull: { documents: { _id: docId } } },
-      { new: true },
-    ).populate("assignedTo", "username email position");
+    const vehicle = await vehicleService.pullVehicleDocument(id as string, docId as string);
 
     if (!vehicle) {
       return res

@@ -1,18 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import { Request, Response } from "express";
 
-const mockContactModel: Record<string, Mock> = vi.hoisted(() => ({
-  find: vi.fn(),
-  findById: vi.fn(),
-  create: vi.fn(),
-  deleteOne: vi.fn(),
+const mockContactsService: Record<string, Mock> = vi.hoisted(() => ({
+  listContacts: vi.fn(),
+  findContactById: vi.fn(),
+  findContactDocument: vi.fn(),
+  createContact: vi.fn(),
+  deleteContactById: vi.fn(),
 }));
 
-vi.mock("../models/contact.model", () => ({
-  __esModule: true,
-  default: mockContactModel,
-  // IContact re-export so the controller import works
-}));
+vi.mock("../services/contacts.service", () => mockContactsService);
 
 vi.mock("../utils/audit.utils", () => ({
   logEvent: vi.fn().mockResolvedValue(undefined),
@@ -59,7 +56,7 @@ describe("Contacts Controller", () => {
   describe("getContacts", () => {
     it("should return all contacts", async () => {
       const contacts = [{ _id: "c1", name: "Dupont" }];
-      mockContactModel.find.mockResolvedValue(contacts);
+      mockContactsService.listContacts.mockResolvedValue(contacts);
       await getContacts(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(contacts);
@@ -77,9 +74,7 @@ describe("Contacts Controller", () => {
 
     it("should return 404 when contact not found", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
-      mockContactModel.findById.mockReturnValue({
-        lean: vi.fn().mockResolvedValue(null),
-      });
+      mockContactsService.findContactById.mockResolvedValue(null);
       await contactInfo(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(404);
     });
@@ -87,9 +82,7 @@ describe("Contacts Controller", () => {
     it("should return the contact", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       const contact = { _id: "507f1f77bcf86cd799439011", name: "Dupont" };
-      mockContactModel.findById.mockReturnValue({
-        lean: vi.fn().mockResolvedValue(contact),
-      });
+      mockContactsService.findContactById.mockResolvedValue(contact);
       await contactInfo(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(contact);
@@ -97,9 +90,7 @@ describe("Contacts Controller", () => {
 
     it("should return 500 on DB error", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
-      mockContactModel.findById.mockReturnValue({
-        lean: vi.fn().mockRejectedValue(new Error("DB error")),
-      });
+      mockContactsService.findContactById.mockRejectedValue(new Error("DB error"));
       await contactInfo(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
     });
@@ -110,7 +101,7 @@ describe("Contacts Controller", () => {
   describe("createContact", () => {
     it("should create a contact and log audit event", async () => {
       req.body = { name: "Dupont", email: "test@test.com" };
-      mockContactModel.create.mockResolvedValue({
+      mockContactsService.createContact.mockResolvedValue({
         _id: "c2",
         name: "Dupont",
       });
@@ -128,7 +119,7 @@ describe("Contacts Controller", () => {
 
     it("should return 400 on validation error", async () => {
       req.body = {};
-      mockContactModel.create.mockRejectedValue(new Error("validation error"));
+      mockContactsService.createContact.mockRejectedValue(new Error("validation error"));
       await createContact(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
@@ -145,7 +136,7 @@ describe("Contacts Controller", () => {
 
     it("should return 404 when contact not found", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
-      mockContactModel.findById.mockResolvedValue(null);
+      mockContactsService.findContactDocument.mockResolvedValue(null);
       await updateContact(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(404);
     });
@@ -169,7 +160,7 @@ describe("Contacts Controller", () => {
           return Promise.resolve(this);
         }),
       };
-      mockContactModel.findById.mockResolvedValue(mockContact);
+      mockContactsService.findContactDocument.mockResolvedValue(mockContact);
       await updateContact(req as Request, res as Response);
       expect(mockContact.name).toBe("Martin");
       expect(mockContact.save).toHaveBeenCalled();
@@ -179,7 +170,7 @@ describe("Contacts Controller", () => {
     it("should return 500 on DB error", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       req.body = { name: "Martin" };
-      mockContactModel.findById.mockRejectedValue(new Error("DB error"));
+      mockContactsService.findContactDocument.mockRejectedValue(new Error("DB error"));
       await updateContact(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
     });
@@ -197,12 +188,8 @@ describe("Contacts Controller", () => {
     it("should delete a contact and log audit event", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
       const contact = { _id: "507f1f77bcf86cd799439011", name: "Dupont" };
-      mockContactModel.findById.mockReturnValue({
-        lean: vi.fn().mockResolvedValue(contact),
-      });
-      mockContactModel.deleteOne.mockReturnValue({
-        exec: vi.fn().mockResolvedValue({ deletedCount: 1 }),
-      });
+      mockContactsService.findContactById.mockResolvedValue(contact);
+      mockContactsService.deleteContactById.mockResolvedValue({ deletedCount: 1 });
       await deleteContact(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(logEvent).toHaveBeenCalledWith(
@@ -216,9 +203,7 @@ describe("Contacts Controller", () => {
 
     it("should return 500 on DB error", async () => {
       req.params = { id: "507f1f77bcf86cd799439011" };
-      mockContactModel.findById.mockReturnValue({
-        lean: vi.fn().mockRejectedValue(new Error("DB error")),
-      });
+      mockContactsService.findContactById.mockRejectedValue(new Error("DB error"));
       await deleteContact(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
     });

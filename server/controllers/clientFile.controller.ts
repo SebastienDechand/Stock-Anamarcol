@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import path from "path";
 import fs from "fs";
 import multer from "multer";
-import ClientFileModel from "../models/clientFile.model";
 import type { ClientFileDocType } from "../models/clientFile.model";
+import * as clientFileService from "../services/clientFile.service";
 import { validateObjectId } from "../utils/validate.utils";
 import { logEvent } from "../utils/audit.utils";
 import { handleError } from "../utils/response.utils";
@@ -50,10 +50,7 @@ export const getClientFiles = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const files = await ClientFileModel.find()
-      .sort({ createdAt: -1 })
-      .populate("contactRef", "name email phone")
-      .lean();
+    const files = await clientFileService.listClientFiles();
     res.status(200).json(files);
   } catch (err) {
     handleError(res, err, "Error fetching client files:");
@@ -69,9 +66,7 @@ export const getClientFile = async (
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
-    const file = await ClientFileModel.findById(req.params.id)
-      .populate("contactRef", "name email phone")
-      .lean();
+    const file = await clientFileService.findClientFileById(req.params.id as string);
     if (!file) {
       res.status(404).json({
         message: "Client file not found",
@@ -97,10 +92,10 @@ export const createClientFile = async (
     // Duplicate check
     // 1. SIRET + address (same brand, same store)
     if (data.siret?.trim() && data.address?.trim()) {
-      const bySiretAddr = await ClientFileModel.findOne({
-        siret: data.siret.trim(),
-        address: { $regex: `^${data.address.trim()}$`, $options: "i" },
-      }).lean();
+      const bySiretAddr = await clientFileService.findClientFileBySiretAndAddress(
+        data.siret.trim(),
+        data.address.trim(),
+      );
       if (bySiretAddr) {
         res.status(409).json({
           message: "A client file with this SIRET and address already exists",
@@ -112,10 +107,10 @@ export const createClientFile = async (
     }
     // 2. lastName + address
     if (data.lastName?.trim() && data.address?.trim()) {
-      const byAddr = await ClientFileModel.findOne({
-        lastName: { $regex: `^${data.lastName.trim()}$`, $options: "i" },
-        address: { $regex: `^${data.address.trim()}$`, $options: "i" },
-      }).lean();
+      const byAddr = await clientFileService.findClientFileByNameAndAddress(
+        data.lastName.trim(),
+        data.address.trim(),
+      );
       if (byAddr) {
         res.status(409).json({
           message: "A client file with this name and address already exists",
@@ -126,7 +121,7 @@ export const createClientFile = async (
       }
     }
 
-    const file = await ClientFileModel.create(data);
+    const file = await clientFileService.createClientFile(data);
     await logEvent(
       "create",
       "clientfile",
@@ -153,7 +148,7 @@ export const updateClientFile = async (
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
-    const file = await ClientFileModel.findById(req.params.id);
+    const file = await clientFileService.findClientFileDocument(req.params.id as string);
     if (!file) {
       res.status(404).json({
         message: "Client file not found",
@@ -220,7 +215,7 @@ export const deleteClientFile = async (
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
-    const file = await ClientFileModel.findByIdAndDelete(req.params.id);
+    const file = await clientFileService.deleteClientFileById(req.params.id as string);
     if (!file) {
       res.status(404).json({
         message: "Client file not found",
@@ -259,7 +254,7 @@ export const uploadDocument = async (
   }
 
   try {
-    const file = await ClientFileModel.findById(req.params.id);
+    const file = await clientFileService.findClientFileDocument(req.params.id as string);
     if (!file) {
       res.status(404).json({
         message: "Client file not found",
@@ -302,7 +297,7 @@ export const deleteDocument = async (
   if (!validateObjectId(req.params.docId as string, res)) return;
 
   try {
-    const file = await ClientFileModel.findById(req.params.id);
+    const file = await clientFileService.findClientFileDocument(req.params.id as string);
     if (!file) {
       res.status(404).json({
         message: "Client file not found",

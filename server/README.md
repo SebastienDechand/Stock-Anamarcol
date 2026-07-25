@@ -107,6 +107,15 @@ server/
 │   ├── statistics.routes.ts
 │   └── user.routes.ts
 │
+├── services/                          Data-access layer (Mongoose calls), one per resource
+│   ├── clientFile.service.ts
+│   ├── contacts.service.ts
+│   ├── interventionReport.service.ts
+│   ├── purge.service.ts                  History/Audit TTL purge
+│   ├── reminderVehicle.service.ts        Vehicle inspection/CT email reminders
+│   ├── shipments.service.ts              Includes PDF/XLSX archive generation
+│   └── vehicle.service.ts
+│
 ├── utils/
 │   ├── audit.utils.ts                    Audit log (logEvent, getRecentEvents)
 │   ├── errors.utils.ts                   Error formatting

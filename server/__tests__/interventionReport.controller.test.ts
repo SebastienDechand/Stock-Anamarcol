@@ -1,17 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import { Request, Response } from "express";
 
-const mockReportModel = vi.hoisted(() => ({
-  find: vi.fn(),
-  findById: vi.fn(),
-  create: vi.fn(),
-  findByIdAndDelete: vi.fn(),
+const mockReportService = vi.hoisted(() => ({
+  listInterventionReports: vi.fn(),
+  findInterventionReportById: vi.fn(),
+  findInterventionReportDocument: vi.fn(),
+  createInterventionReport: vi.fn(),
+  deleteInterventionReportById: vi.fn(),
 }));
 
-vi.mock("../models/interventionReport.model", () => ({
-  __esModule: true,
-  default: mockReportModel,
-}));
+vi.mock("../services/interventionReport.service", () => mockReportService);
 
 vi.mock("../utils/validate.utils", () => ({
   validateObjectId: vi.fn((id: string, res: Response) => {
@@ -79,46 +77,28 @@ describe("InterventionReport Controller", () => {
   describe("getInterventionReports", () => {
     it("should return all reports with 200", async () => {
       const reports = [mockReport];
-      mockReportModel.find.mockReturnValue({
-        sort: vi.fn().mockReturnValue({
-          populate: vi.fn().mockReturnValue({
-            lean: vi.fn().mockResolvedValue(reports),
-          }),
-        }),
-      });
+      mockReportService.listInterventionReports.mockResolvedValue(reports);
 
       await getInterventionReports(req as Request, res as Response);
 
-      expect(mockReportModel.find).toHaveBeenCalledWith({});
+      expect(mockReportService.listInterventionReports).toHaveBeenCalledWith({});
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(reports);
     });
 
     it("should filter by clientFileId when provided", async () => {
       req.query = { clientFileId: CLIENT_FILE_ID };
-      mockReportModel.find.mockReturnValue({
-        sort: vi.fn().mockReturnValue({
-          populate: vi.fn().mockReturnValue({
-            lean: vi.fn().mockResolvedValue([mockReport]),
-          }),
-        }),
-      });
+      mockReportService.listInterventionReports.mockResolvedValue([mockReport]);
 
       await getInterventionReports(req as Request, res as Response);
 
-      expect(mockReportModel.find).toHaveBeenCalledWith({
+      expect(mockReportService.listInterventionReports).toHaveBeenCalledWith({
         clientFile: CLIENT_FILE_ID,
       });
     });
 
     it("should return 500 on error", async () => {
-      mockReportModel.find.mockReturnValue({
-        sort: vi.fn().mockReturnValue({
-          populate: vi.fn().mockReturnValue({
-            lean: vi.fn().mockRejectedValue(new Error("DB error")),
-          }),
-        }),
-      });
+      mockReportService.listInterventionReports.mockRejectedValue(new Error("DB error"));
 
       await getInterventionReports(req as Request, res as Response);
 
@@ -137,11 +117,7 @@ describe("InterventionReport Controller", () => {
 
     it("should return 404 when report not found", async () => {
       req.params = { id: VALID_ID };
-      mockReportModel.findById.mockReturnValue({
-        populate: vi.fn().mockReturnValue({
-          lean: vi.fn().mockResolvedValue(null),
-        }),
-      });
+      mockReportService.findInterventionReportById.mockResolvedValue(null);
 
       await getInterventionReport(req as Request, res as Response);
 
@@ -154,11 +130,7 @@ describe("InterventionReport Controller", () => {
 
     it("should return the report with 200", async () => {
       req.params = { id: VALID_ID };
-      mockReportModel.findById.mockReturnValue({
-        populate: vi.fn().mockReturnValue({
-          lean: vi.fn().mockResolvedValue(mockReport),
-        }),
-      });
+      mockReportService.findInterventionReportById.mockResolvedValue(mockReport);
 
       await getInterventionReport(req as Request, res as Response);
 
@@ -176,14 +148,14 @@ describe("InterventionReport Controller", () => {
         twRegisters: ["TW123"],
         cashguardUnits: [mockUnit],
       };
-      mockReportModel.create.mockResolvedValue({
+      mockReportService.createInterventionReport.mockResolvedValue({
         ...mockReport,
         _id: { toString: () => VALID_ID },
       });
 
       await createInterventionReport(req as Request, res as Response);
 
-      expect(mockReportModel.create).toHaveBeenCalledWith(
+      expect(mockReportService.createInterventionReport).toHaveBeenCalledWith(
         expect.objectContaining({
           clientFile: CLIENT_FILE_ID,
           createdBy: "monteur1",
@@ -197,7 +169,9 @@ describe("InterventionReport Controller", () => {
 
     it("should return 400 on validation error", async () => {
       req.body = {};
-      mockReportModel.create.mockRejectedValue(new Error("validation failed"));
+      mockReportService.createInterventionReport.mockRejectedValue(
+        new Error("validation failed"),
+      );
 
       await createInterventionReport(req as Request, res as Response);
 
@@ -216,7 +190,7 @@ describe("InterventionReport Controller", () => {
 
     it("should return 404 when report not found", async () => {
       req.params = { id: VALID_ID };
-      mockReportModel.findById.mockResolvedValue(null);
+      mockReportService.findInterventionReportDocument.mockResolvedValue(null);
 
       await updateInterventionReport(req as Request, res as Response);
 
@@ -234,7 +208,7 @@ describe("InterventionReport Controller", () => {
           notes: "Updated notes",
         }),
       };
-      mockReportModel.findById.mockResolvedValue(report);
+      mockReportService.findInterventionReportDocument.mockResolvedValue(report);
 
       await updateInterventionReport(req as Request, res as Response);
 
@@ -251,7 +225,7 @@ describe("InterventionReport Controller", () => {
         updatedBy: undefined as string | undefined,
         save: vi.fn().mockResolvedValue(mockReport),
       };
-      mockReportModel.findById.mockResolvedValue(report);
+      mockReportService.findInterventionReportDocument.mockResolvedValue(report);
 
       await updateInterventionReport(req as Request, res as Response);
 
@@ -270,7 +244,7 @@ describe("InterventionReport Controller", () => {
 
     it("should return 404 when report not found", async () => {
       req.params = { id: VALID_ID };
-      mockReportModel.findByIdAndDelete.mockResolvedValue(null);
+      mockReportService.deleteInterventionReportById.mockResolvedValue(null);
 
       await deleteInterventionReport(req as Request, res as Response);
 
@@ -279,7 +253,7 @@ describe("InterventionReport Controller", () => {
 
     it("should delete report and return 200", async () => {
       req.params = { id: VALID_ID };
-      mockReportModel.findByIdAndDelete.mockResolvedValue(mockReport);
+      mockReportService.deleteInterventionReportById.mockResolvedValue(mockReport);
 
       await deleteInterventionReport(req as Request, res as Response);
 
