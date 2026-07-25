@@ -12,6 +12,7 @@ import { initialInterventionReportsState } from '../../intervention-reports/stor
 import { initialAuthState } from '../../../store/auth/auth.state';
 import { ApiService } from '../../../core/http/api.service';
 import { ToastService } from '../../../core/toast/toast.service';
+import { LanguageService } from '../../../core/services/language.service';
 import { ClientFile } from '../../../shared/models/client-file.model';
 import {
   CashguardUnit,
@@ -101,6 +102,7 @@ describe('ClientFileDetailPage', () => {
           },
         },
         { provide: ToastService, useValue: { success: vi.fn(), error: vi.fn() } },
+        { provide: LanguageService, useValue: { current: 'fr' } },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: vi.fn().mockReturnValue('file-id-1') } } },

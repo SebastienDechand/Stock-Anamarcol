@@ -9,6 +9,7 @@ import { HistoryService } from '../history.service';
 import { ToastService } from '../../../core/toast/toast.service';
 import { HistoryCacheService } from '../history-cache.service';
 import { initialAuthState } from '../../../store/auth/auth.state';
+import { LanguageService } from '../../../core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import type { AuditEvent } from '../../../shared/models/audit.model';
 
@@ -44,6 +45,7 @@ describe('HistoryPage', () => {
         },
         { provide: ToastService, useValue: { success: vi.fn(), error: vi.fn() } },
         { provide: TranslateService, useValue: { instant: (key: string) => key } },
+        { provide: LanguageService, useValue: { current: 'fr' } },
         { provide: HistoryCacheService, useValue: { events: [], users: [] } },
       ],
     }).compileComponents();

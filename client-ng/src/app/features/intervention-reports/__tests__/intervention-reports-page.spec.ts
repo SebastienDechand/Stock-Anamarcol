@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { InterventionReportsPage } from '../intervention-reports-page';
 import { InterventionReportsFacade } from '../store/intervention-reports.facade';
 import { initialInterventionReportsState } from '../store/intervention-reports.state';
+import { LanguageService } from '../../../core/services/language.service';
 import type { InterventionReport } from '../../../shared/models/intervention-report.model';
 
 const initialState = { interventionReports: initialInterventionReportsState };
@@ -31,6 +32,7 @@ describe('InterventionReportsPage', () => {
       providers: [
         provideMockStore({ initialState }),
         { provide: Router, useValue: { navigate: mockNavigate } },
+        { provide: LanguageService, useValue: { current: 'fr' } },
       ],
     }).compileComponents();
 

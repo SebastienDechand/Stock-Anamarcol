@@ -8,6 +8,7 @@ import { initialClientFilesState } from '../../client-files/store/client-files.s
 import { initialAuthState } from '../../../store/auth/auth.state';
 import type { Shipment } from '../../../shared/models/shipment.model';
 import type { ClientFile } from '../../../shared/models/client-file.model';
+import { LanguageService } from '../../../core/services/language.service';
 
 const initialState = {
   shipments: initialShipmentsState,
@@ -73,7 +74,10 @@ describe('ShipmentsPage', () => {
 
     await TestBed.configureTestingModule({
       imports: [ShipmentsPage],
-      providers: [provideMockStore({ initialState })],
+      providers: [
+        provideMockStore({ initialState }),
+        { provide: LanguageService, useValue: { current: 'fr' } },
+      ],
     }).compileComponents();
 
     facade = TestBed.inject(ShipmentsFacade);
@@ -307,7 +311,7 @@ describe('ShipmentsPage', () => {
       const result = component.formatDate('2024-06-15T10:30:00.000Z');
       expect(result).toBeTruthy();
       expect(result).not.toBe('-');
-      // Verify it is a non-empty string produced by toLocaleString('fr-FR')
+      // Verify it is a non-empty string produced by toLocaleString(locale)
       expect(typeof result).toBe('string');
       expect(result.length).toBeGreaterThan(0);
     });

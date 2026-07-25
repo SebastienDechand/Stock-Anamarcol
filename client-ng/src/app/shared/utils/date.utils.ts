@@ -1,4 +1,15 @@
-export function formatDateFr(value: string | Date | undefined | null): string {
+import { Lang } from '../../core/services/language.service';
+
+const LOCALE_BY_LANG: Record<Lang, string> = { fr: 'fr-FR', en: 'en-GB' };
+
+export function resolveLocale(lang: Lang): string {
+  return LOCALE_BY_LANG[lang];
+}
+
+export function formatDateFr(
+  value: string | Date | undefined | null,
+  lang: Lang = 'fr',
+): string {
   if (!value) return '';
   const options: Intl.DateTimeFormatOptions = {
     hour: '2-digit',
@@ -11,5 +22,5 @@ export function formatDateFr(value: string | Date | undefined | null): string {
   };
   const timestamp = Date.parse(String(value));
   if (isNaN(timestamp)) return '';
-  return new Date(timestamp).toLocaleDateString('fr-FR', options);
+  return new Date(timestamp).toLocaleDateString(resolveLocale(lang), options);
 }

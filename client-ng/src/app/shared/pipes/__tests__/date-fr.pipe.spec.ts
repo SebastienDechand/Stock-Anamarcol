@@ -1,8 +1,17 @@
-import { describe, it, expect } from 'vitest';
+import { TestBed } from '@angular/core/testing';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { DateFrPipe } from '../date-fr.pipe';
+import { LanguageService } from '../../../core/services/language.service';
 
 describe('DateFrPipe', () => {
-  const pipe = new DateFrPipe();
+  let pipe: DateFrPipe;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [{ provide: LanguageService, useValue: { current: 'fr' } }],
+    });
+    pipe = TestBed.runInInjectionContext(() => new DateFrPipe());
+  });
 
   it('should return an empty string for null, undefined or empty input', () => {
     expect(pipe.transform(null)).toBe('');

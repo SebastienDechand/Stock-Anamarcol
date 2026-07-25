@@ -4,6 +4,7 @@ import { of, throwError } from 'rxjs';
 import { ShipmentHistoryModal } from '../shipment-history-modal';
 import { ApiService } from '../../../../../core/http/api.service';
 import { ToastService } from '../../../../../core/toast/toast.service';
+import { LanguageService } from '../../../../../core/services/language.service';
 import type { ShipmentArchive } from '../../../../../shared/models/shipment.model';
 
 const sampleArchive: ShipmentArchive = {
@@ -38,6 +39,7 @@ describe('ShipmentHistoryModal', () => {
       providers: [
         { provide: ApiService, useValue: api },
         { provide: ToastService, useValue: toast },
+        { provide: LanguageService, useValue: { current: 'fr' } },
       ],
     });
 

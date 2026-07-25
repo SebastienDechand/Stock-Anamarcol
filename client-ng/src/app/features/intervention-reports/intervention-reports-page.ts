@@ -7,6 +7,8 @@ import { InterventionReportsFacade } from './store/intervention-reports.facade';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
 import { InterventionReport } from '../../shared/models/intervention-report.model';
+import { LanguageService } from '../../core/services/language.service';
+import { resolveLocale } from '../../shared/utils/date.utils';
 
 @Component({
   selector: 'app-intervention-reports-page',
@@ -18,6 +20,7 @@ import { InterventionReport } from '../../shared/models/intervention-report.mode
 export class InterventionReportsPage implements OnInit {
   protected facade = inject(InterventionReportsFacade);
   private router = inject(Router);
+  private languageService = inject(LanguageService);
 
   isLoading$ = this.facade.isLoading$;
   reports$ = this.facade.reports$;
@@ -68,6 +71,6 @@ export class InterventionReportsPage implements OnInit {
 
   formatDate(date: string): string {
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('fr-FR');
+    return new Date(date).toLocaleDateString(resolveLocale(this.languageService.current));
   }
 }

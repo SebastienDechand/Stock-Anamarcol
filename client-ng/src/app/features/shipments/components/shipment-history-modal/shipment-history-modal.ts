@@ -6,6 +6,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../../../../core/http/api.service';
 import { ToastService } from '../../../../core/toast/toast.service';
 import { ShipmentArchive } from '../../../../shared/models/shipment.model';
+import { LanguageService } from '../../../../core/services/language.service';
+import { resolveLocale } from '../../../../shared/utils/date.utils';
 
 @Component({
   selector: 'app-shipment-history-modal',
@@ -21,6 +23,7 @@ export class ShipmentHistoryModal implements OnInit {
   private api = inject(ApiService);
   private toast = inject(ToastService);
   private destroyRef = inject(DestroyRef);
+  private languageService = inject(LanguageService);
 
   readonly x = X;
   readonly archiveIcon = Archive;
@@ -90,7 +93,7 @@ export class ShipmentHistoryModal implements OnInit {
 
   formatDate(date: string | undefined): string {
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('fr-FR', {
+    return new Date(date).toLocaleDateString(resolveLocale(this.languageService.current), {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
