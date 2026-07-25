@@ -6,6 +6,7 @@ import ClientFileModel from "../models/clientFile.model";
 import type { ClientFileDocType } from "../models/clientFile.model";
 import { validateObjectId } from "../utils/validate.utils";
 import { logEvent } from "../utils/audit.utils";
+import { handleError } from "../utils/response.utils";
 import { ErrorCode } from "../constants/errorCodes";
 
 // #region Multer config for client file documents
@@ -55,10 +56,7 @@ export const getClientFiles = async (
       .lean();
     res.status(200).json(files);
   } catch (err) {
-    console.error("Error fetching client files:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error fetching client files:");
   }
 };
 // #endregion
@@ -83,10 +81,7 @@ export const getClientFile = async (
     }
     res.status(200).json(file);
   } catch (err) {
-    console.error("Error fetching client file:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error fetching client file:");
   }
 };
 // #endregion
@@ -245,10 +240,7 @@ export const deleteClientFile = async (
       code: ErrorCode.CLIENT_FILE_DELETED,
     });
   } catch (err) {
-    console.error("Error deleting client file:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error deleting client file:");
   }
 };
 // #endregion
@@ -290,11 +282,13 @@ export const uploadDocument = async (
     const updated = await file.save();
     res.status(201).json(updated);
   } catch (err) {
-    console.error("Error uploading document:", err);
-    res.status(500).json({
-      message: "Error uploading document",
-      code: ErrorCode.CLIENT_FILE_UPLOAD_ERROR,
-    });
+    handleError(
+      res,
+      err,
+      "Error uploading document:",
+      "Error uploading document",
+      ErrorCode.CLIENT_FILE_UPLOAD_ERROR,
+    );
   }
 };
 // #endregion
@@ -340,11 +334,13 @@ export const deleteDocument = async (
     const updated = await file.save();
     res.status(200).json(updated);
   } catch (err) {
-    console.error("Error deleting document:", err);
-    res.status(500).json({
-      message: "Error deleting document",
-      code: ErrorCode.DOCUMENT_DELETE_ERROR,
-    });
+    handleError(
+      res,
+      err,
+      "Error deleting document:",
+      "Error deleting document",
+      ErrorCode.DOCUMENT_DELETE_ERROR,
+    );
   }
 };
 // #endregion

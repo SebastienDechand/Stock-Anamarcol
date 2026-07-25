@@ -4,6 +4,7 @@ import VehicleModel from "../models/vehicle.model";
 import UserModel from "../models/user.model";
 import { logEvent } from "../utils/audit.utils";
 import { validateObjectId } from "../utils/validate.utils";
+import { handleError } from "../utils/response.utils";
 import { ErrorCode } from "../constants/errorCodes";
 
 // #region GET All Vehicles
@@ -15,10 +16,13 @@ export const getAllVehicles = async (_req: Request, res: Response) => {
 
     res.status(200).json(vehicles);
   } catch (error) {
-    console.error("Error fetching vehicles:", error);
-    res
-      .status(500)
-      .json({ message: "Error fetching vehicles", code: ErrorCode.VEHICLE_FETCH_ERROR });
+    handleError(
+      res,
+      error,
+      "Error fetching vehicles:",
+      "Error fetching vehicles",
+      ErrorCode.VEHICLE_FETCH_ERROR,
+    );
   }
 };
 // #endregion
@@ -42,10 +46,13 @@ export const getVehicleById = async (req: Request, res: Response) => {
 
     res.status(200).json(vehicle);
   } catch (error) {
-    console.error("Error fetching vehicle:", error);
-    res
-      .status(500)
-      .json({ message: "Error fetching vehicle", code: ErrorCode.VEHICLE_FETCH_ERROR });
+    handleError(
+      res,
+      error,
+      "Error fetching vehicle:",
+      "Error fetching vehicle",
+      ErrorCode.VEHICLE_FETCH_ERROR,
+    );
   }
 };
 // #endregion
@@ -145,10 +152,13 @@ export const createVehicle = async (req: Request, res: Response) => {
 
     res.status(201).json(newVehicle);
   } catch (error) {
-    console.error("Error creating vehicle:", error);
-    res
-      .status(500)
-      .json({ message: "Error creating vehicle", code: ErrorCode.VEHICLE_CREATE_ERROR });
+    handleError(
+      res,
+      error,
+      "Error creating vehicle:",
+      "Error creating vehicle",
+      ErrorCode.VEHICLE_CREATE_ERROR,
+    );
   }
 };
 // #endregion
@@ -249,10 +259,13 @@ export const updateVehicle = async (req: Request, res: Response) => {
     const updated = await vehicle.populate("assignedTo", "username email position");
     res.status(200).json(updated);
   } catch (error) {
-    console.error("Error updating vehicle:", error);
-    res
-      .status(500)
-      .json({ message: "Error updating vehicle", code: ErrorCode.VEHICLE_UPDATE_ERROR });
+    handleError(
+      res,
+      error,
+      "Error updating vehicle:",
+      "Error updating vehicle",
+      ErrorCode.VEHICLE_UPDATE_ERROR,
+    );
   }
 };
 // #endregion
@@ -279,10 +292,13 @@ export const deleteVehicle = async (req: Request, res: Response) => {
       .status(200)
       .json({ message: "Vehicle deleted successfully", code: ErrorCode.VEHICLE_DELETED });
   } catch (error) {
-    console.error("Error deleting vehicle:", error);
-    res
-      .status(500)
-      .json({ message: "Error deleting vehicle", code: ErrorCode.VEHICLE_DELETE_ERROR });
+    handleError(
+      res,
+      error,
+      "Error deleting vehicle:",
+      "Error deleting vehicle",
+      ErrorCode.VEHICLE_DELETE_ERROR,
+    );
   }
 };
 // #endregion
@@ -311,10 +327,13 @@ export const searchVehicles = async (req: Request, res: Response) => {
 
     res.status(200).json(vehicles);
   } catch (error) {
-    console.error("Error searching vehicles:", error);
-    res
-      .status(500)
-      .json({ message: "Error searching vehicles", code: ErrorCode.VEHICLE_SEARCH_ERROR });
+    handleError(
+      res,
+      error,
+      "Error searching vehicles:",
+      "Error searching vehicles",
+      ErrorCode.VEHICLE_SEARCH_ERROR,
+    );
   }
 };
 // #endregion
@@ -367,11 +386,13 @@ export const uploadDocument = async (req: Request, res: Response) => {
 
     res.status(200).json(vehicle);
   } catch (error) {
-    console.error("Error uploading document:", error);
-    res.status(500).json({
-      message: "Error uploading document",
-      code: ErrorCode.VEHICLE_DOC_UPLOAD_ERROR,
-    });
+    handleError(
+      res,
+      error,
+      "Error uploading document:",
+      "Error uploading document",
+      ErrorCode.VEHICLE_DOC_UPLOAD_ERROR,
+    );
   }
 };
 // #endregion
@@ -407,11 +428,13 @@ export const deleteDocument = async (req: Request, res: Response) => {
 
     res.status(200).json(vehicle);
   } catch (error) {
-    console.error("Error deleting document:", error);
-    res.status(500).json({
-      message: "Error deleting document",
-      code: ErrorCode.VEHICLE_DOC_DELETE_ERROR,
-    });
+    handleError(
+      res,
+      error,
+      "Error deleting document:",
+      "Error deleting document",
+      ErrorCode.VEHICLE_DOC_DELETE_ERROR,
+    );
   }
 };
 // #endregion

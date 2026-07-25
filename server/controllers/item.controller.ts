@@ -8,6 +8,7 @@ import {
   logItemDelete,
 } from "../utils/history.utils";
 import { logEvent } from "../utils/audit.utils";
+import { handleError } from "../utils/response.utils";
 import { invalidateStatsCache } from "./stats.controller";
 import { ErrorCode } from "../constants/errorCodes";
 import { Role } from "../constants";
@@ -27,10 +28,7 @@ export const itemInfo = async (req: Request, res: Response): Promise<void> => {
     }
     res.status(200).json(item);
   } catch (err) {
-    console.error("Error fetching item:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error fetching item:");
   }
 };
 
@@ -133,10 +131,7 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json(response);
   } catch (err) {
-    console.error("Error fetching items:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error fetching items:");
   }
 };
 
@@ -256,10 +251,7 @@ export const updateItem = async (
     invalidateStatsCache();
     res.status(200).json({ item: updatedItem });
   } catch (err) {
-    console.error("Error updating item:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error updating item:");
   }
 };
 
@@ -301,10 +293,7 @@ export const deleteItem = async (
       .status(200)
       .json({ message: "Successfully deleted", code: ErrorCode.DELETED });
   } catch (err) {
-    console.error("Error deleting item:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error deleting item:");
   }
 };
 
@@ -389,9 +378,6 @@ export const prepaBatch = async (
       updated,
     });
   } catch (err) {
-    console.error("Error in prepa batch:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error in prepa batch:");
   }
 };

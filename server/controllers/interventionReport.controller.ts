@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import InterventionReportModel from "../models/interventionReport.model";
 import { validateObjectId } from "../utils/validate.utils";
+import { handleError } from "../utils/response.utils";
 import { ErrorCode } from "../constants/errorCodes";
 
 // #region List all reports (optionally filter by clientFile)
@@ -18,10 +19,7 @@ export const getInterventionReports = async (
       .lean();
     res.status(200).json(reports);
   } catch (err) {
-    console.error("Error fetching intervention reports:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error fetching intervention reports:");
   }
 };
 // #endregion
@@ -45,10 +43,7 @@ export const getInterventionReport = async (
     }
     res.status(200).json(report);
   } catch (err) {
-    console.error("Error fetching intervention report:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error fetching intervention report:");
   }
 };
 // #endregion
@@ -139,10 +134,7 @@ export const deleteInterventionReport = async (
       .status(200)
       .json({ message: "Report deleted", code: ErrorCode.REPORT_DELETED });
   } catch (err) {
-    console.error("Error deleting intervention report:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error deleting intervention report:");
   }
 };
 // #endregion

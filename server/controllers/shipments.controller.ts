@@ -6,6 +6,7 @@ import type { IShipmentArchive } from "../models/shipmentArchive.model";
 import PDFDocument from "pdfkit";
 import * as XLSX from "xlsx";
 import { validateObjectId } from "../utils/validate.utils";
+import { handleError } from "../utils/response.utils";
 import { ErrorCode } from "../constants/errorCodes";
 
 /**
@@ -234,10 +235,7 @@ export const getShipments = async (
       .lean();
     res.status(200).json(shipments);
   } catch (err) {
-    console.error("Error fetching shipments:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error fetching shipments:");
   }
 };
 
@@ -299,10 +297,7 @@ export const createShipment = async (
     });
     res.status(201).json(created);
   } catch (err) {
-    console.error("Error creating shipment:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error creating shipment:");
   }
 };
 
@@ -325,10 +320,7 @@ export const markSent = async (req: Request, res: Response): Promise<void> => {
     const updated = await shipment.save();
     res.status(200).json(updated);
   } catch (err) {
-    console.error("Error marking shipment sent:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error marking shipment sent:");
   }
 };
 
@@ -345,10 +337,7 @@ export const deleteShipment = async (
       .status(200)
       .json({ message: "Deleted", code: ErrorCode.SHIPMENT_DELETED });
   } catch (err) {
-    console.error("Error deleting shipment:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error deleting shipment:");
   }
 };
 
@@ -382,10 +371,7 @@ export const createArchive = async (
       createdAt: archive.createdAt,
     });
   } catch (err) {
-    console.error("Error creating shipment archive:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error creating shipment archive:");
   }
 };
 
@@ -403,10 +389,7 @@ export const getArchives = async (
       .lean();
     res.status(200).json(archives);
   } catch (err) {
-    console.error("Error fetching archives:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error fetching archives:");
   }
 };
 
@@ -474,9 +457,6 @@ export const downloadArchive = async (
       res.end(pdfBuffer);
     }
   } catch (err) {
-    console.error("Error downloading archive:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "Error downloading archive:");
   }
 };

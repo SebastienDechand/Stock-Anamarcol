@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import ContactModel from "../models/contact.model";
 import { validateUploadedFile, uploadToImgBB } from "../utils/upload.utils";
 import { logEvent } from "../utils/audit.utils";
-import { ErrorCode } from "../constants/errorCodes";
+import { handleError } from "../utils/response.utils";
 
 export const uploadContact = async (
   req: Request,
@@ -36,9 +36,6 @@ export const uploadContact = async (
 
     res.json(updatedContact);
   } catch (err) {
-    console.error("File upload or database update error:", err);
-    res
-      .status(500)
-      .json({ message: "Internal server error", code: ErrorCode.INTERNAL_ERROR });
+    handleError(res, err, "File upload or database update error:");
   }
 };
