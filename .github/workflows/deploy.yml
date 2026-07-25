@@ -78,7 +78,7 @@ jobs:
       - name: Prepare server files for deployment
         run: |
           mkdir -p deploy-server
-          rsync -av --exclude='__tests__' \
+          rsync -av --exclude='*.test.ts' \
             --exclude='coverage' \
             --exclude='node_modules' \
             --exclude='.gitignore' \

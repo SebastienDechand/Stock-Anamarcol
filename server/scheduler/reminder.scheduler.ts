@@ -1,5 +1,5 @@
 import cron from "node-cron";
-import { checkAndSendVehicleReminders } from "../services/reminderVehicle.service";
+import { checkAndSendVehicleReminders } from "../services/reminderVehicle/reminderVehicle.service";
 
 /**
  * Starts the vehicle reminders scheduler.

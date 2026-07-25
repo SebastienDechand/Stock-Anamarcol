@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { sendVehicleReminders } from "../controllers/reminder.controller";
-import { requireSuperAdmin } from "../middleware/auth.middleware";
+import { sendVehicleReminders } from "../controllers/reminder/reminder.controller";
+import { requireSuperAdmin } from "../middleware/auth/auth.middleware";
 
 const router = Router();
 

@@ -1,10 +1,10 @@
 import { Router } from "express";
-import * as interventionReportController from "../controllers/interventionReport.controller";
+import * as interventionReportController from "../controllers/interventionReport/interventionReport.controller";
 import {
   requireAuth,
   requireAdmin,
   requireMonteur,
-} from "../middleware/auth.middleware";
+} from "../middleware/auth/auth.middleware";
 
 const router = Router();
 

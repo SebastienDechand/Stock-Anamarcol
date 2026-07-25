@@ -8,8 +8,8 @@ import {
   searchVehicles,
   uploadDocument,
   deleteDocument,
-} from "../controllers/vehicle.controller";
-import { requireAdmin } from "../middleware/auth.middleware";
+} from "../controllers/vehicle/vehicle.controller";
+import { requireAdmin } from "../middleware/auth/auth.middleware";
 import multer from "multer";
 import path from "path";
 import fs from "fs";

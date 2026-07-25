@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
-import * as contactController from "../controllers/contacts.controller";
-import * as uploadContactController from "../controllers/uploadContact.controller";
-import { requireAuth, requireAdmin } from "../middleware/auth.middleware";
-import { imageUpload } from "../utils/upload.utils";
+import * as contactController from "../controllers/contacts/contacts.controller";
+import * as uploadContactController from "../controllers/uploadContact/uploadContact.controller";
+import { requireAuth, requireAdmin } from "../middleware/auth/auth.middleware";
+import { imageUpload } from "../utils/upload/upload.utils";
 
 const router = Router();
 

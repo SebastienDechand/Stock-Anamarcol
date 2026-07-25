@@ -1,6 +1,6 @@
 import { Router } from "express";
-import * as auditController from "../controllers/audit.controller";
-import { requireAdmin, requireSuperAdmin } from "../middleware/auth.middleware";
+import * as auditController from "../controllers/audit/audit.controller";
+import { requireAdmin, requireSuperAdmin } from "../middleware/auth/auth.middleware";
 
 const router = Router();
 

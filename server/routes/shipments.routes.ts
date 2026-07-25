@@ -1,10 +1,10 @@
 import { Router } from "express";
-import * as shipmentsController from "../controllers/shipments.controller";
+import * as shipmentsController from "../controllers/shipments/shipments.controller";
 import {
   requireAuth,
   requireHotline,
   requireAdmin,
-} from "../middleware/auth.middleware";
+} from "../middleware/auth/auth.middleware";
 
 const router = Router();
 
