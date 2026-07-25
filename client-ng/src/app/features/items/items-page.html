@@ -38,7 +38,7 @@
         @if (isAdmin$ | async) {
           <button
             class="btn-icon-action"
-            (click)="showExportModal.set(true)"
+            (click)="openExportModal()"
             [title]="'ITEMS.EXPORT' | translate"
           >
             <lucide-icon name="download" [size]="18" />

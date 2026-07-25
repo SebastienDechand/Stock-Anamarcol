@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, map } from 'rxjs';
+import { combineLatest, map, take } from 'rxjs';
 import { FetchItemsParams, Item, NewItem } from '../../../shared/models/item.model';
 import { ItemsActions } from './items.actions';
 import {
@@ -39,6 +39,15 @@ export class ItemsFacade {
 
   loadAllItems() {
     this.store.dispatch(ItemsActions.loadAllItems());
+  }
+
+  loadAllItemsIfNeeded() {
+    this.store
+      .select(selectItemsLoaded)
+      .pipe(take(1))
+      .subscribe((loaded) => {
+        if (!loaded) this.loadAllItems();
+      });
   }
   fetchItems(params: FetchItemsParams = {}) {
     this.store.dispatch(ItemsActions.fetchItems({ params }));
