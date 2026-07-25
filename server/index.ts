@@ -6,7 +6,7 @@ if (!process.env.CLIENT_URL) {
 }
 import { connectDB } from "./config/db";
 import app from "./app";
-import { purgeOldEntries } from "./services/purge.service";
+import { purgeOldEntries } from "./services/purge/purge.service";
 import { startReminderScheduler } from "./scheduler/reminder.scheduler";
 
 // Wait for MongoDB before accepting requests

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import * as cameraController from "../controllers/camera.controller";
-import { requireAuth } from "../middleware/auth.middleware";
+import * as cameraController from "../controllers/camera/camera.controller";
+import { requireAuth } from "../middleware/auth/auth.middleware";
 
 const router = Router();
 

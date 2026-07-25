@@ -1,10 +1,10 @@
 import { Router } from "express";
-import * as clientFileController from "../controllers/clientFile.controller";
+import * as clientFileController from "../controllers/clientFile/clientFile.controller";
 import {
   requireAuth,
   requireAdmin,
   requireMonteur,
-} from "../middleware/auth.middleware";
+} from "../middleware/auth/auth.middleware";
 import { ErrorCode } from "../constants/errorCodes";
 
 const router = Router();

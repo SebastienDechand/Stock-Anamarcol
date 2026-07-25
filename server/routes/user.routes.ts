@@ -1,10 +1,10 @@
 import { Router, Request, Response } from "express";
-import * as authController from "../controllers/auth.controller";
-import * as userController from "../controllers/user.controller";
-import * as uploadController from "../controllers/upload.controller";
-import { imageUpload } from "../utils/upload.utils";
-import { requireAuth, requireAdmin } from "../middleware/auth.middleware";
-import { loginRateLimiter } from "../middleware/rateLimit.middleware";
+import * as authController from "../controllers/auth/auth.controller";
+import * as userController from "../controllers/user/user.controller";
+import * as uploadController from "../controllers/upload/upload.controller";
+import { imageUpload } from "../utils/upload/upload.utils";
+import { requireAuth, requireAdmin } from "../middleware/auth/auth.middleware";
+import { loginRateLimiter } from "../middleware/rateLimit/rateLimit.middleware";
 
 const router = Router();
 

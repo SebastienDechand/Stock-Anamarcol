@@ -4,7 +4,7 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import mongoose from "mongoose";
-import { mongoSanitize } from "./middleware/sanitize";
+import { mongoSanitize } from "./middleware/sanitize/sanitize";
 import userRoutes from "./routes/user.routes";
 import itemRoutes from "./routes/item.routes";
 import statisticsRoutes from "./routes/statistics.routes";
@@ -16,7 +16,7 @@ import interventionReportRoutes from "./routes/interventionReport.routes";
 import vehicleRoutes from "./routes/vehicle.routes";
 import cameraRoutes from "./routes/camera.routes";
 import reminderRoutes from "./routes/reminder.routes";
-import { requireAuth } from "./middleware/auth.middleware";
+import { requireAuth } from "./middleware/auth/auth.middleware";
 import cors from "cors";
 
 const app = express();

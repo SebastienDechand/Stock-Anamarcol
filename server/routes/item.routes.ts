@@ -1,9 +1,9 @@
 import { Router, Request, Response } from "express";
-import * as itemController from "../controllers/item.controller";
-import * as historyController from "../controllers/history.controller";
-import * as uploadItemController from "../controllers/uploadItem.controller";
-import { requireAuth, requireAdmin } from "../middleware/auth.middleware";
-import { imageUpload } from "../utils/upload.utils";
+import * as itemController from "../controllers/item/item.controller";
+import * as historyController from "../controllers/history/history.controller";
+import * as uploadItemController from "../controllers/uploadItem/uploadItem.controller";
+import { requireAuth, requireAdmin } from "../middleware/auth/auth.middleware";
+import { imageUpload } from "../utils/upload/upload.utils";
 
 const router = Router();
 

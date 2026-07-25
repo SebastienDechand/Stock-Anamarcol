@@ -39,63 +39,55 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 
 ## 🗂️ Architecture
 
+Tests are colocated next to the file they cover, `x.ts` + `x.test.ts` side by
+side (no `__tests__/` subfolder) - same convention as the Angular frontend.
+
 ```
 server/
-├── __tests__/                        Unit tests
-│   ├── audit.controller.test.ts         History & purge
-│   ├── audit.utils.test.ts
-│   ├── auth.controller.test.ts
-│   ├── auth.middleware.test.ts          Auth + requireSuperAdmin
-│   ├── clientFile.controller.test.ts
-│   ├── constants.test.ts
-│   ├── contacts.controller.test.ts
-│   ├── errors.utils.test.ts
-│   ├── history.controller.test.ts
-│   ├── history.utils.test.ts
-│   ├── interventionReport.controller.test.ts
-│   ├── item.controller.test.ts          CRUD + prepaBatch
-│   ├── security.test.ts
-│   ├── shipments.controller.test.ts
-│   ├── stats.controller.test.ts
-│   ├── user.controller.test.ts          CRUD + setRole
-│   └── validate.utils.test.ts
-│
 ├── config/
 │   ├── db.ts                             MongoDB Atlas connection
 │   └── swagger.ts                        Swagger configuration (dev only)
 │
-├── constants/index.ts                 Shared constants
+├── constants/
+│   ├── index.ts                          Shared constants (SUPPLIERS, STATUSES, Role...)
+│   ├── index.test.ts
+│   ├── errorCodes.ts
+│   └── cameras.ts
 │
-├── controllers/
-│   ├── audit.controller.ts               Global history & purge
-│   ├── auth.controller.ts                Register, login, logout
-│   ├── clientFile.controller.ts          Client file CRUD
-│   ├── contacts.controller.ts            Contact CRUD
-│   ├── history.controller.ts
-│   ├── interventionReport.controller.ts  Intervention report CRUD
-│   ├── item.controller.ts                Item CRUD + prepaBatch
-│   ├── shipments.controller.ts           Shipment CRUD
-│   ├── stats.controller.ts               Statistics & dashboard
-│   ├── upload.controller.ts              Profile avatar upload
-│   ├── uploadContact.controller.ts       Contact photo upload
-│   ├── uploadItem.controller.ts          Item image upload
-│   └── user.controller.ts                User CRUD + setRole
+├── controllers/                       One subfolder per controller, test alongside
+│   ├── audit/audit.controller.ts         Global history & purge
+│   ├── auth/auth.controller.ts           Register, login, logout
+│   ├── camera/camera.controller.ts       Camera stream proxy
+│   ├── clientFile/clientFile.controller.ts
+│   ├── contacts/contacts.controller.ts
+│   ├── history/history.controller.ts
+│   ├── interventionReport/interventionReport.controller.ts
+│   ├── item/item.controller.ts           Item CRUD + prepaBatch
+│   ├── reminder/reminder.controller.ts   Vehicle reminder trigger endpoint
+│   ├── shipments/shipments.controller.ts
+│   ├── stats/stats.controller.ts         Statistics & dashboard
+│   ├── upload/upload.controller.ts       Profile avatar upload
+│   ├── uploadContact/uploadContact.controller.ts
+│   ├── uploadItem/uploadItem.controller.ts
+│   ├── user/user.controller.ts           User CRUD + setRole
+│   └── vehicle/vehicle.controller.ts
 │
 ├── middleware/
-│   ├── auth.middleware.ts                checkUser, requireAuth, requireAdmin, requireSuperAdmin
-│   ├── rateLimiter.ts
-│   └── sanitize.ts
+│   ├── auth/auth.middleware.ts            checkUser, requireAuth, requireAdmin, requireSuperAdmin
+│   ├── rateLimit/rateLimit.middleware.ts
+│   └── sanitize/sanitize.ts
 │
 ├── models/
 │   ├── audit.model.ts                    Audit schema (30-day TTL)
 │   ├── clientFile.model.ts               Client file schema
 │   ├── contact.model.ts                  Contact schema
-│   ├── history.model.ts                  History schema (30-day TTL)
+│   ├── history.model.ts                  History schema (60-day TTL)
 │   ├── interventionReport.model.ts       Intervention report schema
 │   ├── item.model.ts                     Item schema
 │   ├── shipment.model.ts                 Shipment schema
 │   ├── shipmentArchive.model.ts          Shipment archive schema
-│   └── user.model.ts                     User schema
+│   ├── user.model.ts                     User schema
+│   └── vehicle.model.ts                  Vehicle schema
 │
 ├── routes/
 │   ├── clientFile.routes.ts
@@ -105,26 +97,29 @@ server/
 │   ├── item.routes.ts
 │   ├── shipments.routes.ts
 │   ├── statistics.routes.ts
+│   ├── vehicle.routes.ts
 │   └── user.routes.ts
 │
-├── services/                          Data-access layer (Mongoose calls), one per resource
-│   ├── clientFile.service.ts
-│   ├── contacts.service.ts
-│   ├── interventionReport.service.ts
-│   ├── purge.service.ts                  History/Audit TTL purge
-│   ├── reminderVehicle.service.ts        Vehicle inspection/CT email reminders
-│   ├── shipments.service.ts              Includes PDF/XLSX archive generation
-│   └── vehicle.service.ts
+├── services/                          Data-access layer (Mongoose calls), one subfolder per resource
+│   ├── clientFile/clientFile.service.ts
+│   ├── contacts/contacts.service.ts
+│   ├── interventionReport/interventionReport.service.ts
+│   ├── purge/purge.service.ts             History/Audit TTL purge
+│   ├── reminderVehicle/reminderVehicle.service.ts  Vehicle inspection/CT email reminders
+│   ├── shipments/shipments.service.ts     Includes PDF/XLSX archive generation
+│   └── vehicle/vehicle.service.ts
 │
 ├── utils/
-│   ├── audit.utils.ts                    Audit log (logEvent, getRecentEvents)
-│   ├── errors.utils.ts                   Error formatting
-│   ├── history.utils.ts                  Item history (logItemCreate, logItemChanges, logItemDelete)
-│   ├── response.utils.ts                 handleError (shared 500 response helper)
-│   ├── upload.utils.ts                   File validation + ImgBB upload
-│   └── validate.utils.ts                 MongoDB ObjectId validation
+│   ├── audit/audit.utils.ts               Audit log (logEvent, getRecentEvents)
+│   ├── errors/errors.utils.ts             Error formatting
+│   ├── history/history.utils.ts           Item history (logItemCreate, logItemChanges, logItemDelete)
+│   ├── mailer/mailer.ts                   Vehicle reminder emails
+│   ├── response/response.utils.ts         handleError (shared 500 response helper)
+│   ├── upload/upload.utils.ts             File validation + ImgBB upload
+│   └── validate/validate.utils.ts         MongoDB ObjectId validation
 │
 ├── app.ts                             Express config (middleware, routes)
+├── security.test.ts                   Route-protection integration tests (supertest + app.ts)
 ├── index.ts                           Entry point (dotenv, DB, listen)
 └── package.json
 ```
@@ -461,27 +456,37 @@ npm run test:ci     # Tests + coverage (CI)
 | --------------- | --------------------------------- |
 | **Framework**   | Vitest                            |
 | **HTTP**        | Supertest                         |
-| **Location**    | `__tests__/`                      |
-| **Coverage**    | Controllers, middleware, utils    |
+| **Location**    | Colocated next to each source file (`x.ts` + `x.test.ts`, no `__tests__/`) |
+| **Coverage**    | Controllers, middleware, services, utils |
 
 ### Test files
 
-| File                                     | Coverage                                                         |
-| ----------------------------------------- | ------------------------------------------------------------------ |
-| `audit.controller.test.ts`               | `getHistory`, `purgeAllHistoryAndAudit`                            |
-| `audit.utils.test.ts`                    | Audit functions                                                     |
-| `auth.controller.test.ts`                | Register, login, logout                                             |
-| `auth.middleware.test.ts`                | `checkUser`, `requireAuth`, `requireAdmin`, `requireSuperAdmin`     |
-| `clientFile.controller.test.ts`          | Client file CRUD                                                     |
-| `constants.test.ts`                      | Shared constants                                                     |
-| `contacts.controller.test.ts`            | Contact CRUD                                                         |
-| `errors.utils.test.ts`                   | Error formatting functions                                          |
-| `history.controller.test.ts`             | Global history                                                       |
-| `history.utils.test.ts`                  | History functions                                                    |
-| `interventionReport.controller.test.ts`  | Intervention report CRUD                                             |
-| `item.controller.test.ts`                | Item CRUD + `prepaBatch`                                             |
-| `security.test.ts`                       | Helmet headers, rate limiting                                        |
-| `shipments.controller.test.ts`           | Shipment CRUD                                                        |
-| `stats.controller.test.ts`               | Dashboard and statistics                                             |
-| `user.controller.test.ts`                | User CRUD + `setRole`                                                |
-| `validate.utils.test.ts`                 | ObjectId validation                                                  |
+| File                                                          | Coverage                                                         |
+| --------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `controllers/audit/audit.controller.test.ts`                  | `getHistory`, `purgeAllHistoryAndAudit`                            |
+| `controllers/auth/auth.controller.test.ts`                    | Register, login, logout                                             |
+| `controllers/clientFile/clientFile.controller.test.ts`        | Client file CRUD                                                     |
+| `controllers/contacts/contacts.controller.test.ts`            | Contact CRUD                                                         |
+| `controllers/history/history.controller.test.ts`              | Global history                                                       |
+| `controllers/interventionReport/interventionReport.controller.test.ts` | Intervention report CRUD                                    |
+| `controllers/item/item.controller.test.ts`                    | Item CRUD + `prepaBatch`                                             |
+| `controllers/reminder/reminder.controller.test.ts`            | Vehicle reminder trigger endpoint                                    |
+| `controllers/shipments/shipments.controller.test.ts`          | Shipment CRUD                                                        |
+| `controllers/stats/stats.controller.test.ts`                  | Dashboard and statistics                                             |
+| `controllers/user/user.controller.test.ts`                    | User CRUD + `setRole`                                                |
+| `middleware/auth/auth.middleware.test.ts`                     | `checkUser`, `requireAuth`, `requireAdmin`, `requireSuperAdmin`     |
+| `services/clientFile/clientFile.service.test.ts`              | Client file data-access layer                                        |
+| `services/contacts/contacts.service.test.ts`                  | Contact data-access layer                                            |
+| `services/interventionReport/interventionReport.service.test.ts` | Intervention report data-access layer                             |
+| `services/reminderVehicle/reminderVehicle.service.test.ts`    | Reminder due-date logic + email sending                              |
+| `services/shipments/shipments.service.test.ts`                | Shipment data-access + PDF/XLSX archive generation                   |
+| `services/vehicle/vehicle.service.test.ts`                    | Vehicle data-access layer                                            |
+| `utils/audit/audit.utils.test.ts`                             | Audit functions                                                      |
+| `utils/errors/errors.utils.test.ts`                           | Error formatting functions                                           |
+| `utils/history/history.utils.test.ts`                         | History functions                                                    |
+| `utils/response/response.utils.test.ts`                       | `handleError` helper                                                 |
+| `utils/validate/validate.utils.test.ts`                       | ObjectId validation                                                  |
+| `constants/index.test.ts`                                     | Shared constants                                                     |
+| `security.test.ts`                                            | Helmet headers, rate limiting                                        |
+
+Missing: `vehicle.controller.ts`, `camera.controller.ts`, `upload*.controller.ts`, `purge.service.ts`, `scheduler/reminder.scheduler.ts` (tracked in `AUDIT_TODO.md`).
