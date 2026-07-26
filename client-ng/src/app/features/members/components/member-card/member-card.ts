@@ -26,7 +26,7 @@ export class MemberCard {
   deleteRequested = output<User>();
 
   get initials(): string {
-    return (this.user().username ?? '?')[0].toUpperCase();
+    return (this.user().username || '?')[0].toUpperCase();
   }
 
   get avatarUrl(): string {

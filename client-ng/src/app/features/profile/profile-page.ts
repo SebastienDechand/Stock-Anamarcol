@@ -76,7 +76,7 @@ export class ProfilePage implements OnInit {
   }
 
   get initials(): string {
-    return (this.user()?.username ?? '?')[0].toUpperCase();
+    return (this.user()?.username || '?')[0].toUpperCase();
   }
 
   vehicleIcon(vehicle: Vehicle): string {

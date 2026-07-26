@@ -53,7 +53,7 @@ export class ContactModal implements OnInit {
   }
 
   get initials(): string {
-    return (this.contact().name ?? '?')[0].toUpperCase();
+    return (this.contact().name || '?')[0].toUpperCase();
   }
 
   onFileChange(event: Event) {
