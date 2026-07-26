@@ -154,9 +154,9 @@ describe('ClientFile Controller', () => {
         expect.objectContaining({ lastName: 'DUPONT', createdBy: 'admin' }),
       );
       expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith({
-        clientFile: expect.anything(),
-      });
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({ lastName: 'DUPONT', firstName: 'Jean' }),
+      );
     });
 
     it('should return 409 when a duplicate SIRET+address is found', async () => {

@@ -9,6 +9,7 @@
     "test": "ng test --watch=false",
     "test:watch": "ng test",
     "test:ui": "ng test --ui --watch=true",
+    "e2e": "playwright test",
     "format": "prettier --write \"src/**/*.{ts,html,scss,css,json}\""
   },
   "private": true,
@@ -42,6 +43,7 @@
     "@angular/build": "^21.2.3",
     "@angular/cli": "^21.0.4",
     "@angular/compiler-cli": "^21.2.0",
+    "@playwright/test": "^1.62.0",
     "@vitest/ui": "^4.1.9",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
