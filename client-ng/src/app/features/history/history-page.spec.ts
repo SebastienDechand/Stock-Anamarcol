@@ -1,19 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 import { ElementRef } from '@angular/core';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { of } from 'rxjs';
 import { provideMockStore } from '@ngrx/store/testing';
 import { HistoryPage } from './history-page';
 import { AuthFacade } from '../../store/auth/facade/auth.facade';
-import { HistoryService } from './history.service';
-import { ToastService } from '../../core/toast/toast.service';
-import { HistoryCacheService } from './history-cache.service';
+import { HistoryFacade } from './store/facade/history.facade';
 import { initialAuthState } from '../../store/auth/state/auth.state';
+import { initialHistoryState } from './store/state/history.state';
 import { LanguageService } from '../../core/services/language/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import type { AuditEvent } from '../../shared/models/audit/audit.model';
 
-const initialState = { auth: initialAuthState };
+const initialState = { auth: initialAuthState, history: initialHistoryState };
 
 const makeEvent = (overrides: Partial<AuditEvent> = {}): AuditEvent => ({
   _id: 'e1',
@@ -35,20 +33,15 @@ describe('HistoryPage', () => {
       imports: [HistoryPage],
       providers: [
         provideMockStore({ initialState }),
-        {
-          provide: HistoryService,
-          useValue: {
-            getEvents: vi.fn().mockReturnValue(of([])),
-            getUsers: vi.fn().mockReturnValue(of([])),
-            purge: vi.fn().mockReturnValue(of(undefined)),
-          },
-        },
-        { provide: ToastService, useValue: { success: vi.fn(), error: vi.fn() } },
         { provide: TranslateService, useValue: { instant: (key: string) => key } },
         { provide: LanguageService, useValue: { current: 'fr' } },
-        { provide: HistoryCacheService, useValue: { events: [], users: [] } },
       ],
     }).compileComponents();
+
+    const facade = TestBed.inject(HistoryFacade);
+    vi.spyOn(facade, 'loadEvents').mockImplementation(() => {});
+    vi.spyOn(facade, 'loadUsers').mockImplementation(() => {});
+    vi.spyOn(facade, 'purge').mockImplementation(() => {});
 
     const fixture = TestBed.createComponent(HistoryPage);
     component = fixture.componentInstance;

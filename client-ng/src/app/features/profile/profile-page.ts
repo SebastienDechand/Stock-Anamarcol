@@ -1,10 +1,9 @@
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { combineLatest } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { AuthFacade } from '../../store/auth/facade/auth.facade';
 import { UsersFacade } from '../members/store/facade/users.facade';
 import { DateFrPipe } from '../../shared/pipes/date-fr/date-fr.pipe';
@@ -30,11 +29,24 @@ export class ProfilePage implements OnInit {
   private vehiclesFacade = inject(VehiclesFacade);
   private translate = inject(TranslateService);
 
-  user = signal<User | null>(null);
+  user = toSignal(this.authFacade.user$, { initialValue: null as User | null });
+  private vehicles = toSignal(this.vehiclesFacade.vehicles$, { initialValue: [] as Vehicle[] });
+
   editingPhone = signal(false);
   phone = signal('');
   uploadError = signal('');
-  assignedVehicle = signal<Vehicle | null>(null);
+
+  assignedVehicle = computed(() => {
+    const currentUser = this.user();
+    if (!currentUser) return null;
+    return (
+      this.vehicles().find((vehicle) => {
+        const id =
+          typeof vehicle.assignedTo === 'object' ? vehicle.assignedTo?._id : vehicle.assignedTo;
+        return id === currentUser._id;
+      }) ?? null
+    );
+  });
 
   departmentLabelKeys = DEPARTMENT_LABEL_KEYS;
   vehicleFormatLabelKeys = VEHICLE_FORMAT_LABEL_KEYS;
@@ -42,23 +54,9 @@ export class ProfilePage implements OnInit {
   ngOnInit() {
     this.vehiclesFacade.loadAll();
 
-    combineLatest([this.authFacade.user$, this.vehiclesFacade.vehicles$])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([currentUser, vehicles]) => {
-        this.user.set(currentUser);
-        this.phone.set(currentUser?.phone ?? '');
-        this.assignedVehicle.set(
-          currentUser
-            ? (vehicles.find((vehicle) => {
-                const id =
-                  typeof vehicle.assignedTo === 'object'
-                    ? vehicle.assignedTo?._id
-                    : vehicle.assignedTo;
-                return id === currentUser._id;
-              }) ?? null)
-            : null,
-        );
-      });
+    this.authFacade.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((currentUser) => {
+      this.phone.set(currentUser?.phone ?? '');
+    });
   }
 
   get avatarUrl(): string {
