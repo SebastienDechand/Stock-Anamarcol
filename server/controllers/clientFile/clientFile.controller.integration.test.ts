@@ -79,7 +79,8 @@ describe('Client file CRUD flow (integration)', () => {
         .send(VALID_FILE);
 
       expect(res.status).toBe(201);
-      expect(res.body.clientFile).toBeDefined();
+      expect(res.body._id).toBeDefined();
+      expect(res.body.lastName).toBe(VALID_FILE.lastName);
     });
 
     it('returns 409 on a duplicate SIRET + address', async () => {

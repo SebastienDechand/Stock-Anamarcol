@@ -115,7 +115,7 @@ export const createClientFile = async (req: Request, res: Response): Promise<voi
     await logEvent('create', 'clientfile', file._id.toString(), res.locals.user?.username, {
       entityName: `${file.lastName} ${file.firstName ?? ''}`.trim(),
     });
-    res.status(201).json({ clientFile: file._id });
+    res.status(201).json(file);
   } catch (err) {
     console.error('Error creating client file:', err);
     res.status(400).json({
