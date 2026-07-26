@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { Request, Response } from "express";
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { Request, Response } from 'express';
 
 const mockAuditModel = vi.hoisted(() => ({
   deleteMany: vi.fn(),
@@ -18,50 +18,47 @@ const mockUserModel = vi.hoisted(() => ({
   find: vi.fn(),
 }));
 
-vi.mock("../../models/audit.model", () => ({
+vi.mock('../../models/audit.model', () => ({
   __esModule: true,
   default: mockAuditModel,
 }));
-vi.mock("../../models/history.model", () => ({
+vi.mock('../../models/history.model', () => ({
   __esModule: true,
   default: mockHistoryModel,
 }));
-vi.mock("../../models/item.model", () => ({
+vi.mock('../../models/item.model', () => ({
   __esModule: true,
   default: mockItemModel,
 }));
-vi.mock("../../models/contact.model", () => ({
+vi.mock('../../models/contact.model', () => ({
   __esModule: true,
   default: mockContactModel,
 }));
-vi.mock("../../models/user.model", () => ({
+vi.mock('../../models/user.model', () => ({
   __esModule: true,
   default: mockUserModel,
 }));
-vi.mock("../../utils/audit/audit.utils", () => ({
+vi.mock('../../utils/audit/audit.utils', () => ({
   getRecentEvents: vi.fn().mockResolvedValue([]),
   logEvent: vi.fn().mockResolvedValue(undefined),
 }));
 
-import {
-  getHistory,
-  purgeAllHistoryAndAudit,
-} from "./audit.controller";
+import { getHistory, purgeAllHistoryAndAudit } from './audit.controller';
 
-describe("Audit Controller", () => {
+describe('Audit Controller', () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
 
   beforeEach(() => {
     req = { query: {}, body: {} };
     res = {
-      locals: { user: { username: "admin" } },
-      status: vi.fn().mockReturnThis() as unknown as Response["status"],
-      json: vi.fn() as unknown as Response["json"],
+      locals: { user: { username: 'admin' } },
+      status: vi.fn().mockReturnThis() as unknown as Response['status'],
+      json: vi.fn() as unknown as Response['json'],
     };
     vi.clearAllMocks();
-    vi.spyOn(console, "error").mockImplementation(() => {});
-    vi.spyOn(console, "log").mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -69,8 +66,8 @@ describe("Audit Controller", () => {
   });
 
   // #region getHistory
-  describe("getHistory", () => {
-    it("should return merged events with status 200", async () => {
+  describe('getHistory', () => {
+    it('should return merged events with status 200', async () => {
       mockHistoryModel.find.mockReturnValue({
         sort: vi.fn().mockReturnValue({
           limit: vi.fn().mockReturnValue({
@@ -100,8 +97,8 @@ describe("Audit Controller", () => {
       expect(res.json).toHaveBeenCalledWith([]);
     });
 
-    it("should use custom limit from query", async () => {
-      req.query = { limit: "50" };
+    it('should use custom limit from query', async () => {
+      req.query = { limit: '50' };
       mockHistoryModel.find.mockReturnValue({
         sort: vi.fn().mockReturnValue({
           limit: vi.fn().mockReturnValue({
@@ -120,35 +117,35 @@ describe("Audit Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should return 500 on error", async () => {
+    it('should return 500 on error', async () => {
       mockHistoryModel.find.mockImplementation(() => {
-        throw new Error("DB error");
+        throw new Error('DB error');
       });
 
       await getHistory(req as Request, res as Response);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Internal server error",
-        code: "INTERNAL_ERROR",
+        message: 'Internal server error',
+        code: 'INTERNAL_ERROR',
       });
     });
 
-    it("should include item name in itemEvents response", async () => {
-      const itemId = "507f1f77bcf86cd799439011";
+    it('should include item name in itemEvents response', async () => {
+      const itemId = '507f1f77bcf86cd799439011';
       const historyEntry = {
-        _id: "h1",
-        action: "update",
-        field: "quantity",
-        oldValue: "10",
-        newValue: "20",
+        _id: 'h1',
+        action: 'update',
+        field: 'quantity',
+        oldValue: '10',
+        newValue: '20',
         itemId,
-        userName: "testuser",
-        createdAt: "2026-07-18T00:00:00Z",
+        userName: 'testuser',
+        createdAt: '2026-07-18T00:00:00Z',
       };
       const itemData = {
         _id: itemId,
-        name: "Test Item",
+        name: 'Test Item',
       };
 
       mockHistoryModel.find.mockReturnValue({
@@ -179,15 +176,15 @@ describe("Audit Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
       const responseData = (res.json as any).mock.calls[0][0];
       expect(responseData).toHaveLength(1);
-      expect(responseData[0].details.name).toBe("Test Item");
-      expect(responseData[0].details.entityName).toBe("Test Item");
+      expect(responseData[0].details.name).toBe('Test Item');
+      expect(responseData[0].details.entityName).toBe('Test Item');
     });
   });
   // #endregion
 
   // #region purgeAllHistoryAndAudit
-  describe("purgeAllHistoryAndAudit", () => {
-    it("should delete all audit and history docs", async () => {
+  describe('purgeAllHistoryAndAudit', () => {
+    it('should delete all audit and history docs', async () => {
       mockAuditModel.deleteMany.mockResolvedValue({ deletedCount: 10 });
       mockHistoryModel.deleteMany.mockResolvedValue({ deletedCount: 5 });
 
@@ -212,15 +209,15 @@ describe("Audit Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should return 500 on error", async () => {
-      mockAuditModel.deleteMany.mockRejectedValue(new Error("DB error"));
+    it('should return 500 on error', async () => {
+      mockAuditModel.deleteMany.mockRejectedValue(new Error('DB error'));
 
       await purgeAllHistoryAndAudit(req as Request, res as Response);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Internal server error",
-        code: "INTERNAL_ERROR",
+        message: 'Internal server error',
+        code: 'INTERNAL_ERROR',
       });
     });
   });

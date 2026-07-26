@@ -1,12 +1,12 @@
-import type { Express } from "express";
-import request from "supertest";
-import UserModel from "../../models/user.model";
-import type { Role } from "../../constants";
+import type { Express } from 'express';
+import request from 'supertest';
+import UserModel from '../../models/user.model';
+import type { Role } from '../../constants';
 
 // @types/superagent types "set-cookie" as a plain string, but Node's real
 // http headers always return it as string[] - see @types/superagent/lib/node/response.d.ts.
 export function setCookieHeader(res: request.Response): string[] {
-  return res.headers["set-cookie"] as unknown as string[];
+  return res.headers['set-cookie'] as unknown as string[];
 }
 
 export interface SeededUser {
@@ -23,7 +23,7 @@ export async function seedUserAndLogin(
 ): Promise<SeededUser> {
   const user = await UserModel.create(params);
   const res = await request(app)
-    .post("/api/user/login")
+    .post('/api/user/login')
     .send({ email: params.email, password: params.password });
   return { id: user._id.toString(), cookie: setCookieHeader(res) };
 }

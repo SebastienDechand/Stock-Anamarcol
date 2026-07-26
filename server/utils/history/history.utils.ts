@@ -1,46 +1,32 @@
-import HistoryModel from "../../models/history.model";
+import HistoryModel from '../../models/history.model';
 
 type ItemSnapshot = Record<string, unknown>;
 
-const TRACKED_FIELDS = [
-  "name",
-  "supplier",
-  "status",
-  "cgKit",
-  "tpvKit",
-  "image",
-] as const;
+const TRACKED_FIELDS = ['name', 'supplier', 'status', 'cgKit', 'tpvKit', 'image'] as const;
 
-export async function logItemCreate(
-  itemId: string,
-  userName: string,
-): Promise<void> {
+export async function logItemCreate(itemId: string, userName: string): Promise<void> {
   try {
     await HistoryModel.create({
       itemId,
-      action: "create",
+      action: 'create',
       userName,
     });
   } catch (err) {
-    console.error("History log error (create):", err);
+    console.error('History log error (create):', err);
   }
 }
 
-export async function logItemDelete(
-  itemId: string,
-  name: string,
-  userName: string,
-): Promise<void> {
+export async function logItemDelete(itemId: string, name: string, userName: string): Promise<void> {
   try {
     await HistoryModel.create({
       itemId,
-      action: "delete",
-      field: "name",
+      action: 'delete',
+      field: 'name',
       oldValue: name,
       userName,
     });
   } catch (err) {
-    console.error("History log error (delete):", err);
+    console.error('History log error (delete):', err);
   }
 }
 
@@ -62,13 +48,13 @@ export async function logItemChanges(
 
     // Check quantity change separately
     if (
-      Object.prototype.hasOwnProperty.call(newData, "quantity") &&
+      Object.prototype.hasOwnProperty.call(newData, 'quantity') &&
       Number(newData.quantity) !== Number(oldItem.quantity)
     ) {
       entries.push({
         itemId,
-        action: "quantity_change",
-        field: "quantity",
+        action: 'quantity_change',
+        field: 'quantity',
         oldValue: String(oldItem.quantity),
         newValue: String(newData.quantity),
         userName,
@@ -83,9 +69,9 @@ export async function logItemChanges(
       ) {
         entries.push({
           itemId,
-          action: "update",
+          action: 'update',
           field,
-          oldValue: String(oldItem[field] ?? ""),
+          oldValue: String(oldItem[field] ?? ''),
           newValue: String(newData[field]),
           userName,
         });
@@ -96,6 +82,6 @@ export async function logItemChanges(
       await HistoryModel.insertMany(entries);
     }
   } catch (err) {
-    console.error("History log error (update):", err);
+    console.error('History log error (update):', err);
   }
 }

@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema, Types } from "mongoose";
+import mongoose, { Document, Model, Schema, Types } from 'mongoose';
 
 // #region CashGuard unit sub-document
 export interface ICashguardUnit {
@@ -39,10 +39,10 @@ const cashguardUnitSchema = new Schema<ICashguardUnit>(
     ub: { type: String, trim: true },
     cassetteSlots: {
       type: [String],
-      default: ["", "", "", ""],
+      default: ['', '', '', ''],
       validate: {
         validator: (v: string[]) => v.length === 4,
-        message: "cassetteSlots must have exactly 4 entries",
+        message: 'cassetteSlots must have exactly 4 entries',
       },
     },
     assignedRegisters: { type: [String], default: [] },
@@ -55,7 +55,7 @@ const interventionReportSchema = new Schema<IInterventionReport>(
   {
     clientFile: {
       type: Schema.Types.ObjectId,
-      ref: "clientfile",
+      ref: 'clientfile',
       required: true,
     },
     twRegister1: { type: String, trim: true },
@@ -74,10 +74,9 @@ const interventionReportSchema = new Schema<IInterventionReport>(
   { timestamps: true },
 );
 
-const InterventionReportModel: Model<IInterventionReport> =
-  mongoose.model<IInterventionReport>(
-    "interventionreport",
-    interventionReportSchema,
-  );
+const InterventionReportModel: Model<IInterventionReport> = mongoose.model<IInterventionReport>(
+  'interventionreport',
+  interventionReportSchema,
+);
 
 export default InterventionReportModel;

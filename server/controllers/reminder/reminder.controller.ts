@@ -1,22 +1,19 @@
-import { Request, Response } from "express";
-import { checkAndSendVehicleReminders } from "../../services/reminderVehicle/reminderVehicle.service";
-import { handleError } from "../../utils/response/response.utils";
-import { ErrorCode } from "../../constants/errorCodes";
+import { Request, Response } from 'express';
+import { checkAndSendVehicleReminders } from '../../services/reminderVehicle/reminderVehicle.service';
+import { handleError } from '../../utils/response/response.utils';
+import { ErrorCode } from '../../constants/errorCodes';
 
 /**
  * POST /api/reminders/vehicles/send
  * Manually triggers vehicle reminder emails. Superadmin only.
  */
-export const sendVehicleReminders = async (
-  _req: Request,
-  res: Response,
-): Promise<void> => {
+export const sendVehicleReminders = async (_req: Request, res: Response): Promise<void> => {
   try {
     const reminders = await checkAndSendVehicleReminders();
 
     if (reminders.length === 0) {
       res.status(200).json({
-        message: "No reminders to send (no deadline within 30 or 7 days)",
+        message: 'No reminders to send (no deadline within 30 or 7 days)',
         code: ErrorCode.NO_REMINDERS_DUE,
         reminders: [],
       });
@@ -32,8 +29,8 @@ export const sendVehicleReminders = async (
     handleError(
       res,
       error,
-      "[Controller] Error sending reminders:",
-      "Error sending reminders",
+      '[Controller] Error sending reminders:',
+      'Error sending reminders',
       ErrorCode.REMINDER_SEND_ERROR,
     );
   }

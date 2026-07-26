@@ -1,5 +1,5 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
-import { SUPPLIERS, STATUSES, Supplier, Status } from "../constants";
+import mongoose, { Document, Model, Schema } from 'mongoose';
+import { SUPPLIERS, STATUSES, Supplier, Status } from '../constants';
 
 export interface IItem extends Document {
   posterId?: string;
@@ -22,7 +22,7 @@ const ItemSchema = new Schema<IItem>(
     },
     modifierName: {
       type: String,
-      default: "",
+      default: '',
     },
     name: {
       type: String,
@@ -44,7 +44,7 @@ const ItemSchema = new Schema<IItem>(
     },
     image: {
       type: String,
-      default: "./logo_small.jpg",
+      default: './logo_small.jpg',
     },
     status: {
       type: String,
@@ -71,6 +71,6 @@ ItemSchema.index({ supplier: 1, status: 1, name: 1 });
 // Index for low-stock queries
 ItemSchema.index({ quantity: 1 });
 
-const ItemModel: Model<IItem> = mongoose.model<IItem>("item", ItemSchema);
+const ItemModel: Model<IItem> = mongoose.model<IItem>('item', ItemSchema);
 
 export default ItemModel;

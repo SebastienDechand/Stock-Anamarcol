@@ -1,12 +1,8 @@
-import mongoose, { Document, Model, Schema, Types } from "mongoose";
+import mongoose, { Document, Model, Schema, Types } from 'mongoose';
 
 // #region Document sub-document
 export type ClientFileDocType =
-  | "purchase_order"
-  | "report"
-  | "acceptance_report"
-  | "visit"
-  | "other";
+  'purchase_order' | 'report' | 'acceptance_report' | 'visit' | 'other';
 
 export interface IClientFileDoc {
   _id: Types.ObjectId;
@@ -106,14 +102,8 @@ const clientFileDocSchema = new Schema<IClientFileDoc>(
     filename: { type: String, required: true },
     type: {
       type: String,
-      enum: [
-        "purchase_order",
-        "report",
-        "acceptance_report",
-        "visit",
-        "other",
-      ],
-      default: "other",
+      enum: ['purchase_order', 'report', 'acceptance_report', 'visit', 'other'],
+      default: 'other',
     },
     uploadedAt: { type: Date, default: Date.now },
     uploadedBy: { type: String },
@@ -149,7 +139,7 @@ const clientFileSchema = new Schema<IClientFile>(
     equipment: { type: equipementSchema, default: () => ({}) },
     notes: { type: String, trim: true },
     documents: { type: [clientFileDocSchema], default: [] },
-    contactRef: { type: Schema.Types.ObjectId, ref: "contact" },
+    contactRef: { type: Schema.Types.ObjectId, ref: 'contact' },
     dateInstallation: { type: Date },
     dateRenouvellement: { type: Date },
     createdBy: { type: String },
@@ -158,7 +148,7 @@ const clientFileSchema = new Schema<IClientFile>(
 );
 
 const ClientFileModel: Model<IClientFile> = mongoose.model<IClientFile>(
-  "clientfile",
+  'clientfile',
   clientFileSchema,
 );
 

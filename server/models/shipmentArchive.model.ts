@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema } from 'mongoose';
 
 export interface IShipmentArchive extends Document {
   /** Human-readable title, e.g. "February 2026" */
@@ -31,7 +31,9 @@ const ShipmentArchiveSchema = new Schema<IShipmentArchive>(
 
 ShipmentArchiveSchema.index({ createdAt: -1 });
 
-const ShipmentArchiveModel: Model<IShipmentArchive> =
-  mongoose.model<IShipmentArchive>("shipmentArchive", ShipmentArchiveSchema);
+const ShipmentArchiveModel: Model<IShipmentArchive> = mongoose.model<IShipmentArchive>(
+  'shipmentArchive',
+  ShipmentArchiveSchema,
+);
 
 export default ShipmentArchiveModel;

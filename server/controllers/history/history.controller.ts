@@ -1,12 +1,9 @@
-import { Request, Response } from "express";
-import HistoryModel from "../../models/history.model";
-import { validateObjectId } from "../../utils/validate/validate.utils";
-import { handleError } from "../../utils/response/response.utils";
+import { Request, Response } from 'express';
+import HistoryModel from '../../models/history.model';
+import { validateObjectId } from '../../utils/validate/validate.utils';
+import { handleError } from '../../utils/response/response.utils';
 
-export const getItemHistory = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+export const getItemHistory = async (req: Request, res: Response): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
@@ -17,6 +14,6 @@ export const getItemHistory = async (
 
     res.status(200).json(history);
   } catch (err) {
-    handleError(res, err, "Error fetching item history:");
+    handleError(res, err, 'Error fetching item history:');
   }
 };

@@ -1,7 +1,7 @@
-import { MongoMemoryServer } from "mongodb-memory-server";
-import mongoose from "mongoose";
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
 
-const MONGODB_BINARY_VERSION = "7.0.14";
+const MONGODB_BINARY_VERSION = '7.0.14';
 
 let mongod: MongoMemoryServer | undefined;
 

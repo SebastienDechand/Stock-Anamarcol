@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
-import { Request, Response } from "express";
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
+import { Request, Response } from 'express';
 
 // Mock fs so unlink does not touch the real filesystem
-vi.mock("fs", async () => ({
-  ...(await vi.importActual<typeof import("fs")>("fs")),
+vi.mock('fs', async () => ({
+  ...(await vi.importActual<typeof import('fs')>('fs')),
   mkdirSync: vi.fn(),
   unlink: vi.fn((_p: string, cb: (err: null) => void) => cb(null)),
 }));
@@ -18,17 +18,17 @@ const mockClientFileService = vi.hoisted(() => ({
   deleteClientFileById: vi.fn(),
 }));
 
-vi.mock("../../services/clientFile/clientFile.service", () => mockClientFileService);
+vi.mock('../../services/clientFile/clientFile.service', () => mockClientFileService);
 
-vi.mock("../../utils/audit/audit.utils", () => ({
+vi.mock('../../utils/audit/audit.utils', () => ({
   logEvent: vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock("../../utils/validate/validate.utils", () => ({
+vi.mock('../../utils/validate/validate.utils', () => ({
   validateObjectId: vi.fn((id: string, res: Response) => {
     const valid = /^[a-f\d]{24}$/i.test(id);
     if (!valid) {
-      (res.status as Mock)(400).json({ error: "Invalid ObjectId" });
+      (res.status as Mock)(400).json({ error: 'Invalid ObjectId' });
     }
     return valid;
   }),
@@ -42,42 +42,42 @@ import {
   deleteClientFile,
   uploadDocument,
   deleteDocument,
-} from "./clientFile.controller";
+} from './clientFile.controller';
 
-const VALID_ID = "507f1f77bcf86cd799439011";
-const VALID_DOC_ID = "507f1f77bcf86cd799439022";
+const VALID_ID = '507f1f77bcf86cd799439011';
+const VALID_DOC_ID = '507f1f77bcf86cd799439022';
 
 const mockDoc = {
   _id: { toString: () => VALID_DOC_ID },
-  name: "devis.pdf",
-  filename: "1234-devis.pdf",
-  type: "devis",
+  name: 'devis.pdf',
+  filename: '1234-devis.pdf',
+  type: 'devis',
 };
 
 const mockFile = {
   _id: VALID_ID,
-  lastName: "DUPONT",
-  firstName: "Jean",
-  company: "TestCorp",
+  lastName: 'DUPONT',
+  firstName: 'Jean',
+  company: 'TestCorp',
   equipment: { registerCount: 2, cashguardCount: 1 },
-  notes: "",
+  notes: '',
   documents: [mockDoc],
   save: vi.fn(),
 };
 
-describe("ClientFile Controller", () => {
+describe('ClientFile Controller', () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
 
   beforeEach(() => {
     req = { params: {}, body: {}, query: {} };
     res = {
-      locals: { user: { username: "admin" } },
-      status: vi.fn().mockReturnThis() as unknown as Response["status"],
-      json: vi.fn() as unknown as Response["json"],
+      locals: { user: { username: 'admin' } },
+      status: vi.fn().mockReturnThis() as unknown as Response['status'],
+      json: vi.fn() as unknown as Response['json'],
     };
     vi.clearAllMocks();
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -85,8 +85,8 @@ describe("ClientFile Controller", () => {
   });
 
   // #region getClientFiles
-  describe("getClientFiles", () => {
-    it("should return all client files with 200", async () => {
+  describe('getClientFiles', () => {
+    it('should return all client files with 200', async () => {
       const files = [mockFile];
       mockClientFileService.listClientFiles.mockResolvedValue(files);
 
@@ -96,8 +96,8 @@ describe("ClientFile Controller", () => {
       expect(res.json).toHaveBeenCalledWith(files);
     });
 
-    it("should return 500 on error", async () => {
-      mockClientFileService.listClientFiles.mockRejectedValue(new Error("DB error"));
+    it('should return 500 on error', async () => {
+      mockClientFileService.listClientFiles.mockRejectedValue(new Error('DB error'));
 
       await getClientFiles(req as Request, res as Response);
 
@@ -107,14 +107,14 @@ describe("ClientFile Controller", () => {
   // #endregion
 
   // #region getClientFile
-  describe("getClientFile", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "invalid" };
+  describe('getClientFile', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'invalid' };
       await getClientFile(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 404 when file not found", async () => {
+    it('should return 404 when file not found', async () => {
       req.params = { id: VALID_ID };
       mockClientFileService.findClientFileById.mockResolvedValue(null);
 
@@ -122,12 +122,12 @@ describe("ClientFile Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Client file not found",
-        code: "CLIENT_FILE_NOT_FOUND",
+        message: 'Client file not found',
+        code: 'CLIENT_FILE_NOT_FOUND',
       });
     });
 
-    it("should return the file with 200", async () => {
+    it('should return the file with 200', async () => {
       req.params = { id: VALID_ID };
       mockClientFileService.findClientFileById.mockResolvedValue(mockFile);
 
@@ -140,9 +140,9 @@ describe("ClientFile Controller", () => {
   // #endregion
 
   // #region createClientFile
-  describe("createClientFile", () => {
-    it("should create a client file and return 201", async () => {
-      req.body = { lastName: "DUPONT", firstName: "Jean" };
+  describe('createClientFile', () => {
+    it('should create a client file and return 201', async () => {
+      req.body = { lastName: 'DUPONT', firstName: 'Jean' };
       mockClientFileService.createClientFile.mockResolvedValue({
         ...mockFile,
         _id: { toString: () => VALID_ID },
@@ -151,7 +151,7 @@ describe("ClientFile Controller", () => {
       await createClientFile(req as Request, res as Response);
 
       expect(mockClientFileService.createClientFile).toHaveBeenCalledWith(
-        expect.objectContaining({ lastName: "DUPONT", createdBy: "admin" }),
+        expect.objectContaining({ lastName: 'DUPONT', createdBy: 'admin' }),
       );
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({
@@ -159,29 +159,27 @@ describe("ClientFile Controller", () => {
       });
     });
 
-    it("should return 409 when a duplicate SIRET+address is found", async () => {
-      req.body = { siret: "12345", address: "1 rue de la Paix" };
+    it('should return 409 when a duplicate SIRET+address is found', async () => {
+      req.body = { siret: '12345', address: '1 rue de la Paix' };
       mockClientFileService.findClientFileBySiretAndAddress.mockResolvedValue({
-        _id: "existing1",
-        lastName: "MARTIN",
-        company: "TestCorp",
+        _id: 'existing1',
+        lastName: 'MARTIN',
+        company: 'TestCorp',
       });
 
       await createClientFile(req as Request, res as Response);
 
       expect(mockClientFileService.findClientFileBySiretAndAddress).toHaveBeenCalledWith(
-        "12345",
-        "1 rue de la Paix",
+        '12345',
+        '1 rue de la Paix',
       );
       expect(res.status).toHaveBeenCalledWith(409);
       expect(mockClientFileService.createClientFile).not.toHaveBeenCalled();
     });
 
-    it("should return 400 on validation error", async () => {
+    it('should return 400 on validation error', async () => {
       req.body = {};
-      mockClientFileService.createClientFile.mockRejectedValue(
-        new Error("validation failed"),
-      );
+      mockClientFileService.createClientFile.mockRejectedValue(new Error('validation failed'));
 
       await createClientFile(req as Request, res as Response);
 
@@ -191,14 +189,14 @@ describe("ClientFile Controller", () => {
   // #endregion
 
   // #region updateClientFile
-  describe("updateClientFile", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "invalid" };
+  describe('updateClientFile', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'invalid' };
       await updateClientFile(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 404 when file not found", async () => {
+    it('should return 404 when file not found', async () => {
       req.params = { id: VALID_ID };
       mockClientFileService.findClientFileDocument.mockResolvedValue(null);
 
@@ -207,13 +205,13 @@ describe("ClientFile Controller", () => {
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    it("should update fields and return 200", async () => {
+    it('should update fields and return 200', async () => {
       req.params = { id: VALID_ID };
-      req.body = { lastName: "MARTIN", city: "Paris" };
+      req.body = { lastName: 'MARTIN', city: 'Paris' };
 
       const file = {
         ...mockFile,
-        save: vi.fn().mockResolvedValue({ ...mockFile, lastName: "MARTIN" }),
+        save: vi.fn().mockResolvedValue({ ...mockFile, lastName: 'MARTIN' }),
       };
       mockClientFileService.findClientFileDocument.mockResolvedValue(file);
 
@@ -223,11 +221,11 @@ describe("ClientFile Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should update new planning and equipment fields", async () => {
+    it('should update new planning and equipment fields', async () => {
       req.params = { id: VALID_ID };
       req.body = {
         equipment: { registerCount: 5, cashguardCount: 2 },
-        notes: "Attention fragile",
+        notes: 'Attention fragile',
         preInstallationVisit: true,
         carpentryPlanCutout: false,
       };
@@ -241,20 +239,18 @@ describe("ClientFile Controller", () => {
         registerCount: 5,
         cashguardCount: 2,
       });
-      expect((file as Record<string, unknown>).notes).toBe(
-        "Attention fragile",
-      );
+      expect((file as Record<string, unknown>).notes).toBe('Attention fragile');
       expect(file.save).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should return 400 on save error", async () => {
+    it('should return 400 on save error', async () => {
       req.params = { id: VALID_ID };
-      req.body = { lastName: "ERR" };
+      req.body = { lastName: 'ERR' };
 
       const file = {
         ...mockFile,
-        save: vi.fn().mockRejectedValue(new Error("save failed")),
+        save: vi.fn().mockRejectedValue(new Error('save failed')),
       };
       mockClientFileService.findClientFileDocument.mockResolvedValue(file);
 
@@ -266,14 +262,14 @@ describe("ClientFile Controller", () => {
   // #endregion
 
   // #region deleteClientFile
-  describe("deleteClientFile", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "invalid" };
+  describe('deleteClientFile', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'invalid' };
       await deleteClientFile(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 404 when file not found", async () => {
+    it('should return 404 when file not found', async () => {
       req.params = { id: VALID_ID };
       mockClientFileService.deleteClientFileById.mockResolvedValue(null);
 
@@ -282,7 +278,7 @@ describe("ClientFile Controller", () => {
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    it("should delete file and return 200", async () => {
+    it('should delete file and return 200', async () => {
       req.params = { id: VALID_ID };
       mockClientFileService.deleteClientFileById.mockResolvedValue(mockFile);
 
@@ -290,37 +286,37 @@ describe("ClientFile Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Client file deleted",
-        code: "CLIENT_FILE_DELETED",
+        message: 'Client file deleted',
+        code: 'CLIENT_FILE_DELETED',
       });
     });
   });
   // #endregion
 
   // #region uploadDocument
-  describe("uploadDocument", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "invalid" };
+  describe('uploadDocument', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'invalid' };
       await uploadDocument(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 400 when no file is provided", async () => {
+    it('should return 400 when no file is provided', async () => {
       req.params = { id: VALID_ID };
       req.file = undefined;
       await uploadDocument(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
-        message: "No file provided",
-        code: "NO_FILE_PROVIDED",
+        message: 'No file provided',
+        code: 'NO_FILE_PROVIDED',
       });
     });
 
-    it("should return 404 when client file not found", async () => {
+    it('should return 404 when client file not found', async () => {
       req.params = { id: VALID_ID };
       req.file = {
-        originalname: "test.pdf",
-        filename: "123-test.pdf",
+        originalname: 'test.pdf',
+        filename: '123-test.pdf',
       } as Express.Multer.File;
       mockClientFileService.findClientFileDocument.mockResolvedValue(null);
 
@@ -328,17 +324,17 @@ describe("ClientFile Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Client file not found",
-        code: "CLIENT_FILE_NOT_FOUND",
+        message: 'Client file not found',
+        code: 'CLIENT_FILE_NOT_FOUND',
       });
     });
 
-    it("should add document and return 201", async () => {
+    it('should add document and return 201', async () => {
       req.params = { id: VALID_ID };
-      req.body = { type: "devis" };
+      req.body = { type: 'devis' };
       req.file = {
-        originalname: "devis.pdf",
-        filename: "999-devis.pdf",
+        originalname: 'devis.pdf',
+        filename: '999-devis.pdf',
       } as Express.Multer.File;
 
       const file = {
@@ -351,19 +347,19 @@ describe("ClientFile Controller", () => {
       await uploadDocument(req as Request, res as Response);
 
       expect(file.documents.push).toHaveBeenCalledWith(
-        expect.objectContaining({ name: "devis.pdf", type: "devis" }),
+        expect.objectContaining({ name: 'devis.pdf', type: 'devis' }),
       );
       expect(file.save).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(201);
     });
 
-    it("should return 500 on unexpected error", async () => {
+    it('should return 500 on unexpected error', async () => {
       req.params = { id: VALID_ID };
       req.file = {
-        originalname: "x.pdf",
-        filename: "x.pdf",
+        originalname: 'x.pdf',
+        filename: 'x.pdf',
       } as Express.Multer.File;
-      mockClientFileService.findClientFileDocument.mockRejectedValue(new Error("DB crash"));
+      mockClientFileService.findClientFileDocument.mockRejectedValue(new Error('DB crash'));
 
       await uploadDocument(req as Request, res as Response);
 
@@ -373,20 +369,20 @@ describe("ClientFile Controller", () => {
   // #endregion
 
   // #region deleteDocument
-  describe("deleteDocument", () => {
-    it("should return 400 when client file ID is invalid", async () => {
-      req.params = { id: "invalid", docId: VALID_DOC_ID };
+  describe('deleteDocument', () => {
+    it('should return 400 when client file ID is invalid', async () => {
+      req.params = { id: 'invalid', docId: VALID_DOC_ID };
       await deleteDocument(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 400 when doc ID is invalid", async () => {
-      req.params = { id: VALID_ID, docId: "notanid" };
+    it('should return 400 when doc ID is invalid', async () => {
+      req.params = { id: VALID_ID, docId: 'notanid' };
       await deleteDocument(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 404 when client file not found", async () => {
+    it('should return 404 when client file not found', async () => {
       req.params = { id: VALID_ID, docId: VALID_DOC_ID };
       mockClientFileService.findClientFileDocument.mockResolvedValue(null);
 
@@ -394,12 +390,12 @@ describe("ClientFile Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Client file not found",
-        code: "CLIENT_FILE_NOT_FOUND",
+        message: 'Client file not found',
+        code: 'CLIENT_FILE_NOT_FOUND',
       });
     });
 
-    it("should return 404 when document not found in the file", async () => {
+    it('should return 404 when document not found in the file', async () => {
       req.params = { id: VALID_ID, docId: VALID_DOC_ID };
       const file = { ...mockFile, documents: [] }; // no documents
       mockClientFileService.findClientFileDocument.mockResolvedValue(file);
@@ -408,12 +404,12 @@ describe("ClientFile Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Document not found",
-        code: "DOCUMENT_NOT_FOUND",
+        message: 'Document not found',
+        code: 'DOCUMENT_NOT_FOUND',
       });
     });
 
-    it("should delete document from file and return 200", async () => {
+    it('should delete document from file and return 200', async () => {
       req.params = { id: VALID_ID, docId: VALID_DOC_ID };
 
       const file = {
@@ -431,9 +427,9 @@ describe("ClientFile Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should return 500 on unexpected error", async () => {
+    it('should return 500 on unexpected error', async () => {
       req.params = { id: VALID_ID, docId: VALID_DOC_ID };
-      mockClientFileService.findClientFileDocument.mockRejectedValue(new Error("crash"));
+      mockClientFileService.findClientFileDocument.mockRejectedValue(new Error('crash'));
 
       await deleteDocument(req as Request, res as Response);
 

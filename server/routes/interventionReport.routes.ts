@@ -1,42 +1,18 @@
-import { Router } from "express";
-import * as interventionReportController from "../controllers/interventionReport/interventionReport.controller";
-import {
-  requireAuth,
-  requireAdmin,
-  requireMonteur,
-} from "../middleware/auth/auth.middleware";
+import { Router } from 'express';
+import * as interventionReportController from '../controllers/interventionReport/interventionReport.controller';
+import { requireAuth, requireAdmin, requireMonteur } from '../middleware/auth/auth.middleware';
 
 const router = Router();
 
 // All authenticated users can view
-router.get(
-  "/",
-  requireAuth,
-  interventionReportController.getInterventionReports,
-);
-router.get(
-  "/:id",
-  requireAuth,
-  interventionReportController.getInterventionReport,
-);
+router.get('/', requireAuth, interventionReportController.getInterventionReports);
+router.get('/:id', requireAuth, interventionReportController.getInterventionReport);
 
 // Create / update: monteur, admin, superadmin
-router.post(
-  "/",
-  requireMonteur,
-  interventionReportController.createInterventionReport,
-);
-router.put(
-  "/:id",
-  requireMonteur,
-  interventionReportController.updateInterventionReport,
-);
+router.post('/', requireMonteur, interventionReportController.createInterventionReport);
+router.put('/:id', requireMonteur, interventionReportController.updateInterventionReport);
 
 // Delete: admin/superadmin only
-router.delete(
-  "/:id",
-  requireAdmin,
-  interventionReportController.deleteInterventionReport,
-);
+router.delete('/:id', requireAdmin, interventionReportController.deleteInterventionReport);
 
 export default router;

@@ -1,10 +1,10 @@
-import { Router } from "express";
-import * as cameraController from "../controllers/camera/camera.controller";
-import { requireAuth } from "../middleware/auth/auth.middleware";
+import { Router } from 'express';
+import * as cameraController from '../controllers/camera/camera.controller';
+import { requireAuth } from '../middleware/auth/auth.middleware';
 
 const router = Router();
 
 // Proxy for camera streams (HTTPS → HTTP)
-router.get("/stream/:cameraId", requireAuth, cameraController.getCameraStream);
+router.get('/stream/:cameraId', requireAuth, cameraController.getCameraStream);
 
 export default router;

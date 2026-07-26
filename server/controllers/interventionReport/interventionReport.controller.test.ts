@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
-import { Request, Response } from "express";
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
+import { Request, Response } from 'express';
 
 const mockReportService = vi.hoisted(() => ({
   listInterventionReports: vi.fn(),
@@ -9,13 +9,13 @@ const mockReportService = vi.hoisted(() => ({
   deleteInterventionReportById: vi.fn(),
 }));
 
-vi.mock("../../services/interventionReport/interventionReport.service", () => mockReportService);
+vi.mock('../../services/interventionReport/interventionReport.service', () => mockReportService);
 
-vi.mock("../../utils/validate/validate.utils", () => ({
+vi.mock('../../utils/validate/validate.utils', () => ({
   validateObjectId: vi.fn((id: string, res: Response) => {
     const valid = /^[a-f\d]{24}$/i.test(id);
     if (!valid) {
-      (res.status as Mock)(400).json({ error: "Invalid ObjectId" });
+      (res.status as Mock)(400).json({ error: 'Invalid ObjectId' });
     }
     return valid;
   }),
@@ -27,46 +27,46 @@ import {
   createInterventionReport,
   updateInterventionReport,
   deleteInterventionReport,
-} from "./interventionReport.controller";
+} from './interventionReport.controller';
 
-const VALID_ID = "507f1f77bcf86cd799439011";
-const CLIENT_FILE_ID = "507f1f77bcf86cd799439012";
+const VALID_ID = '507f1f77bcf86cd799439011';
+const CLIENT_FILE_ID = '507f1f77bcf86cd799439012';
 
 const mockUnit = {
-  serialNumber: "SN001",
-  up: "UP1",
-  ub: "UB1",
-  cassetteSlots: ["", "", "", ""],
-  assignedRegisters: ["CAISSE 1"],
+  serialNumber: 'SN001',
+  up: 'UP1',
+  ub: 'UB1',
+  cassetteSlots: ['', '', '', ''],
+  assignedRegisters: ['CAISSE 1'],
   hasPc: false,
 };
 
 const mockReport = {
   _id: VALID_ID,
   clientFile: CLIENT_FILE_ID,
-  twRegisters: ["TW123"],
-  twPc: "TWPC456",
+  twRegisters: ['TW123'],
+  twPc: 'TWPC456',
   cashguardUnits: [mockUnit],
-  notes: "Test notes",
-  createdBy: "monteur1",
+  notes: 'Test notes',
+  createdBy: 'monteur1',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   save: vi.fn(),
 };
 
-describe("InterventionReport Controller", () => {
+describe('InterventionReport Controller', () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
 
   beforeEach(() => {
     req = { params: {}, body: {}, query: {} };
     res = {
-      locals: { user: { username: "monteur1" } },
-      status: vi.fn().mockReturnThis() as unknown as Response["status"],
-      json: vi.fn() as unknown as Response["json"],
+      locals: { user: { username: 'monteur1' } },
+      status: vi.fn().mockReturnThis() as unknown as Response['status'],
+      json: vi.fn() as unknown as Response['json'],
     };
     vi.clearAllMocks();
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -74,8 +74,8 @@ describe("InterventionReport Controller", () => {
   });
 
   // #region getInterventionReports
-  describe("getInterventionReports", () => {
-    it("should return all reports with 200", async () => {
+  describe('getInterventionReports', () => {
+    it('should return all reports with 200', async () => {
       const reports = [mockReport];
       mockReportService.listInterventionReports.mockResolvedValue(reports);
 
@@ -86,7 +86,7 @@ describe("InterventionReport Controller", () => {
       expect(res.json).toHaveBeenCalledWith(reports);
     });
 
-    it("should filter by clientFileId when provided", async () => {
+    it('should filter by clientFileId when provided', async () => {
       req.query = { clientFileId: CLIENT_FILE_ID };
       mockReportService.listInterventionReports.mockResolvedValue([mockReport]);
 
@@ -97,8 +97,8 @@ describe("InterventionReport Controller", () => {
       });
     });
 
-    it("should return 500 on error", async () => {
-      mockReportService.listInterventionReports.mockRejectedValue(new Error("DB error"));
+    it('should return 500 on error', async () => {
+      mockReportService.listInterventionReports.mockRejectedValue(new Error('DB error'));
 
       await getInterventionReports(req as Request, res as Response);
 
@@ -108,14 +108,14 @@ describe("InterventionReport Controller", () => {
   // #endregion
 
   // #region getInterventionReport
-  describe("getInterventionReport", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "invalid" };
+  describe('getInterventionReport', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'invalid' };
       await getInterventionReport(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 404 when report not found", async () => {
+    it('should return 404 when report not found', async () => {
       req.params = { id: VALID_ID };
       mockReportService.findInterventionReportById.mockResolvedValue(null);
 
@@ -123,12 +123,12 @@ describe("InterventionReport Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Report not found",
-        code: "REPORT_NOT_FOUND",
+        message: 'Report not found',
+        code: 'REPORT_NOT_FOUND',
       });
     });
 
-    it("should return the report with 200", async () => {
+    it('should return the report with 200', async () => {
       req.params = { id: VALID_ID };
       mockReportService.findInterventionReportById.mockResolvedValue(mockReport);
 
@@ -141,11 +141,11 @@ describe("InterventionReport Controller", () => {
   // #endregion
 
   // #region createInterventionReport
-  describe("createInterventionReport", () => {
-    it("should create a report and return 201", async () => {
+  describe('createInterventionReport', () => {
+    it('should create a report and return 201', async () => {
       req.body = {
         clientFile: CLIENT_FILE_ID,
-        twRegisters: ["TW123"],
+        twRegisters: ['TW123'],
         cashguardUnits: [mockUnit],
       };
       mockReportService.createInterventionReport.mockResolvedValue({
@@ -158,7 +158,7 @@ describe("InterventionReport Controller", () => {
       expect(mockReportService.createInterventionReport).toHaveBeenCalledWith(
         expect.objectContaining({
           clientFile: CLIENT_FILE_ID,
-          createdBy: "monteur1",
+          createdBy: 'monteur1',
         }),
       );
       expect(res.status).toHaveBeenCalledWith(201);
@@ -167,11 +167,9 @@ describe("InterventionReport Controller", () => {
       });
     });
 
-    it("should return 400 on validation error", async () => {
+    it('should return 400 on validation error', async () => {
       req.body = {};
-      mockReportService.createInterventionReport.mockRejectedValue(
-        new Error("validation failed"),
-      );
+      mockReportService.createInterventionReport.mockRejectedValue(new Error('validation failed'));
 
       await createInterventionReport(req as Request, res as Response);
 
@@ -181,14 +179,14 @@ describe("InterventionReport Controller", () => {
   // #endregion
 
   // #region updateInterventionReport
-  describe("updateInterventionReport", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "invalid" };
+  describe('updateInterventionReport', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'invalid' };
       await updateInterventionReport(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 404 when report not found", async () => {
+    it('should return 404 when report not found', async () => {
       req.params = { id: VALID_ID };
       mockReportService.findInterventionReportDocument.mockResolvedValue(null);
 
@@ -197,15 +195,15 @@ describe("InterventionReport Controller", () => {
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    it("should update fields and return 200", async () => {
+    it('should update fields and return 200', async () => {
       req.params = { id: VALID_ID };
-      req.body = { notes: "Updated notes", twRegisters: ["TW999"] };
+      req.body = { notes: 'Updated notes', twRegisters: ['TW999'] };
 
       const report = {
         ...mockReport,
         save: vi.fn().mockResolvedValue({
           ...mockReport,
-          notes: "Updated notes",
+          notes: 'Updated notes',
         }),
       };
       mockReportService.findInterventionReportDocument.mockResolvedValue(report);
@@ -216,9 +214,9 @@ describe("InterventionReport Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should set updatedBy from locals", async () => {
+    it('should set updatedBy from locals', async () => {
       req.params = { id: VALID_ID };
-      req.body = { notes: "new note" };
+      req.body = { notes: 'new note' };
 
       const report = {
         ...mockReport,
@@ -229,20 +227,20 @@ describe("InterventionReport Controller", () => {
 
       await updateInterventionReport(req as Request, res as Response);
 
-      expect(report.updatedBy).toBe("monteur1");
+      expect(report.updatedBy).toBe('monteur1');
     });
   });
   // #endregion
 
   // #region deleteInterventionReport
-  describe("deleteInterventionReport", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "invalid" };
+  describe('deleteInterventionReport', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'invalid' };
       await deleteInterventionReport(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 404 when report not found", async () => {
+    it('should return 404 when report not found', async () => {
       req.params = { id: VALID_ID };
       mockReportService.deleteInterventionReportById.mockResolvedValue(null);
 
@@ -251,7 +249,7 @@ describe("InterventionReport Controller", () => {
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    it("should delete report and return 200", async () => {
+    it('should delete report and return 200', async () => {
       req.params = { id: VALID_ID };
       mockReportService.deleteInterventionReportById.mockResolvedValue(mockReport);
 
@@ -259,8 +257,8 @@ describe("InterventionReport Controller", () => {
 
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Report deleted",
-        code: "REPORT_DELETED",
+        message: 'Report deleted',
+        code: 'REPORT_DELETED',
       });
     });
   });

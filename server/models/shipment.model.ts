@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, Schema, Types } from "mongoose";
+import mongoose, { Document, Model, Schema, Types } from 'mongoose';
 
 export interface IShipment extends Document {
   // #region Client card
@@ -42,7 +42,7 @@ const ShipmentSchema = new Schema<IShipment>(
     part: { type: String, required: true, trim: true },
     clientFile: {
       type: Schema.Types.ObjectId,
-      ref: "clientfile",
+      ref: 'clientfile',
       default: null,
     },
     requestDate: { type: Date, default: null },
@@ -58,9 +58,6 @@ const ShipmentSchema = new Schema<IShipment>(
 ShipmentSchema.index({ createdBy: 1 });
 ShipmentSchema.index({ createdAt: -1 });
 
-const ShipmentModel: Model<IShipment> = mongoose.model<IShipment>(
-  "shipment",
-  ShipmentSchema,
-);
+const ShipmentModel: Model<IShipment> = mongoose.model<IShipment>('shipment', ShipmentSchema);
 
 export default ShipmentModel;
