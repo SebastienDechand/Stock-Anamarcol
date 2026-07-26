@@ -6,6 +6,7 @@ export default defineConfig({
     include: ["**/*.test.ts"],
     exclude: ["**/node_modules/**"],
     setupFiles: ["./vitest.setup.ts"],
+    hookTimeout: 30000,
     coverage: {
       provider: "v8",
       include: [
@@ -15,7 +16,7 @@ export default defineConfig({
         "utils/**/*.ts",
         "constants/**/*.ts",
       ],
-      exclude: ["**/node_modules/**"],
+      exclude: ["**/node_modules/**", "utils/testDb/**", "utils/testAuth/**"],
       reportsDirectory: "./coverage",
     },
   },

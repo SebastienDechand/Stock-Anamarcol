@@ -27,8 +27,16 @@ jobs:
         working-directory: ./server
         run: npm ci
 
+      - name: Cache MongoDB binaries
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/mongodb-binaries
+          key: ${{ runner.os }}-mongodb-binaries-7.0.14
+
       - name: Run tests
         working-directory: ./server
+        env:
+          MONGOMS_PREFER_GLOBAL_PATH: "1"
         run: npm run test:ci
 
   # ─── Tests Frontend Angular ──────────────────────────
