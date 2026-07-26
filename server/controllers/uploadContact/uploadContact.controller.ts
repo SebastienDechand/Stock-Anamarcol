@@ -3,12 +3,14 @@ import ContactModel from "../../models/contact.model";
 import { validateUploadedFile, uploadToImgBB } from "../../utils/upload/upload.utils";
 import { logEvent } from "../../utils/audit/audit.utils";
 import { handleError } from "../../utils/response/response.utils";
+import { validateObjectId } from "../../utils/validate/validate.utils";
 
 export const uploadContact = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   if (!validateUploadedFile(req, res)) return;
+  if (!validateObjectId(req.body.contactId, res)) return;
 
   const fileName = req.body.name + ".jpg";
 
