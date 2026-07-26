@@ -1,6 +1,6 @@
 import { Component, OnChanges, SimpleChanges, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LucideAngularModule, X } from 'lucide-angular';
 import { DateInput } from '../../../../shared/components/date-input/date-input';
@@ -13,6 +13,10 @@ import {
   VehicleFormat,
 } from '../../../../shared/models/vehicle/vehicle.model';
 import { UsersFacade } from '../../../members/store/facade/users.facade';
+import {
+  licensePlateFormatValidator,
+  requiredTrimmedValidator,
+} from '../../../../shared/utils/validators/validators.utils';
 
 function addYears(dateStr: string, years: number): string {
   if (!dateStr) return '';
@@ -35,12 +39,20 @@ const MODEL_FORMAT: Record<VehicleModel, VehicleFormat[]> = {
 @Component({
   selector: 'app-vehicle-form-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, LucideAngularModule, DateInput],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TranslatePipe,
+    LucideAngularModule,
+    DateInput,
+  ],
   templateUrl: './vehicle-form-modal.html',
   styleUrl: './vehicle-form-modal.scss',
 })
 export class VehicleFormModal implements OnChanges {
   private readonly usersFacade = inject(UsersFacade);
+  private readonly fb = inject(FormBuilder);
 
   vehicle = input<Vehicle | null>(null);
   save = output<{ id?: string; data: VehicleForm }>();
@@ -49,11 +61,15 @@ export class VehicleFormModal implements OnChanges {
   readonly x = X;
   readonly users = toSignal(this.usersFacade.users$, { initialValue: [] });
 
-  form: VehicleForm = {
+  licensePlateControl = this.fb.nonNullable.control('', [
+    requiredTrimmedValidator,
+    licensePlateFormatValidator,
+  ]);
+
+  form: Omit<VehicleForm, 'licensePlate'> = {
     brand: 'mercedes',
     model: 'citan',
     format: 'van',
-    licensePlate: '',
     serviceDate: '',
     inspectionDate: '',
     inspectionExpiryDate: '',
@@ -87,11 +103,11 @@ export class VehicleFormModal implements OnChanges {
     if (changes['vehicle']) {
       const vehicle = this.vehicle();
       if (vehicle) {
+        this.licensePlateControl.setValue(vehicle.licensePlate);
         this.form = {
           brand: vehicle.brand,
           model: vehicle.model,
           format: vehicle.format,
-          licensePlate: vehicle.licensePlate,
           serviceDate: this.toDateInput(vehicle.serviceDate),
           inspectionDate: this.toDateInput(vehicle.inspectionDate),
           inspectionExpiryDate: this.toDateInput(vehicle.inspectionExpiryDate),
@@ -143,8 +159,14 @@ export class VehicleFormModal implements OnChanges {
   }
 
   submit(): void {
-    if (!this.form.licensePlate.trim()) return;
-    this.save.emit({ id: this.vehicle()?._id, data: { ...this.form } });
+    if (this.licensePlateControl.invalid) {
+      this.licensePlateControl.markAsTouched();
+      return;
+    }
+    this.save.emit({
+      id: this.vehicle()?._id,
+      data: { ...this.form, licensePlate: this.licensePlateControl.value },
+    });
   }
 
   get isEdit(): boolean {
@@ -157,11 +179,11 @@ export class VehicleFormModal implements OnChanges {
   }
 
   private resetForm(): void {
+    this.licensePlateControl.reset('');
     this.form = {
       brand: 'mercedes',
       model: 'citan',
       format: 'van',
-      licensePlate: '',
       serviceDate: '',
       inspectionDate: '',
       inspectionExpiryDate: '',

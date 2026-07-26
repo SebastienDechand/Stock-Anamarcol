@@ -1,19 +1,22 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { STATUSES, SUPPLIERS } from '../../../../shared/constants';
 import { NewItem } from '../../../../shared/models/item/item.model';
+import { requiredTrimmedValidator } from '../../../../shared/utils/validators/validators.utils';
 
 @Component({
   selector: 'app-add-item-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './add-item-modal.html',
   styleUrl: './add-item-modal.scss',
 })
 export class AddItemModal {
+  private fb = inject(FormBuilder);
+
   posterId = input('');
   submitted = output<NewItem>();
   cancelled = output<void>();
@@ -21,34 +24,21 @@ export class AddItemModal {
   suppliers = SUPPLIERS;
   statuses = STATUSES;
 
-  form = {
-    name: '',
-    supplier: '',
-    status: '',
-    quantity: 0,
-    cgKit: false,
-    tpvKit: false,
-  };
-
-  get isFormValid(): boolean {
-    return (
-      !!this.form.name.trim() &&
-      !!this.form.supplier &&
-      !!this.form.status &&
-      this.form.quantity > 0
-    );
-  }
+  form = this.fb.nonNullable.group({
+    name: ['', requiredTrimmedValidator],
+    supplier: ['', Validators.required],
+    status: ['', Validators.required],
+    quantity: [0, [Validators.required, Validators.min(0)]],
+    cgKit: [false],
+    tpvKit: [false],
+  });
 
   submit() {
-    if (!this.isFormValid) return;
-    this.submitted.emit({
-      name: this.form.name,
-      supplier: this.form.supplier,
-      status: this.form.status,
-      quantity: this.form.quantity,
-      posterId: this.posterId(),
-      cgKit: this.form.cgKit,
-      tpvKit: this.form.tpvKit,
-    });
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const value = this.form.getRawValue();
+    this.submitted.emit({ ...value, posterId: this.posterId() });
   }
 }

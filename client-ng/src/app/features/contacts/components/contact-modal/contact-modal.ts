@@ -1,34 +1,47 @@
-import { Component, OnInit, input, output } from '@angular/core';
+import { Component, OnInit, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Contact, ContactCategory } from '../../../../shared/models/contact/contact.model';
+import {
+  phoneFormatValidator,
+  requiredTrimmedValidator,
+} from '../../../../shared/utils/validators/validators.utils';
 
 @Component({
   selector: 'app-contact-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './contact-modal.html',
   styleUrl: './contact-modal.scss',
 })
 export class ContactModal implements OnInit {
+  private fb = inject(FormBuilder);
+
   contact = input.required<Contact>();
   saved = output<Partial<Contact>>();
   pictureUploaded = output<{ id: string; formData: FormData }>();
   cancelled = output<void>();
 
-  form = { name: '', email: '', phone: '', position: '', link: '', category: 'external' as ContactCategory };
+  form = this.fb.nonNullable.group({
+    name: ['', requiredTrimmedValidator],
+    email: ['', Validators.email],
+    phone: ['', phoneFormatValidator],
+    position: [''],
+    link: [''],
+    category: ['external' as ContactCategory],
+  });
 
   ngOnInit() {
-    this.form = {
+    this.form.setValue({
       name: this.contact().name ?? '',
       email: this.contact().email ?? '',
       phone: this.contact().phone ?? '',
       position: this.contact().position ?? '',
       link: this.contact().link ?? '',
       category: this.contact().category ?? 'external',
-    };
+    });
   }
 
   get avatarUrl(): string {
@@ -52,6 +65,10 @@ export class ContactModal implements OnInit {
   }
 
   submit() {
-    this.saved.emit({ ...this.form });
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    this.saved.emit(this.form.getRawValue());
   }
 }

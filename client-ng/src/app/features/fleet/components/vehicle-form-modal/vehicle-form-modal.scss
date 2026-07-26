@@ -65,6 +65,10 @@
   }
 }
 
+.form-group__error {
+  @include field-error;
+}
+
 .label-base {
   @include label-base;
 }

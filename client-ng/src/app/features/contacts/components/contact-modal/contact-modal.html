@@ -23,27 +23,36 @@
         </div>
       </div>
 
-      <form (ngSubmit)="submit()">
+      <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="form-grid">
           <div class="form-row">
             <label class="form-label">{{ 'CONTACTS.NAME' | translate }}</label>
-            <input class="form-input" [(ngModel)]="form.name" name="name" />
+            <input class="form-input" formControlName="name" />
+            @if (form.controls.name.invalid && form.controls.name.touched) {
+              <p class="form-row__error">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+            }
           </div>
           <div class="form-row">
             <label class="form-label">{{ 'CONTACTS.COMPANY' | translate }}</label>
-            <input class="form-input" [(ngModel)]="form.position" name="position" />
+            <input class="form-input" formControlName="position" />
           </div>
           <div class="form-row">
             <label class="form-label">{{ 'CONTACTS.EMAIL' | translate }}</label>
-            <input class="form-input" type="email" [(ngModel)]="form.email" name="email" />
+            <input class="form-input" type="email" formControlName="email" />
+            @if (form.controls.email.invalid && form.controls.email.touched) {
+              <p class="form-row__error">{{ 'COMMON.INVALID_EMAIL' | translate }}</p>
+            }
           </div>
           <div class="form-row">
             <label class="form-label">{{ 'CONTACTS.PHONE' | translate }}</label>
-            <input class="form-input" [(ngModel)]="form.phone" name="phone" />
+            <input class="form-input" formControlName="phone" />
+            @if (form.controls.phone.invalid && form.controls.phone.touched) {
+              <p class="form-row__error">{{ 'COMMON.INVALID_PHONE' | translate }}</p>
+            }
           </div>
           <div class="form-row">
             <label class="form-label">{{ 'CONTACTS.CATEGORY' | translate }}</label>
-            <select class="form-input" [(ngModel)]="form.category" name="category">
+            <select class="form-input" formControlName="category">
               <option value="external">{{ 'CONTACTS.CATEGORY_EXTERNAL' | translate }}</option>
               <option value="supplier">{{ 'CONTACTS.CATEGORY_SUPPLIER' | translate }}</option>
             </select>
@@ -51,7 +60,7 @@
         </div>
         <div class="form-row website">
           <label class="form-label website">{{ 'CONTACTS.WEBSITE' | translate }}</label>
-          <input class="form-input" [(ngModel)]="form.link" name="link" placeholder="https://..." />
+          <input class="form-input" formControlName="link" placeholder="https://..." />
         </div>
 
         <div class="modal-panel__footer">
@@ -63,7 +72,12 @@
           >
             {{ 'COMMON.CANCEL' | translate }}
           </button>
-          <button type="submit" class="btn-primary" [title]="'COMMON.SAVE' | translate">
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="form.invalid"
+            [title]="'COMMON.SAVE' | translate"
+          >
             {{ 'COMMON.SAVE' | translate }}
           </button>
         </div>

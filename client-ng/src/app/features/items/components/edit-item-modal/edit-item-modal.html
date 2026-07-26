@@ -35,7 +35,7 @@
 
     <!-- Detail tab -->
     @if (activeTab === 'detail') {
-      <div class="modal-body">
+      <div class="modal-body" [formGroup]="form">
         <!-- Left - Image -->
         <div class="img-pane">
           <label class="img-pane__wrap" [class.img-pane__wrap--clickable]="isAdmin()">
@@ -84,7 +84,7 @@
           <div class="field">
             <p class="field__label">{{ 'ITEMS.DENOMINATION' | translate }}</p>
             @if (editing) {
-              <input class="field__input" [(ngModel)]="form.name" name="name" />
+              <input class="field__input" formControlName="name" />
             } @else {
               <p class="field__value">{{ displayItem.name || '–' }}</p>
             }
@@ -94,7 +94,7 @@
           <div class="field">
             <p class="field__label">{{ 'ITEMS.SUPPLIER' | translate }}</p>
             @if (editing) {
-              <select class="field__input" [(ngModel)]="form.supplier" name="supplier">
+              <select class="field__input" formControlName="supplier">
                 <option value="">{{ 'COMMON.SELECT' | translate }}</option>
                 @for (f of suppliers; track f) {
                   <option [value]="f">{{ f }}</option>
@@ -109,7 +109,7 @@
           <div class="field">
             <p class="field__label">{{ 'ITEMS.STATE' | translate }}</p>
             @if (editing) {
-              <select class="field__input" [(ngModel)]="form.status" name="status">
+              <select class="field__input" formControlName="status">
                 <option value="">{{ 'COMMON.SELECT' | translate }}</option>
                 @for (e of statuses; track e) {
                   <option [value]="e">{{ e }}</option>
@@ -124,13 +124,7 @@
           <div class="field">
             <p class="field__label">{{ 'ITEMS.QUANTITY' | translate }}</p>
             @if (editing || editingQty) {
-              <input
-                class="field__input"
-                type="number"
-                min="0"
-                [(ngModel)]="form.quantity"
-                name="quantity"
-              />
+              <input class="field__input" type="number" min="0" formControlName="quantity" />
             } @else {
               <span
                 class="field__value field__value--qty"

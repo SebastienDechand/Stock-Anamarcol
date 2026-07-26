@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -25,11 +25,12 @@ import { UsersFacade } from '../../../members/store/facade/users.facade';
 import { AuthFacade } from '../../../../store/auth/facade/auth.facade';
 import { LanguageService } from '../../../../core/services/language/language.service';
 import { resolveLocale } from '../../../../shared/utils/date/date.utils';
+import { requiredTrimmedValidator } from '../../../../shared/utils/validators/validators.utils';
 
 @Component({
   selector: 'app-edit-item-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './edit-item-modal.html',
   styleUrl: './edit-item-modal.scss',
 })
@@ -38,6 +39,7 @@ export class EditItemModal implements OnInit, OnDestroy {
   submitted = output<Partial<Item>>();
   cancelled = output<void>();
 
+  private fb = inject(FormBuilder);
   private facade = inject(ItemsFacade);
   private usersFacade = inject(UsersFacade);
   private authFacade = inject(AuthFacade);
@@ -62,14 +64,14 @@ export class EditItemModal implements OnInit, OnDestroy {
   imagePreview = signal<string | null>(null);
   fileError = '';
 
-  form = {
-    name: '',
-    supplier: '',
-    status: '',
-    quantity: 0,
-    cgKit: false,
-    tpvKit: false,
-  };
+  form = this.fb.nonNullable.group({
+    name: ['', requiredTrimmedValidator],
+    supplier: ['', Validators.required],
+    status: ['', Validators.required],
+    quantity: [0],
+    cgKit: [false],
+    tpvKit: [false],
+  });
 
   ngOnInit() {
     this.facade.setSelectedItemId(this.item()._id);
@@ -92,14 +94,14 @@ export class EditItemModal implements OnInit, OnDestroy {
 
   resetForm() {
     const currentItem = this.displayItem;
-    this.form = {
+    this.form.reset({
       name: currentItem.name,
       supplier: currentItem.supplier ?? '',
       status: currentItem.status ?? '',
       quantity: currentItem.quantity,
       cgKit: currentItem.cgKit ?? false,
       tpvKit: currentItem.tpvKit ?? false,
-    };
+    });
   }
 
   switchTab(tab: 'detail' | 'history') {
@@ -124,17 +126,18 @@ export class EditItemModal implements OnInit, OnDestroy {
   }
 
   submit() {
-    if (!this.form.name.trim() || !this.form.supplier || !this.form.status) {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
       this.error = this.translate.instant('ITEMS.REQUIRED_FIELDS');
       return;
     }
-    this.submitted.emit({ ...this.form });
+    this.submitted.emit(this.form.getRawValue());
     this.editing = false;
     this.error = '';
   }
 
   submitQty() {
-    const newQty = Math.max(0, this.form.quantity);
+    const newQty = Math.max(0, this.form.getRawValue().quantity);
     const current = this.displayItem.quantity;
     const name = this.currentUser()?.username ?? '';
     const operation = newQty >= current ? 'add' : 'subtract';
