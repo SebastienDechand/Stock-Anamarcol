@@ -14,11 +14,12 @@ import {
 import { Shipment } from '../../../../shared/models/shipment/shipment.model';
 import { LanguageService } from '../../../../core/services/language/language.service';
 import { resolveLocale } from '../../../../shared/utils/date/date.utils';
+import { Badge } from '../../../../shared/components/badge/badge';
 
 @Component({
   selector: 'app-shipment-card',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, TranslatePipe],
+  imports: [CommonModule, LucideAngularModule, TranslatePipe, Badge],
   templateUrl: './shipment-card.html',
   styleUrl: './shipment-card.scss',
 })

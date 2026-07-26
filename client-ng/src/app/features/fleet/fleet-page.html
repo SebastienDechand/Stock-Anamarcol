@@ -78,10 +78,10 @@
                       <tr class="vehicle-row" (click)="openEdit(v)">
                         <td>
                           @let b = badge(v.format);
-                          <span [class]="b.css">
+                          <app-badge [variant]="b.variant">
                             <lucide-icon [img]="b.icon" [size]="11" />
                             {{ b.label | translate }}
-                          </span>
+                          </app-badge>
                         </td>
                         <td class="col-plate-val">{{ v.licensePlate }}</td>
                         <td class="col-assigned-val">{{ v.assignedToName || '-' }}</td>
@@ -225,10 +225,10 @@
                       <div class="vrm__top">
                         <div class="vrm__left">
                           @let b = badge(vehicle.format);
-                          <span [class]="b.css">
+                          <app-badge [variant]="b.variant">
                             <lucide-icon [img]="b.icon" [size]="11" />
                             {{ b.label | translate }}
-                          </span>
+                          </app-badge>
                           <span class="vrm__plate">{{ vehicle.licensePlate }}</span>
                         </div>
                         <div class="vrm__actions" (click)="$event.stopPropagation()">

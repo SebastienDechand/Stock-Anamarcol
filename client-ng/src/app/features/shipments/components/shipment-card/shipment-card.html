@@ -2,9 +2,9 @@
   <div class="shipment-card__header">
     <div class="shipment-card__name">{{ shipment().firstName }} {{ shipment().lastName }}</div>
     @if (shipment().sent) {
-      <span class="badge badge--green">{{ 'SHIPMENTS.STATUS_SENT' | translate }}</span>
+      <app-badge variant="green">{{ 'SHIPMENTS.STATUS_SENT' | translate }}</app-badge>
     } @else {
-      <span class="badge badge--orange">{{ 'SHIPMENTS.STATUS_PENDING' | translate }}</span>
+      <app-badge variant="orange">{{ 'SHIPMENTS.STATUS_PENDING' | translate }}</app-badge>
     }
   </div>
 

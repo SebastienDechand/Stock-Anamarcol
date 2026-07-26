@@ -279,42 +279,4 @@
   flex-wrap: wrap;
   gap: 5px;
 }
-
-.badge {
-  display: inline-block;
-  font-size: 0.68rem;
-  font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 99px;
-
-  &--green {
-    background: #dcfce7;
-    color: #15803d;
-  }
-
-  &--blue {
-    background: #dbeafe;
-    color: #1d4ed8;
-  }
-
-  &--cyan {
-    background: #cffafe;
-    color: #0e7490;
-  }
-
-  &--purple {
-    background: #ede9fe;
-    color: #6d28d9;
-  }
-
-  &--gray {
-    background: var(--surface-100);
-    color: var(--text-secondary);
-  }
-
-  &--yellow {
-    background: #fef9c3;
-    color: #a16207;
-  }
-}
 /* #endregion */

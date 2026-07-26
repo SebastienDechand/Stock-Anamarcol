@@ -25,6 +25,7 @@ import { VehicleDocumentList } from './components/vehicle-document-list/vehicle-
 import { ConfirmDialog } from '../../shared/components/confirm-dialog/confirm-dialog';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
+import { Badge, BadgeVariant } from '../../shared/components/badge/badge';
 import { Vehicle, VehicleForm } from '../../shared/models/vehicle/vehicle.model';
 import { LanguageService } from '../../core/services/language/language.service';
 import {
@@ -53,6 +54,7 @@ const MODEL_SECTIONS = [
     VehicleFormModal,
     VehicleDocumentList,
     PageHero,
+    Badge,
   ],
   templateUrl: './fleet-page.html',
   styleUrl: './fleet-page.scss',
@@ -138,13 +140,13 @@ export class FleetPage implements OnInit {
     return vehicleRevisionStatus(date);
   }
 
-  badge(format: string): { css: string; label: string; icon: LucideIconData } {
-    const map: Record<string, { css: string; label: string; icon: LucideIconData }> = {
-      van: { css: 'badge badge--blue', label: 'FLEET.FORMAT_VAN', icon: this.truck },
-      truck: { css: 'badge badge--orange', label: 'FLEET.FORMAT_TRUCK', icon: this.bus },
-      pickup: { css: 'badge badge--green', label: 'FLEET.FORMAT_PICKUP', icon: this.car },
+  badge(format: string): { variant: BadgeVariant; label: string; icon: LucideIconData } {
+    const map: Record<string, { variant: BadgeVariant; label: string; icon: LucideIconData }> = {
+      van: { variant: 'blue', label: 'FLEET.FORMAT_VAN', icon: this.truck },
+      truck: { variant: 'orange', label: 'FLEET.FORMAT_TRUCK', icon: this.bus },
+      pickup: { variant: 'green', label: 'FLEET.FORMAT_PICKUP', icon: this.car },
     };
-    return map[format] ?? { css: 'badge', label: format, icon: this.truck };
+    return map[format] ?? { variant: 'gray', label: format, icon: this.truck };
   }
 
   openAdd(): void {

@@ -3,28 +3,36 @@
 .badge {
   @include m.badge-base;
 
-  &--brand {
-    background: var(--brand-100);
-    color: var(--brand-700);
-  }
-  &--success {
-    background: #dcfce7;
-    color: #15803d;
-  }
-  &--warning {
-    background: #fef3c7;
-    color: #b45309;
-  }
-  &--danger {
-    background: #fee2e2;
-    color: #b91c1c;
-  }
-  &--info {
+  &--blue {
     background: #dbeafe;
     color: #1d4ed8;
   }
-  &--muted {
-    background: var(--surface-200);
+  &--green {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  &--orange {
+    background: #ffedd5;
+    color: #c2410c;
+  }
+  &--red {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+  &--cyan {
+    background: #cffafe;
+    color: #0e7490;
+  }
+  &--purple {
+    background: #ede9fe;
+    color: #6d28d9;
+  }
+  &--gray {
+    background: var(--surface-100);
     color: var(--text-secondary);
+  }
+  &--yellow {
+    background: #fef9c3;
+    color: #a16207;
   }
 }

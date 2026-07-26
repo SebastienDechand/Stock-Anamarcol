@@ -24,6 +24,7 @@ import { ClientFile, ClientFileForm } from '../../shared/models/client-file/clie
 import { ClientFileModal } from './components/client-file-modal/client-file-modal';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
 import { Pagination } from '../../shared/components/pagination/pagination';
+import { Badge } from '../../shared/components/badge/badge';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -39,6 +40,7 @@ const ITEMS_PER_PAGE = 9;
     ClientFileModal,
     PageHero,
     Pagination,
+    Badge,
     TranslatePipe,
   ],
   templateUrl: './client-files-page.html',

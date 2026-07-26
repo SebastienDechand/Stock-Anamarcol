@@ -53,24 +53,6 @@
   }
 }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 500;
-
-  &--green {
-    background: #d1fae5;
-    color: #065f46;
-  }
-  &--orange {
-    background: #ffedd5;
-    color: #c2410c;
-  }
-}
-
 .btn-success {
   display: inline-flex;
   align-items: center;
