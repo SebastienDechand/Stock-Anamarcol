@@ -17,7 +17,7 @@ export class ContactCard {
   selected = output<Contact>();
 
   get initials(): string {
-    return (this.contact().name ?? '?')[0].toUpperCase();
+    return (this.contact().name || '?')[0].toUpperCase();
   }
 
   get avatarUrl(): string {
