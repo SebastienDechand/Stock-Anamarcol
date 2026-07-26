@@ -31,9 +31,7 @@ import {
   Package,
 } from 'lucide-angular';
 import { AuthFacade } from '../../store/auth/facade/auth.facade';
-import { ToastService } from '../../core/toast/toast.service';
-import { HistoryCacheService } from './history-cache.service';
-import { HistoryService } from './history.service';
+import { HistoryFacade } from './store/facade/history.facade';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
 import { AuditEvent } from '../../shared/models/audit/audit.model';
@@ -68,12 +66,10 @@ function isQuantityOnlyUpdate(event: AuditEvent): boolean {
 })
 export class HistoryPage implements OnInit {
   private authFacade = inject(AuthFacade);
-  private toast = inject(ToastService);
-  private cache = inject(HistoryCacheService);
+  private facade = inject(HistoryFacade);
   private translate = inject(TranslateService);
   private languageService = inject(LanguageService);
   private destroyRef = inject(DestroyRef);
-  private history = inject(HistoryService);
 
   @ViewChild('userDropdownEl') userDropdownEl?: ElementRef<HTMLElement>;
 
@@ -118,47 +114,25 @@ export class HistoryPage implements OnInit {
   filteredTotal = signal(0);
 
   ngOnInit(): void {
-    if (this.cache.events.length) {
-      this.allEvents.set(this.cache.events);
-      this.users.set(this.cache.users);
-    }
+    this.facade.events$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((events) => {
+      this.allEvents.set(events);
+    });
+    this.facade.users$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((users) => {
+      this.users.set(users);
+    });
+    this.facade.isLoading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isLoading) => {
+      this.isLoading.set(isLoading);
+    });
+    this.facade.isPurging$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isPurging) => {
+      this.isPurging.set(isPurging);
+    });
+
     combineLatest([this.authFacade.isAdmin$, this.authFacade.isSuperadmin$])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([isAdmin, isSuperadmin]) => {
-        if (isAdmin || isSuperadmin) this.loadAll();
+        if (isAdmin || isSuperadmin) this.facade.loadEvents();
       });
-    this.loadUsers();
-  }
-
-  private loadAll(): void {
-    if (!this.allEvents().length) {
-      this.isLoading.set(true);
-    }
-    this.history
-      .getEvents()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (events) => {
-          const list = events ?? [];
-          this.allEvents.set(list);
-          this.cache.events = list;
-          this.isLoading.set(false);
-        },
-        error: () => this.isLoading.set(false),
-      });
-  }
-
-  private loadUsers(): void {
-    this.history
-      .getUsers()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (users) => {
-          const list = users ?? [];
-          this.users.set(list);
-          this.cache.users = list;
-        },
-      });
+    this.facade.loadUsers();
   }
 
   get filteredEvents(): AuditEvent[] {
@@ -236,23 +210,9 @@ export class HistoryPage implements OnInit {
     }
   }
 
-  async purge(): Promise<void> {
-    this.isPurging.set(true);
-    this.history
-      .purge()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.allEvents.set([]);
-          this.toast.success(this.translate.instant('HISTORY.PURGED'));
-          this.isPurging.set(false);
-          this.showPurgeModal.set(false);
-        },
-        error: () => {
-          this.toast.error(this.translate.instant('HISTORY.PURGE_ERROR'));
-          this.isPurging.set(false);
-        },
-      });
+  purge(): void {
+    this.facade.purge();
+    this.showPurgeModal.set(false);
   }
 
   private describeEvent(event: AuditEvent): string {

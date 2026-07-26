@@ -62,6 +62,9 @@ import { InterventionReportsActions } from './features/intervention-reports/stor
 import { statisticsReducer } from './features/home/store/reducer/statistics.reducer';
 import { StatisticsEffects } from './features/home/store/effects/statistics.effects';
 
+import { historyReducer } from './features/history/store/reducer/history.reducer';
+import { HistoryEffects } from './features/history/store/effects/history.effects';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -82,6 +85,7 @@ export const appConfig: ApplicationConfig = {
       clientFiles: clientFilesReducer,
       interventionReports: interventionReportsReducer,
       statistics: statisticsReducer,
+      history: historyReducer,
     }),
     provideEffects(
       AuthEffects,
@@ -93,6 +97,7 @@ export const appConfig: ApplicationConfig = {
       ClientFilesEffects,
       InterventionReportsEffects,
       StatisticsEffects,
+      HistoryEffects,
     ),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
 
