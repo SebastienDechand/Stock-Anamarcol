@@ -380,9 +380,7 @@ describe('ItemsEffects', () => {
       );
       const result = await updateQuantityPromise;
 
-      expect(result).toEqual(
-        ItemsActions.updateQuantitySuccess({ id: 'item-001', quantity: 15 }),
-      );
+      expect(result).toEqual(ItemsActions.updateQuantitySuccess({ id: 'item-001', quantity: 15 }));
       expect(toast.success).toHaveBeenCalledWith('TOAST.ITEM_QTY_UPDATED');
     });
 
@@ -504,7 +502,12 @@ describe('ItemsEffects', () => {
 
       const resultsPromise = firstValueFrom(effects.preparationBatch$.pipe(take(2), toArray()));
       actions$.next(
-        ItemsActions.preparationBatch({ field: 'tpvKit', operation: 'decrement', count: 5, params }),
+        ItemsActions.preparationBatch({
+          field: 'tpvKit',
+          operation: 'decrement',
+          count: 5,
+          params,
+        }),
       );
       const results = await resultsPromise;
 
@@ -522,7 +525,12 @@ describe('ItemsEffects', () => {
 
       const preparationBatchPromise = firstValueFrom(effects.preparationBatch$);
       actions$.next(
-        ItemsActions.preparationBatch({ field: 'cgKit', operation: 'increment', count: 2, params: {} }),
+        ItemsActions.preparationBatch({
+          field: 'cgKit',
+          operation: 'increment',
+          count: 2,
+          params: {},
+        }),
       );
       const result = await preparationBatchPromise;
 

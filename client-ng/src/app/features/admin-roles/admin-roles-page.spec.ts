@@ -55,7 +55,10 @@ describe('AdminRolesPage', () => {
 
   describe('filterUsers()', () => {
     it('returns all users when searchTerm is empty', () => {
-      const users = [makeUser(), makeUser({ _id: 'u2', username: 'Bob', email: 'bob@example.com' })];
+      const users = [
+        makeUser(),
+        makeUser({ _id: 'u2', username: 'Bob', email: 'bob@example.com' }),
+      ];
       component.searchTerm.set('');
       expect(component.filterUsers(users)).toEqual(users);
     });
@@ -75,7 +78,10 @@ describe('AdminRolesPage', () => {
     });
 
     it('returns empty array when no match', () => {
-      const users = [makeUser(), makeUser({ _id: 'u2', username: 'Bob', email: 'bob@example.com' })];
+      const users = [
+        makeUser(),
+        makeUser({ _id: 'u2', username: 'Bob', email: 'bob@example.com' }),
+      ];
       component.searchTerm.set('zzz');
       expect(component.filterUsers(users)).toEqual([]);
     });

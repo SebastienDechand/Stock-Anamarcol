@@ -11,11 +11,7 @@ import {
 import { initialContactsState } from '../state/contacts.state';
 import type { Contact } from '../../../../shared/models/contact/contact.model';
 
-const makeContact = (
-  id: string,
-  name: string,
-  category?: Contact['category'],
-): Contact => ({
+const makeContact = (id: string, name: string, category?: Contact['category']): Contact => ({
   _id: id,
   name,
   email: `${name.toLowerCase()}@example.com`,
@@ -105,9 +101,7 @@ describe('Contacts Selectors', () => {
 
     it('should return only contacts categorized as external', () => {
       const state = { contacts: { ...initialContactsState, contacts } };
-      expect(selectExterieurs(state)).toEqual(
-        contacts.filter((c) => c.category === 'external'),
-      );
+      expect(selectExterieurs(state)).toEqual(contacts.filter((c) => c.category === 'external'));
     });
 
     it('should treat contacts with no category as external', () => {
@@ -127,9 +121,7 @@ describe('Contacts Selectors', () => {
 
     it('should return only contacts categorized as supplier', () => {
       const state = { contacts: { ...initialContactsState, contacts } };
-      expect(selectFournisseurs(state)).toEqual(
-        contacts.filter((c) => c.category === 'supplier'),
-      );
+      expect(selectFournisseurs(state)).toEqual(contacts.filter((c) => c.category === 'supplier'));
     });
 
     it('should not include uncategorized contacts', () => {

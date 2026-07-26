@@ -1,5 +1,10 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { FetchItemsParams, Item, ItemHistory, NewItem } from '../../../../shared/models/item/item.model';
+import {
+  FetchItemsParams,
+  Item,
+  ItemHistory,
+  NewItem,
+} from '../../../../shared/models/item/item.model';
 
 export const ItemsActions = createActionGroup({
   source: 'Items',

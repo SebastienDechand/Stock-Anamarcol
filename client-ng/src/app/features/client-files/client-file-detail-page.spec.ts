@@ -230,7 +230,11 @@ describe('ClientFileDetailPage', () => {
 
   describe('getClientLabel()', () => {
     it('returns "NOM firstName - company" when all fields are set', () => {
-      const file = makeClientFile({ lastName: 'dupont', firstName: 'Jean', company: 'SARL Dupont' });
+      const file = makeClientFile({
+        lastName: 'dupont',
+        firstName: 'Jean',
+        company: 'SARL Dupont',
+      });
 
       const label = component.getClientLabel(file);
 

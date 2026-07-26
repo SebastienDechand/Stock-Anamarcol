@@ -62,9 +62,7 @@ describe('AuthEffects', () => {
       actions$.next(AuthActions.login({ email: 'a@b.com', password: 'secret' }));
       const result = await promise;
 
-      expect(result).toEqual(
-        AuthActions.loginFailure({ error: 'LOGIN.TOO_MANY_ATTEMPTS' }),
-      );
+      expect(result).toEqual(AuthActions.loginFailure({ error: 'LOGIN.TOO_MANY_ATTEMPTS' }));
     });
 
     it.each([0, 500, 502, 503, 504])(

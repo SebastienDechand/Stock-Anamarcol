@@ -6,10 +6,7 @@ export function resolveLocale(lang: Lang): string {
   return LOCALE_BY_LANG[lang];
 }
 
-export function formatDateFr(
-  value: string | Date | undefined | null,
-  lang: Lang = 'fr',
-): string {
+export function formatDateFr(value: string | Date | undefined | null, lang: Lang = 'fr'): string {
   if (!value) return '';
   const options: Intl.DateTimeFormatOptions = {
     hour: '2-digit',

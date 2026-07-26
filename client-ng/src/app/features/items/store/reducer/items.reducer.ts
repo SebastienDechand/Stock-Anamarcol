@@ -39,7 +39,9 @@ export const itemsReducer = createReducer(
 
   on(ItemsActions.createItemSuccess, (state, { item }) => ({
     ...state,
+    items: [item, ...state.items],
     allItems: [item, ...state.allItems],
+    total: state.total + 1,
   })),
 
   on(ItemsActions.updateItemSuccess, (state, { item }) => ({

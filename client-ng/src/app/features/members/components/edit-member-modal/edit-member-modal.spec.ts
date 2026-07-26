@@ -33,7 +33,10 @@ describe('EditMemberModal', () => {
     });
 
     it('returns the picture as-is when it is already an absolute or rooted URL', () => {
-      fixture.componentRef.setInput('user', { ...sampleUser, picture: 'https://cdn.example.com/pic.jpg' });
+      fixture.componentRef.setInput('user', {
+        ...sampleUser,
+        picture: 'https://cdn.example.com/pic.jpg',
+      });
       expect(component.avatarUrl).toBe('https://cdn.example.com/pic.jpg');
 
       fixture.componentRef.setInput('user', { ...sampleUser, picture: '/uploads/pic.jpg' });

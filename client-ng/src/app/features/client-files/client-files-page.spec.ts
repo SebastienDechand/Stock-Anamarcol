@@ -145,7 +145,9 @@ describe('ClientFilesPage', () => {
 
   describe('paginate()', () => {
     it('returns the first 9 items for page 1', () => {
-      const files = Array.from({ length: 15 }, (_, i) => makeFile({ _id: `${i}`, lastName: `Nom${i}` }));
+      const files = Array.from({ length: 15 }, (_, i) =>
+        makeFile({ _id: `${i}`, lastName: `Nom${i}` }),
+      );
       component.currentPage.set(1);
 
       const result = component.paginate(files);
@@ -156,7 +158,9 @@ describe('ClientFilesPage', () => {
     });
 
     it('returns the correct slice for page 2', () => {
-      const files = Array.from({ length: 15 }, (_, i) => makeFile({ _id: `${i}`, lastName: `Nom${i}` }));
+      const files = Array.from({ length: 15 }, (_, i) =>
+        makeFile({ _id: `${i}`, lastName: `Nom${i}` }),
+      );
       component.currentPage.set(2);
 
       const result = component.paginate(files);
@@ -172,7 +176,9 @@ describe('ClientFilesPage', () => {
 
   describe('totalPages()', () => {
     it('returns 1 for 9 or fewer items', () => {
-      const files = Array.from({ length: 9 }, (_, i) => makeFile({ _id: `${i}`, lastName: `Nom${i}` }));
+      const files = Array.from({ length: 9 }, (_, i) =>
+        makeFile({ _id: `${i}`, lastName: `Nom${i}` }),
+      );
       expect(component.totalPages(files)).toBe(1);
     });
 
@@ -181,7 +187,9 @@ describe('ClientFilesPage', () => {
     });
 
     it('returns 2 for 10 items', () => {
-      const files = Array.from({ length: 10 }, (_, i) => makeFile({ _id: `${i}`, lastName: `Nom${i}` }));
+      const files = Array.from({ length: 10 }, (_, i) =>
+        makeFile({ _id: `${i}`, lastName: `Nom${i}` }),
+      );
       expect(component.totalPages(files)).toBe(2);
     });
   });

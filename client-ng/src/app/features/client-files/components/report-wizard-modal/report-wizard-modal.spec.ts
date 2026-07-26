@@ -247,14 +247,10 @@ describe('ReportWizardModal', () => {
       component.saved.subscribe(spy);
 
       component.submit();
-      expect(facade.create).toHaveBeenCalledWith(
-        expect.objectContaining({ clientFile: '' }),
-      );
+      expect(facade.create).toHaveBeenCalledWith(expect.objectContaining({ clientFile: '' }));
       expect(component.loading()).toBe(true);
 
-      actions$.next(
-        InterventionReportsActions.createReportSuccess({ report: makeReport() }),
-      );
+      actions$.next(InterventionReportsActions.createReportSuccess({ report: makeReport() }));
 
       expect(component.loading()).toBe(false);
       expect(spy).toHaveBeenCalled();

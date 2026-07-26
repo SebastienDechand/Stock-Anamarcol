@@ -79,13 +79,15 @@ describe('itemsReducer', () => {
     expect(state.error).toBe('oops');
   });
 
-  it('should handle createItemSuccess by prepending to allItems', () => {
+  it('should handle createItemSuccess by prepending to both items and allItems', () => {
     const existing: Item = { ...sampleItem, _id: '2' };
     const state = itemsReducer(
-      { ...initialItemsState, allItems: [existing] },
+      { ...initialItemsState, items: [existing], allItems: [existing], total: 1 },
       ItemsActions.createItemSuccess({ item: sampleItem }),
     );
+    expect(state.items).toEqual([sampleItem, existing]);
     expect(state.allItems).toEqual([sampleItem, existing]);
+    expect(state.total).toBe(2);
   });
 
   it('should handle updateItemSuccess in both items and allItems', () => {

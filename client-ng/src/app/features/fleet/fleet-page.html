@@ -125,9 +125,7 @@
                         </td>
                         <td>
                           <span
-                            [class.text-warning]="
-                              dateStatus(v.antiPollutionExpiryDate) === 'soon'
-                            "
+                            [class.text-warning]="dateStatus(v.antiPollutionExpiryDate) === 'soon'"
                             [class.text-danger]="
                               dateStatus(v.antiPollutionExpiryDate) === 'expired'
                             "

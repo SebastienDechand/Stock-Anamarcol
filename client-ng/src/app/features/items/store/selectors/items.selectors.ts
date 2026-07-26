@@ -10,10 +10,7 @@ export const selectPage = createSelector(selectItemsState, (state) => state.page
 export const selectTotalPages = createSelector(selectItemsState, (state) => state.totalPages);
 export const selectItemsLoading = createSelector(selectItemsState, (state) => state.isLoading);
 export const selectItemsLoaded = createSelector(selectItemsState, (state) => state.loaded);
-export const selectItemsPageLoaded = createSelector(
-  selectItemsState,
-  (state) => state.pageLoaded,
-);
+export const selectItemsPageLoaded = createSelector(selectItemsState, (state) => state.pageLoaded);
 export const selectSelectedItemId = createSelector(
   selectItemsState,
   (state) => state.selectedItemId,
