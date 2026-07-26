@@ -24,7 +24,7 @@ describe("UploadItem Controller", () => {
 
   beforeEach(() => {
     req = {
-      body: { name: "item1", supplier: "Oxhoo", status: "NEW", itemId: "i1" },
+      body: { name: "item1", supplier: "Oxhoo", status: "NEW", itemId: "507f1f77bcf86cd799439011" },
       file: { buffer: Buffer.from("fake") } as Express.Multer.File,
     };
     res = {
@@ -45,17 +45,27 @@ describe("UploadItem Controller", () => {
     expect(uploadToImgBB).not.toHaveBeenCalled();
   });
 
+  it("should return 400 when itemId is not a valid ObjectId", async () => {
+    (validateUploadedFile as ReturnType<typeof vi.fn>).mockReturnValue(true);
+    req.body.itemId = "not-an-id";
+
+    await uploadItem(req as Request, res as Response);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(uploadToImgBB).not.toHaveBeenCalled();
+  });
+
   it("should upload the picture using a name built from name+supplier+status, update the item and return it", async () => {
     (validateUploadedFile as ReturnType<typeof vi.fn>).mockReturnValue(true);
     (uploadToImgBB as ReturnType<typeof vi.fn>).mockResolvedValue("https://img/item.jpg");
-    const updatedItem = { _id: "i1", image: "https://img/item.jpg" };
+    const updatedItem = { _id: "507f1f77bcf86cd799439011", image: "https://img/item.jpg" };
     mockItemModel.findByIdAndUpdate.mockResolvedValue(updatedItem);
 
     await uploadItem(req as Request, res as Response);
 
     expect(uploadToImgBB).toHaveBeenCalledWith(req.file!.buffer, "item1OxhooNEW.jpg");
     expect(mockItemModel.findByIdAndUpdate).toHaveBeenCalledWith(
-      "i1",
+      "507f1f77bcf86cd799439011",
       { $set: { image: "https://img/item.jpg" } },
       { new: true, upsert: true, setDefaultsOnInsert: true },
     );

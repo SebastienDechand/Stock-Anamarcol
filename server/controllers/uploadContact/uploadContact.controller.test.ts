@@ -29,7 +29,7 @@ describe("UploadContact Controller", () => {
 
   beforeEach(() => {
     req = {
-      body: { name: "contact1", contactId: "c1" },
+      body: { name: "contact1", contactId: "507f1f77bcf86cd799439011" },
       file: { buffer: Buffer.from("fake") } as Express.Multer.File,
     };
     res = {
@@ -51,24 +51,34 @@ describe("UploadContact Controller", () => {
     expect(uploadToImgBB).not.toHaveBeenCalled();
   });
 
+  it("should return 400 when contactId is not a valid ObjectId", async () => {
+    (validateUploadedFile as ReturnType<typeof vi.fn>).mockReturnValue(true);
+    req.body.contactId = "not-an-id";
+
+    await uploadContact(req as Request, res as Response);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(uploadToImgBB).not.toHaveBeenCalled();
+  });
+
   it("should upload the picture, update the contact, log the event and return it", async () => {
     (validateUploadedFile as ReturnType<typeof vi.fn>).mockReturnValue(true);
     (uploadToImgBB as ReturnType<typeof vi.fn>).mockResolvedValue("https://img/contact.jpg");
-    const updatedContact = { _id: "c1", picture: "https://img/contact.jpg" };
+    const updatedContact = { _id: "507f1f77bcf86cd799439011", picture: "https://img/contact.jpg" };
     mockContactModel.findByIdAndUpdate.mockResolvedValue(updatedContact);
 
     await uploadContact(req as Request, res as Response);
 
     expect(uploadToImgBB).toHaveBeenCalledWith(req.file!.buffer, "contact1.jpg");
     expect(mockContactModel.findByIdAndUpdate).toHaveBeenCalledWith(
-      "c1",
+      "507f1f77bcf86cd799439011",
       { $set: { picture: "https://img/contact.jpg" } },
       { new: true, upsert: true, setDefaultsOnInsert: true },
     );
     expect(logEvent).toHaveBeenCalledWith(
       "upload",
       "contact",
-      "c1",
+      "507f1f77bcf86cd799439011",
       "admin",
       { pictureUrl: "https://img/contact.jpg" },
     );
@@ -78,12 +88,12 @@ describe("UploadContact Controller", () => {
   it("should still respond even if the audit log fails", async () => {
     (validateUploadedFile as ReturnType<typeof vi.fn>).mockReturnValue(true);
     (uploadToImgBB as ReturnType<typeof vi.fn>).mockResolvedValue("https://img/contact.jpg");
-    mockContactModel.findByIdAndUpdate.mockResolvedValue({ _id: "c1" });
+    mockContactModel.findByIdAndUpdate.mockResolvedValue({ _id: "507f1f77bcf86cd799439011" });
     (logEvent as ReturnType<typeof vi.fn>).mockRejectedValue(new Error("audit down"));
 
     await uploadContact(req as Request, res as Response);
 
-    expect(res.json).toHaveBeenCalledWith({ _id: "c1" });
+    expect(res.json).toHaveBeenCalledWith({ _id: "507f1f77bcf86cd799439011" });
   });
 
   it("should return 500 on unexpected error", async () => {
