@@ -275,6 +275,7 @@
   background: rgb(0 0 0 / 0.5);
   // Above the sidebar (z-index: 200, core/layout/sidebar) so a modal never renders under it
   z-index: 300;
+  padding: var(--space-4);
   @include flex-center;
 }
 

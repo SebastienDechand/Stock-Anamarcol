@@ -269,16 +269,9 @@
 /* #endregion */
 /* #region Modal purge */
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  // Above the sidebar (z-index: 200, core/layout/sidebar) so the modal never renders under it
-  z-index: 300;
+  @include overlay-backdrop;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(2px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
 }
 
 .modal-box {
