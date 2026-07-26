@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../core/services/language/language.service';
 
@@ -7,6 +7,7 @@ export type LanguageToggleVariant = 'icon' | 'menu-item';
 
 @Component({
   selector: 'app-language-toggle',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [AsyncPipe, TranslatePipe],
   templateUrl: './language-toggle.html',

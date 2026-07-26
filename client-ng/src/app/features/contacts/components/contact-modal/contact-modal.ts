@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -11,6 +11,7 @@ import {
 
 @Component({
   selector: 'app-contact-modal',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './contact-modal.html',

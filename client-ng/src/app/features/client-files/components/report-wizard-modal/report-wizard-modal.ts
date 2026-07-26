@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   OnChanges,
@@ -43,6 +44,7 @@ function emptyUnit(): CashguardUnit {
 
 @Component({
   selector: 'app-report-wizard-modal',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './report-wizard-modal.html',

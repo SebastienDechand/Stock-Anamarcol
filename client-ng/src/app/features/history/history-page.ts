@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   ElementRef,
@@ -35,7 +36,11 @@ import { HistoryFacade } from './store/facade/history.facade';
 import { Spinner } from '../../shared/components/spinner/spinner';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
 import { AuditEvent } from '../../shared/models/audit/audit.model';
-import { ACTION_MAP, DEFAULT_ACTION, ENTITY_MAP } from '../../shared/constants/audit/audit.constants';
+import {
+  ACTION_MAP,
+  DEFAULT_ACTION,
+  ENTITY_MAP,
+} from '../../shared/constants/audit/audit.constants';
 import { LanguageService } from '../../core/services/language/language.service';
 import { resolveLocale } from '../../shared/utils/date/date.utils';
 
@@ -59,6 +64,7 @@ function isQuantityOnlyUpdate(event: AuditEvent): boolean {
 
 @Component({
   selector: 'app-history-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe, LucideAngularModule, Spinner, PageHero],
   templateUrl: './history-page.html',

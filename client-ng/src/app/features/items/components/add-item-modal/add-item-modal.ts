@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -9,6 +9,7 @@ import { requiredTrimmedValidator } from '../../../../shared/utils/validators/va
 
 @Component({
   selector: 'app-add-item-modal',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './add-item-modal.html',

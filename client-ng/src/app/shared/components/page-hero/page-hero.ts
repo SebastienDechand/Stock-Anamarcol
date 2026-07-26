@@ -1,9 +1,10 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 import type { LucideIconData } from 'lucide-angular';
 
 @Component({
   selector: 'app-page-hero',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [LucideAngularModule],
   templateUrl: './page-hero.html',

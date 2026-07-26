@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
@@ -9,6 +9,7 @@ import { LanguageToggle } from '../../shared/components/language-toggle/language
 
 @Component({
   selector: 'app-login-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [FormsModule, AsyncPipe, LucideAngularModule, TranslatePipe, LanguageToggle],
   templateUrl: './login-page.html',

@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, AlertCircle, Edit2, Trash2, FileText } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -15,6 +15,7 @@ import {
 
 @Component({
   selector: 'app-vehicle-card',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, LucideAngularModule, TranslatePipe, Badge],
   templateUrl: './vehicle-card.html',

@@ -1,9 +1,13 @@
-import { Component, input, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LucideAngularModule, FileText, Trash2, Upload } from 'lucide-angular';
-import { Vehicle, VehicleDocument, DocumentType } from '../../../../shared/models/vehicle/vehicle.model';
+import {
+  Vehicle,
+  VehicleDocument,
+  DocumentType,
+} from '../../../../shared/models/vehicle/vehicle.model';
 import { environment } from '../../../../../environments/environment';
 import { ToastService } from '../../../../core/toast/toast.service';
 import { LanguageService } from '../../../../core/services/language/language.service';
@@ -22,6 +26,7 @@ const ALLOWED_EXTENSIONS = ['pdf', 'doc', 'docx', 'xlsx', 'xls', 'jpg', 'jpeg', 
 
 @Component({
   selector: 'app-vehicle-document-list',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, FormsModule, TranslatePipe, LucideAngularModule],
   templateUrl: './vehicle-document-list.html',

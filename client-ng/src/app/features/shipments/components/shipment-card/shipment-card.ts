@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
@@ -18,6 +18,7 @@ import { Badge } from '../../../../shared/components/badge/badge';
 
 @Component({
   selector: 'app-shipment-card',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, LucideAngularModule, TranslatePipe, Badge],
   templateUrl: './shipment-card.html',

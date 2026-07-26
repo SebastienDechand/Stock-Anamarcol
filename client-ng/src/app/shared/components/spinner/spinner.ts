@@ -1,7 +1,8 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-spinner',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   template: `
     <div class="spinner-overlay" [class.spinner-overlay--inline]="inline()">

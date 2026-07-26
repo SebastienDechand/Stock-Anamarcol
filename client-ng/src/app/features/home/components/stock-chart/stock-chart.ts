@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   input,
   OnChanges,
@@ -49,6 +50,7 @@ const PALETTE = [
 
 @Component({
   selector: 'app-stock-chart',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [BaseChartDirective, TranslatePipe],
   templateUrl: './stock-chart.html',
@@ -100,9 +102,7 @@ export class StockChart implements OnChanges, AfterViewChecked {
 
   ngOnChanges() {
     this.needsResize = true;
-    const labels = this.stats().map(
-      (stat) => stat.name ?? this.translate.instant('HOME.UNKNOWN'),
-    );
+    const labels = this.stats().map((stat) => stat.name ?? this.translate.instant('HOME.UNKNOWN'));
     const data = this.stats().map((stat) => stat.totalStock);
     const colors = this.palette;
 

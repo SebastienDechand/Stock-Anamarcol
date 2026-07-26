@@ -1,4 +1,4 @@
-import { Component, OnInit, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -14,6 +14,7 @@ export interface FiltersApplied {
 
 @Component({
   selector: 'app-filters-modal',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, LucideAngularModule, TranslatePipe],
   templateUrl: './filters-modal.html',

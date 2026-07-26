@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { UiFacade } from '../../store/ui/facade/ui.facade';
@@ -7,6 +7,7 @@ import { Topbar } from './topbar/topbar';
 
 @Component({
   selector: 'app-layout',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [RouterOutlet, AsyncPipe, Sidebar, Topbar],
   templateUrl: './layout.html',

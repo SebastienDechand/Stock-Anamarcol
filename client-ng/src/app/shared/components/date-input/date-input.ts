@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   signal,
@@ -38,6 +39,7 @@ const MONTH_KEYS = [
 
 @Component({
   selector: 'app-date-input',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, LucideAngularModule, TranslatePipe],
   templateUrl: './date-input.html',

@@ -1,4 +1,12 @@
-import { Component, DestroyRef, inject, OnInit, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
 import { LucideAngularModule, X, Archive, AlertTriangle, Download } from 'lucide-angular';
@@ -11,6 +19,7 @@ import { resolveLocale } from '../../../../shared/utils/date/date.utils';
 
 @Component({
   selector: 'app-shipment-history-modal',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, LucideAngularModule, TranslatePipe],
   templateUrl: './shipment-history-modal.html',

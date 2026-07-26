@@ -1,12 +1,16 @@
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { User } from '../../../../shared/models/user/user.model';
-import { ROLE_DISPLAY_ORDER, ROLE_LABEL_KEYS } from '../../../../shared/constants/roles/roles.constants';
+import {
+  ROLE_DISPLAY_ORDER,
+  ROLE_LABEL_KEYS,
+} from '../../../../shared/constants/roles/roles.constants';
 
 @Component({
   selector: 'app-member-card',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, LucideAngularModule, TranslatePipe],
   templateUrl: './member-card.html',

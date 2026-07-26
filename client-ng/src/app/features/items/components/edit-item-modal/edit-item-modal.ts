@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
@@ -29,6 +30,7 @@ import { requiredTrimmedValidator } from '../../../../shared/utils/validators/va
 
 @Component({
   selector: 'app-edit-item-modal',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './edit-item-modal.html',
