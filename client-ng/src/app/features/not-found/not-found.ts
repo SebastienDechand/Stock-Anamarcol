@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { LucideAngularModule, Home } from 'lucide-angular';
@@ -6,6 +6,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-not-found',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, LucideAngularModule, TranslatePipe],
   templateUrl: './not-found.html',

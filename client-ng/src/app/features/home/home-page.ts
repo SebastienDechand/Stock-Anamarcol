@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -11,6 +11,7 @@ import { PageHero } from '../../shared/components/page-hero/page-hero';
 
 @Component({
   selector: 'app-home-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     AsyncPipe,

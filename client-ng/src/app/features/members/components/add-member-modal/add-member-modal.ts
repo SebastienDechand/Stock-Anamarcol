@@ -1,4 +1,4 @@
-import { Component, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -15,6 +15,7 @@ import {
 
 @Component({
   selector: 'app-add-member-modal',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './add-member-modal.html',

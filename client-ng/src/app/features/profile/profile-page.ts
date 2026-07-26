@@ -1,4 +1,12 @@
-import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
@@ -17,6 +25,7 @@ import { VEHICLE_FORMAT_LABEL_KEYS } from '../../shared/utils/vehicle-status/veh
 
 @Component({
   selector: 'app-profile-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, FormsModule, LucideAngularModule, TranslatePipe, DateFrPipe, PageHero],
   templateUrl: './profile-page.html',

@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -6,6 +6,7 @@ import { Item } from '../../../../shared/models/item/item.model';
 
 @Component({
   selector: 'app-item-card',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, LucideAngularModule, TranslatePipe],
   templateUrl: './item-card.html',

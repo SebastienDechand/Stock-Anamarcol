@@ -1,4 +1,12 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -42,7 +50,10 @@ import {
   ClientFileDoc,
   ClientFileDocType,
 } from '../../shared/models/client-file/client-file.model';
-import { CashguardUnit, InterventionReport } from '../../shared/models/intervention-report/intervention-report.model';
+import {
+  CashguardUnit,
+  InterventionReport,
+} from '../../shared/models/intervention-report/intervention-report.model';
 import { Shipment } from '../../shared/models/shipment/shipment.model';
 import { environment } from '../../../environments/environment';
 import { LanguageService } from '../../core/services/language/language.service';
@@ -60,6 +71,7 @@ const DOC_TYPE_LABELS: Record<ClientFileDocType, string> = {
 
 @Component({
   selector: 'app-client-file-detail-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,

@@ -1,4 +1,14 @@
-import { Component, OnChanges, SimpleChanges, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnChanges,
+  SimpleChanges,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LucideAngularModule, X, FileSpreadsheet } from 'lucide-angular';
@@ -236,6 +246,7 @@ function emptyForm(): ClientFileForm {
 
 @Component({
   selector: 'app-client-file-modal',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './client-file-modal.html',
@@ -244,6 +255,7 @@ function emptyForm(): ClientFileForm {
 export class ClientFileModal implements OnChanges {
   private toast = inject(ToastService);
   private fb = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
 
   file = input<ClientFile | null>(null);
   save = output<{ id?: string; data: ClientFileForm }>();
@@ -406,6 +418,9 @@ export class ClientFileModal implements OnChanges {
       this.form.equipment = { ...this.form.equipment, ...equipment };
     }
     this.lastNameControl.setValue(this.form.lastName);
+    // form is a plain object mutated after an await boundary (XLSX parsing) -
+    // OnPush needs an explicit nudge since nothing here is a signal write.
+    this.cdr.markForCheck();
   }
 
   submit(): void {

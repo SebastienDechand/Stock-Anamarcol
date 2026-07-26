@@ -1,10 +1,11 @@
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 import { AlertTriangle } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-confirm-dialog',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [LucideAngularModule, TranslatePipe],
   templateUrl: './confirm-dialog.html',

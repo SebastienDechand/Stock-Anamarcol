@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +11,11 @@ import { Spinner } from '../../shared/components/spinner/spinner';
 import { AccessDenied } from '../../shared/components/access-denied/access-denied';
 import { PageHero } from '../../shared/components/page-hero/page-hero';
 import { User } from '../../shared/models/user/user.model';
-import { Role, ROLE_DISPLAY_ORDER, ROLE_LABEL_KEYS } from '../../shared/constants/roles/roles.constants';
+import {
+  Role,
+  ROLE_DISPLAY_ORDER,
+  ROLE_LABEL_KEYS,
+} from '../../shared/constants/roles/roles.constants';
 
 const ROLE_COLUMNS: { role: Role; labelKey: string }[] = ROLE_DISPLAY_ORDER.map((role) => ({
   role,
@@ -20,6 +24,7 @@ const ROLE_COLUMNS: { role: Role; labelKey: string }[] = ROLE_DISPLAY_ORDER.map(
 
 @Component({
   selector: 'app-admin-roles-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,

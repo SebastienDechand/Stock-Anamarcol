@@ -1,4 +1,12 @@
-import { Component, OnChanges, SimpleChanges, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnChanges,
+  SimpleChanges,
+  inject,
+  input,
+  output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -38,6 +46,7 @@ const MODEL_FORMAT: Record<VehicleModel, VehicleFormat[]> = {
 
 @Component({
   selector: 'app-vehicle-form-modal',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,
@@ -111,12 +120,8 @@ export class VehicleFormModal implements OnChanges {
           serviceDate: this.toDateInput(vehicle.serviceDate),
           inspectionDate: this.toDateInput(vehicle.inspectionDate),
           inspectionExpiryDate: this.toDateInput(vehicle.inspectionExpiryDate),
-          antiPollutionInspectionDate: this.toDateInput(
-            vehicle.antiPollutionInspectionDate,
-          ),
-          antiPollutionExpiryDate: this.toDateInput(
-            vehicle.antiPollutionExpiryDate,
-          ),
+          antiPollutionInspectionDate: this.toDateInput(vehicle.antiPollutionInspectionDate),
+          antiPollutionExpiryDate: this.toDateInput(vehicle.antiPollutionExpiryDate),
           assignedTo:
             (typeof vehicle.assignedTo === 'object'
               ? vehicle.assignedTo?._id
@@ -151,10 +156,7 @@ export class VehicleFormModal implements OnChanges {
   onAntiPollutionInspectionChange(value?: string): void {
     if (value !== undefined) this.form.antiPollutionInspectionDate = value;
     if (this.form.antiPollutionInspectionDate) {
-      this.form.antiPollutionExpiryDate = addYears(
-        this.form.antiPollutionInspectionDate,
-        2,
-      );
+      this.form.antiPollutionExpiryDate = addYears(this.form.antiPollutionInspectionDate, 2);
     }
   }
 

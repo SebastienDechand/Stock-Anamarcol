@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   AfterViewInit,
   Component,
   computed,
@@ -29,6 +30,7 @@ function clampOffset(x: number, y: number, zoom: number): { x: number; y: number
 
 @Component({
   selector: 'app-camera-card',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, LucideAngularModule, TranslatePipe],
   templateUrl: './camera-card.html',

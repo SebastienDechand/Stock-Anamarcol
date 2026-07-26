@@ -1,9 +1,10 @@
-import { Component, computed, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { LucideAngularModule, ChevronLeft, ChevronRight } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-pagination',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [LucideAngularModule, TranslatePipe],
   templateUrl: './pagination.html',

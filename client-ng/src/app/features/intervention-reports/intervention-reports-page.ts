@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { LucideAngularModule, Search, FolderOpen } from 'lucide-angular';
@@ -12,6 +12,7 @@ import { resolveLocale } from '../../shared/utils/date/date.utils';
 
 @Component({
   selector: 'app-intervention-reports-page',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CommonModule, LucideAngularModule, TranslatePipe, Spinner, PageHero],
   templateUrl: './intervention-reports-page.html',
