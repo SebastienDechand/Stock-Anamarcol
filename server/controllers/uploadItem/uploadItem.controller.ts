@@ -1,18 +1,14 @@
-import { Request, Response } from "express";
-import ItemModel from "../../models/item.model";
-import { validateUploadedFile, uploadToImgBB } from "../../utils/upload/upload.utils";
-import { handleError } from "../../utils/response/response.utils";
-import { validateObjectId } from "../../utils/validate/validate.utils";
+import { Request, Response } from 'express';
+import ItemModel from '../../models/item.model';
+import { validateUploadedFile, uploadToImgBB } from '../../utils/upload/upload.utils';
+import { handleError } from '../../utils/response/response.utils';
+import { validateObjectId } from '../../utils/validate/validate.utils';
 
-export const uploadItem = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+export const uploadItem = async (req: Request, res: Response): Promise<void> => {
   if (!validateUploadedFile(req, res)) return;
   if (!validateObjectId(req.body.itemId, res)) return;
 
-  const fileName =
-    req.body.name + req.body.supplier + req.body.status + ".jpg";
+  const fileName = req.body.name + req.body.supplier + req.body.status + '.jpg';
 
   try {
     const imageUrl = await uploadToImgBB(req.file!.buffer, fileName);
@@ -25,6 +21,6 @@ export const uploadItem = async (
 
     res.json(updatedItem);
   } catch (err) {
-    handleError(res, err, "File upload or database update error:");
+    handleError(res, err, 'File upload or database update error:');
   }
 };

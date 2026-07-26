@@ -1,5 +1,5 @@
-import HistoryModel from "../../models/history.model";
-import AuditModel from "../../models/audit.model";
+import HistoryModel from '../../models/history.model';
+import AuditModel from '../../models/audit.model';
 
 /**
  * Purge entries older than 60 days from both History and Audit tables
@@ -19,14 +19,13 @@ export const purgeOldEntries = async () => {
       }),
     ]);
 
-    const totalDeleted =
-      (historyResult.deletedCount || 0) + (auditResult.deletedCount || 0);
+    const totalDeleted = (historyResult.deletedCount || 0) + (auditResult.deletedCount || 0);
     if (totalDeleted > 0) {
       console.log(
         `[Purge] Deleted ${historyResult.deletedCount || 0} history + ${auditResult.deletedCount || 0} audit entries (total: ${totalDeleted})`,
       );
     }
   } catch (err) {
-    console.error("[Purge] Error:", err);
+    console.error('[Purge] Error:', err);
   }
 };

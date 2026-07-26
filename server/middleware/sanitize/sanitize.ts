@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from 'express';
 
 /**
  * Recursively remove keys starting with '$' and keys containing '.'
@@ -17,33 +17,29 @@ function sanitize(obj: unknown): unknown {
     return obj.map(sanitize);
   }
 
-  if (typeof obj === "object") {
+  if (typeof obj === 'object') {
     const clean: Record<string, unknown> = {};
     for (const key of Object.keys(obj as Record<string, unknown>)) {
-      if (key.startsWith("$") || key.includes(".")) continue;
+      if (key.startsWith('$') || key.includes('.')) continue;
       clean[key] = sanitize((obj as Record<string, unknown>)[key]);
     }
     return clean;
   }
 
   // Sanitize string values that look like operators (e.g. "{$gt: ''}")
-  if (typeof obj === "string" && obj.includes("$")) {
-    return obj.replace(/\$/g, "");
+  if (typeof obj === 'string' && obj.includes('$')) {
+    return obj.replace(/\$/g, '');
   }
 
   return obj;
 }
 
 /** Express 5-compatible NoSQL sanitization middleware */
-export function mongoSanitize(
-  req: Request,
-  _res: Response,
-  next: NextFunction,
-): void {
-  if (req.body && typeof req.body === "object") {
+export function mongoSanitize(req: Request, _res: Response, next: NextFunction): void {
+  if (req.body && typeof req.body === 'object') {
     req.body = sanitize(req.body);
   }
-  if (req.params && typeof req.params === "object") {
+  if (req.params && typeof req.params === 'object') {
     // req.params is writable in Express 5
     const sanitized = sanitize(req.params) as Record<string, string>;
     for (const key of Object.keys(req.params)) {

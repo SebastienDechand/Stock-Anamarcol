@@ -1,9 +1,9 @@
-import ContactModel, { IContact } from "../../models/contact.model";
-import type { HydratedDocument } from "mongoose";
+import ContactModel, { IContact } from '../../models/contact.model';
+import type { HydratedDocument } from 'mongoose';
 
 export type NewContact = Pick<
   IContact,
-  "name" | "email" | "link" | "position" | "phone" | "category"
+  'name' | 'email' | 'link' | 'position' | 'phone' | 'category'
 >;
 
 export function listContacts() {
@@ -14,9 +14,7 @@ export function findContactById(id: string) {
   return ContactModel.findById(id).lean();
 }
 
-export function findContactDocument(
-  id: string,
-): Promise<HydratedDocument<IContact> | null> {
+export function findContactDocument(id: string): Promise<HydratedDocument<IContact> | null> {
   return ContactModel.findById(id);
 }
 

@@ -1,19 +1,15 @@
-import { Request, Response } from "express";
-import ItemModel from "../../models/item.model";
-import { createItemErrors } from "../../utils/errors/errors.utils";
-import { validateObjectId } from "../../utils/validate/validate.utils";
-import {
-  logItemCreate,
-  logItemChanges,
-  logItemDelete,
-} from "../../utils/history/history.utils";
-import { logEvent } from "../../utils/audit/audit.utils";
-import { handleError } from "../../utils/response/response.utils";
-import { invalidateStatsCache } from "../stats/stats.controller";
-import { ErrorCode } from "../../constants/errorCodes";
-import { Role } from "../../constants";
+import { Request, Response } from 'express';
+import ItemModel from '../../models/item.model';
+import { createItemErrors } from '../../utils/errors/errors.utils';
+import { validateObjectId } from '../../utils/validate/validate.utils';
+import { logItemCreate, logItemChanges, logItemDelete } from '../../utils/history/history.utils';
+import { logEvent } from '../../utils/audit/audit.utils';
+import { handleError } from '../../utils/response/response.utils';
+import { invalidateStatsCache } from '../stats/stats.controller';
+import { ErrorCode } from '../../constants/errorCodes';
+import { Role } from '../../constants';
 
-const ADMIN_ONLY_FIELDS = ["supplier", "status"] as const;
+const ADMIN_ONLY_FIELDS = ['supplier', 'status'] as const;
 
 export const itemInfo = async (req: Request, res: Response): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
@@ -21,14 +17,12 @@ export const itemInfo = async (req: Request, res: Response): Promise<void> => {
   try {
     const item = await ItemModel.findById(req.params.id).lean();
     if (!item) {
-      res
-        .status(404)
-        .json({ message: "Item not found", code: ErrorCode.ITEM_NOT_FOUND });
+      res.status(404).json({ message: 'Item not found', code: ErrorCode.ITEM_NOT_FOUND });
       return;
     }
     res.status(200).json(item);
   } catch (err) {
-    handleError(res, err, "Error fetching item:");
+    handleError(res, err, 'Error fetching item:');
   }
 };
 
@@ -38,39 +32,39 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
     const {
       page = 1,
       limit = 20,
-      search = "",
-      supplier = "",
-      status = "",
+      search = '',
+      supplier = '',
+      status = '',
       lowStock,
       cgKit,
       tpvKit,
-      sortBy = "name",
-      sortOrder = "asc",
+      sortBy = 'name',
+      sortOrder = 'asc',
     } = req.query;
 
     const filter: Record<string, unknown> = {};
 
     if (search) {
-      filter.name = { $regex: search, $options: "i" };
+      filter.name = { $regex: search, $options: 'i' };
     }
     if (supplier) {
-      filter.supplier = { $in: (supplier as string).split(",") };
+      filter.supplier = { $in: (supplier as string).split(',') };
     }
     if (status) {
-      filter.status = { $in: (status as string).split(",") };
+      filter.status = { $in: (status as string).split(',') };
     }
-    if (lowStock === "true") {
+    if (lowStock === 'true') {
       filter.quantity = { $lt: 5 };
     }
-    if (cgKit === "true") {
+    if (cgKit === 'true') {
       filter.cgKit = true;
     }
-    if (tpvKit === "true") {
+    if (tpvKit === 'true') {
       filter.tpvKit = true;
     }
 
     const sort: Record<string, 1 | -1> = {
-      [sortBy as string]: sortOrder === "desc" ? -1 : 1,
+      [sortBy as string]: sortOrder === 'desc' ? -1 : 1,
     };
     const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
 
@@ -85,8 +79,8 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
 
     // If a preparation filter is active, check if decrement is possible
     const preparationFields: string[] = [];
-    if (cgKit === "true") preparationFields.push("cgKit");
-    if (tpvKit === "true") preparationFields.push("tpvKit");
+    if (cgKit === 'true') preparationFields.push('cgKit');
+    if (tpvKit === 'true') preparationFields.push('tpvKit');
 
     if (preparationFields.length > 0) {
       for (const field of preparationFields) {
@@ -96,7 +90,7 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
             [field]: true,
             $or: [
               { quantity: { $lte: 0 } },
-              ...(field === "cgKit"
+              ...(field === 'cgKit'
                 ? [
                     {
                       name: { $regex: /cassette/i },
@@ -131,24 +125,12 @@ export const readItem = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json(response);
   } catch (err) {
-    handleError(res, err, "Error fetching items:");
+    handleError(res, err, 'Error fetching items:');
   }
 };
 
-export const createItem = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
-  const {
-    name,
-    quantity,
-    supplier,
-    status,
-    posterId,
-    modifierName,
-    cgKit,
-    tpvKit,
-  } = req.body;
+export const createItem = async (req: Request, res: Response): Promise<void> => {
+  const { name, quantity, supplier, status, posterId, modifierName, cgKit, tpvKit } = req.body;
   try {
     const item = await ItemModel.create({
       name,
@@ -162,12 +144,9 @@ export const createItem = async (
     });
 
     try {
-      logItemCreate(
-        String(item._id),
-        res.locals.user?.username || modifierName || "Inconnu",
-      );
+      logItemCreate(String(item._id), res.locals.user?.username || modifierName || 'Inconnu');
     } catch (err) {
-      console.error("logItemCreate error:", err);
+      console.error('logItemCreate error:', err);
     }
 
     invalidateStatsCache();
@@ -178,21 +157,17 @@ export const createItem = async (
   }
 };
 
-export const updateItem = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+export const updateItem = async (req: Request, res: Response): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
 
   const userRoles = res.locals.user?.roles ?? [];
-  const isAdmin =
-    userRoles.includes(Role.ADMIN) || userRoles.includes(Role.SUPERADMIN);
+  const isAdmin = userRoles.includes(Role.ADMIN) || userRoles.includes(Role.SUPERADMIN);
   const requestsAdminOnlyField = ADMIN_ONLY_FIELDS.some((field) =>
     Object.prototype.hasOwnProperty.call(req.body, field),
   );
   if (requestsAdminOnlyField && !isAdmin) {
     res.status(403).json({
-      message: "Access denied - admin required",
+      message: 'Access denied - admin required',
       code: ErrorCode.ACCESS_DENIED_ADMIN,
     });
     return;
@@ -202,15 +177,13 @@ export const updateItem = async (
     const item = await ItemModel.findById(req.params.id);
 
     if (!item) {
-      res
-        .status(404)
-        .json({ message: "Item not found", code: ErrorCode.ITEM_NOT_FOUND });
+      res.status(404).json({ message: 'Item not found', code: ErrorCode.ITEM_NOT_FOUND });
       return;
     }
 
     // Snapshot old values before mutation (guard for mocked objects)
     const oldItem: Record<string, unknown> =
-      typeof item.toObject === "function"
+      typeof item.toObject === 'function'
         ? (item.toObject() as unknown as Record<string, unknown>)
         : { ...item };
 
@@ -218,17 +191,17 @@ export const updateItem = async (
     if (req.body.supplier) item.supplier = req.body.supplier;
     if (req.body.status) item.status = req.body.status;
 
-    if (Object.prototype.hasOwnProperty.call(req.body, "quantity")) {
+    if (Object.prototype.hasOwnProperty.call(req.body, 'quantity')) {
       item.quantity = req.body.quantity < 0 ? 0 : req.body.quantity;
     }
 
     if (req.body.image) item.image = req.body.image;
     if (req.body.modifierName) item.modifierName = req.body.modifierName;
 
-    if (Object.prototype.hasOwnProperty.call(req.body, "cgKit")) {
+    if (Object.prototype.hasOwnProperty.call(req.body, 'cgKit')) {
       item.cgKit = req.body.cgKit;
     }
-    if (Object.prototype.hasOwnProperty.call(req.body, "tpvKit")) {
+    if (Object.prototype.hasOwnProperty.call(req.body, 'tpvKit')) {
       item.tpvKit = req.body.tpvKit;
     }
 
@@ -239,37 +212,29 @@ export const updateItem = async (
         req.params.id as string,
         oldItem,
         req.body,
-        res.locals.user?.username ||
-          req.body.modifierName ||
-          oldItem.modifierName ||
-          "Inconnu",
+        res.locals.user?.username || req.body.modifierName || oldItem.modifierName || 'Inconnu',
       );
     } catch (err) {
-      console.error("logItemChanges error:", err);
+      console.error('logItemChanges error:', err);
     }
 
     invalidateStatsCache();
     res.status(200).json({ item: updatedItem });
   } catch (err) {
-    handleError(res, err, "Error updating item:");
+    handleError(res, err, 'Error updating item:');
   }
 };
 
-export const deleteItem = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+export const deleteItem = async (req: Request, res: Response): Promise<void> => {
   if (!validateObjectId(req.params.id as string, res)) return;
 
   try {
     const maybeQuery = ItemModel.findById(req.params.id as string);
     let item: Record<string, unknown> | undefined = undefined;
     if (maybeQuery) {
-      if (typeof maybeQuery.lean === "function") {
+      if (typeof maybeQuery.lean === 'function') {
         item = (await maybeQuery.lean()) as unknown as Record<string, unknown>;
-      } else if (
-        typeof (maybeQuery as { then?: unknown }).then === "function"
-      ) {
+      } else if (typeof (maybeQuery as { then?: unknown }).then === 'function') {
         item = (await maybeQuery) as unknown as Record<string, unknown>;
       }
     }
@@ -280,28 +245,23 @@ export const deleteItem = async (
       try {
         logItemDelete(
           req.params.id as string,
-          String(item.name ?? ""),
-          res.locals.user?.username || "Admin",
+          String(item.name ?? ''),
+          res.locals.user?.username || 'Admin',
         );
       } catch (err) {
-        console.error("logItemDelete error:", err);
+        console.error('logItemDelete error:', err);
       }
     }
 
     invalidateStatsCache();
-    res
-      .status(200)
-      .json({ message: "Successfully deleted", code: ErrorCode.DELETED });
+    res.status(200).json({ message: 'Successfully deleted', code: ErrorCode.DELETED });
   } catch (err) {
-    handleError(res, err, "Error deleting item:");
+    handleError(res, err, 'Error deleting item:');
   }
 };
 
 // Batch operation on a preparation set: +1/-1 on all items (CG: cassettes = -4/+4)
-export const preparationBatch = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+export const preparationBatch = async (req: Request, res: Response): Promise<void> => {
   const {
     preparation,
     operation,
@@ -312,27 +272,20 @@ export const preparationBatch = async (
     count?: number;
   };
   // count only for increment (restocking)
-  const count =
-    operation === "increment"
-      ? Math.max(1, Math.floor(Number(rawCount) || 1))
-      : 1;
+  const count = operation === 'increment' ? Math.max(1, Math.floor(Number(rawCount) || 1)) : 1;
 
-  if (!preparation || !["cgKit", "tpvKit"].includes(preparation)) {
-    res
-      .status(400)
-      .json({ message: "Invalid preparation", code: ErrorCode.INVALID_PREPARATION });
+  if (!preparation || !['cgKit', 'tpvKit'].includes(preparation)) {
+    res.status(400).json({ message: 'Invalid preparation', code: ErrorCode.INVALID_PREPARATION });
     return;
   }
-  if (!operation || !["increment", "decrement"].includes(operation)) {
-    res
-      .status(400)
-      .json({ message: "Invalid operation", code: ErrorCode.INVALID_OPERATION });
+  if (!operation || !['increment', 'decrement'].includes(operation)) {
+    res.status(400).json({ message: 'Invalid operation', code: ErrorCode.INVALID_OPERATION });
     return;
   }
 
   try {
     const items = await ItemModel.find({ [preparation]: true });
-    const userName = res.locals.user?.username || "Admin";
+    const userName = res.locals.user?.username || 'Admin';
     let updated = 0;
 
     for (const item of items) {
@@ -340,14 +293,11 @@ export const preparationBatch = async (
 
       // For CG: cassettes change by 4, the rest by 1 - multiplied by count
       let delta = 1 * count;
-      if (preparation === "cgKit" && item.name.toLowerCase().includes("cassette")) {
+      if (preparation === 'cgKit' && item.name.toLowerCase().includes('cassette')) {
         delta = 4 * count;
       }
 
-      const newQty =
-        operation === "increment"
-          ? oldQty + delta
-          : Math.max(0, oldQty - delta);
+      const newQty = operation === 'increment' ? oldQty + delta : Math.max(0, oldQty - delta);
 
       if (newQty !== oldQty) {
         item.quantity = newQty;
@@ -363,8 +313,8 @@ export const preparationBatch = async (
       }
     }
 
-    const preparationLabel = preparation === "cgKit" ? "CashGuard" : "Caisse TPV";
-    await logEvent("update", "item", undefined, userName, {
+    const preparationLabel = preparation === 'cgKit' ? 'CashGuard' : 'Caisse TPV';
+    await logEvent('update', 'item', undefined, userName, {
       batch: true,
       preparation: preparationLabel,
       operation,
@@ -378,6 +328,6 @@ export const preparationBatch = async (
       updated,
     });
   } catch (err) {
-    handleError(res, err, "Error in preparation batch:");
+    handleError(res, err, 'Error in preparation batch:');
   }
 };

@@ -1,17 +1,15 @@
-import { Types } from "mongoose";
-import VehicleModel, { IVehicle } from "../../models/vehicle.model";
-import UserModel from "../../models/user.model";
+import { Types } from 'mongoose';
+import VehicleModel, { IVehicle } from '../../models/vehicle.model';
+import UserModel from '../../models/user.model';
 
-const ASSIGNED_TO_FIELDS = "username email position";
+const ASSIGNED_TO_FIELDS = 'username email position';
 
 export function listVehicles() {
-  return VehicleModel.find()
-    .populate("assignedTo", ASSIGNED_TO_FIELDS)
-    .sort({ createdAt: -1 });
+  return VehicleModel.find().populate('assignedTo', ASSIGNED_TO_FIELDS).sort({ createdAt: -1 });
 }
 
 export function findVehicleById(id: string) {
-  return VehicleModel.findById(id).populate("assignedTo", ASSIGNED_TO_FIELDS);
+  return VehicleModel.findById(id).populate('assignedTo', ASSIGNED_TO_FIELDS);
 }
 
 export function findVehicleDocument(id: string) {
@@ -45,7 +43,7 @@ export function deleteVehicleById(id: string) {
 
 export function searchVehicles(filter: Record<string, unknown>) {
   return VehicleModel.find(filter)
-    .populate("assignedTo", ASSIGNED_TO_FIELDS)
+    .populate('assignedTo', ASSIGNED_TO_FIELDS)
     .sort({ createdAt: -1 });
 }
 
@@ -54,5 +52,5 @@ export function pullVehicleDocument(id: string, docId: string) {
     id,
     { $pull: { documents: { _id: docId } } },
     { new: true },
-  ).populate("assignedTo", ASSIGNED_TO_FIELDS);
+  ).populate('assignedTo', ASSIGNED_TO_FIELDS);
 }

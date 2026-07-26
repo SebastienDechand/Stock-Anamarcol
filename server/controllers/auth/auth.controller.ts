@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import UserModel from "../../models/user.model";
-import jwt from "jsonwebtoken";
-import { signUpErrors, signInErrors } from "../../utils/errors/errors.utils";
-import { JWT_MAX_AGE, COOKIE_MAX_AGE, Role } from "../../constants";
-import { logEvent } from "../../utils/audit/audit.utils";
-import { ErrorCode } from "../../constants/errorCodes";
+import { Request, Response } from 'express';
+import UserModel from '../../models/user.model';
+import jwt from 'jsonwebtoken';
+import { signUpErrors, signInErrors } from '../../utils/errors/errors.utils';
+import { JWT_MAX_AGE, COOKIE_MAX_AGE, Role } from '../../constants';
+import { logEvent } from '../../utils/audit/audit.utils';
+import { ErrorCode } from '../../constants/errorCodes';
 
 // Create a JWT token
 const createToken = (id: string): string => {
@@ -15,8 +15,7 @@ const createToken = (id: string): string => {
 
 // Sign up
 export const signUp = async (req: Request, res: Response): Promise<void> => {
-  const { username, email, password, position, phone, department } =
-    req.body;
+  const { username, email, password, position, phone, department } = req.body;
 
   try {
     const payload: Record<string, unknown> = {
@@ -27,7 +26,7 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
       phone,
       department,
     };
-    if (department === "Hotline") {
+    if (department === 'Hotline') {
       payload.roles = [Role.USER, Role.HOTLINE];
     } else {
       payload.roles = [Role.USER];
@@ -49,20 +48,19 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = await UserModel.login(email, password);
     const token = createToken(user._id.toString());
-    res.cookie("jwt", token, {
+    res.cookie('jwt', token, {
       httpOnly: true,
       maxAge: COOKIE_MAX_AGE,
       secure: true,
-      sameSite: "lax",
+      sameSite: 'lax',
     });
     // Audit: login
     try {
-      await logEvent("login", "user", user._id.toString(), user.username);
+      await logEvent('login', 'user', user._id.toString(), user.username);
     } catch (err) {
-      console.error("Audit login error:", err);
+      console.error('Audit login error:', err);
     }
-    const effectiveRoles: string[] =
-      user.roles && user.roles.length > 0 ? user.roles : [Role.USER];
+    const effectiveRoles: string[] = user.roles && user.roles.length > 0 ? user.roles : [Role.USER];
     res.status(200).json({ user: user._id, roles: effectiveRoles });
   } catch (err) {
     const errors = signInErrors(err as Error);
@@ -72,8 +70,6 @@ export const signIn = async (req: Request, res: Response): Promise<void> => {
 
 // Sign out
 export const logout = async (_req: Request, res: Response): Promise<void> => {
-  res.cookie("jwt", "", { maxAge: 1 });
-  res
-    .status(200)
-    .json({ message: "Logged out successfully", code: ErrorCode.LOGOUT_SUCCESS });
+  res.cookie('jwt', '', { maxAge: 1 });
+  res.status(200).json({ message: 'Logged out successfully', code: ErrorCode.LOGOUT_SUCCESS });
 };

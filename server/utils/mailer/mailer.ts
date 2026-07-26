@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+import { Resend } from 'resend';
 
 let resend: Resend | null = null;
 
@@ -14,57 +14,57 @@ export interface VehicleReminderData {
   vehicleName: string;
   daysUntil: number;
   dueDate: Date;
-  type: "revision" | "ct" | "anti_pollution";
+  type: 'revision' | 'ct' | 'anti_pollution';
 }
 
 function formatDateFR(date: Date): string {
-  return date.toLocaleDateString("fr-FR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "Europe/Paris",
+  return date.toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Europe/Paris',
   });
 }
 
 function getReminderBannerColor(daysUntil: number): string {
-  if (daysUntil === 0) return "#c0392b"; // Dark red for day of control
-  if (daysUntil <= 7) return "#e74c3c"; // Red for 1 week
-  return "#f39c12"; // Orange for 1 month
+  if (daysUntil === 0) return '#c0392b'; // Dark red for day of control
+  if (daysUntil <= 7) return '#e74c3c'; // Red for 1 week
+  return '#f39c12'; // Orange for 1 month
 }
 
 function getReminderTitle(daysUntil: number): string {
-  if (daysUntil === 0) return "⚠️ RAPPEL URGENT - JOUR DU CONTRÔLE";
-  if (daysUntil <= 7) return "📌 RAPPEL - 1 SEMAINE";
-  return "📅 RAPPEL - 1 MOIS";
+  if (daysUntil === 0) return '⚠️ RAPPEL URGENT - JOUR DU CONTRÔLE';
+  if (daysUntil <= 7) return '📌 RAPPEL - 1 SEMAINE';
+  return '📅 RAPPEL - 1 MOIS';
 }
 
-function getReminderConfig(type: "revision" | "ct" | "anti_pollution") {
+function getReminderConfig(type: 'revision' | 'ct' | 'anti_pollution') {
   const configs = {
     revision: {
-      title: "Révision annuelle",
-      description: "La révision annuelle du véhicule doit être renouvelée",
-      warningBg: "#fff8e1",
-      warningBorder: "#f39c12",
-      warningText: "#856404",
+      title: 'Révision annuelle',
+      description: 'La révision annuelle du véhicule doit être renouvelée',
+      warningBg: '#fff8e1',
+      warningBorder: '#f39c12',
+      warningText: '#856404',
       warningMsg:
-        "Important : Veuillez planifier la révision dès que possible pour éviter une surcharge à la dernière minute.",
+        'Important : Veuillez planifier la révision dès que possible pour éviter une surcharge à la dernière minute.',
     },
     ct: {
-      title: "Contrôle Technique",
-      description: "Le Contrôle Technique du véhicule expire",
-      warningBg: "#ffe9e9",
-      warningBorder: "#e74c3c",
-      warningText: "#c0392b",
+      title: 'Contrôle Technique',
+      description: 'Le Contrôle Technique du véhicule expire',
+      warningBg: '#ffe9e9',
+      warningBorder: '#e74c3c',
+      warningText: '#c0392b',
       warningMsg:
-        "Attention : Circuler sans CT valide est une infraction. Tous les véhicules doivent être contrôlés dans les délais légaux.",
+        'Attention : Circuler sans CT valide est une infraction. Tous les véhicules doivent être contrôlés dans les délais légaux.',
     },
     anti_pollution: {
-      title: "Contrôle Anti-Pollution",
-      description: "Le Contrôle Anti-Pollution du véhicule expire",
-      warningBg: "#f0f5e9",
-      warningBorder: "#27ae60",
-      warningText: "#27ae60",
+      title: 'Contrôle Anti-Pollution',
+      description: 'Le Contrôle Anti-Pollution du véhicule expire',
+      warningBg: '#f0f5e9',
+      warningBorder: '#27ae60',
+      warningText: '#27ae60',
       warningMsg:
         "Respect de l'environnement : Le contrôle anti-pollution garantit que nos véhicules respectent les normes d'émission en vigueur.",
     },
@@ -72,12 +72,9 @@ function getReminderConfig(type: "revision" | "ct" | "anti_pollution") {
   return configs[type];
 }
 
-export const sendVehicleReminder = async (
-  to: string,
-  data: VehicleReminderData,
-): Promise<void> => {
+export const sendVehicleReminder = async (to: string, data: VehicleReminderData): Promise<void> => {
   if (!process.env.RESEND_API_KEY) {
-    console.warn("[Mailer] RESEND_API_KEY not configured - email skipped");
+    console.warn('[Mailer] RESEND_API_KEY not configured - email skipped');
     return;
   }
 
@@ -86,7 +83,7 @@ export const sendVehicleReminder = async (
   const config = getReminderConfig(data.type);
 
   await getResendClient().emails.send({
-    from: "ANAMARCOL Flotte <onboarding@resend.dev>",
+    from: 'ANAMARCOL Flotte <onboarding@resend.dev>',
     to,
     subject: `${data.vehicleName?.toUpperCase()} - ${config.title} (${data.daysUntil}j)`,
     html: `

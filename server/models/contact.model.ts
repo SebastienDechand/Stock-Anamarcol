@@ -1,6 +1,6 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema } from 'mongoose';
 
-export type ContactCategory = "external" | "supplier";
+export type ContactCategory = 'external' | 'supplier';
 
 export interface IContact extends Document {
   name: string;
@@ -23,8 +23,8 @@ const contactSchema = new Schema<IContact>(
     },
     category: {
       type: String,
-      enum: ["external", "supplier"],
-      default: "external",
+      enum: ['external', 'supplier'],
+      default: 'external',
       required: true,
     },
     email: {
@@ -37,7 +37,7 @@ const contactSchema = new Schema<IContact>(
     },
     picture: {
       type: String,
-      default: "./uploads/profil/random-user.png",
+      default: './uploads/profil/random-user.png',
     },
     position: {
       type: String,
@@ -52,9 +52,6 @@ const contactSchema = new Schema<IContact>(
   },
 );
 
-const ContactModel: Model<IContact> = mongoose.model<IContact>(
-  "contact",
-  contactSchema,
-);
+const ContactModel: Model<IContact> = mongoose.model<IContact>('contact', contactSchema);
 
 export default ContactModel;

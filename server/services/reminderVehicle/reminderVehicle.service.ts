@@ -1,14 +1,14 @@
-import VehicleModel from "../../models/vehicle.model";
-import UserModel from "../../models/user.model";
-import { sendVehicleReminder } from "../../utils/mailer/mailer";
-import { Role } from "../../constants";
+import VehicleModel from '../../models/vehicle.model';
+import UserModel from '../../models/user.model';
+import { sendVehicleReminder } from '../../utils/mailer/mailer';
+import { Role } from '../../constants';
 
 export interface ReminderCheck {
   vehicleId: string;
   licensePlate: string;
-  type: "revision" | "ct" | "anti_pollution";
+  type: 'revision' | 'ct' | 'anti_pollution';
   daysUntilDue: number;
-  reminderType: "jour_du_controle" | "1_week" | "1_month";
+  reminderType: 'jour_du_controle' | '1_week' | '1_month';
 }
 
 /**
@@ -32,11 +32,11 @@ function getDaysUntilDue(dueDate: Date | undefined | null): number | null {
  */
 function getReminderType(
   daysUntil: number | null,
-): "jour_du_controle" | "1_week" | "1_month" | null {
+): 'jour_du_controle' | '1_week' | '1_month' | null {
   if (daysUntil === null) return null;
-  if (daysUntil === 0) return "jour_du_controle";
-  if (daysUntil === 7) return "1_week";
-  if (daysUntil === 30) return "1_month";
+  if (daysUntil === 0) return 'jour_du_controle';
+  if (daysUntil === 7) return '1_week';
+  if (daysUntil === 30) return '1_month';
   return null;
 }
 
@@ -46,12 +46,9 @@ function getReminderType(
 async function getSuperAdmins() {
   return UserModel.find(
     {
-      $or: [
-        { roles: Role.SUPERADMIN },
-        { email: process.env.SUPERADMIN_EMAIL?.toLowerCase() },
-      ],
+      $or: [{ roles: Role.SUPERADMIN }, { email: process.env.SUPERADMIN_EMAIL?.toLowerCase() }],
     },
-    "email username",
+    'email username',
   ).lean();
 }
 
@@ -65,7 +62,7 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
   // Fetch all superadmins
   const superAdmins = await getSuperAdmins();
   if (superAdmins.length === 0) {
-    console.warn("[Reminder] No superadmin found to send reminders to");
+    console.warn('[Reminder] No superadmin found to send reminders to');
     return [];
   }
 
@@ -76,10 +73,7 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
     // #region Service (annual anniversary)
     const revisionDays = getDaysUntilDue(
       vehicle.serviceDate
-        ? new Date(
-            new Date(vehicle.serviceDate).getTime() +
-              365 * 24 * 60 * 60 * 1000,
-          )
+        ? new Date(new Date(vehicle.serviceDate).getTime() + 365 * 24 * 60 * 60 * 1000)
         : null,
     );
     const revisionReminderType = getReminderType(revisionDays);
@@ -88,23 +82,20 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
       reminders.push({
         vehicleId: vehicle._id.toString(),
         licensePlate: vehicle.licensePlate,
-        type: "revision",
+        type: 'revision',
         daysUntilDue: revisionDays,
         reminderType,
       });
       // Send to superadmins
       for (const admin of superAdmins) {
         const nextRevisionDate = vehicle.serviceDate
-          ? new Date(
-              new Date(vehicle.serviceDate).getTime() +
-                365 * 24 * 60 * 60 * 1000,
-            )
+          ? new Date(new Date(vehicle.serviceDate).getTime() + 365 * 24 * 60 * 60 * 1000)
           : new Date();
         await sendVehicleReminder(admin.email, {
           vehicleName: `${vehicle.brand.toUpperCase()} ${vehicle.model} (${vehicle.licensePlate})`,
           daysUntil: revisionDays,
           dueDate: nextRevisionDate,
-          type: "revision",
+          type: 'revision',
         }).catch((err) => {
           console.error(
             `[Reminder] Error sending service reminder for ${vehicle.licensePlate}:`,
@@ -125,7 +116,7 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
       reminders.push({
         vehicleId: vehicle._id.toString(),
         licensePlate: vehicle.licensePlate,
-        type: "ct",
+        type: 'ct',
         daysUntilDue: ctDays,
         reminderType,
       });
@@ -137,7 +128,7 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
           dueDate: vehicle.inspectionExpiryDate
             ? new Date(vehicle.inspectionExpiryDate)
             : new Date(),
-          type: "ct",
+          type: 'ct',
         }).catch((err) => {
           console.error(
             `[Reminder] Error sending inspection reminder for ${vehicle.licensePlate}:`,
@@ -150,9 +141,7 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
 
     // #region Anti-pollution (expiry)
     const antiPollutionDays = getDaysUntilDue(
-      vehicle.antiPollutionExpiryDate
-        ? new Date(vehicle.antiPollutionExpiryDate)
-        : null,
+      vehicle.antiPollutionExpiryDate ? new Date(vehicle.antiPollutionExpiryDate) : null,
     );
     const antiPollutionReminderType = getReminderType(antiPollutionDays);
     if (antiPollutionReminderType && antiPollutionDays !== null) {
@@ -160,7 +149,7 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
       reminders.push({
         vehicleId: vehicle._id.toString(),
         licensePlate: vehicle.licensePlate,
-        type: "anti_pollution",
+        type: 'anti_pollution',
         daysUntilDue: antiPollutionDays,
         reminderType,
       });
@@ -172,7 +161,7 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
           dueDate: vehicle.antiPollutionExpiryDate
             ? new Date(vehicle.antiPollutionExpiryDate)
             : new Date(),
-          type: "anti_pollution",
+          type: 'anti_pollution',
         }).catch((err) => {
           console.error(
             `[Reminder] Error sending anti-pollution reminder for ${vehicle.licensePlate}:`,
@@ -185,9 +174,7 @@ export async function checkAndSendVehicleReminders(): Promise<ReminderCheck[]> {
   }
 
   if (reminders.length > 0) {
-    console.log(
-      `[Reminder] ${reminders.length} reminder(s) sent to superadmins`,
-    );
+    console.log(`[Reminder] ${reminders.length} reminder(s) sent to superadmins`);
   }
 
   return reminders;

@@ -1,8 +1,8 @@
-import ShipmentModel from "../../models/shipment.model";
-import type { IShipment } from "../../models/shipment.model";
-import ShipmentArchiveModel from "../../models/shipmentArchive.model";
-import type { IShipmentArchive } from "../../models/shipmentArchive.model";
-import PDFDocument from "pdfkit";
+import ShipmentModel from '../../models/shipment.model';
+import type { IShipment } from '../../models/shipment.model';
+import ShipmentArchiveModel from '../../models/shipmentArchive.model';
+import type { IShipmentArchive } from '../../models/shipmentArchive.model';
+import PDFDocument from 'pdfkit';
 
 export function listShipments(filter: Record<string, unknown>) {
   return ShipmentModel.find(filter).sort({ createdAt: -1 }).lean();
@@ -21,10 +21,7 @@ export function deleteShipmentById(id: string) {
 }
 
 export function listArchives() {
-  return ShipmentArchiveModel.find()
-    .select("-fileBuffer")
-    .sort({ createdAt: -1 })
-    .lean();
+  return ShipmentArchiveModel.find().select('-fileBuffer').sort({ createdAt: -1 }).lean();
 }
 
 export function findArchiveById(id: string) {
@@ -51,48 +48,48 @@ export async function performArchiveForMonth(
 
   if (shipments.length === 0) return null;
 
-  const monthName = start.toLocaleDateString("fr-FR", {
-    month: "long",
-    year: "numeric",
+  const monthName = start.toLocaleDateString('fr-FR', {
+    month: 'long',
+    year: 'numeric',
   });
   const title = monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
   // #region Generate PDF
   const buffer = await new Promise<Buffer>((resolve, reject) => {
     const doc = new PDFDocument({
-      size: "A4",
-      layout: "landscape",
+      size: 'A4',
+      layout: 'landscape',
       margin: 20,
     });
     const chunks: Buffer[] = [];
-    doc.on("data", (c: Buffer) => chunks.push(c));
-    doc.on("end", () => resolve(Buffer.concat(chunks)));
-    doc.on("error", reject);
+    doc.on('data', (c: Buffer) => chunks.push(c));
+    doc.on('end', () => resolve(Buffer.concat(chunks)));
+    doc.on('error', reject);
 
-    doc.fontSize(14).text(`Envois – ${title}`, { align: "center" });
+    doc.fontSize(14).text(`Envois – ${title}`, { align: 'center' });
     doc.moveDown(0.2);
     doc
       .fontSize(8)
-      .fillColor("#666")
+      .fillColor('#666')
       .text(
-        `Exporté le ${new Date().toLocaleDateString("fr-FR")} · ${shipments.length} envoi${shipments.length > 1 ? "s" : ""}`,
-        { align: "center" },
+        `Exporté le ${new Date().toLocaleDateString('fr-FR')} · ${shipments.length} envoi${shipments.length > 1 ? 's' : ''}`,
+        { align: 'center' },
       );
     doc.moveDown(0.6);
 
     const cols = [
-      { header: "Statut", width: 48, key: "statut" },
-      { header: "Nom", width: 60, key: "lastName" },
-      { header: "Prénom", width: 55, key: "firstName" },
-      { header: "Société", width: 80, key: "company" },
-      { header: "Pièce", width: 70, key: "part" },
-      { header: "Adresse", width: 100, key: "address" },
-      { header: "CP", width: 38, key: "cp" },
-      { header: "Ville", width: 60, key: "city" },
-      { header: "Tél", width: 70, key: "phone" },
-      { header: "Envoyé par", width: 55, key: "sentBy" },
-      { header: "Créé par", width: 55, key: "createdBy" },
-      { header: "Date", width: 55, key: "createdAt" },
+      { header: 'Statut', width: 48, key: 'statut' },
+      { header: 'Nom', width: 60, key: 'lastName' },
+      { header: 'Prénom', width: 55, key: 'firstName' },
+      { header: 'Société', width: 80, key: 'company' },
+      { header: 'Pièce', width: 70, key: 'part' },
+      { header: 'Adresse', width: 100, key: 'address' },
+      { header: 'CP', width: 38, key: 'cp' },
+      { header: 'Ville', width: 60, key: 'city' },
+      { header: 'Tél', width: 70, key: 'phone' },
+      { header: 'Envoyé par', width: 55, key: 'sentBy' },
+      { header: 'Créé par', width: 55, key: 'createdBy' },
+      { header: 'Date', width: 55, key: 'createdAt' },
     ];
     const startX = 20;
     const headerHeight = 18;
@@ -105,13 +102,13 @@ export async function performArchiveForMonth(
     // Utility: measure the height needed for wrapped text in a column
     const measureCellHeight = (text: string, colWidth: number): number => {
       const innerW = colWidth - cellPadX * 2;
-      return doc.heightOfString(text || "", { width: innerW }) + cellPadY * 2;
+      return doc.heightOfString(text || '', { width: innerW }) + cellPadY * 2;
     };
 
     // Header row
-    doc.fillColor("#4a7c2e").rect(startX, y, tableWidth, headerHeight).fill();
+    doc.fillColor('#4a7c2e').rect(startX, y, tableWidth, headerHeight).fill();
     let x = startX;
-    doc.fillColor("#ffffff").fontSize(fontSize).font("Helvetica-Bold");
+    doc.fillColor('#ffffff').fontSize(fontSize).font('Helvetica-Bold');
     for (const col of cols) {
       doc.text(col.header, x + cellPadX, y + 5, {
         width: col.width - cellPadX * 2,
@@ -121,28 +118,28 @@ export async function performArchiveForMonth(
     y += headerHeight;
 
     // Data rows – dynamic height, no ellipsis
-    doc.font("Helvetica").fillColor("#333333").fontSize(fontSize);
+    doc.font('Helvetica').fillColor('#333333').fontSize(fontSize);
     for (let i = 0; i < shipments.length; i++) {
       const s = shipments[i];
       const values: Record<string, string> = {
-        statut: s.sent ? "Envoyé" : "En attente",
-        lastName: s.lastName || "",
-        firstName: s.firstName || "",
-        company: [s.company, s.companyOrRole].filter(Boolean).join(" / "),
-        part: s.part || "",
-        address: s.address || "",
-        cp: s.postalCode || "",
-        city: s.city || "",
-        phone: [s.phone, s.phone2].filter(Boolean).join(" / "),
-        sentBy: s.sentBy || "",
-        createdBy: s.createdByName || "",
-        createdAt: new Date(s.createdAt).toLocaleDateString("fr-FR"),
+        statut: s.sent ? 'Envoyé' : 'En attente',
+        lastName: s.lastName || '',
+        firstName: s.firstName || '',
+        company: [s.company, s.companyOrRole].filter(Boolean).join(' / '),
+        part: s.part || '',
+        address: s.address || '',
+        cp: s.postalCode || '',
+        city: s.city || '',
+        phone: [s.phone, s.phone2].filter(Boolean).join(' / '),
+        sentBy: s.sentBy || '',
+        createdBy: s.createdByName || '',
+        createdAt: new Date(s.createdAt).toLocaleDateString('fr-FR'),
       };
 
       // Compute row height = max cell height
       let rowHeight = 14; // minimum
       for (const col of cols) {
-        const h = measureCellHeight(values[col.key] || "", col.width);
+        const h = measureCellHeight(values[col.key] || '', col.width);
         if (h > rowHeight) rowHeight = h;
       }
 
@@ -154,18 +151,13 @@ export async function performArchiveForMonth(
 
       // Zebra stripe
       if (i % 2 === 0) {
-        doc
-          .save()
-          .fillColor("#f3f4f6")
-          .rect(startX, y, tableWidth, rowHeight)
-          .fill()
-          .restore();
-        doc.fillColor("#333333");
+        doc.save().fillColor('#f3f4f6').rect(startX, y, tableWidth, rowHeight).fill().restore();
+        doc.fillColor('#333333');
       }
 
       x = startX;
       for (const col of cols) {
-        doc.text(values[col.key] || "", x + cellPadX, y + cellPadY, {
+        doc.text(values[col.key] || '', x + cellPadX, y + cellPadY, {
           width: col.width - cellPadX * 2,
         });
         x += col.width;
@@ -179,23 +171,21 @@ export async function performArchiveForMonth(
 
   // Build raw data rows for future XLSX export
   const rawData = shipments.map((s: IShipment) => ({
-    Statut: s.sent ? "Envoyé" : "En attente",
-    Nom: s.lastName || "",
-    Prénom: s.firstName || "",
-    Société: s.company || "",
-    "Société / Fonction": s.companyOrRole || "",
-    Pièce: s.part || "",
-    Adresse: s.address || "",
-    CP: s.postalCode || "",
-    Ville: s.city || "",
-    Tél: s.phone || "",
-    "Tél 2": s.phone2 || "",
-    Email: s.email || "",
-    "Envoyé par": s.sentBy || "",
-    "Créé par": s.createdByName || "",
-    "Date création": s.createdAt
-      ? new Date(s.createdAt).toLocaleDateString("fr-FR")
-      : "",
+    Statut: s.sent ? 'Envoyé' : 'En attente',
+    Nom: s.lastName || '',
+    Prénom: s.firstName || '',
+    Société: s.company || '',
+    'Société / Fonction': s.companyOrRole || '',
+    Pièce: s.part || '',
+    Adresse: s.address || '',
+    CP: s.postalCode || '',
+    Ville: s.city || '',
+    Tél: s.phone || '',
+    'Tél 2': s.phone2 || '',
+    Email: s.email || '',
+    'Envoyé par': s.sentBy || '',
+    'Créé par': s.createdByName || '',
+    'Date création': s.createdAt ? new Date(s.createdAt).toLocaleDateString('fr-FR') : '',
   }));
 
   const archive = await ShipmentArchiveModel.create({

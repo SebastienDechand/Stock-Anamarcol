@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { Request, Response } from "express";
-import { Role } from "../../constants";
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { Request, Response } from 'express';
+import { Role } from '../../constants';
 
 const mockUserModel = vi.hoisted(() => ({
   find: vi.fn(),
@@ -8,12 +8,12 @@ const mockUserModel = vi.hoisted(() => ({
   deleteOne: vi.fn(),
 }));
 
-vi.mock("../../models/user.model", () => ({
+vi.mock('../../models/user.model', () => ({
   __esModule: true,
   default: mockUserModel,
 }));
 
-vi.mock("../../utils/audit/audit.utils", () => ({
+vi.mock('../../utils/audit/audit.utils', () => ({
   logEvent: vi.fn().mockResolvedValue(undefined),
 }));
 
@@ -24,22 +24,22 @@ import {
   deleteUser,
   setRole,
   setRoles,
-} from "./user.controller";
+} from './user.controller';
 
-describe("User Controller", () => {
+describe('User Controller', () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
 
   beforeEach(() => {
     req = { params: {}, body: {} };
     res = {
-      locals: { user: { _id: "admin-id", username: "admin", roles: [Role.ADMIN] } },
-      status: vi.fn().mockReturnThis() as unknown as Response["status"],
-      json: vi.fn() as unknown as Response["json"],
-      send: vi.fn() as unknown as Response["send"],
+      locals: { user: { _id: 'admin-id', username: 'admin', roles: [Role.ADMIN] } },
+      status: vi.fn().mockReturnThis() as unknown as Response['status'],
+      json: vi.fn() as unknown as Response['json'],
+      send: vi.fn() as unknown as Response['send'],
     };
     vi.clearAllMocks();
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -47,11 +47,11 @@ describe("User Controller", () => {
   });
 
   // #region getAllUsers
-  describe("getAllUsers", () => {
-    it("should return all users", async () => {
+  describe('getAllUsers', () => {
+    it('should return all users', async () => {
       const mockUsers = [
-        { _id: "1", username: "user1" },
-        { _id: "2", username: "user2" },
+        { _id: '1', username: 'user1' },
+        { _id: '2', username: 'user2' },
       ];
       mockUserModel.find.mockReturnValue({
         select: vi.fn().mockResolvedValue(mockUsers),
@@ -65,16 +65,16 @@ describe("User Controller", () => {
   // #endregion
 
   // #region userInfo
-  describe("userInfo", () => {
-    it("should return 400 when ID is invalid", () => {
-      req.params = { id: "invalid" };
+  describe('userInfo', () => {
+    it('should return 400 when ID is invalid', () => {
+      req.params = { id: 'invalid' };
       userInfo(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return user info", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      const mockUser = { _id: "507f1f77bcf86cd799439011", username: "test" };
+    it('should return user info', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      const mockUser = { _id: '507f1f77bcf86cd799439011', username: 'test' };
 
       mockUserModel.findById.mockReturnValue({
         select: vi.fn().mockReturnValue({
@@ -91,15 +91,15 @@ describe("User Controller", () => {
   // #endregion
 
   // #region deleteUser
-  describe("deleteUser", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "invalid" };
+  describe('deleteUser', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'invalid' };
       await deleteUser(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should delete a user successfully", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should delete a user successfully', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       mockUserModel.deleteOne.mockReturnValue({
         exec: vi.fn().mockResolvedValue({ deletedCount: 1 }),
       });
@@ -107,64 +107,64 @@ describe("User Controller", () => {
       await deleteUser(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Successfully deleted",
-        code: "DELETED",
+        message: 'Successfully deleted',
+        code: 'DELETED',
       });
     });
   });
   // #endregion
 
   // #region updateUser
-  describe("updateUser", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "invalid" };
+  describe('updateUser', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'invalid' };
       await updateUser(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 404 when user does not exist", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should return 404 when user does not exist', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       mockUserModel.findById.mockResolvedValue(null);
 
       await updateUser(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    it("should update a user successfully", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { email: "new@test.com", position: "Dev" };
+    it('should update a user successfully', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { email: 'new@test.com', position: 'Dev' };
 
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
-        email: "old@test.com",
-        position: "",
+        _id: '507f1f77bcf86cd799439011',
+        email: 'old@test.com',
+        position: '',
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
-          email: "new@test.com",
-          position: "Dev",
+          _id: '507f1f77bcf86cd799439011',
+          email: 'new@test.com',
+          position: 'Dev',
         }),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await updateUser(req as Request, res as Response);
-      expect(mockUser.email).toBe("new@test.com");
-      expect(mockUser.position).toBe("Dev");
+      expect(mockUser.email).toBe('new@test.com');
+      expect(mockUser.position).toBe('Dev');
       expect(mockUser.save).toHaveBeenCalled();
     });
 
-    it("should auto-assign hotline role when department set to Hotline", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { department: "Hotline" };
+    it('should auto-assign hotline role when department set to Hotline', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { department: 'Hotline' };
 
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
-        email: "old@test.com",
-        position: "",
-        department: "",
+        _id: '507f1f77bcf86cd799439011',
+        email: 'old@test.com',
+        position: '',
+        department: '',
         roles: [Role.USER],
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
-          department: "Hotline",
+          _id: '507f1f77bcf86cd799439011',
+          department: 'Hotline',
           roles: [Role.USER, Role.HOTLINE],
         }),
       };
@@ -175,19 +175,19 @@ describe("User Controller", () => {
       expect(mockUser.save).toHaveBeenCalled();
     });
 
-    it("should downgrade hotline role when department removed", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { department: "Management" };
+    it('should downgrade hotline role when department removed', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { department: 'Management' };
 
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
-        email: "old@test.com",
-        position: "",
-        department: "Hotline",
+        _id: '507f1f77bcf86cd799439011',
+        email: 'old@test.com',
+        position: '',
+        department: 'Hotline',
         roles: [Role.USER, Role.HOTLINE],
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
-          department: "Management",
+          _id: '507f1f77bcf86cd799439011',
+          department: 'Management',
           roles: [Role.USER],
         }),
       };
@@ -198,19 +198,19 @@ describe("User Controller", () => {
       expect(mockUser.save).toHaveBeenCalled();
     });
 
-    it("should NOT override admin role when department set to Hotline", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { department: "Hotline" };
+    it('should NOT override admin role when department set to Hotline', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { department: 'Hotline' };
 
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
-        email: "admin@test.com",
-        position: "",
-        department: "Management",
+        _id: '507f1f77bcf86cd799439011',
+        email: 'admin@test.com',
+        position: '',
+        department: 'Management',
         roles: [Role.ADMIN, Role.USER],
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
-          department: "Hotline",
+          _id: '507f1f77bcf86cd799439011',
+          department: 'Hotline',
           roles: [Role.ADMIN, Role.USER],
         }),
       };
@@ -222,19 +222,19 @@ describe("User Controller", () => {
       expect(mockUser.save).toHaveBeenCalled();
     });
 
-    it("should NOT override superadmin role when department set to Hotline", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { department: "Hotline" };
+    it('should NOT override superadmin role when department set to Hotline', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { department: 'Hotline' };
 
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
-        email: "super@test.com",
-        position: "",
-        department: "Management",
+        _id: '507f1f77bcf86cd799439011',
+        email: 'super@test.com',
+        position: '',
+        department: 'Management',
         roles: [Role.SUPERADMIN, Role.ADMIN, Role.USER],
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
-          department: "Hotline",
+          _id: '507f1f77bcf86cd799439011',
+          department: 'Hotline',
           roles: [Role.SUPERADMIN, Role.ADMIN, Role.USER],
         }),
       };
@@ -246,58 +246,66 @@ describe("User Controller", () => {
       expect(mockUser.save).toHaveBeenCalled();
     });
 
-    it("should return 403 when a non-admin tries to update another user", async () => {
-      res.locals!.user = { _id: "user-id", username: "regular", roles: [Role.USER] };
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { phone: "0102030405" };
+    it('should return 403 when a non-admin tries to update another user', async () => {
+      res.locals!.user = { _id: 'user-id', username: 'regular', roles: [Role.USER] };
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { phone: '0102030405' };
 
       await updateUser(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(403);
       expect(mockUserModel.findById).not.toHaveBeenCalled();
     });
 
-    it("should let a non-admin update their own phone and picture", async () => {
-      res.locals!.user = { _id: "507f1f77bcf86cd799439011", username: "regular", roles: [Role.USER] };
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { phone: "0102030405", picture: "https://cdn.example.com/pic.jpg" };
+    it('should let a non-admin update their own phone and picture', async () => {
+      res.locals!.user = {
+        _id: '507f1f77bcf86cd799439011',
+        username: 'regular',
+        roles: [Role.USER],
+      };
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { phone: '0102030405', picture: 'https://cdn.example.com/pic.jpg' };
 
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
-        phone: "",
-        picture: "",
+        _id: '507f1f77bcf86cd799439011',
+        phone: '',
+        picture: '',
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
-          phone: "0102030405",
-          picture: "https://cdn.example.com/pic.jpg",
+          _id: '507f1f77bcf86cd799439011',
+          phone: '0102030405',
+          picture: 'https://cdn.example.com/pic.jpg',
         }),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await updateUser(req as Request, res as Response);
-      expect(mockUser.phone).toBe("0102030405");
-      expect(mockUser.picture).toBe("https://cdn.example.com/pic.jpg");
+      expect(mockUser.phone).toBe('0102030405');
+      expect(mockUser.picture).toBe('https://cdn.example.com/pic.jpg');
       expect(mockUser.save).toHaveBeenCalled();
     });
 
-    it("should silently ignore admin-only fields when a non-admin updates their own record", async () => {
-      res.locals!.user = { _id: "507f1f77bcf86cd799439011", username: "regular", roles: [Role.USER] };
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { email: "hacked@test.com", position: "Boss", department: "Hotline" };
+    it('should silently ignore admin-only fields when a non-admin updates their own record', async () => {
+      res.locals!.user = {
+        _id: '507f1f77bcf86cd799439011',
+        username: 'regular',
+        roles: [Role.USER],
+      };
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { email: 'hacked@test.com', position: 'Boss', department: 'Hotline' };
 
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
-        email: "old@test.com",
-        position: "",
-        department: "",
+        _id: '507f1f77bcf86cd799439011',
+        email: 'old@test.com',
+        position: '',
+        department: '',
         roles: [Role.USER],
         save: vi.fn().mockResolvedValue({}),
       };
       mockUserModel.findById.mockResolvedValue(mockUser);
 
       await updateUser(req as Request, res as Response);
-      expect(mockUser.email).toBe("old@test.com");
-      expect(mockUser.position).toBe("");
-      expect(mockUser.department).toBe("");
+      expect(mockUser.email).toBe('old@test.com');
+      expect(mockUser.position).toBe('');
+      expect(mockUser.department).toBe('');
       expect(mockUser.roles).not.toContain(Role.HOTLINE);
       expect(mockUser.save).toHaveBeenCalled();
     });
@@ -305,27 +313,27 @@ describe("User Controller", () => {
   // #endregion
 
   // #region setRole
-  describe("setRole", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "invalid" };
+  describe('setRole', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'invalid' };
       req.body = { role: Role.ADMIN };
       await setRole(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 400 when role is invalid", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { role: "hacker" };
+    it('should return 400 when role is invalid', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { role: 'hacker' };
       await setRole(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Invalid role",
-        code: "INVALID_ROLE",
+        message: 'Invalid role',
+        code: 'INVALID_ROLE',
       });
     });
 
-    it("should return 404 when user not found", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should return 404 when user not found', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       req.body = { role: Role.ADMIN };
       mockUserModel.findById.mockResolvedValue(null);
 
@@ -333,14 +341,14 @@ describe("User Controller", () => {
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    it("should update the role successfully", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should update the role successfully', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       req.body = { role: Role.ADMIN };
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
+        _id: '507f1f77bcf86cd799439011',
         roles: [Role.USER],
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
+          _id: '507f1f77bcf86cd799439011',
           roles: [Role.ADMIN, Role.USER],
         }),
       };
@@ -352,14 +360,14 @@ describe("User Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should update the role to hotline successfully", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should update the role to hotline successfully', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       req.body = { role: Role.HOTLINE };
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
+        _id: '507f1f77bcf86cd799439011',
         roles: [Role.USER],
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
+          _id: '507f1f77bcf86cd799439011',
           roles: [Role.USER, Role.HOTLINE],
         }),
       };
@@ -371,14 +379,14 @@ describe("User Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should update the role to superadmin successfully", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should update the role to superadmin successfully', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       req.body = { role: Role.SUPERADMIN };
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
+        _id: '507f1f77bcf86cd799439011',
         roles: [Role.USER],
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
+          _id: '507f1f77bcf86cd799439011',
           roles: [Role.SUPERADMIN, Role.ADMIN, Role.USER],
         }),
       };
@@ -390,14 +398,14 @@ describe("User Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should update the role to user successfully", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should update the role to user successfully', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       req.body = { role: Role.USER };
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
+        _id: '507f1f77bcf86cd799439011',
         roles: [Role.ADMIN, Role.USER],
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
+          _id: '507f1f77bcf86cd799439011',
           roles: [Role.USER],
         }),
       };
@@ -409,10 +417,10 @@ describe("User Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should return 500 on internal error", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should return 500 on internal error', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       req.body = { role: Role.ADMIN };
-      mockUserModel.findById.mockRejectedValue(new Error("DB failure"));
+      mockUserModel.findById.mockRejectedValue(new Error('DB failure'));
 
       await setRole(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
@@ -421,48 +429,48 @@ describe("User Controller", () => {
   // #endregion
 
   // #region setRoles
-  describe("setRoles", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "invalid" };
+  describe('setRoles', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'invalid' };
       req.body = { roles: [Role.ADMIN, Role.USER] };
       await setRoles(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 400 when roles is not an array", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should return 400 when roles is not an array', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       req.body = { roles: Role.ADMIN };
       await setRoles(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Invalid roles",
-        code: "INVALID_ROLE",
+        message: 'Invalid roles',
+        code: 'INVALID_ROLE',
       });
     });
 
-    it("should return 400 when roles array contains invalid values", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { roles: [Role.USER, "hacker"] };
+    it('should return 400 when roles array contains invalid values', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { roles: [Role.USER, 'hacker'] };
       await setRoles(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 404 when user not found", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should return 404 when user not found', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       req.body = { roles: [Role.ADMIN, Role.USER] };
       mockUserModel.findById.mockResolvedValue(null);
       await setRoles(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    it("should update multiple roles successfully", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should update multiple roles successfully', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       req.body = { roles: [Role.ADMIN, Role.USER] };
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
+        _id: '507f1f77bcf86cd799439011',
         roles: [Role.USER],
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
+          _id: '507f1f77bcf86cd799439011',
           roles: [Role.ADMIN, Role.USER],
         }),
       };
@@ -477,14 +485,14 @@ describe("User Controller", () => {
       );
     });
 
-    it("should assign monteur role successfully", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should assign monteur role successfully', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       req.body = { roles: [Role.USER, Role.MONTEUR] };
       const mockUser = {
-        _id: "507f1f77bcf86cd799439011",
+        _id: '507f1f77bcf86cd799439011',
         roles: [Role.USER],
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
+          _id: '507f1f77bcf86cd799439011',
           roles: [Role.USER, Role.MONTEUR],
         }),
       };
@@ -495,10 +503,10 @@ describe("User Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should return 500 on internal error", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should return 500 on internal error', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       req.body = { roles: [Role.USER] };
-      mockUserModel.findById.mockRejectedValue(new Error("DB failure"));
+      mockUserModel.findById.mockRejectedValue(new Error('DB failure'));
       await setRoles(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
     });

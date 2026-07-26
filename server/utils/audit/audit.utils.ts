@@ -1,4 +1,4 @@
-import AuditModel from "../../models/audit.model";
+import AuditModel from '../../models/audit.model';
 
 export async function logEvent(
   action: string,
@@ -16,13 +16,10 @@ export async function logEvent(
       details,
     });
   } catch (err) {
-    console.error("Audit log error:", err);
+    console.error('Audit log error:', err);
   }
 }
 
-export async function getRecentEvents(
-  limit = 200,
-  filter: Record<string, unknown> = {},
-) {
+export async function getRecentEvents(limit = 200, filter: Record<string, unknown> = {}) {
   return AuditModel.find(filter).sort({ createdAt: -1 }).limit(limit).lean();
 }

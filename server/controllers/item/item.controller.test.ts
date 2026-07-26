@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { Request, Response } from "express";
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { Request, Response } from 'express';
 
 const mockItemModel = vi.hoisted(() => ({
   findById: vi.fn(),
@@ -9,22 +9,22 @@ const mockItemModel = vi.hoisted(() => ({
   deleteOne: vi.fn(),
 }));
 
-vi.mock("../../models/item.model", () => ({
+vi.mock('../../models/item.model', () => ({
   __esModule: true,
   default: mockItemModel,
 }));
 
-vi.mock("../../utils/history/history.utils", () => ({
+vi.mock('../../utils/history/history.utils', () => ({
   logItemCreate: vi.fn(),
   logItemChanges: vi.fn(),
   logItemDelete: vi.fn(),
 }));
 
-vi.mock("../../utils/audit/audit.utils", () => ({
+vi.mock('../../utils/audit/audit.utils', () => ({
   logEvent: vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock("../stats/stats.controller", () => ({
+vi.mock('../stats/stats.controller', () => ({
   invalidateStatsCache: vi.fn(),
 }));
 
@@ -35,9 +35,9 @@ import {
   updateItem,
   deleteItem,
   preparationBatch,
-} from "./item.controller";
+} from './item.controller';
 
-describe("Item Controller", () => {
+describe('Item Controller', () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
 
@@ -48,13 +48,13 @@ describe("Item Controller", () => {
       body: {},
     };
     res = {
-      locals: { user: { username: "admin" } },
-      status: vi.fn().mockReturnThis() as unknown as Response["status"],
-      json: vi.fn() as unknown as Response["json"],
-      send: vi.fn() as unknown as Response["send"],
+      locals: { user: { username: 'admin' } },
+      status: vi.fn().mockReturnThis() as unknown as Response['status'],
+      json: vi.fn() as unknown as Response['json'],
+      send: vi.fn() as unknown as Response['send'],
     };
     vi.clearAllMocks();
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -62,15 +62,15 @@ describe("Item Controller", () => {
   });
 
   // #region itemInfo
-  describe("itemInfo", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "invalid-id" };
+  describe('itemInfo', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'invalid-id' };
       await itemInfo(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 404 when item does not exist", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should return 404 when item does not exist', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       mockItemModel.findById.mockReturnValue({
         lean: vi.fn().mockResolvedValue(null),
       });
@@ -79,14 +79,14 @@ describe("Item Controller", () => {
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    it("should return the item when found", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should return the item when found', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       const mockItem = {
-        _id: "507f1f77bcf86cd799439011",
-        name: "Pièce A",
+        _id: '507f1f77bcf86cd799439011',
+        name: 'Pièce A',
         quantity: 10,
-        supplier: "Fournisseur1",
-        status: "Neuf",
+        supplier: 'Fournisseur1',
+        status: 'Neuf',
       };
       mockItemModel.findById.mockReturnValue({
         lean: vi.fn().mockResolvedValue(mockItem),
@@ -100,10 +100,10 @@ describe("Item Controller", () => {
   // #endregion
 
   // #region readItem
-  describe("readItem", () => {
-    it("should return paginated items", async () => {
-      req.query = { page: "1", limit: "10" };
-      const mockItems = [{ name: "Test" }];
+  describe('readItem', () => {
+    it('should return paginated items', async () => {
+      req.query = { page: '1', limit: '10' };
+      const mockItems = [{ name: 'Test' }];
 
       mockItemModel.find.mockReturnValue({
         sort: vi.fn().mockReturnValue({
@@ -128,8 +128,8 @@ describe("Item Controller", () => {
       );
     });
 
-    it("should apply the search filter", async () => {
-      req.query = { search: "piece", page: "1", limit: "10" };
+    it('should apply the search filter', async () => {
+      req.query = { search: 'piece', page: '1', limit: '10' };
 
       mockItemModel.find.mockReturnValue({
         sort: vi.fn().mockReturnValue({
@@ -145,13 +145,13 @@ describe("Item Controller", () => {
       await readItem(req as Request, res as Response);
       expect(mockItemModel.find).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: { $regex: "piece", $options: "i" },
+          name: { $regex: 'piece', $options: 'i' },
         }),
       );
     });
 
-    it("should filter by low stock", async () => {
-      req.query = { lowStock: "true", page: "1", limit: "10" };
+    it('should filter by low stock', async () => {
+      req.query = { lowStock: 'true', page: '1', limit: '10' };
 
       mockItemModel.find.mockReturnValue({
         sort: vi.fn().mockReturnValue({
@@ -175,18 +175,18 @@ describe("Item Controller", () => {
   // #endregion
 
   // #region createItem
-  describe("createItem", () => {
-    it("should create an item successfully", async () => {
+  describe('createItem', () => {
+    it('should create an item successfully', async () => {
       req.body = {
-        name: "Pièce B",
-        quantity: "5",
-        supplier: "Fournisseur1",
-        status: "Neuf",
-        posterId: "user123",
-        modifierName: "admin",
+        name: 'Pièce B',
+        quantity: '5',
+        supplier: 'Fournisseur1',
+        status: 'Neuf',
+        posterId: 'user123',
+        modifierName: 'admin',
       };
 
-      const mockCreated = { ...req.body, _id: "abc123", quantity: 5 };
+      const mockCreated = { ...req.body, _id: 'abc123', quantity: 5 };
       mockItemModel.create.mockResolvedValue(mockCreated);
 
       await createItem(req as Request, res as Response);
@@ -194,11 +194,9 @@ describe("Item Controller", () => {
       expect(res.json).toHaveBeenCalledWith({ item: mockCreated });
     });
 
-    it("should return 400 when creation fails", async () => {
-      req.body = { name: "" };
-      mockItemModel.create.mockRejectedValue(
-        new Error("name required"),
-      );
+    it('should return 400 when creation fails', async () => {
+      req.body = { name: '' };
+      mockItemModel.create.mockRejectedValue(new Error('name required'));
 
       await createItem(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
@@ -207,37 +205,37 @@ describe("Item Controller", () => {
   // #endregion
 
   // #region updateItem
-  describe("updateItem", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "bad-id" };
+  describe('updateItem', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'bad-id' };
       await updateItem(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should return 404 when item does not exist", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should return 404 when item does not exist', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       mockItemModel.findById.mockResolvedValue(null);
 
       await updateItem(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(404);
     });
 
-    it("should update an item successfully", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { name: "Updated", quantity: 15 };
+    it('should update an item successfully', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { name: 'Updated', quantity: 15 };
 
       const mockItem = {
-        _id: "507f1f77bcf86cd799439011",
-        name: "Original",
+        _id: '507f1f77bcf86cd799439011',
+        name: 'Original',
         quantity: 10,
         toObject: vi.fn().mockReturnValue({
-          _id: "507f1f77bcf86cd799439011",
-          name: "Original",
+          _id: '507f1f77bcf86cd799439011',
+          name: 'Original',
           quantity: 10,
         }),
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
-          name: "Updated",
+          _id: '507f1f77bcf86cd799439011',
+          name: 'Updated',
           quantity: 15,
         }),
       };
@@ -247,31 +245,31 @@ describe("Item Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should return 403 when a non-admin tries to change supplier or status", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { supplier: "Amazon" };
-      res.locals = { user: { username: "user", roles: ["user"] } };
+    it('should return 403 when a non-admin tries to change supplier or status', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { supplier: 'Amazon' };
+      res.locals = { user: { username: 'user', roles: ['user'] } };
 
       await updateItem(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(403);
       expect(mockItemModel.findById).not.toHaveBeenCalled();
     });
 
-    it("should allow an admin to change supplier or status", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
-      req.body = { status: "RMA" };
-      res.locals = { user: { username: "admin", roles: ["admin"] } };
+    it('should allow an admin to change supplier or status', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
+      req.body = { status: 'RMA' };
+      res.locals = { user: { username: 'admin', roles: ['admin'] } };
 
       const mockItem = {
-        _id: "507f1f77bcf86cd799439011",
-        status: "NEW",
+        _id: '507f1f77bcf86cd799439011',
+        status: 'NEW',
         toObject: vi.fn().mockReturnValue({
-          _id: "507f1f77bcf86cd799439011",
-          status: "NEW",
+          _id: '507f1f77bcf86cd799439011',
+          status: 'NEW',
         }),
         save: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
-          status: "RMA",
+          _id: '507f1f77bcf86cd799439011',
+          status: 'RMA',
         }),
       };
       mockItemModel.findById.mockResolvedValue(mockItem);
@@ -280,20 +278,18 @@ describe("Item Controller", () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it("should prevent negative quantity", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should prevent negative quantity', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       req.body = { quantity: -5 };
 
       const mockItem = {
-        _id: "507f1f77bcf86cd799439011",
+        _id: '507f1f77bcf86cd799439011',
         quantity: 10,
         toObject: vi.fn().mockReturnValue({
-          _id: "507f1f77bcf86cd799439011",
+          _id: '507f1f77bcf86cd799439011',
           quantity: 10,
         }),
-        save: vi.fn().mockImplementation(function (this: {
-          quantity: number;
-        }) {
+        save: vi.fn().mockImplementation(function (this: { quantity: number }) {
           return Promise.resolve(this);
         }),
       };
@@ -306,19 +302,19 @@ describe("Item Controller", () => {
   // #endregion
 
   // #region deleteItem
-  describe("deleteItem", () => {
-    it("should return 400 when ID is invalid", async () => {
-      req.params = { id: "bad-id" };
+  describe('deleteItem', () => {
+    it('should return 400 when ID is invalid', async () => {
+      req.params = { id: 'bad-id' };
       await deleteItem(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
     });
 
-    it("should delete an item successfully", async () => {
-      req.params = { id: "507f1f77bcf86cd799439011" };
+    it('should delete an item successfully', async () => {
+      req.params = { id: '507f1f77bcf86cd799439011' };
       mockItemModel.findById.mockReturnValue({
         lean: vi.fn().mockResolvedValue({
-          _id: "507f1f77bcf86cd799439011",
-          name: "Test",
+          _id: '507f1f77bcf86cd799439011',
+          name: 'Test',
         }),
       });
       mockItemModel.deleteOne.mockReturnValue({
@@ -328,44 +324,44 @@ describe("Item Controller", () => {
       await deleteItem(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Successfully deleted",
-        code: "DELETED",
+        message: 'Successfully deleted',
+        code: 'DELETED',
       });
     });
   });
   // #endregion
 
   // #region preparationBatch
-  describe("preparationBatch", () => {
-    it("should return 400 when preparation is invalid", async () => {
-      req.body = { preparation: "invalid", operation: "decrement" };
+  describe('preparationBatch', () => {
+    it('should return 400 when preparation is invalid', async () => {
+      req.body = { preparation: 'invalid', operation: 'decrement' };
       await preparationBatch(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Invalid preparation",
-        code: "INVALID_PREPARATION",
+        message: 'Invalid preparation',
+        code: 'INVALID_PREPARATION',
       });
     });
 
-    it("should return 400 when operation is invalid", async () => {
-      req.body = { preparation: "cgKit", operation: "multiply" };
+    it('should return 400 when operation is invalid', async () => {
+      req.body = { preparation: 'cgKit', operation: 'multiply' };
       await preparationBatch(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({
-        message: "Invalid operation",
-        code: "INVALID_OPERATION",
+        message: 'Invalid operation',
+        code: 'INVALID_OPERATION',
       });
     });
 
-    it("should decrement quantities for matching items", async () => {
-      req.body = { preparation: "cgKit", operation: "decrement" };
+    it('should decrement quantities for matching items', async () => {
+      req.body = { preparation: 'cgKit', operation: 'decrement' };
 
       const mockItems = [
         {
-          _id: "item1",
-          name: "Pièce A",
+          _id: 'item1',
+          name: 'Pièce A',
           quantity: 10,
-          toObject: vi.fn().mockReturnValue({ name: "Pièce A", quantity: 10 }),
+          toObject: vi.fn().mockReturnValue({ name: 'Pièce A', quantity: 10 }),
           save: vi.fn().mockResolvedValue(true),
         },
       ];
@@ -376,20 +372,18 @@ describe("Item Controller", () => {
       expect(mockItems[0].quantity).toBe(9);
       expect(mockItems[0].save).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({ updated: 1 }),
-      );
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ updated: 1 }));
     });
 
-    it("should apply delta of 4 for cassette items in cgKit", async () => {
-      req.body = { preparation: "cgKit", operation: "decrement" };
+    it('should apply delta of 4 for cassette items in cgKit', async () => {
+      req.body = { preparation: 'cgKit', operation: 'decrement' };
 
       const mockItems = [
         {
-          _id: "item1",
-          name: "Cassette HV",
+          _id: 'item1',
+          name: 'Cassette HV',
           quantity: 10,
-          toObject: vi.fn().mockReturnValue({ name: "Cassette HV", quantity: 10 }),
+          toObject: vi.fn().mockReturnValue({ name: 'Cassette HV', quantity: 10 }),
           save: vi.fn().mockResolvedValue(true),
         },
       ];
@@ -400,15 +394,15 @@ describe("Item Controller", () => {
       expect(mockItems[0].quantity).toBe(6);
     });
 
-    it("should not go below 0 on decrement", async () => {
-      req.body = { preparation: "tpvKit", operation: "decrement" };
+    it('should not go below 0 on decrement', async () => {
+      req.body = { preparation: 'tpvKit', operation: 'decrement' };
 
       const mockItems = [
         {
-          _id: "item1",
-          name: "Pièce A",
+          _id: 'item1',
+          name: 'Pièce A',
           quantity: 0,
-          toObject: vi.fn().mockReturnValue({ name: "Pièce A", quantity: 0 }),
+          toObject: vi.fn().mockReturnValue({ name: 'Pièce A', quantity: 0 }),
           save: vi.fn().mockResolvedValue(true),
         },
       ];

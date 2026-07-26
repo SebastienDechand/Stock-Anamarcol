@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
-import ItemModel from "../../models/item.model";
-import { LOW_STOCK_THRESHOLD } from "../../constants";
-import { handleError } from "../../utils/response/response.utils";
-import type { DashboardResult, LowStockItemResult } from "../../types/stats";
+import { Request, Response } from 'express';
+import ItemModel from '../../models/item.model';
+import { LOW_STOCK_THRESHOLD } from '../../constants';
+import { handleError } from '../../utils/response/response.utils';
+import type { DashboardResult, LowStockItemResult } from '../../types/stats';
 
 // Simple in-memory cache (invalidated on each mutation)
 let statsCache: DashboardResult | null = null;
@@ -15,10 +15,7 @@ const invalidateCache = (): void => {
 };
 
 // Unified endpoint: all stats in a single request
-export const getDashboardStats = async (
-  _req: Request,
-  res: Response,
-): Promise<void> => {
+export const getDashboardStats = async (_req: Request, res: Response): Promise<void> => {
   try {
     const now = Date.now();
     if (statsCache && now - statsCacheTime < CACHE_TTL) {
@@ -26,59 +23,53 @@ export const getDashboardStats = async (
       return;
     }
 
-    const [
-      globalStats,
-      suppliersStats,
-      statusesStats,
-      lowStockItems,
-      cgItems,
-      tpvItems,
-    ] = await Promise.all([
-      ItemModel.aggregate([
-        {
-          $group: {
-            _id: null,
-            numberOfArticles: { $sum: 1 },
-            totalStock: { $sum: "$quantity" },
-            numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantity", LOW_STOCK_THRESHOLD] }, 1, 0] },
-            },
-            suppliers: { $addToSet: "$supplier" },
-          },
-        },
-      ]),
-      ItemModel.aggregate([
-        {
-          $group: {
-            _id: "$supplier",
-            numberOfArticles: { $sum: 1 },
-            totalStock: { $sum: "$quantity" },
-            numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantity", LOW_STOCK_THRESHOLD] }, 1, 0] },
+    const [globalStats, suppliersStats, statusesStats, lowStockItems, cgItems, tpvItems] =
+      await Promise.all([
+        ItemModel.aggregate([
+          {
+            $group: {
+              _id: null,
+              numberOfArticles: { $sum: 1 },
+              totalStock: { $sum: '$quantity' },
+              numberOfLowStockArticles: {
+                $sum: { $cond: [{ $lt: ['$quantity', LOW_STOCK_THRESHOLD] }, 1, 0] },
+              },
+              suppliers: { $addToSet: '$supplier' },
             },
           },
-        },
-        { $sort: { _id: 1 } },
-      ]),
-      ItemModel.aggregate([
-        {
-          $group: {
-            _id: "$status",
-            numberOfArticles: { $sum: 1 },
-            totalStock: { $sum: "$quantity" },
-            numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantity", LOW_STOCK_THRESHOLD] }, 1, 0] },
+        ]),
+        ItemModel.aggregate([
+          {
+            $group: {
+              _id: '$supplier',
+              numberOfArticles: { $sum: 1 },
+              totalStock: { $sum: '$quantity' },
+              numberOfLowStockArticles: {
+                $sum: { $cond: [{ $lt: ['$quantity', LOW_STOCK_THRESHOLD] }, 1, 0] },
+              },
             },
           },
-        },
-        { $sort: { _id: 1 } },
-      ]),
-      ItemModel.find({ quantity: { $lt: LOW_STOCK_THRESHOLD } })
-        .sort({ quantity: 1, name: 1 })
-        .lean(),
-      ItemModel.find({ cgKit: true }).select("name quantity").lean(),
-      ItemModel.find({ tpvKit: true }).select("quantity").lean(),
-    ]);
+          { $sort: { _id: 1 } },
+        ]),
+        ItemModel.aggregate([
+          {
+            $group: {
+              _id: '$status',
+              numberOfArticles: { $sum: 1 },
+              totalStock: { $sum: '$quantity' },
+              numberOfLowStockArticles: {
+                $sum: { $cond: [{ $lt: ['$quantity', LOW_STOCK_THRESHOLD] }, 1, 0] },
+              },
+            },
+          },
+          { $sort: { _id: 1 } },
+        ]),
+        ItemModel.find({ quantity: { $lt: LOW_STOCK_THRESHOLD } })
+          .sort({ quantity: 1, name: 1 })
+          .lean(),
+        ItemModel.find({ cgKit: true }).select('name quantity').lean(),
+        ItemModel.find({ tpvKit: true }).select('quantity').lean(),
+      ]);
 
     const global = globalStats[0] || {
       numberOfArticles: 0,
@@ -96,9 +87,7 @@ export const getDashboardStats = async (
       typedCgItems.length > 0
         ? Math.min(
             ...typedCgItems.map((item) => {
-              const isCassette = item.name
-                .toLowerCase()
-                .includes("cassette");
+              const isCassette = item.name.toLowerCase().includes('cassette');
               return isCassette ? Math.floor(item.quantity / 4) : item.quantity;
             }),
           )
@@ -107,9 +96,7 @@ export const getDashboardStats = async (
     // Complete TPV preparation = min(qty) of each item (1 of each)
     const typedTpvItems = tpvItems as { quantity: number }[];
     const completeTPV =
-      typedTpvItems.length > 0
-        ? Math.min(...typedTpvItems.map((item) => item.quantity))
-        : 0;
+      typedTpvItems.length > 0 ? Math.min(...typedTpvItems.map((item) => item.quantity)) : 0;
 
     const result: DashboardResult = {
       global: {
@@ -140,7 +127,7 @@ export const getDashboardStats = async (
 
     res.status(200).json(result);
   } catch (error) {
-    handleError(res, error, "Dashboard stats error:");
+    handleError(res, error, 'Dashboard stats error:');
   }
 };
 
@@ -148,41 +135,32 @@ export const invalidateStatsCache = invalidateCache;
 
 // === Legacy endpoints kept for backward compatibility ===
 
-export const getNumberOfArticles = async (
-  _req: Request,
-  res: Response,
-): Promise<void> => {
+export const getNumberOfArticles = async (_req: Request, res: Response): Promise<void> => {
   try {
     const numberOfArticles = await ItemModel.countDocuments();
     res.status(200).json({ numberOfArticles });
   } catch (error) {
-    handleError(res, error, "Error fetching number of articles:");
+    handleError(res, error, 'Error fetching number of articles:');
   }
 };
 
-export const getTotalStock = async (
-  _req: Request,
-  res: Response,
-): Promise<void> => {
+export const getTotalStock = async (_req: Request, res: Response): Promise<void> => {
   try {
     const result = await ItemModel.aggregate([
-      { $group: { _id: null, totalStock: { $sum: "$quantity" } } },
+      { $group: { _id: null, totalStock: { $sum: '$quantity' } } },
     ]);
     res.status(200).json({ totalStock: result[0]?.totalStock || 0 });
   } catch (error) {
-    handleError(res, error, "Error fetching total stock:");
+    handleError(res, error, 'Error fetching total stock:');
   }
 };
 
-export const getNumberOfSuppliers = async (
-  _req: Request,
-  res: Response,
-): Promise<void> => {
+export const getNumberOfSuppliers = async (_req: Request, res: Response): Promise<void> => {
   try {
-    const list = await ItemModel.distinct("supplier");
+    const list = await ItemModel.distinct('supplier');
     res.status(200).json({ numberOfSuppliers: list.length });
   } catch (error) {
-    handleError(res, error, "Error fetching number of suppliers:");
+    handleError(res, error, 'Error fetching number of suppliers:');
   }
 };
 
@@ -194,40 +172,31 @@ export const getNumberOfArticlesWithStockBelow5 = async (
     const count = await ItemModel.countDocuments({ quantity: { $lt: LOW_STOCK_THRESHOLD } });
     res.status(200).json({ numberOfLowStockArticles: count });
   } catch (error) {
-    handleError(res, error, "Error fetching number of low-stock articles:");
+    handleError(res, error, 'Error fetching number of low-stock articles:');
   }
 };
 
-export const getArticlesWithLowStock = async (
-  _req: Request,
-  res: Response,
-): Promise<void> => {
+export const getArticlesWithLowStock = async (_req: Request, res: Response): Promise<void> => {
   try {
     const articles = await ItemModel.find({ quantity: { $lt: LOW_STOCK_THRESHOLD } })
       .sort({ quantity: 1, name: 1 })
       .lean();
     res.json(articles);
   } catch (error) {
-    handleError(res, error, "Error fetching low-stock articles:");
+    handleError(res, error, 'Error fetching low-stock articles:');
   }
 };
 
-export const getSuppliersList = async (
-  _req: Request,
-  res: Response,
-): Promise<void> => {
+export const getSuppliersList = async (_req: Request, res: Response): Promise<void> => {
   try {
-    const suppliersList = await ItemModel.distinct("supplier");
+    const suppliersList = await ItemModel.distinct('supplier');
     res.status(200).json({ suppliersList });
   } catch (error) {
-    handleError(res, error, "Error fetching suppliers list:");
+    handleError(res, error, 'Error fetching suppliers list:');
   }
 };
 
-export const getStatisticsForSupplier = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+export const getStatisticsForSupplier = async (req: Request, res: Response): Promise<void> => {
   try {
     const supplier = req.params.supplier;
     const [count, stats] = await Promise.all([
@@ -237,9 +206,9 @@ export const getStatisticsForSupplier = async (
         {
           $group: {
             _id: null,
-            totalStock: { $sum: "$quantity" },
+            totalStock: { $sum: '$quantity' },
             numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantity", LOW_STOCK_THRESHOLD] }, 1, 0] },
+              $sum: { $cond: [{ $lt: ['$quantity', LOW_STOCK_THRESHOLD] }, 1, 0] },
             },
           },
         },
@@ -248,26 +217,20 @@ export const getStatisticsForSupplier = async (
     const s = stats[0] || { totalStock: 0, numberOfLowStockArticles: 0 };
     res.status(200).json({ numberOfArticles: count, ...s });
   } catch (error) {
-    handleError(res, error, "Error fetching statistics for supplier:");
+    handleError(res, error, 'Error fetching statistics for supplier:');
   }
 };
 
-export const getStatusesList = async (
-  _req: Request,
-  res: Response,
-): Promise<void> => {
+export const getStatusesList = async (_req: Request, res: Response): Promise<void> => {
   try {
-    const statusesList = await ItemModel.distinct("status");
+    const statusesList = await ItemModel.distinct('status');
     res.status(200).json({ statusesList });
   } catch (error) {
-    handleError(res, error, "Error fetching statuses list:");
+    handleError(res, error, 'Error fetching statuses list:');
   }
 };
 
-export const getStatisticsForStatus = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+export const getStatisticsForStatus = async (req: Request, res: Response): Promise<void> => {
   try {
     const status = req.params.status;
     const [count, stats] = await Promise.all([
@@ -277,9 +240,9 @@ export const getStatisticsForStatus = async (
         {
           $group: {
             _id: null,
-            totalStock: { $sum: "$quantity" },
+            totalStock: { $sum: '$quantity' },
             numberOfLowStockArticles: {
-              $sum: { $cond: [{ $lt: ["$quantity", LOW_STOCK_THRESHOLD] }, 1, 0] },
+              $sum: { $cond: [{ $lt: ['$quantity', LOW_STOCK_THRESHOLD] }, 1, 0] },
             },
           },
         },
@@ -288,6 +251,6 @@ export const getStatisticsForStatus = async (
     const s = stats[0] || { totalStock: 0, numberOfLowStockArticles: 0 };
     res.status(200).json({ numberOfArticles: count, ...s });
   } catch (error) {
-    handleError(res, error, "Error fetching statistics for status:");
+    handleError(res, error, 'Error fetching statistics for status:');
   }
 };

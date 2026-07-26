@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { EventEmitter } from "events";
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { EventEmitter } from 'events';
 
 const mockShipmentModel = vi.hoisted(() => ({
   find: vi.fn(),
@@ -16,17 +16,17 @@ const mockShipmentArchiveModel = vi.hoisted(() => ({
   findById: vi.fn(),
 }));
 
-vi.mock("../../models/shipment.model", () => ({
+vi.mock('../../models/shipment.model', () => ({
   __esModule: true,
   default: mockShipmentModel,
 }));
 
-vi.mock("../../models/shipmentArchive.model", () => ({
+vi.mock('../../models/shipmentArchive.model', () => ({
   __esModule: true,
   default: mockShipmentArchiveModel,
 }));
 
-vi.mock("pdfkit", () => {
+vi.mock('pdfkit', () => {
   const PDFDocumentMock = vi.fn().mockImplementation(function () {
     const emitter = new EventEmitter() as EventEmitter & Record<string, unknown>;
     emitter.fontSize = vi.fn().mockReturnValue(emitter);
@@ -44,8 +44,8 @@ vi.mock("pdfkit", () => {
     emitter.y = 100;
     emitter.end = vi.fn().mockImplementation(() => {
       process.nextTick(() => {
-        emitter.emit("data", Buffer.from("fake-pdf"));
-        emitter.emit("end");
+        emitter.emit('data', Buffer.from('fake-pdf'));
+        emitter.emit('end');
       });
     });
     return emitter;
@@ -62,50 +62,50 @@ import {
   findArchiveById,
   performArchiveForMonth,
   autoArchiveIfNeeded,
-} from "./shipments.service";
+} from './shipments.service';
 
-describe("shipments.service", () => {
+describe('shipments.service', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("listShipments sorts by createdAt desc and leans", async () => {
-    const list = [{ _id: "s1" }];
+  it('listShipments sorts by createdAt desc and leans', async () => {
+    const list = [{ _id: 's1' }];
     const lean = vi.fn().mockResolvedValue(list);
     const sort = vi.fn().mockReturnValue({ lean });
     mockShipmentModel.find.mockReturnValue({ sort });
 
-    const result = await listShipments({ clientFile: "cf1" });
+    const result = await listShipments({ clientFile: 'cf1' });
 
-    expect(mockShipmentModel.find).toHaveBeenCalledWith({ clientFile: "cf1" });
+    expect(mockShipmentModel.find).toHaveBeenCalledWith({ clientFile: 'cf1' });
     expect(sort).toHaveBeenCalledWith({ createdAt: -1 });
     expect(result).toBe(list);
   });
 
-  it("createShipment delegates to the model", async () => {
-    const data = { lastName: "Dupont" };
-    mockShipmentModel.create.mockResolvedValue({ _id: "s1", ...data });
+  it('createShipment delegates to the model', async () => {
+    const data = { lastName: 'Dupont' };
+    mockShipmentModel.create.mockResolvedValue({ _id: 's1', ...data });
     const result = await createShipment(data);
     expect(mockShipmentModel.create).toHaveBeenCalledWith(data);
-    expect(result).toEqual({ _id: "s1", ...data });
+    expect(result).toEqual({ _id: 's1', ...data });
   });
 
-  it("findShipmentDocument delegates to findById", () => {
-    const doc = { _id: "s1" };
+  it('findShipmentDocument delegates to findById', () => {
+    const doc = { _id: 's1' };
     mockShipmentModel.findById.mockReturnValue(doc);
-    expect(findShipmentDocument("s1")).toBe(doc);
+    expect(findShipmentDocument('s1')).toBe(doc);
   });
 
-  it("deleteShipmentById delegates to deleteOne({ _id }).exec()", async () => {
+  it('deleteShipmentById delegates to deleteOne({ _id }).exec()', async () => {
     const exec = vi.fn().mockResolvedValue({ deletedCount: 1 });
     mockShipmentModel.deleteOne.mockReturnValue({ exec });
-    await deleteShipmentById("s1");
-    expect(mockShipmentModel.deleteOne).toHaveBeenCalledWith({ _id: "s1" });
+    await deleteShipmentById('s1');
+    expect(mockShipmentModel.deleteOne).toHaveBeenCalledWith({ _id: 's1' });
     expect(exec).toHaveBeenCalled();
   });
 
-  it("listArchives excludes fileBuffer and sorts by createdAt desc", async () => {
-    const archives = [{ _id: "a1" }];
+  it('listArchives excludes fileBuffer and sorts by createdAt desc', async () => {
+    const archives = [{ _id: 'a1' }];
     const lean = vi.fn().mockResolvedValue(archives);
     const sort = vi.fn().mockReturnValue({ lean });
     const select = vi.fn().mockReturnValue({ sort });
@@ -113,24 +113,24 @@ describe("shipments.service", () => {
 
     const result = await listArchives();
 
-    expect(select).toHaveBeenCalledWith("-fileBuffer");
+    expect(select).toHaveBeenCalledWith('-fileBuffer');
     expect(sort).toHaveBeenCalledWith({ createdAt: -1 });
     expect(result).toBe(archives);
   });
 
-  it("findArchiveById leans the result", async () => {
-    const archive = { _id: "a1" };
+  it('findArchiveById leans the result', async () => {
+    const archive = { _id: 'a1' };
     const lean = vi.fn().mockResolvedValue(archive);
     mockShipmentArchiveModel.findById.mockReturnValue({ lean });
 
-    const result = await findArchiveById("a1");
+    const result = await findArchiveById('a1');
 
-    expect(mockShipmentArchiveModel.findById).toHaveBeenCalledWith("a1");
+    expect(mockShipmentArchiveModel.findById).toHaveBeenCalledWith('a1');
     expect(result).toBe(archive);
   });
 
-  describe("performArchiveForMonth", () => {
-    it("returns null when there are no shipments for that month", async () => {
+  describe('performArchiveForMonth', () => {
+    it('returns null when there are no shipments for that month', async () => {
       const lean = vi.fn().mockResolvedValue([]);
       const sort = vi.fn().mockReturnValue({ lean });
       mockShipmentModel.find.mockReturnValue({ sort });
@@ -141,22 +141,22 @@ describe("shipments.service", () => {
       expect(mockShipmentArchiveModel.create).not.toHaveBeenCalled();
     });
 
-    it("archives shipments into a PDF, creates the archive, and purges the month", async () => {
+    it('archives shipments into a PDF, creates the archive, and purges the month', async () => {
       const now = new Date(2026, 0, 15);
       const shipments = [
         {
-          _id: "s1",
-          lastName: "DUPONT",
-          firstName: "JEAN",
+          _id: 's1',
+          lastName: 'DUPONT',
+          firstName: 'JEAN',
           sent: true,
-          part: "Hooper",
-          address: "7 AV MOZART",
-          postalCode: "75016",
-          city: "PARIS",
-          companyOrRole: "BOULANGERIE",
-          company: "DUPONT SARL",
-          sentBy: "admin",
-          createdByName: "admin",
+          part: 'Hooper',
+          address: '7 AV MOZART',
+          postalCode: '75016',
+          city: 'PARIS',
+          companyOrRole: 'BOULANGERIE',
+          company: 'DUPONT SARL',
+          sentBy: 'admin',
+          createdByName: 'admin',
           createdAt: now,
         },
       ];
@@ -164,8 +164,8 @@ describe("shipments.service", () => {
       const sort = vi.fn().mockReturnValue({ lean });
       mockShipmentModel.find.mockReturnValue({ sort });
       mockShipmentArchiveModel.create.mockResolvedValue({
-        _id: "arc1",
-        title: "Janvier 2026",
+        _id: 'arc1',
+        title: 'Janvier 2026',
         shipmentCount: 1,
       });
       mockShipmentModel.deleteMany.mockResolvedValue({ deletedCount: 1 });
@@ -175,22 +175,18 @@ describe("shipments.service", () => {
       expect(mockShipmentArchiveModel.create).toHaveBeenCalledWith(
         expect.objectContaining({
           shipmentCount: 1,
-          rawData: expect.arrayContaining([
-            expect.objectContaining({ Nom: "DUPONT" }),
-          ]),
+          rawData: expect.arrayContaining([expect.objectContaining({ Nom: 'DUPONT' })]),
         }),
       );
       expect(mockShipmentModel.deleteMany).toHaveBeenCalledWith(
         expect.objectContaining({ createdAt: expect.any(Object) }),
       );
-      expect(archive).toEqual(
-        expect.objectContaining({ _id: "arc1", shipmentCount: 1 }),
-      );
+      expect(archive).toEqual(expect.objectContaining({ _id: 'arc1', shipmentCount: 1 }));
     });
   });
 
-  describe("autoArchiveIfNeeded", () => {
-    it("does nothing when there are no shipments at all", async () => {
+  describe('autoArchiveIfNeeded', () => {
+    it('does nothing when there are no shipments at all', async () => {
       const lean = vi.fn().mockResolvedValue(null);
       const sort = vi.fn().mockReturnValue({ lean });
       mockShipmentModel.findOne.mockReturnValue({ sort });
@@ -200,7 +196,7 @@ describe("shipments.service", () => {
       expect(mockShipmentModel.find).not.toHaveBeenCalled();
     });
 
-    it("archives every past month with shipments", async () => {
+    it('archives every past month with shipments', async () => {
       const now = new Date();
       const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1);
       const oldestLean = vi.fn().mockResolvedValue({ createdAt: twoMonthsAgo });

@@ -1,8 +1,8 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose, { Document, Model, Schema } from 'mongoose';
 
 export interface IHistory extends Document {
   itemId: mongoose.Types.ObjectId;
-  action: "create" | "update" | "delete" | "quantity_change";
+  action: 'create' | 'update' | 'delete' | 'quantity_change';
   field?: string;
   oldValue?: string;
   newValue?: string;
@@ -14,14 +14,14 @@ const HistorySchema = new Schema<IHistory>(
   {
     itemId: {
       type: Schema.Types.ObjectId,
-      ref: "item",
+      ref: 'item',
       required: true,
       index: true,
     },
     action: {
       type: String,
       required: true,
-      enum: ["create", "update", "delete", "quantity_change"],
+      enum: ['create', 'update', 'delete', 'quantity_change'],
     },
     field: {
       type: String,
@@ -44,26 +44,20 @@ const HistorySchema = new Schema<IHistory>(
 
 HistorySchema.index({ itemId: 1, createdAt: -1 });
 
-const HistoryModel: Model<IHistory> = mongoose.model<IHistory>(
-  "history",
-  HistorySchema,
-);
+const HistoryModel: Model<IHistory> = mongoose.model<IHistory>('history', HistorySchema);
 
 // Auto-purge after 60 days.
 Promise.all(
-  ["createdAt_1", "createdAt_ttl"].map((name) =>
+  ['createdAt_1', 'createdAt_ttl'].map((name) =>
     HistoryModel.collection.dropIndex(name).catch(() => {
       // Index might not exist, that's fine
     }),
   ),
 ).then(() => {
   HistoryModel.collection
-    .createIndex(
-      { createdAt: 1 },
-      { expireAfterSeconds: 60 * 24 * 3600, name: "createdAt_ttl" },
-    )
+    .createIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 24 * 3600, name: 'createdAt_ttl' })
     .catch((err) => {
-      console.error("Failed to (re)create history TTL index:", err);
+      console.error('Failed to (re)create history TTL index:', err);
     });
 });
 

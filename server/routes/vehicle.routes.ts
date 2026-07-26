@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from 'express';
 import {
   getAllVehicles,
   getVehicleById,
@@ -8,15 +8,15 @@ import {
   searchVehicles,
   uploadDocument,
   deleteDocument,
-} from "../controllers/vehicle/vehicle.controller";
-import { requireAdmin } from "../middleware/auth/auth.middleware";
-import multer from "multer";
-import path from "path";
-import fs from "fs";
+} from '../controllers/vehicle/vehicle.controller';
+import { requireAdmin } from '../middleware/auth/auth.middleware';
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 const router = Router();
 
-const uploadDir = path.join(process.cwd(), "uploads/vehicules");
+const uploadDir = path.join(process.cwd(), 'uploads/vehicules');
 fs.mkdirSync(uploadDir, { recursive: true });
 
 // Configure multer for vehicle document uploads
@@ -39,28 +39,23 @@ const upload = multer({
     if (allowedTypes.test(ext)) {
       cb(null, true);
     } else {
-      cb(new Error("Invalid file type"));
+      cb(new Error('Invalid file type'));
     }
   },
 });
 
 // #region Vehicle routes (require authentication)
-router.get("/", requireAdmin, getAllVehicles);
-router.get("/search", requireAdmin, searchVehicles);
-router.get("/:id", requireAdmin, getVehicleById);
-router.post("/", requireAdmin, createVehicle);
-router.put("/:id", requireAdmin, updateVehicle);
-router.delete("/:id", requireAdmin, deleteVehicle);
+router.get('/', requireAdmin, getAllVehicles);
+router.get('/search', requireAdmin, searchVehicles);
+router.get('/:id', requireAdmin, getVehicleById);
+router.post('/', requireAdmin, createVehicle);
+router.put('/:id', requireAdmin, updateVehicle);
+router.delete('/:id', requireAdmin, deleteVehicle);
 // #endregion
 
 // #region Document routes
-router.post(
-  "/:id/documents",
-  requireAdmin,
-  upload.single("file"),
-  uploadDocument,
-);
-router.delete("/:id/documents/:docId", requireAdmin, deleteDocument);
+router.post('/:id/documents', requireAdmin, upload.single('file'), uploadDocument);
+router.delete('/:id/documents/:docId', requireAdmin, deleteDocument);
 // #endregion
 
 export default router;
