@@ -2,7 +2,7 @@
   <div class="vehicle-card__header">
     <div class="vehicle-card__title-row">
       <span class="vehicle-card__plate">{{ vehicle().licensePlate }}</span>
-      <span [class]="formatBadgeClass">{{ formatLabel | translate }}</span>
+      <app-badge [variant]="formatBadgeVariant">{{ formatLabel | translate }}</app-badge>
     </div>
     @if (vehicle().assignedToName) {
       <p class="vehicle-card__assigned">

@@ -111,36 +111,36 @@
             <!-- Equipment badges -->
             <div class="file-card__badges">
               @if (file.equipment.registerCount > 0) {
-                <span class="badge badge--green"
+                <app-badge variant="green"
                   >{{ file.equipment.registerCount }} Caisse{{
                     file.equipment.registerCount > 1 ? 's' : ''
-                  }}</span
+                  }}</app-badge
                 >
               }
               @if (file.equipment.scaleCount > 0) {
-                <span class="badge badge--green"
+                <app-badge variant="green"
                   >{{ file.equipment.scaleCount }} Caisse{{
                     file.equipment.scaleCount > 1 ? 's' : ''
                   }}
-                  (Bal.)</span
+                  (Bal.)</app-badge
                 >
               }
               @if (file.equipment.cashguardCount > 0) {
-                <span class="badge badge--blue">{{ file.equipment.cashguardCount }} CashGuard</span>
+                <app-badge variant="blue">{{ file.equipment.cashguardCount }} CashGuard</app-badge>
               }
               @if (file.equipment.fusionCount > 0) {
-                <span class="badge badge--cyan">{{ file.equipment.fusionCount }} Fusion</span>
+                <app-badge variant="cyan">{{ file.equipment.fusionCount }} Fusion</app-badge>
               }
               @if (file.equipment.tactisLicenses > 0) {
-                <span class="badge badge--purple">{{ file.equipment.tactisLicenses }} TACTIS</span>
+                <app-badge variant="purple">{{ file.equipment.tactisLicenses }} TACTIS</app-badge>
               }
               @if (file.equipment.backofficePcCount > 0) {
-                <span class="badge badge--gray">{{ file.equipment.backofficePcCount }} PC</span>
+                <app-badge variant="gray">{{ file.equipment.backofficePcCount }} PC</app-badge>
               }
               @if (file.preInstallationVisit) {
-                <span class="badge badge--yellow">{{
+                <app-badge variant="yellow">{{
                   'CLIENT_FILES.PREINSTALL_BADGE' | translate
-                }}</span>
+                }}</app-badge>
               }
             </div>
 

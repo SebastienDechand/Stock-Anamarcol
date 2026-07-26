@@ -4,6 +4,7 @@ import { LucideAngularModule, AlertCircle, Edit2, Trash2, FileText } from 'lucid
 import { TranslatePipe } from '@ngx-translate/core';
 import { Vehicle } from '../../../../shared/models/vehicle/vehicle.model';
 import { LanguageService } from '../../../../core/services/language/language.service';
+import { Badge, BadgeVariant } from '../../../../shared/components/badge/badge';
 import {
   VEHICLE_FORMAT_LABEL_KEYS,
   VehicleDateStatus,
@@ -15,7 +16,7 @@ import {
 @Component({
   selector: 'app-vehicle-card',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, TranslatePipe],
+  imports: [CommonModule, LucideAngularModule, TranslatePipe, Badge],
   templateUrl: './vehicle-card.html',
   styleUrl: './vehicle-card.scss',
 })
@@ -36,13 +37,13 @@ export class VehicleCard {
   formatDate = (date: string | Date | undefined): string =>
     formatVehicleDate(date, this.languageService.current);
 
-  get formatBadgeClass(): string {
-    const map: Record<string, string> = {
-      van: 'badge badge--blue',
-      pickup: 'badge badge--green',
-      truck: 'badge badge--orange',
+  get formatBadgeVariant(): BadgeVariant {
+    const map: Record<string, BadgeVariant> = {
+      van: 'blue',
+      pickup: 'green',
+      truck: 'orange',
     };
-    return map[this.vehicle().format] ?? 'badge';
+    return map[this.vehicle().format] ?? 'gray';
   }
 
   get formatLabel(): string {

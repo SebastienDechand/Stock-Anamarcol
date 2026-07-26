@@ -564,7 +564,7 @@
   }
 }
 /* #endregion */
-/* #region Badges */
+/* #region "Mark sent" badge-styled button (status display uses <app-badge>) */
 
 .badge {
   display: inline-flex;
@@ -579,11 +579,6 @@
   &--green {
     background: #dcfce7;
     color: #16a34a;
-  }
-
-  &--red {
-    background: #fee2e2;
-    color: #dc2626;
   }
 
   &--btn {

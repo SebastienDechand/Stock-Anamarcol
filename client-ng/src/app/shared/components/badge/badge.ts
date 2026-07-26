@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 
-export type BadgeVariant = 'success' | 'warning' | 'danger' | 'info' | 'muted' | 'brand';
+export type BadgeVariant = 'blue' | 'green' | 'orange' | 'red' | 'cyan' | 'purple' | 'gray' | 'yellow';
 
 @Component({
   selector: 'app-badge',
@@ -9,5 +9,5 @@ export type BadgeVariant = 'success' | 'warning' | 'danger' | 'info' | 'muted' |
   styleUrl: './badge.scss',
 })
 export class Badge {
-  variant = input<BadgeVariant>('brand');
+  variant = input.required<BadgeVariant>();
 }

@@ -139,13 +139,15 @@
                       (click)="selectClientFile(cf)"
                       [title]="
                         'SHIPMENTS.SELECT_CLIENT_TITLE'
-                          | translate: { name: cf.lastName + (cf.firstName ? ' ' + cf.firstName : '') }
+                          | translate
+                            : { name: cf.lastName + (cf.firstName ? ' ' + cf.firstName : '') }
                       "
                     >
                       <lucide-icon [img]="folderOpen" [size]="13" class="cf-dropdown__icon" />
                       <div>
                         <p class="cf-dropdown__name">
-                          {{ cf.lastName.toUpperCase() }}{{ cf.firstName ? ' ' + cf.firstName : '' }}
+                          {{ cf.lastName.toUpperCase()
+                          }}{{ cf.firstName ? ' ' + cf.firstName : '' }}
                         </p>
                         @if (cf.company) {
                           <p class="cf-dropdown__sub">{{ cf.company }}</p>
@@ -421,17 +423,15 @@
               <tr [class.row--sent]="s.sent" (click)="detailShipment.set(s)">
                 <td>
                   @if (s.sent) {
-                    <span class="badge badge--green">
-                      <lucide-icon [img]="check" [size]="12" />{{
-                        'SHIPMENTS.STATUS_SENT' | translate
-                      }}
-                    </span>
+                    <app-badge variant="green">
+                      <lucide-icon [img]="check" [size]="12" />
+                      {{ 'SHIPMENTS.STATUS_SENT' | translate }}
+                    </app-badge>
                   } @else {
-                    <span class="badge badge--red">
-                      <lucide-icon [img]="circleAlert" [size]="12" />{{
-                        'SHIPMENTS.STATUS_PENDING' | translate
-                      }}
-                    </span>
+                    <app-badge variant="red">
+                      <lucide-icon [img]="circleAlert" [size]="12" />
+                      {{ 'SHIPMENTS.STATUS_PENDING' | translate }}
+                    </app-badge>
                   }
                 </td>
                 <td>
@@ -478,15 +478,15 @@
           <div class="m-card" [class.m-card--sent]="s.sent" (click)="detailShipment.set(s)">
             <div class="m-card__top">
               @if (s.sent) {
-                <span class="badge badge--green">
-                  <lucide-icon [img]="check" [size]="12" />{{ 'SHIPMENTS.STATUS_SENT' | translate }}
-                </span>
+                <app-badge variant="green">
+                  <lucide-icon [img]="check" [size]="12" />
+                  {{ 'SHIPMENTS.STATUS_SENT' | translate }}
+                </app-badge>
               } @else {
-                <span class="badge badge--red">
-                  <lucide-icon [img]="circleAlert" [size]="12" />{{
-                    'SHIPMENTS.STATUS_PENDING' | translate
-                  }}
-                </span>
+                <app-badge variant="red">
+                  <lucide-icon [img]="circleAlert" [size]="12" />
+                  {{ 'SHIPMENTS.STATUS_PENDING' | translate }}
+                </app-badge>
               }
               <span class="m-card__creator">{{ s.createdByName }}</span>
             </div>
@@ -497,9 +497,7 @@
                 {{ s.company }}{{ s.companyOrRole ? ' · ' + s.companyOrRole : '' }}
               </p>
             }
-            <p class="m-card__piece">
-              <lucide-icon [img]="packageIcon" [size]="12" />{{ s.part }}
-            </p>
+            <p class="m-card__piece"><lucide-icon [img]="packageIcon" [size]="12" />{{ s.part }}</p>
             @if (s.address) {
               <p class="m-card__meta">
                 <lucide-icon [img]="mapPin" [size]="12" />
