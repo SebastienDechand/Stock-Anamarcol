@@ -126,7 +126,9 @@
                 {{ vehicle.brand | titlecase }} {{ vehicle.model | titlecase }}
               </p>
               <p class="vehicle-detail__immat">{{ vehicle.licensePlate }}</p>
-              <span class="vehicle-detail__badge">{{ vehicleFormatLabelKeys[vehicle.format] | translate }}</span>
+              <span class="vehicle-detail__badge">{{
+                vehicleFormatLabelKeys[vehicle.format] | translate
+              }}</span>
             </div>
           } @else {
             <div class="vehicle-empty">

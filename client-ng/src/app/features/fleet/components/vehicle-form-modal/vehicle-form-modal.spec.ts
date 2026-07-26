@@ -147,9 +147,7 @@ describe('VehicleFormModal', () => {
 
       component.submit();
 
-      expect(spy).toHaveBeenCalledWith(
-        expect.objectContaining({ id: 'v42' }),
-      );
+      expect(spy).toHaveBeenCalledWith(expect.objectContaining({ id: 'v42' }));
     });
   });
 });

@@ -1,7 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { combineLatest, map } from 'rxjs';
-import { ClientFile, ClientFileForm } from '../../../../shared/models/client-file/client-file.model';
+import {
+  ClientFile,
+  ClientFileForm,
+} from '../../../../shared/models/client-file/client-file.model';
 import { ClientFilesActions } from '../actions/client-files.actions';
 import {
   selectAllClientFiles,

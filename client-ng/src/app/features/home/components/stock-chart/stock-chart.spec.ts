@@ -65,10 +65,7 @@ describe('StockChart', () => {
     it('formats the label using the translated unit count', () => {
       const { component } = buildComponent([makeStat()]);
       const label = component.pieOptions.plugins?.tooltip?.callbacks?.label;
-      const formatted = label?.call(
-        {} as never,
-        { label: 'Alpha', parsed: 10 } as never,
-      );
+      const formatted = label?.call({} as never, { label: 'Alpha', parsed: 10 } as never);
       expect(formatted).toBe(' Alpha: HOME.CHART_UNITS');
     });
   });

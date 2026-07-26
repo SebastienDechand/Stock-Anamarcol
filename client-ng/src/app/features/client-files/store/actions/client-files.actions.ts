@@ -1,5 +1,8 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { ClientFile, ClientFileForm } from '../../../../shared/models/client-file/client-file.model';
+import {
+  ClientFile,
+  ClientFileForm,
+} from '../../../../shared/models/client-file/client-file.model';
 
 export const ClientFilesActions = createActionGroup({
   source: 'Client Files',
