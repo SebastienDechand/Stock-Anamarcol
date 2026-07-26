@@ -17,7 +17,7 @@ describe('AddItemModal - submit()', () => {
     const modal = build();
     const spy = vi.fn();
     modal.submitted.subscribe(spy);
-    modal.form.name = '   ';
+    modal.form.patchValue({ name: '   ' });
     modal.submit();
     expect(spy).not.toHaveBeenCalled();
   });
@@ -26,14 +26,14 @@ describe('AddItemModal - submit()', () => {
     const modal = build();
     const spy = vi.fn();
     modal.submitted.subscribe(spy);
-    modal.form = {
+    modal.form.setValue({
       name: 'Stylo bleu',
       supplier: 'Bureau Vallée',
       status: 'Neuf',
       quantity: 10,
       cgKit: false,
       tpvKit: false,
-    };
+    });
     modal.submit();
 
     expect(spy).toHaveBeenCalledWith({
@@ -47,14 +47,11 @@ describe('AddItemModal - submit()', () => {
     });
   });
 
-  it('does not emit when supplier, status or quantity are missing', () => {
+  it('does not emit when supplier or status are missing', () => {
     const modal = build();
     const spy = vi.fn();
     modal.submitted.subscribe(spy);
-    modal.form.name = 'Crayon';
-    modal.form.supplier = '';
-    modal.form.status = '';
-    modal.form.quantity = 0;
+    modal.form.patchValue({ name: 'Crayon', supplier: '', status: '', quantity: 0 });
     modal.submit();
     expect(spy).not.toHaveBeenCalled();
   });

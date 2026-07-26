@@ -1,10 +1,14 @@
-import { Component, OnInit, input, output } from '@angular/core';
+import { Component, OnInit, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { User } from '../../../../shared/models/user/user.model';
 import { UpdateUserData } from '../../store/actions/users.actions';
+import {
+  phoneFormatValidator,
+  requiredTrimmedValidator,
+} from '../../../../shared/utils/validators/validators.utils';
 import {
   ALL_DEPARTMENT_LABELS,
   DEPARTMENT_LABEL_KEYS,
@@ -13,11 +17,13 @@ import {
 @Component({
   selector: 'app-edit-member-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './edit-member-modal.html',
   styleUrl: './edit-member-modal.scss',
 })
 export class EditMemberModal implements OnInit {
+  private fb = inject(FormBuilder);
+
   user = input.required<User>();
   isSuperadmin = input(false);
   saved = output<UpdateUserData>();
@@ -27,16 +33,22 @@ export class EditMemberModal implements OnInit {
   departments = ALL_DEPARTMENT_LABELS;
   departmentLabelKeys = DEPARTMENT_LABEL_KEYS;
 
-  form: UpdateUserData = {};
+  form = this.fb.nonNullable.group({
+    username: ['', requiredTrimmedValidator],
+    email: ['', [requiredTrimmedValidator, Validators.email]],
+    position: [''],
+    phone: ['', phoneFormatValidator],
+    department: [''],
+  });
 
   ngOnInit() {
-    this.form = {
+    this.form.setValue({
       username: this.user().username,
       email: this.user().email,
       position: this.user().position ?? '',
       phone: this.user().phone ?? '',
       department: this.user().department ?? '',
-    };
+    });
   }
 
   get avatarUrl(): string {
@@ -61,7 +73,10 @@ export class EditMemberModal implements OnInit {
   }
 
   submit() {
-    if (!this.form.username?.trim() || !this.form.email?.trim()) return;
-    this.saved.emit(this.form);
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    this.saved.emit(this.form.getRawValue());
   }
 }

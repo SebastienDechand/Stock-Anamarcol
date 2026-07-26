@@ -1,14 +1,6 @@
-import {
-  Component,
-  OnChanges,
-  SimpleChanges,
-  inject,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { Component, OnChanges, SimpleChanges, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LucideAngularModule, X, FileSpreadsheet } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import {
@@ -17,6 +9,7 @@ import {
   Equipement,
 } from '../../../../shared/models/client-file/client-file.model';
 import { ToastService } from '../../../../core/toast/toast.service';
+import { requiredTrimmedValidator } from '../../../../shared/utils/validators/validators.utils';
 
 // #region BDC parsing
 
@@ -244,12 +237,13 @@ function emptyForm(): ClientFileForm {
 @Component({
   selector: 'app-client-file-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './client-file-modal.html',
   styleUrl: './client-file-modal.scss',
 })
 export class ClientFileModal implements OnChanges {
   private toast = inject(ToastService);
+  private fb = inject(FormBuilder);
 
   file = input<ClientFile | null>(null);
   save = output<{ id?: string; data: ClientFileForm }>();
@@ -257,6 +251,8 @@ export class ClientFileModal implements OnChanges {
 
   readonly x = X;
   readonly fileSpreadsheet = FileSpreadsheet;
+
+  lastNameControl = this.fb.nonNullable.control('', requiredTrimmedValidator);
 
   form: ClientFileForm = emptyForm();
   xlsxImporting = signal(false);
@@ -324,6 +320,7 @@ export class ClientFileModal implements OnChanges {
             notes: file.notes ?? '',
           }
         : emptyForm();
+      this.lastNameControl.setValue(this.form.lastName);
     }
   }
 
@@ -408,11 +405,18 @@ export class ClientFileModal implements OnChanges {
     if (equipment) {
       this.form.equipment = { ...this.form.equipment, ...equipment };
     }
+    this.lastNameControl.setValue(this.form.lastName);
   }
 
   submit(): void {
-    if (!this.form.lastName.trim()) return;
-    this.save.emit({ id: this.file()?._id, data: { ...this.form } });
+    if (this.lastNameControl.invalid) {
+      this.lastNameControl.markAsTouched();
+      return;
+    }
+    this.save.emit({
+      id: this.file()?._id,
+      data: { ...this.form, lastName: this.lastNameControl.value },
+    });
   }
 }
 // #endregion

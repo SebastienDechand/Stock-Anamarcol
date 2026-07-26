@@ -75,10 +75,12 @@
             <label class="form-label">{{ 'COMMON.NAME' | translate }} *</label>
             <input
               class="input-base"
-              [value]="getStr('lastName')"
-              (input)="setStr('lastName', $any($event.target).value)"
+              [formControl]="lastNameControl"
               [placeholder]="'CLIENT_FILES.NAME_PLACEHOLDER' | translate"
             />
+            @if (lastNameControl.invalid && lastNameControl.touched) {
+              <p class="form-field__error">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+            }
           </div>
           <div class="form-field">
             <label class="form-label">{{ 'COMMON.FIRST_NAME' | translate }}</label>
@@ -298,7 +300,7 @@
       <button
         class="btn-primary"
         type="button"
-        [disabled]="!form.lastName.trim()"
+        [disabled]="lastNameControl.invalid"
         (click)="submit()"
         [title]="isEdit ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate)"
       >

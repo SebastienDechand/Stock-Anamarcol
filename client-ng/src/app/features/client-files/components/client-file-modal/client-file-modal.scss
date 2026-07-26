@@ -4,7 +4,8 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  // Above the sidebar (z-index: 200, core/layout/sidebar) so the modal never renders under it
+  z-index: 300;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
@@ -185,6 +186,10 @@
   &--full {
     grid-column: 1 / -1;
   }
+}
+
+.form-field__error {
+  @include field-error;
 }
 
 .form-label {

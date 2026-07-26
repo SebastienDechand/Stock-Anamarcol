@@ -56,7 +56,11 @@
     "PREV_MONTH": "Previous month",
     "NEXT_MONTH": "Next month",
     "DATE_PLACEHOLDER": "e.g.: 01/01/2024",
-    "SELECT_DAY": "Select day {{day}}"
+    "SELECT_DAY": "Select day {{day}}",
+    "FIELD_REQUIRED": "This field is required.",
+    "INVALID_EMAIL": "Invalid email address.",
+    "INVALID_PHONE": "Invalid phone number.",
+    "MIN_VALUE": "Value must be at least {{min}}."
   },
 
   "CALENDAR": {
@@ -408,8 +412,8 @@
     "TW_PC": "TW PC",
     "CG_UNITS": "CashGuard units ({{n}})",
     "CG_UNIT": "Unit {{n}}",
-    "UP_LABEL": "Serial No UP",
-    "UB_LABEL": "Serial No UB",
+    "UP_LABEL": "Serial No. UP (coin unit)",
+    "UB_LABEL": "Serial No. UB (bill unit)",
     "CASSETTES": "Cassettes",
     "ASSIGNED_REGISTERS": "Assigned registers",
     "PC_ASSOCIATED": "Associated Backoffice PC",
@@ -453,6 +457,7 @@
     "ADD": "Add vehicle",
     "SEARCH_PLACEHOLDER": "Search a vehicle...",
     "PLATE": "License plate",
+    "INVALID_PLATE": "Invalid format, expected: AB-123-CD",
     "ASSIGNED": "Assigned to",
     "REVISION": "Service",
     "CT_EXPIRATION": "MOT expiration",

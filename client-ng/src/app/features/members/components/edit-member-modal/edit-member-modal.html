@@ -12,7 +12,7 @@
       </button>
     </div>
 
-    <form class="modal-panel__body" (ngSubmit)="submit()">
+    <form class="modal-panel__body" [formGroup]="form" (ngSubmit)="submit()">
       @if (isSuperadmin()) {
         <div class="avatar-section">
           <div class="avatar-wrap">
@@ -32,35 +32,45 @@
       <div class="form-grid">
         <div class="form-row">
           <label class="form-label">{{ 'MEMBERS.PSEUDO' | translate }} *</label>
-          <input class="form-input" [(ngModel)]="form.username" name="username" required />
+          <input class="form-input" formControlName="username" />
+          @if (form.controls.username.invalid && form.controls.username.touched) {
+            <p class="form-row__error">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+          }
         </div>
         <div class="form-row">
           <label class="form-label">{{ 'MEMBERS.EMAIL' | translate }} *</label>
-          <input class="form-input" type="email" [(ngModel)]="form.email" name="email" required />
+          <input class="form-input" type="email" formControlName="email" />
+          @if (form.controls.email.invalid && form.controls.email.touched) {
+            <p class="form-row__error">
+              {{
+                (form.controls.email.errors?.['required']
+                  ? 'COMMON.FIELD_REQUIRED'
+                  : 'COMMON.INVALID_EMAIL'
+                ) | translate
+              }}
+            </p>
+          }
         </div>
         <div class="form-row">
           <label class="form-label">{{ 'MEMBERS.POSITION' | translate }}</label>
           <input
             class="form-input"
-            [(ngModel)]="form.position"
-            name="position"
+            formControlName="position"
             [placeholder]="'MEMBERS.POSITION_PLACEHOLDER' | translate"
           />
         </div>
         <div class="form-row">
           <label class="form-label">{{ 'MEMBERS.PHONE' | translate }}</label>
-          <input
-            class="form-input"
-            [(ngModel)]="form.phone"
-            name="phone"
-            placeholder="06 XX XX XX XX"
-          />
+          <input class="form-input" formControlName="phone" placeholder="06 XX XX XX XX" />
+          @if (form.controls.phone.invalid && form.controls.phone.touched) {
+            <p class="form-row__error">{{ 'COMMON.INVALID_PHONE' | translate }}</p>
+          }
         </div>
       </div>
 
       <div class="form-row">
         <label class="form-label">{{ 'MEMBERS.DEPARTMENT' | translate }}</label>
-        <select class="form-input" [(ngModel)]="form.department" name="department">
+        <select class="form-input" formControlName="department">
           <option value="">{{ 'MEMBERS.SELECT' | translate }}</option>
           @for (department of departments; track department) {
             <option [value]="department">{{ departmentLabelKeys[department] | translate }}</option>
@@ -80,7 +90,7 @@
         <button
           type="submit"
           class="btn-primary"
-          [disabled]="!form.username?.trim() || !form.email?.trim()"
+          [disabled]="form.invalid"
           [title]="'COMMON.SAVE' | translate"
         >
           {{ 'COMMON.SAVE' | translate }}

@@ -7,60 +7,63 @@
       </button>
     </div>
 
-    <form class="modal-panel__body" (ngSubmit)="submit()">
+    <form class="modal-panel__body" [formGroup]="form" (ngSubmit)="submit()">
       <div class="form-row">
         <label class="form-label" for="name">{{ 'ITEMS.DENOMINATION' | translate }} *</label>
         <input
           id="name"
           class="form-input"
-          [(ngModel)]="form.name"
-          name="name"
-          required
+          formControlName="name"
           [placeholder]="'ITEMS.DENOMINATION' | translate"
         />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <p class="form-row__error">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+        }
       </div>
 
       <div class="form-grid">
         <div class="form-row">
-          <label class="form-label" for="supplier">{{ 'ITEMS.SUPPLIER' | translate }}</label>
-          <select id="supplier" class="form-input" [(ngModel)]="form.supplier" name="supplier">
+          <label class="form-label" for="supplier">{{ 'ITEMS.SUPPLIER' | translate }} *</label>
+          <select id="supplier" class="form-input" formControlName="supplier">
             <option value="">{{ 'COMMON.SELECT' | translate }}</option>
             @for (f of suppliers; track f) {
               <option [value]="f">{{ f }}</option>
             }
           </select>
+          @if (form.controls.supplier.invalid && form.controls.supplier.touched) {
+            <p class="form-row__error">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+          }
         </div>
 
         <div class="form-row">
-          <label class="form-label" for="status">{{ 'ITEMS.STATE' | translate }}</label>
-          <select id="status" class="form-input" [(ngModel)]="form.status" name="status">
+          <label class="form-label" for="status">{{ 'ITEMS.STATE' | translate }} *</label>
+          <select id="status" class="form-input" formControlName="status">
             <option value="">{{ 'COMMON.SELECT' | translate }}</option>
             @for (e of statuses; track e) {
               <option [value]="e">{{ e }}</option>
             }
           </select>
+          @if (form.controls.status.invalid && form.controls.status.touched) {
+            <p class="form-row__error">{{ 'COMMON.FIELD_REQUIRED' | translate }}</p>
+          }
         </div>
       </div>
 
       <div class="form-row">
         <label class="form-label" for="qty">{{ 'ITEMS.QUANTITY' | translate }}</label>
-        <input
-          id="qty"
-          class="form-input"
-          type="number"
-          min="0"
-          [(ngModel)]="form.quantity"
-          name="quantity"
-        />
+        <input id="qty" class="form-input" type="number" min="0" formControlName="quantity" />
+        @if (form.controls.quantity.invalid && form.controls.quantity.touched) {
+          <p class="form-row__error">{{ 'COMMON.MIN_VALUE' | translate: { min: 0 } }}</p>
+        }
       </div>
 
       <div class="form-row form-row--inline">
         <label class="toggle-label">
-          <input type="checkbox" [(ngModel)]="form.cgKit" name="cgKit" />
+          <input type="checkbox" formControlName="cgKit" />
           <span>{{ 'ITEMS.PREPARATION_CG' | translate }}</span>
         </label>
         <label class="toggle-label">
-          <input type="checkbox" [(ngModel)]="form.tpvKit" name="tpvKit" />
+          <input type="checkbox" formControlName="tpvKit" />
           <span>{{ 'ITEMS.PREPARATION_TPV' | translate }}</span>
         </label>
       </div>
@@ -77,7 +80,7 @@
         <button
           type="submit"
           class="btn-primary"
-          [disabled]="!isFormValid"
+          [disabled]="form.invalid"
           [title]="'ITEMS.ADD' | translate"
         >
           {{ 'ITEMS.ADD' | translate }}

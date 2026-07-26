@@ -227,6 +227,11 @@
   margin-bottom: var(--space-1);
 }
 
+@mixin field-error {
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+}
+
 @mixin form-group {
   @include flex-col(var(--space-1));
 }
@@ -268,7 +273,8 @@
   position: fixed;
   inset: 0;
   background: rgb(0 0 0 / 0.5);
-  z-index: 50;
+  // Above the sidebar (z-index: 200, core/layout/sidebar) so a modal never renders under it
+  z-index: 300;
   @include flex-center;
 }
 

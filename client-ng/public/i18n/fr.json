@@ -56,7 +56,11 @@
     "PREV_MONTH": "Mois précédent",
     "NEXT_MONTH": "Mois suivant",
     "DATE_PLACEHOLDER": "ex: 01/01/2024",
-    "SELECT_DAY": "Sélectionner le {{day}}"
+    "SELECT_DAY": "Sélectionner le {{day}}",
+    "FIELD_REQUIRED": "Ce champ est obligatoire.",
+    "INVALID_EMAIL": "Adresse email invalide.",
+    "INVALID_PHONE": "Numéro de téléphone invalide.",
+    "MIN_VALUE": "La valeur doit être supérieure ou égale à {{min}}."
   },
 
   "CALENDAR": {
@@ -453,6 +457,7 @@
     "ADD": "Ajouter un véhicule",
     "SEARCH_PLACEHOLDER": "Rechercher un véhicule...",
     "PLATE": "Immatriculation",
+    "INVALID_PLATE": "Format invalide, attendu : AB-123-CD",
     "ASSIGNED": "Affecté à",
     "REVISION": "Révision",
     "CT_EXPIRATION": "CT expiration",

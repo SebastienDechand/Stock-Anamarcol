@@ -55,6 +55,9 @@
 .form-input {
   @include m.input-base;
 }
+.form-row__error {
+  @include m.field-error;
+}
 
 .input-wrap {
   position: relative;

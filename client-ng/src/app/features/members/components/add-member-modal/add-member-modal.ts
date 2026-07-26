@@ -1,9 +1,13 @@
-import { Component, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { NewUserData } from '../../store/actions/users.actions';
+import {
+  phoneFormatValidator,
+  requiredTrimmedValidator,
+} from '../../../../shared/utils/validators/validators.utils';
 import {
   ALL_DEPARTMENT_LABELS,
   DEPARTMENT_LABEL_KEYS,
@@ -12,31 +16,35 @@ import {
 @Component({
   selector: 'app-add-member-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, TranslatePipe],
   templateUrl: './add-member-modal.html',
   styleUrl: './add-member-modal.scss',
 })
 export class AddMemberModal {
+  private fb = inject(FormBuilder);
+
   submitted = output<NewUserData>();
   cancelled = output<void>();
 
   departments = ALL_DEPARTMENT_LABELS;
   departmentLabelKeys = DEPARTMENT_LABEL_KEYS;
 
-  form: NewUserData & { password: string } = {
-    username: '',
-    email: '',
-    password: '',
-    position: '',
-    phone: '',
-    department: '',
-  };
+  form = this.fb.nonNullable.group({
+    username: ['', requiredTrimmedValidator],
+    email: ['', [requiredTrimmedValidator, Validators.email]],
+    password: ['', requiredTrimmedValidator],
+    position: [''],
+    phone: ['', phoneFormatValidator],
+    department: [''],
+  });
 
   showPassword = false;
 
   submit() {
-    if (!this.form.username.trim() || !this.form.email.trim() || !this.form.password.trim())
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
-    this.submitted.emit(this.form);
+    }
+    this.submitted.emit(this.form.getRawValue());
   }
 }
