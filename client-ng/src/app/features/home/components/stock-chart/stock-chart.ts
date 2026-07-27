@@ -1,11 +1,14 @@
 import {
+  AfterViewChecked,
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   input,
   OnChanges,
-  AfterViewChecked,
-  ViewChildren,
+  OnDestroy,
   QueryList,
+  ViewChildren,
   inject,
 } from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts';
@@ -56,14 +59,16 @@ const PALETTE = [
   templateUrl: './stock-chart.html',
   styleUrl: './stock-chart.scss',
 })
-export class StockChart implements OnChanges, AfterViewChecked {
+export class StockChart implements OnChanges, AfterViewChecked, AfterViewInit, OnDestroy {
   stats = input.required<SupplierStats[]>();
   chartType = input<'pie' | 'bar'>('pie');
 
   private readonly translate = inject(TranslateService);
+  private readonly elementRef = inject(ElementRef<HTMLElement>);
 
   @ViewChildren(BaseChartDirective) charts!: QueryList<BaseChartDirective>;
   private needsResize = false;
+  private resizeObserver?: ResizeObserver;
 
   pieData: ChartData<'doughnut'> = { labels: [], datasets: [] };
   barData: ChartData<'bar'> = { labels: [], datasets: [] };
@@ -98,6 +103,17 @@ export class StockChart implements OnChanges, AfterViewChecked {
       this.needsResize = false;
       this.charts.forEach((chart) => chart.chart?.resize());
     }
+  }
+
+  ngAfterViewInit() {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.charts.forEach((chart) => chart.chart?.resize());
+    });
+    this.resizeObserver.observe(this.elementRef.nativeElement);
+  }
+
+  ngOnDestroy() {
+    this.resizeObserver?.disconnect();
   }
 
   ngOnChanges() {

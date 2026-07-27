@@ -9,11 +9,31 @@
   &__charts-row {
     display: grid;
     grid-template-columns: 1fr;
+    grid-template-areas:
+      'chart'
+      'suppliers'
+      'lowstock';
     gap: var(--space-4);
 
     @include m.lg {
       grid-template-columns: 1fr 1fr;
+      grid-template-areas:
+        'chart suppliers'
+        'lowstock lowstock';
     }
+  }
+
+  &__card--chart {
+    grid-area: chart;
+  }
+
+  &__card--suppliers {
+    grid-area: suppliers;
+  }
+
+  &__card--lowstock {
+    grid-area: lowstock;
+    min-width: 0;
   }
 
   &__card {
@@ -21,9 +41,11 @@
     padding: var(--space-5) var(--space-6);
     display: flex;
     flex-direction: column;
+    min-width: 0;
 
     app-stock-chart {
       flex: 1;
+      min-width: 0;
       min-height: 0;
     }
   }

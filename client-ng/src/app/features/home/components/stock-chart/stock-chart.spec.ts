@@ -1,10 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 import { QueryList } from '@angular/core';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { StockChart } from './stock-chart';
 import { TranslateService } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import type { SupplierStats } from '../../../../shared/models/statistics/statistics.model';
+
+// jsdom doesn't implement ResizeObserver.
+beforeEach(() => {
+  vi.stubGlobal(
+    'ResizeObserver',
+    class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    },
+  );
+});
 
 const makeStat = (overrides: Partial<SupplierStats> = {}): SupplierStats => ({
   numberOfArticles: 1,

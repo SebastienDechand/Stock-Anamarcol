@@ -14,7 +14,7 @@
 
     <div class="home__charts-row">
       <!-- Chart card -->
-      <div class="home__card">
+      <div class="home__card home__card--chart">
         <div class="home__card-header">
           <h2 class="home__section-title">{{ 'HOME.STOCK_BY_SUPPLIER' | translate }}</h2>
           <div class="home__chart-toggle">
@@ -44,7 +44,7 @@
       </div>
 
       <!-- Supplier details card -->
-      <div class="home__card">
+      <div class="home__card home__card--suppliers">
         <h2 class="home__section-title home__section-title--mb">
           {{ 'HOME.SUPPLIER_DETAILS' | translate }}
         </h2>
@@ -102,12 +102,12 @@
           </div>
         }
       </div>
-    </div>
 
-    @if (facade.lowStockItems$ | async; as items) {
-      @if (items.length > 0) {
-        <app-low-stock-table [items]="items" />
+      @if (facade.lowStockItems$ | async; as items) {
+        @if (items.length > 0) {
+          <app-low-stock-table class="home__card--lowstock" [items]="items" />
+        }
       }
-    }
+    </div>
   </div>
 }
