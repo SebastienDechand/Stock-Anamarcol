@@ -1,0 +1,17 @@
+{
+  "/api": {
+    "target": "http://server:4000",
+    "changeOrigin": true,
+    "secure": false
+  },
+  "/jwtid": {
+    "target": "http://server:4000",
+    "changeOrigin": true,
+    "secure": false
+  },
+  "/uploads": {
+    "target": "http://server:4000",
+    "changeOrigin": true,
+    "secure": false
+  }
+}
