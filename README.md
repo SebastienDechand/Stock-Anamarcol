@@ -2,9 +2,9 @@
 
 # 📦 Stock Anamarcol
 
-**Application de gestion de stock interne pour Anamarcol**
+**Internal stock management application for Anamarcol**
 
-Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
+Real-time tracking of items, quantities, suppliers, shipments, and contacts.
 
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?style=for-the-badge&logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
@@ -20,29 +20,29 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 
 ---
 
-## ✨ Fonctionnalités
+## ✨ Features
 
-| Fonctionnalité              | Description                                                                            |
-| --------------------------- | -------------------------------------------------------------------------------------- |
-| **Gestion des articles**    | CRUD complet, suivi des quantités, alertes stock bas                                   |
-| **Fournisseurs & états**    | Filtres avancés par fournisseur, état (NEW / RMA) et préparation                       |
-| **Tableau de bord**         | Statistiques globales, par fournisseur et par état avec graphiques                     |
-| **Préparations batch**      | Décrémentation/incrémentation groupée (CashGuard, Caisse TPV)                          |
-| **Historique & audit**      | Suivi des modifications articles, journal d'audit, purge superadmin                    |
-| **Export multi-format**     | Export des articles filtrés en CSV, XLSX et PDF                                        |
-| **Envois**                  | Gestion des envois et expéditions avec suivi et archivage                              |
-| **Fiches clients**          | Fiches détaillées par client, historique et documents associés                         |
-| **Rapports d'intervention** | Création et suivi des rapports d'intervention terrain                                  |
-| **Contacts**                | Annuaire interne avec fiches détaillées et upload photo                                |
-| **Membres**                 | Gestion de l'équipe par pôles (Management, Hotline, Warehouse, Installer, Site Management) |
-| **Flotte véhicules**        | Gestion et suivi des véhicules de l'entreprise (réservé admin)                         |
-| **Surveillance**            | Affichage en continu des caméras de l'entreprise (réservé admin)                       |
-| **Upload d'images**         | Photos d'articles, avatars profils et contacts via ImgBB                               |
-| **Authentification**        | JWT avec 5 rôles cumulables (superadmin / admin / hotline / monteur / user)            |
+| Feature                    | Description                                                                                |
+| --------------------------- | -------------------------------------------------------------------------------------------- |
+| **Item management**        | Full CRUD, quantity tracking, low-stock alerts                                               |
+| **Suppliers & statuses**   | Advanced filters by supplier, status (NEW / RMA) and preparation                              |
+| **Dashboard**               | Global, per-supplier and per-status statistics with charts                                    |
+| **Batch preparation**      | Grouped decrement/increment (CashGuard, TPV register)                                        |
+| **History & audit**        | Item change tracking, audit log, superadmin purge                                             |
+| **Multi-format export**    | Export filtered items to CSV, XLSX and PDF                                                    |
+| **Shipments**               | Shipment management with tracking and archiving                                               |
+| **Client files**           | Detailed per-client files, history and associated documents                                   |
+| **Intervention reports**   | Creation and tracking of field intervention reports                                           |
+| **Contacts**                | Internal directory with detailed cards and photo upload                                       |
+| **Members**                 | Team management by department (Management, Hotline, Warehouse, Installer, Site Management)    |
+| **Vehicle fleet**          | Company vehicle management and tracking (admin only)                                          |
+| **Surveillance**           | Continuous display of company cameras (admin only)                                            |
+| **Image upload**           | Item photos, profile and contact avatars via ImgBB                                            |
+| **Authentication**         | JWT with 5 stackable roles (superadmin / admin / hotline / monteur / user)                    |
 
 ---
 
-## 🏗️ Stack technique
+## 🏗️ Tech stack
 
 <table>
 <tr>
@@ -50,32 +50,32 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 
 ### Frontend
 
-| Technologie          | Rôle                              |
-| --------------------- | ---------------------------------- |
-| **Angular 21**         | Interface utilisateur (standalone, signals) |
-| **TypeScript**         | Typage statique                    |
-| **NgRx**               | State management (store + effects) |
-| **SCSS (BEM)**         | Styling scopé par composant        |
-| **@ngx-translate**     | i18n (FR par défaut, EN disponible) |
-| **lucide-angular**     | Icônes                             |
+| Technology            | Role                                |
+| ----------------------- | ------------------------------------ |
+| **Angular 21**          | UI (standalone components, signals) |
+| **TypeScript**          | Static typing                       |
+| **NgRx**                | State management (store + effects)  |
+| **SCSS (BEM)**          | Component-scoped styling            |
+| **@ngx-translate**      | i18n (FR by default, EN available)  |
+| **lucide-angular**      | Icons                                |
 
 </td>
 <td width="50%" valign="top">
 
 ### Backend
 
-| Technologie       | Rôle                  |
-| ----------------- | --------------------- |
-| **Node.js 24**    | Runtime               |
-| **Express 5**     | Framework HTTP        |
-| **TypeScript**    | Typage statique       |
-| **MongoDB Atlas** | Base de données       |
-| **Mongoose 9**    | ODM                   |
-| **JWT**           | Authentification      |
-| **Bcrypt**        | Hashage mots de passe |
-| **Multer**        | Upload de fichiers    |
-| **Helmet**        | Sécurité HTTP         |
-| **ImgBB**         | Hébergement d'images  |
+| Technology        | Role                  |
+| ------------------ | ---------------------- |
+| **Node.js 24**     | Runtime                |
+| **Express 5**      | HTTP framework          |
+| **TypeScript**     | Static typing           |
+| **MongoDB Atlas**  | Database                |
+| **Mongoose 9**     | ODM                     |
+| **JWT**            | Authentication          |
+| **Bcrypt**         | Password hashing        |
+| **Multer**         | File uploads             |
+| **Helmet**         | HTTP security            |
+| **ImgBB**          | Image hosting            |
 
 </td>
 </tr>
@@ -87,51 +87,52 @@ Suivi en temps réel des articles, quantités, fournisseurs, envois et contacts.
 
 ```
 Stock-Anamarcol
-├── client-ng/                   Application Angular 21 (SPA) — déployée en production
+├── client-ng/                   Angular 21 application (SPA) — deployed to production
 │   └── src/app/
 │       ├── core/                Layout, guards, config
-│       ├── features/            Un dossier par domaine (articles, contacts, envois,
-│       │                        fiches-clients, flotte, history, home, membres,
-│       │                        profil, rapports-intervention, surveillance,
+│       ├── features/            One folder per domain (items, contacts, shipments,
+│       │                        client-files, fleet, history, home, members,
+│       │                        profile, intervention-reports, surveillance,
 │       │                        admin-roles, login, legal, not-found)
-│       │   └── */store/         State management NgRx (store + effects) par feature
-│       └── shared/              Composants, constantes, modèles partagés
+│       │   └── */store/         NgRx state management (store + effects) per feature
+│       └── shared/              Shared components, constants, models
 │
-├── server/                     API REST Express
-│   ├── __tests__/              Tests unitaires (Vitest)
+├── server/                     Express REST API
 │   ├── config/                 Configuration (DB, Swagger)
-│   ├── controllers/            Logique métier
-│   ├── middleware/             Auth, validation, rôles
-│   ├── models/                 Schémas Mongoose
-│   ├── routes/                 Définition des routes
-│   └── utils/                  Upload, validation, historique, audit
+│   ├── controllers/            Business logic
+│   ├── middleware/             Auth, validation, roles
+│   ├── models/                 Mongoose schemas
+│   ├── routes/                 Route definitions
+│   └── utils/                  Upload, validation, history, audit
+│   (tests are colocated next to their source file, e.g. `x.ts` + `x.test.ts`)
 │
-└── .github/workflows/          CI/CD (tests backend + client-ng, deploy)
+└── .github/workflows/          CI/CD (backend + client-ng tests, E2E, deploy)
 ```
 
 ---
 
-## 🚀 Démarrage rapide
+## 🚀 Quick start
 
-### Prérequis
+### Requirements
 
-> **Node.js** >= 18.x • **npm** >= 9.x • **MongoDB Atlas** • Clé API **ImgBB**
+> **Node.js** >= 18.x • **npm** >= 9.x • **MongoDB Atlas** • **ImgBB** API key
+> (or just **Docker**, see below)
 
-### 1️⃣ Cloner le dépôt
+### 1️⃣ Clone the repo
 
 ```bash
 git clone https://github.com/SebastienDechand/Stock-Anamarcol.git
 cd Stock-Anamarcol
 ```
 
-### 2️⃣ Installer les dépendances
+### 2️⃣ Install dependencies
 
 ```bash
 cd server && npm install
 cd ../client-ng && npm install
 ```
 
-### 3️⃣ Variables d'environnement
+### 3️⃣ Environment variables
 
 <details>
 <summary><strong>Backend</strong> — <code>server/config/.env</code></summary>
@@ -141,18 +142,26 @@ PORT=4000
 DB_USER_PASS=<user>:<password>
 MONGO_HOST=<cluster>.mongodb.net
 CLIENT_URL=http://localhost:4200
-TOKEN_SECRET=<votre_secret_jwt>
-IMGBB_API_KEY=<votre_cle_imgbb>
-RESEND_API_KEY=<votre_cle_resend>
-SUPERADMIN_EMAIL=<email_superadmin>
-CAMERA_HOST=<ip_camera>
-CAMERA_USERNAME=<user_camera>
-CAMERA_PASSWORD=<password_camera>
+TOKEN_SECRET=<your_jwt_secret>
+SUPERADMIN_EMAIL=<superadmin_email>
+IMGBB_API_KEY=<your_imgbb_key>
+RESEND_API_KEY=<your_resend_key>
+CAMERA_HOST=<camera_ip>
+CAMERA_USERNAME=<camera_user>
+CAMERA_PASSWORD=<camera_password>
 ```
 
 </details>
 
-### 4️⃣ Lancer en développement
+### 4️⃣ Run in development
+
+**Via Docker (recommended)** — a single command starts both backend and frontend with hot reload:
+
+```bash
+npm run dev
+```
+
+**Native** (without Docker):
 
 ```bash
 # Terminal 1 — Backend
@@ -162,11 +171,22 @@ cd server && npm run dev
 cd client-ng && npm start
 ```
 
-> L'application est accessible sur **http://localhost:4200**
+> The app is available at **http://localhost:4200**
 
 ---
 
 ## 📜 Scripts
+
+### Root (Docker)
+
+| Command                | Description                                        |
+| ------------------------ | ----------------------------------------------------- |
+| `npm run dev`           | Backend + frontend in containers, hot reload           |
+| `npm test`              | Backend + frontend tests, via Docker                   |
+| `npm run test:server`   | Backend tests only, via Docker                         |
+| `npm run test:client`   | Frontend tests only, via Docker                        |
+| `npm run test:e2e`      | Playwright E2E tests (native, outside Docker)           |
+| `npm run ci`            | `test` + `test:e2e` — full equivalent of the CI pipeline |
 
 <table>
 <tr>
@@ -174,25 +194,25 @@ cd client-ng && npm start
 
 ### Client (Angular)
 
-| Commande        | Description         |
-| --------------- | -------------------- |
-| `npm start`     | Serveur de dev Angular |
-| `npm run build` | Build production      |
-| `npm test`      | Tests Vitest           |
-| `npm run test:watch` | Tests en watch   |
+| Command              | Description          |
+| ---------------------- | ---------------------- |
+| `npm start`           | Angular dev server     |
+| `npm run build`       | Production build       |
+| `npm test`            | Vitest tests            |
+| `npm run test:watch`  | Tests in watch mode     |
 
 </td>
 <td width="50%" valign="top">
 
-### Serveur
+### Server
 
-| Commande          | Description          |
-| ----------------- | -------------------- |
-| `npm run dev`     | nodemon + ts-node    |
-| `npm run build`   | Compile TS → `dist/` |
-| `npm start`       | Lance le build       |
-| `npm test`        | Tests Vitest         |
-| `npm run test:ci` | Tests + couverture   |
+| Command            | Description             |
+| -------------------- | ------------------------- |
+| `npm run dev`       | nodemon + ts-node          |
+| `npm run build`     | Compile TS → `dist/`       |
+| `npm start`         | Run the build              |
+| `npm test`          | Vitest tests                |
+| `npm run test:ci`   | Tests + coverage            |
 
 </td>
 </tr>
@@ -202,67 +222,69 @@ cd client-ng && npm start
 
 ## 🔄 CI/CD
 
-Le projet utilise **GitHub Actions** avec deux workflows :
+The project uses **GitHub Actions** with two workflows:
 
-### `ci.yml` — Intégration continue
+### `ci.yml` — Continuous integration
 
-> Déclenché sur push `main`/`develop` et PR vers `main`
-
-```
-Tests backend (Vitest) ⇉ Tests frontend Angular (Vitest)
-```
-
-> Les 2 jobs tournent en parallèle (pas de build dans ce workflow).
-
-### `deploy.yml` — Déploiement
-
-> Déclenché sur push `main` ou dispatch manuel
+> Triggered on push to `main`/`develop` and PRs targeting `main`
 
 ```
-Gate (CI) → Build + FTP client-ng (Angular) → Build TS + FTP server
+Backend tests (Vitest) ⇉ Frontend tests (Vitest) ⇉ E2E tests (Playwright)
 ```
 
-> Hébergement : **o2switch** (FTP). Le déploiement backend touche `tmp/restart.txt` pour
-> forcer Passenger à recharger l'app Node après chaque déploiement.
+> The 3 jobs run in parallel (no build in this workflow).
+
+### `deploy.yml` — Deployment
+
+> Triggered on push to `main` or manual dispatch
+
+```
+Gate (CI) → Build + FTP client-ng (Angular) → Build TS + FTP server → warm-up request
+```
+
+> Hosting: **o2switch** (FTP). The backend deploy touches `tmp/restart.txt` to force
+> Passenger to reload the Node app after each deployment, then a warm-up request hits
+> the live URL so the cold start (Passenger spawn + MongoDB connection) is absorbed by
+> the pipeline instead of the first real visitor.
 
 ---
 
-## 🔐 Rôles & Permissions
+## 🔐 Roles & Permissions
 
-> Les rôles sont cumulables (un utilisateur peut être `hotline` **et** `monteur`, par ex.). `admin` et `superadmin` héritent toujours des permissions `hotline`/`monteur`.
+> Roles are stackable (a user can be `hotline` **and** `monteur`, for example). `admin` and `superadmin` always inherit `hotline`/`monteur` permissions.
 
-| Action                                       | User | Hotline | Monteur | Admin | Superadmin |
-| --------------------------------------------- | :--: | :-----: | :-----: | :---: | :--------: |
-| Voir les articles                             |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
-| Modifier les quantités                        |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
-| Exécuter les préparations batch               |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
-| Consulter les envois                          |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
-| Consulter les fiches clients / rapports       |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
-| Créer un envoi / le marquer envoyé            |  ❌  |   ✅    |   ❌    |  ✅   |     ✅     |
-| Créer / modifier fiches clients et rapports   |  ❌  |   ❌    |   ✅    |  ✅   |     ✅     |
-| Ajouter / modifier un article                 |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
-| Supprimer un article / envoi / fiche / rapport |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
-| Export CSV / XLSX / PDF                       |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
-| Gérer les contacts                            |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
-| Voir les rôles / éditer les fiches membres    |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
-| Accéder à Flotte véhicules / Surveillance     |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
-| Consulter l'historique et l'audit             |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
-| Ajouter / supprimer un membre                 |  ❌  |   ❌    |   ❌    |  ❌   |     ✅     |
-| Changer les rôles des utilisateurs            |  ❌  |   ❌    |   ❌    |  ❌   |     ✅     |
-| Purger l'historique et l'audit                |  ❌  |   ❌    |   ❌    |  ❌   |     ✅     |
-
----
-
-## 📚 Documentation détaillée
-
-| Document                                          | Description                                          |
-| -------------------------------------------------- | ----------------------------------------------------- |
-| [**Client Angular (Frontend)**](client-ng/README.md) | Architecture Angular, NgRx, routes, guards, styling  |
-| [**Server (Backend)**](server/README.md)          | API endpoints, modèles, middleware, sécurité          |
+| Action                                        | User | Hotline | Monteur | Admin | Superadmin |
+| ----------------------------------------------- | :--: | :-----: | :-----: | :---: | :--------: |
+| View items                                      |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
+| Update quantities                                |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
+| Run batch preparations                           |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
+| View shipments                                   |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
+| View client files / reports                      |  ✅  |   ✅    |   ✅    |  ✅   |     ✅     |
+| Create a shipment / mark it as sent               |  ❌  |   ✅    |   ❌    |  ✅   |     ✅     |
+| Create / update client files and reports          |  ❌  |   ❌    |   ✅    |  ✅   |     ✅     |
+| Add / update an item                              |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| Delete an item / shipment / file / report         |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| Export CSV / XLSX / PDF                          |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| Manage contacts                                   |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| View roles / edit member profiles                 |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| Access Vehicle fleet / Surveillance                |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| View history and audit log                        |  ❌  |   ❌    |   ❌    |  ✅   |     ✅     |
+| Add / remove a member                             |  ❌  |   ❌    |   ❌    |  ❌   |     ✅     |
+| Change user roles                                 |  ❌  |   ❌    |   ❌    |  ❌   |     ✅     |
+| Purge history and audit log                       |  ❌  |   ❌    |   ❌    |  ❌   |     ✅     |
 
 ---
 
-## 👨‍💻 Auteur
+## 📚 Detailed documentation
+
+| Document                                          | Description                                            |
+| -------------------------------------------------- | --------------------------------------------------------- |
+| [**Angular client (Frontend)**](client-ng/README.md) | Angular architecture, NgRx, routes, guards, styling      |
+| [**Server (Backend)**](server/README.md)          | Architecture, models, middleware, security (API reference: Swagger) |
+
+---
+
+## 👨‍💻 Author
 
 **Sébastien Dechand** — [@SebastienDechand](https://github.com/SebastienDechand)
 
@@ -270,6 +292,6 @@ Gate (CI) → Build + FTP client-ng (Angular) → Build TS + FTP server
 
 <div align="center">
 
-\*Projet interne — Tous droits réservés — **Anamarcol\***
+*Internal project — All rights reserved — **Anamarcol***
 
 </div>

@@ -6,7 +6,7 @@
 
 Express 5 • TypeScript • MongoDB Atlas • JWT
 
-![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-24.x-339933?style=flat-square&logo=nodedotjs&logoColor=white)
 ![Express](https://img.shields.io/badge/Express-5.2-000000?style=flat-square&logo=express&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat-square&logo=mongodb&logoColor=white)
@@ -20,7 +20,7 @@ Express 5 • TypeScript • MongoDB Atlas • JWT
 
 | Technology    | Version | Role                                |
 | ------------- | ------- | ------------------------------------ |
-| Node.js       | `20.x`  | Runtime                             |
+| Node.js       | `24.x`  | Runtime                             |
 | Express       | `5.2`   | HTTP framework                      |
 | TypeScript    | `5.9`   | Static typing                       |
 | MongoDB Atlas | `-`     | Database                            |
@@ -128,121 +128,9 @@ server/
 
 ## 🔌 API Endpoints
 
-> Base URL: `/api`
-
-### Authentication - `/api/user`
-
-| Method | Route       |  Auth  | Description                                          |
-| ------ | ----------- | :----: | ------------------------------------------------------ |
-| `POST` | `/register` | Admin  | Account creation (username, email, password)             |
-| `POST` | `/login`    | Public | Login → JWT cookie                                      |
-| `GET`  | `/logout`   | Public | Logout (cookie removal)                                 |
-
-> `/register` is not self-service sign-up: only an admin can create an account.
-
-### Users - `/api/user`
-
-| Method   | Route        | Auth  | Description                                                     |
-| -------- | ------------- | :---: | ----------------------------------------------------------------- |
-| `GET`    | `/`           |  🔒   | List of all users                                                  |
-| `GET`    | `/:id`        |  🔒   | User details                                                       |
-| `PUT`    | `/:id`        |  🔒   | Update a user (self, or anyone if admin)                          |
-| `DELETE` | `/:id`        | Admin | Delete a user                                                     |
-| `PUT`    | `/:id/role`   | Admin | Change a user's single role (legacy)                              |
-| `PUT`    | `/:id/roles`  | Admin | Replace a user's `roles[]` array                                  |
-| `POST`   | `/upload`     |  🔒   | Upload avatar                                                     |
-
-> `PUT /:id` allows a non-admin user to update their own profile; the fields editable outside of admin are restricted at the controller level (`user.controller.ts`), not at the route level.
-
-### Items - `/api/item`
-
-| Method   | Route          |    Auth     | Description                                                            |
-| -------- | -------------- | :---------: | ----------------------------------------------------------------------- |
-| `GET`    | `/`            |     🔒      | Paginated list + filters (search, supplier, status, lowStock, sort)     |
-| `GET`    | `/:id`         |     🔒      | Item details                                                            |
-| `POST`   | `/`            |     🔒      | Create an item                                                          |
-| `PUT`    | `/:id`         |     🔒      | Update (name, quantity, modifierName; supplier/status require Admin)    |
-| `DELETE` | `/:id`         |    Admin    | Delete an item                                                          |
-| `GET`    | `/history/:id` |     🔒      | Change history of an item                                               |
-| `POST`   | `/preparation-batch` |     🔒      | Batch decrement/increment for prep operations                          |
-| `POST`   | `/upload`      | 🔒 + Multer | Upload item image                                                       |
-
-> `PUT /:id` allows any authenticated user to adjust `quantity` (used by the stock +/- controls); changing `supplier` or `status` returns 403 unless the caller is Admin/Superadmin (enforced in `item.controller.ts`, not at the route level).
-
-### History - `/api/history`
-
-| Method | Route    |    Auth    | Description                                             |
-| ------ | -------- | :--------: | --------------------------------------------------------- |
-| `GET`  | `/`      |     🔒     | Log of changes and audit events (limited to 30 days)      |
-| `POST` | `/purge` | Superadmin | Full purge of history + audit                             |
-
-### Contacts - `/api/contacts`
-
-| Method   | Route     |      Auth      | Description             |
-| -------- | --------- | :------------: | ------------------------- |
-| `GET`    | `/`       |       🔒       | List of all contacts      |
-| `GET`    | `/:id`    |       🔒       | Contact details           |
-| `POST`   | `/`       |     Admin      | Create a contact          |
-| `PUT`    | `/:id`    |     Admin      | Update a contact          |
-| `DELETE` | `/:id`    |     Admin      | Delete a contact          |
-| `POST`   | `/upload` | Admin + Multer | Upload contact photo      |
-
-### Shipments - `/api/shipments`
-
-| Method   | Route                     |  Auth   | Description                        |
-| -------- | -------------------------- | :-----: | ------------------------------------ |
-| `GET`    | `/`                         |   🔒    | List of shipments                    |
-| `GET`    | `/archives`                 |  Admin  | List of archived shipments           |
-| `GET`    | `/archives/:id/download`    |  Admin  | Download an archive                  |
-| `POST`   | `/`                         | Hotline | Create a shipment                    |
-| `POST`   | `/archive`                  |  Admin  | Archive a shipment                   |
-| `PUT`    | `/:id/sent`                 | Hotline | Mark a shipment as sent              |
-| `DELETE` | `/:id`                      |  Admin  | Delete a shipment                    |
-
-### Client files - `/api/client-files`
-
-| Method   | Route                       |  Auth   | Description                 |
-| -------- | ----------------------------- | :-----: | ----------------------------- |
-| `GET`    | `/`                            |   🔒    | List of client files          |
-| `GET`    | `/:id`                         |   🔒    | Client file details           |
-| `POST`   | `/`                            | Monteur | Create a client file          |
-| `PUT`    | `/:id`                         | Monteur | Update a client file          |
-| `POST`   | `/:id/documents`               | Monteur | Upload a linked document      |
-| `DELETE` | `/:id/documents/:docId`        | Monteur | Delete a document              |
-| `DELETE` | `/:id`                         |  Admin  | Delete a client file           |
-
-### Intervention reports - `/api/intervention-reports`
-
-| Method   | Route  |  Auth   | Description            |
-| -------- | ------ | :-----: | ------------------------ |
-| `GET`    | `/`    |   🔒    | List of reports          |
-| `GET`    | `/:id` |   🔒    | Report details           |
-| `POST`   | `/`    | Monteur | Create a report          |
-| `PUT`    | `/:id` | Monteur | Update a report          |
-| `DELETE` | `/:id` |  Admin  | Delete a report          |
-
-### Statistics - `/api/statistics`
-
-| Method | Route                        | Auth | Description                                     |
-| ------ | ----------------------------- | :--: | -------------------------------------------------- |
-| `GET`  | `/dashboard`                 |  🔒  | Unified dashboard (all stats, **30s cache**)       |
-| `GET`  | `/articles`                  |  🔒  | Total number of items                              |
-| `GET`  | `/stock`                     |  🔒  | Total stock                                        |
-| `GET`  | `/suppliers`               |  🔒  | Number of suppliers                                |
-| `GET`  | `/articles/stockinf5`        |  🔒  | Number of items with low stock                     |
-| `GET`  | `/articles/low-stock`        |  🔒  | List of low-stock items                            |
-| `GET`  | `/suppliers/list`         |  🔒  | List of suppliers                                  |
-| `GET`  | `/suppliers/:supplier`  |  🔒  | Stats by supplier                                  |
-| `GET`  | `/statuses/list`                 |  🔒  | List of statuses                                   |
-| `GET`  | `/statuses/:status`                |  🔒  | Stats by status                                    |
-
-### JWT - `/jwtid`
-
-| Method | Route    | Auth | Description                                    |
-| ------ | -------- | :--: | -------------------------------------------- |
-| `GET`  | `/jwtid` |  🔒  | Returns `{ _id, role }` from the JWT cookie   |
-
-> **Legend:** Public • 🔒 `requireAuth` • Hotline `requireHotline` • Monteur `requireMonteur` • Admin `requireAdmin` • Superadmin `requireSuperAdmin` • Multer (upload)
+> Base URL: `/api`. Full interactive reference (routes, auth requirements,
+> request/response schemas): Swagger UI at `/api-docs` (dev only, see
+> `config/swagger.ts`) — kept in sync there instead of duplicated here.
 
 ---
 
@@ -488,4 +376,10 @@ npm run test:ci     # Tests + coverage (CI)
 | `constants/index.test.ts`                                     | Shared constants                                                     |
 | `security.test.ts`                                            | Helmet headers, rate limiting                                        |
 
-Missing: `vehicle.controller.ts`, `camera.controller.ts`, `upload*.controller.ts`, `purge.service.ts`, `scheduler/reminder.scheduler.ts` (tracked in `AUDIT_TODO.md`).
+Missing: `vehicle.controller.ts`, `camera.controller.ts`, `upload*.controller.ts`, `purge.service.ts`, `scheduler/reminder.scheduler.ts`.
+
+---
+
+## 🔄 CI
+
+Tested in `.github/workflows/ci.yml` (job `test-server`, in parallel with the frontend and E2E jobs). Deployed to production via `deploy.yml` (`tsc` build + FTP to o2switch, followed by a warm-up request to absorb the Passenger cold start).
