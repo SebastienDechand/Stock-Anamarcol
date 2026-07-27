@@ -89,6 +89,9 @@ describe('ContactModal', () => {
         id: '1',
         formData: expect.any(FormData),
       });
+      const formData = spy.mock.calls[0][0].formData as FormData;
+      expect(formData.get('name')).toBe('Alice Dupont');
+      expect(formData.get('contactId')).toBe('1');
     });
 
     it('does nothing when no file is selected', () => {

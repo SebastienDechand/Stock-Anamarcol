@@ -55,6 +55,6 @@
     [contact]="editingContact()!"
     (saved)="onSave($event)"
     (pictureUploaded)="onPictureUpload($event)"
-    (cancelled)="editingContact.set(null)"
+    (cancelled)="closeModal()"
   />
 }
