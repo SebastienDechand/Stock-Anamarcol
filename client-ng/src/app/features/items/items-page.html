@@ -106,9 +106,9 @@
             class="chip"
             [class.chip--active-etat]="isStatusActive(e)"
             (click)="toggleStatus(e)"
-            [title]="('ITEMS.STATE_FILTER' | translate) + ' : ' + e"
+            [title]="('ITEMS.STATE_FILTER' | translate) + ' : ' + (statusLabelKey(e) | translate)"
           >
-            {{ e }}
+            {{ statusLabelKey(e) | translate }}
           </button>
         }
         <span class="filter-row__label filter-row__label--mid">{{

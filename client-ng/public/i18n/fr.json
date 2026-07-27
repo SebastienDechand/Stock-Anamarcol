@@ -176,6 +176,8 @@
     "DENOMINATION": "Détail de l'article",
     "SUPPLIER": "Fournisseur",
     "STATE": "État",
+    "STATE_NEW": "Neuf",
+    "STATE_RMA": "SAV",
     "LOCATION": "Emplacement",
     "DESCRIPTION": "Description",
     "THRESHOLD": "Seuil d'alerte",

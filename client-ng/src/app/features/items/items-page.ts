@@ -27,6 +27,7 @@ import { FiltersModal, FiltersApplied } from './components/filters-modal/filters
 import { Item, FetchItemsParams, NewItem } from '../../shared/models/item/item.model';
 import { User } from '../../shared/models/user/user.model';
 import { SUPPLIERS, STATUSES } from '../../shared/constants';
+import { statusLabelKey } from '../../shared/utils/item-status/item-status.utils';
 import { togglePreparationFilter } from '../../shared/utils/preparation-filter/preparation-filter.utils';
 
 function getItemsPerPage(): number {
@@ -80,6 +81,7 @@ export class ItemsPage implements OnInit {
 
   readonly suppliers = SUPPLIERS;
   readonly statuses = STATUSES;
+  readonly statusLabelKey = statusLabelKey;
   readonly preps = ['CashGuard', 'Caisse TPV'] as const;
 
   showAddModal = signal(false);

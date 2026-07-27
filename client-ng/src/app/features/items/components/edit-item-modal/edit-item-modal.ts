@@ -27,6 +27,7 @@ import { AuthFacade } from '../../../../store/auth/facade/auth.facade';
 import { LanguageService } from '../../../../core/services/language/language.service';
 import { resolveLocale } from '../../../../shared/utils/date/date.utils';
 import { requiredTrimmedValidator } from '../../../../shared/utils/validators/validators.utils';
+import { statusLabelKey } from '../../../../shared/utils/item-status/item-status.utils';
 
 @Component({
   selector: 'app-edit-item-modal',
@@ -50,6 +51,7 @@ export class EditItemModal implements OnInit, OnDestroy {
 
   suppliers = SUPPLIERS;
   statuses = STATUSES;
+  readonly statusLabelKey = statusLabelKey;
 
   readonly isAdmin = toSignal(this.authFacade.isAdmin$, { initialValue: false });
   readonly currentUser = toSignal(this.authFacade.user$, { initialValue: null });

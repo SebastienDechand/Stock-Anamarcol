@@ -112,11 +112,13 @@
               <select class="field__input" formControlName="status">
                 <option value="">{{ 'COMMON.SELECT' | translate }}</option>
                 @for (e of statuses; track e) {
-                  <option [value]="e">{{ e }}</option>
+                  <option [value]="e">{{ statusLabelKey(e) | translate }}</option>
                 }
               </select>
             } @else {
-              <p class="field__value">{{ displayItem.status || '–' }}</p>
+              <p class="field__value">
+                {{ displayItem.status ? (statusLabelKey(displayItem.status) | translate) : '–' }}
+              </p>
             }
           </div>
 

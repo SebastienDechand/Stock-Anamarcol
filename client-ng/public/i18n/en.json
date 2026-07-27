@@ -176,6 +176,8 @@
     "DENOMINATION": "Item details",
     "SUPPLIER": "Supplier",
     "STATE": "Condition",
+    "STATE_NEW": "New",
+    "STATE_RMA": "RMA",
     "LOCATION": "Location",
     "DESCRIPTION": "Description",
     "THRESHOLD": "Alert threshold",

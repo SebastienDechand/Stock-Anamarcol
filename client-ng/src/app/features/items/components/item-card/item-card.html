@@ -25,7 +25,9 @@
 
   <div class="item-card__body">
     <h3 class="item-card__name">{{ item().name }}</h3>
-    <p class="item-card__meta">{{ item().supplier }} · {{ item().status }}</p>
+    <p class="item-card__meta">
+      {{ item().supplier }} · {{ statusLabelKey(item().status) | translate }}
+    </p>
 
     <div class="item-card__footer">
       <button

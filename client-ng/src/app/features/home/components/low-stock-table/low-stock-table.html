@@ -14,10 +14,10 @@
           [title]="
             ('ITEMS.STATE_FILTER' | translate) +
             ' : ' +
-            (tab.key === 'all' ? ('COMMON.ALL' | translate) : tab.label)
+            (tab.key === 'all' ? ('COMMON.ALL' | translate) : (tab.label | translate))
           "
         >
-          {{ tab.key === 'all' ? ('COMMON.ALL' | translate) : tab.label }}
+          {{ tab.key === 'all' ? ('COMMON.ALL' | translate) : (tab.label | translate) }}
           @if (tab.key !== 'all') {
             <span class="low-stock__tab-count">({{ countByTab(tab.key) }})</span>
           }
@@ -29,7 +29,7 @@
   @if (filteredItems.length === 0) {
     <p class="low-stock__empty">
       {{ 'ITEMS.LOW_STOCK_SUBTITLE' | translate
-      }}{{ activeTab() !== 'all' ? ' (' + activeTab() + ')' : '' }}
+      }}{{ activeTabLabelKey ? ' (' + (activeTabLabelKey | translate) + ')' : '' }}
     </p>
   } @else {
     <!-- Mobile card view -->
@@ -38,7 +38,9 @@
         <div class="low-stock__card">
           <div class="low-stock__card-info">
             <p class="low-stock__card-denomination">{{ item.name }}</p>
-            <p class="low-stock__card-meta">{{ item.supplier }} · {{ item.status }}</p>
+            <p class="low-stock__card-meta">
+              {{ item.supplier }} · {{ statusLabelKey(item.status) | translate }}
+            </p>
           </div>
           <span
             class="low-stock__qty-badge"
@@ -67,7 +69,7 @@
             <tr>
               <td class="low-stock__denomination">{{ item.name }}</td>
               <td>{{ item.supplier }}</td>
-              <td>{{ item.status }}</td>
+              <td>{{ statusLabelKey(item.status) | translate }}</td>
               <td class="low-stock__qty-col">
                 <span
                   class="low-stock__qty-badge"

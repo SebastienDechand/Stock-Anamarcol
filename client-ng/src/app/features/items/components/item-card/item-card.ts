@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Item } from '../../../../shared/models/item/item.model';
+import { statusLabelKey } from '../../../../shared/utils/item-status/item-status.utils';
 
 @Component({
   selector: 'app-item-card',
@@ -43,6 +44,8 @@ export class ItemCard {
     if (quantity < 5) return 'limite';
     return 'ok';
   }
+
+  readonly statusLabelKey = statusLabelKey;
 
   onFileChange(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
