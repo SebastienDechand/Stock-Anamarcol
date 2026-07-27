@@ -9,6 +9,8 @@ export const AuthActions = createActionGroup({
     'Check Session Success': props<{ uid: string; roles: Role[] }>(),
     'Check Session Failure': emptyProps(),
 
+    'Verify Session': emptyProps(),
+
     Login: props<{ email: string; password: string }>(),
     'Login Success': emptyProps(),
     'Login Failure': props<{ error: string }>(),

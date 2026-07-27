@@ -1,16 +1,17 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { catchError, throwError } from 'rxjs';
+import { AuthActions } from '../../../store/auth/actions/auth.actions';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router);
+  const store = inject(Store);
   const cloned = req.clone({ withCredentials: true });
 
   return next(cloned).pipe(
     catchError((err: HttpErrorResponse) => {
       if (err.status === 401) {
-        router.navigate(['/']);
+        store.dispatch(AuthActions.logout());
       }
       return throwError(() => err);
     }),

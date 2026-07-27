@@ -36,6 +36,10 @@ export class AuthFacade {
     this.store.dispatch(AuthActions.checkSession());
   }
 
+  verifySession() {
+    this.store.dispatch(AuthActions.verifySession());
+  }
+
   login(email: string, password: string) {
     this.store.dispatch(AuthActions.login({ email, password }));
   }

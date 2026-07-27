@@ -41,6 +41,27 @@ export class AuthEffects {
     ),
   );
 
+  verifySession$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.verifySession),
+      exhaustMap(() =>
+        this.authService.checkSession().pipe(
+          map(({ uid, roles }) => AuthActions.checkSessionSuccess({ uid, roles })),
+          catchError(() => of(AuthActions.checkSessionFailure())),
+        ),
+      ),
+    ),
+  );
+
+  checkSessionFailure$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.checkSessionFailure),
+        tap(() => this.router.navigate(['/'])),
+      ),
+    { dispatch: false },
+  );
+
   loadUserProfile$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.checkSessionSuccess),

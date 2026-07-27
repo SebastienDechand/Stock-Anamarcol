@@ -2,10 +2,11 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient, withInterceptors, HttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
-import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { authInterceptor } from './auth.interceptor';
+import { AuthActions } from '../../../store/auth/actions/auth.actions';
 
-const mockNavigate = vi.fn();
+const mockDispatch = vi.fn();
 
 describe('authInterceptor', () => {
   let http: HttpClient;
@@ -17,14 +18,14 @@ describe('authInterceptor', () => {
         provideHttpClient(withInterceptors([authInterceptor])),
         provideHttpClientTesting(),
         {
-          provide: Router,
-          useValue: { navigate: mockNavigate },
+          provide: Store,
+          useValue: { dispatch: mockDispatch },
         },
       ],
     });
     http = TestBed.inject(HttpClient);
     httpMock = TestBed.inject(HttpTestingController);
-    mockNavigate.mockClear();
+    mockDispatch.mockClear();
   });
 
   afterEach(() => httpMock.verify());
@@ -53,17 +54,17 @@ describe('authInterceptor', () => {
     req.flush({});
   });
 
-  it('should navigate to / on 401 response', () => {
+  it('should dispatch logout on 401 response', () => {
     http.get('/api/protected').subscribe({ error: () => {} });
 
     const req = httpMock.expectOne('/api/protected');
     req.flush({ message: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
 
-    expect(mockNavigate).toHaveBeenCalledWith(['/']);
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockDispatch).toHaveBeenCalledWith(AuthActions.logout());
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
   });
 
-  it('should rethrow the error after navigating on 401', () => {
+  it('should rethrow the error after dispatching on 401', () => {
     let errorCalled = false;
 
     http.get('/api/protected').subscribe({
@@ -78,22 +79,22 @@ describe('authInterceptor', () => {
     expect(errorCalled).toBe(true);
   });
 
-  it('should NOT navigate on 404 response', () => {
+  it('should NOT dispatch on 404 response', () => {
     http.get('/api/missing').subscribe({ error: () => {} });
 
     const req = httpMock.expectOne('/api/missing');
     req.flush({ message: 'Not Found' }, { status: 404, statusText: 'Not Found' });
 
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(mockDispatch).not.toHaveBeenCalled();
   });
 
-  it('should NOT navigate on 500 response', () => {
+  it('should NOT dispatch on 500 response', () => {
     http.get('/api/error').subscribe({ error: () => {} });
 
     const req = httpMock.expectOne('/api/error');
     req.flush({ message: 'Server Error' }, { status: 500, statusText: 'Internal Server Error' });
 
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(mockDispatch).not.toHaveBeenCalled();
   });
 
   it('should rethrow errors that are not 401', () => {
@@ -109,6 +110,6 @@ describe('authInterceptor', () => {
     req.flush({ message: 'Not Found' }, { status: 404, statusText: 'Not Found' });
 
     expect(errorCalled).toBe(true);
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(mockDispatch).not.toHaveBeenCalled();
   });
 });
