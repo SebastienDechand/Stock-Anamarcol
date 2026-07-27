@@ -61,6 +61,7 @@ export class ContactModal implements OnInit {
     if (!file) return;
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('name', this.contact().name);
     formData.append('contactId', this.contact()._id);
     this.pictureUploaded.emit({ id: this.contact()._id, formData });
   }
