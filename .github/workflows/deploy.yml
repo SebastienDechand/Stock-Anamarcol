@@ -95,3 +95,10 @@ jobs:
           password: ${{ secrets.O2SWITCH_FTP_PASSWORD }}
           local-dir: ./deploy-server/
           server-dir: ${{ secrets.O2SWITCH_SERVER_PATH }}
+
+      - name: Warm up the server
+        # Touching tmp/restart.txt above forces Passenger to respawn the Node
+        # process on its next request, which only starts accepting connections
+        # once it has connected to MongoDB Atlas. Hitting it here absorbs that
+        # cold-start delay in CI instead of on the first real visitor.
+        run: curl -sS --retry 5 --retry-all-errors --retry-delay 5 --max-time 60 https://stock-api.anamarcol.com/jwtid
