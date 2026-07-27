@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import ItemModel from '../../models/item.model';
 import { LOW_STOCK_THRESHOLD } from '../../constants';
 import { handleError } from '../../utils/response/response.utils';
+import { validateSupplier, validateStatus } from '../../utils/validate/validate.utils';
 import type { DashboardResult, LowStockItemResult } from '../../types/stats';
 
 // Simple in-memory cache (invalidated on each mutation)
@@ -199,6 +200,7 @@ export const getSuppliersList = async (_req: Request, res: Response): Promise<vo
 export const getStatisticsForSupplier = async (req: Request, res: Response): Promise<void> => {
   try {
     const supplier = req.params.supplier;
+    if (!validateSupplier(supplier, res)) return;
     const [count, stats] = await Promise.all([
       ItemModel.countDocuments({ supplier }),
       ItemModel.aggregate([
@@ -233,6 +235,7 @@ export const getStatusesList = async (_req: Request, res: Response): Promise<voi
 export const getStatisticsForStatus = async (req: Request, res: Response): Promise<void> => {
   try {
     const status = req.params.status;
+    if (!validateStatus(status, res)) return;
     const [count, stats] = await Promise.all([
       ItemModel.countDocuments({ status }),
       ItemModel.aggregate([

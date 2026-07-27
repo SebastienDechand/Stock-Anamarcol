@@ -17,7 +17,7 @@ export const getHistory = async (req: Request, res: Response): Promise<void> => 
       getRecentEvents(limit, {
         action: { $nin: ['logout', 'quantity_change'] },
       }),
-      HistoryModel.find({ action: { $nin: ['upload', 'quantity_change'] } })
+      HistoryModel.find({ action: { $nin: ['quantity_change'] } })
         .sort({ createdAt: -1 })
         .limit(limit)
         .lean(),
