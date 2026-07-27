@@ -7,7 +7,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: 'list',
   use: {
-    baseURL: 'http://localhost:4200',
+    baseURL: 'http://localhost:4201',
     trace: 'on-first-retry',
     // The app falls back to navigator.language when no language preference
     // is stored yet (see language.service.ts) - pin French so the test
@@ -19,13 +19,13 @@ export default defineConfig({
     {
       command: 'npx ts-node e2eServer.ts',
       cwd: '../server',
-      port: 4000,
+      port: 4001,
       reuseExistingServer: false,
       timeout: 60_000,
     },
     {
-      command: 'npm start',
-      url: 'http://localhost:4200',
+      command: 'npx ng serve --port 4201 --proxy-config proxy.conf.e2e.json',
+      url: 'http://localhost:4201',
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
     },
