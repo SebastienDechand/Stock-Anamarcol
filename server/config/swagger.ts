@@ -85,7 +85,7 @@ const options: swaggerJsdoc.Options = {
       '/api/user/register': {
         post: {
           tags: ['Auth'],
-          summary: 'Inscription',
+          summary: 'Register',
           requestBody: {
             content: {
               'application/json': {
@@ -110,7 +110,7 @@ const options: swaggerJsdoc.Options = {
       '/api/user/login': {
         post: {
           tags: ['Auth'],
-          summary: 'Connexion',
+          summary: 'Login',
           requestBody: {
             content: {
               'application/json': {
@@ -134,14 +134,14 @@ const options: swaggerJsdoc.Options = {
       '/api/user/logout': {
         get: {
           tags: ['Auth'],
-          summary: 'Déconnexion',
+          summary: 'Logout',
           responses: { 200: { description: 'Logged out' } },
         },
       },
       '/jwtid': {
         get: {
           tags: ['Auth'],
-          summary: 'Vérifier le JWT (retourne id + rôle)',
+          summary: 'Verify JWT (returns id + role)',
           responses: {
             200: { description: 'OK' },
             401: { description: 'Not authenticated' },
@@ -153,7 +153,7 @@ const options: swaggerJsdoc.Options = {
       '/api/user': {
         get: {
           tags: ['Users'],
-          summary: 'Liste des utilisateurs',
+          summary: 'List users',
           responses: {
             200: {
               description: 'OK',
@@ -170,7 +170,7 @@ const options: swaggerJsdoc.Options = {
         },
         post: {
           tags: ['Users'],
-          summary: 'Créer un utilisateur (admin)',
+          summary: 'Create a user (admin)',
           requestBody: {
             content: {
               'application/json': {
@@ -195,7 +195,7 @@ const options: swaggerJsdoc.Options = {
       '/api/user/{id}': {
         get: {
           tags: ['Users'],
-          summary: 'Info utilisateur',
+          summary: 'User info',
           parameters: [
             {
               name: 'id',
@@ -208,7 +208,7 @@ const options: swaggerJsdoc.Options = {
         },
         put: {
           tags: ['Users'],
-          summary: 'Modifier utilisateur',
+          summary: 'Update user',
           parameters: [
             {
               name: 'id',
@@ -221,7 +221,7 @@ const options: swaggerJsdoc.Options = {
         },
         delete: {
           tags: ['Users'],
-          summary: 'Supprimer utilisateur',
+          summary: 'Delete user',
           parameters: [
             {
               name: 'id',
@@ -236,7 +236,7 @@ const options: swaggerJsdoc.Options = {
       '/api/user/upload': {
         post: {
           tags: ['Users'],
-          summary: 'Upload photo de profil',
+          summary: 'Upload profile picture',
           requestBody: {
             content: {
               'multipart/form-data': {
@@ -253,7 +253,7 @@ const options: swaggerJsdoc.Options = {
       '/api/user/{id}/role': {
         put: {
           tags: ['Users'],
-          summary: "Modifier le rôle d'un utilisateur (admin)",
+          summary: "Update a user's role (admin)",
           parameters: [
             {
               name: 'id',
@@ -289,7 +289,7 @@ const options: swaggerJsdoc.Options = {
       '/api/item': {
         get: {
           tags: ['Items'],
-          summary: 'Liste des articles (paginée)',
+          summary: 'List items (paginated)',
           parameters: [
             {
               name: 'page',
@@ -347,7 +347,7 @@ const options: swaggerJsdoc.Options = {
         },
         post: {
           tags: ['Items'],
-          summary: 'Créer un article',
+          summary: 'Create an item',
           requestBody: {
             content: {
               'application/json': {
@@ -361,7 +361,7 @@ const options: swaggerJsdoc.Options = {
       '/api/item/{id}': {
         get: {
           tags: ['Items'],
-          summary: "Détail d'un article",
+          summary: 'Item detail',
           parameters: [
             {
               name: 'id',
@@ -374,7 +374,7 @@ const options: swaggerJsdoc.Options = {
         },
         put: {
           tags: ['Items'],
-          summary: 'Modifier un article',
+          summary: 'Update an item',
           parameters: [
             {
               name: 'id',
@@ -387,7 +387,7 @@ const options: swaggerJsdoc.Options = {
         },
         delete: {
           tags: ['Items'],
-          summary: 'Supprimer un article (admin)',
+          summary: 'Delete an item (admin)',
           parameters: [
             {
               name: 'id',
@@ -402,7 +402,7 @@ const options: swaggerJsdoc.Options = {
       '/api/item/history/{id}': {
         get: {
           tags: ['Items'],
-          summary: "Historique d'un article",
+          summary: 'Item history',
           parameters: [
             {
               name: 'id',
@@ -429,7 +429,7 @@ const options: swaggerJsdoc.Options = {
       '/api/item/upload': {
         post: {
           tags: ['Items'],
-          summary: 'Upload image article',
+          summary: 'Upload item image',
           requestBody: {
             content: {
               'multipart/form-data': {
@@ -449,7 +449,7 @@ const options: swaggerJsdoc.Options = {
       '/api/item/preparation-batch': {
         post: {
           tags: ['Items'],
-          summary: 'Opérations de préparation en lot (cgKit / tpvKit)',
+          summary: 'Batch preparation operations (cgKit / tpvKit)',
           requestBody: {
             content: {
               'application/json': {
@@ -476,7 +476,7 @@ const options: swaggerJsdoc.Options = {
       '/api/contacts': {
         get: {
           tags: ['Contacts'],
-          summary: 'Liste des contacts',
+          summary: 'List contacts',
           responses: {
             200: {
               description: 'OK',
@@ -493,14 +493,14 @@ const options: swaggerJsdoc.Options = {
         },
         post: {
           tags: ['Contacts'],
-          summary: 'Créer un contact (admin)',
+          summary: 'Create a contact (admin)',
           responses: { 201: { description: 'Created' } },
         },
       },
       '/api/contacts/upload': {
         post: {
           tags: ['Contacts'],
-          summary: 'Upload photo de contact (admin)',
+          summary: 'Upload contact picture (admin)',
           requestBody: {
             content: {
               'multipart/form-data': {
@@ -523,7 +523,7 @@ const options: swaggerJsdoc.Options = {
       '/api/contacts/{id}': {
         get: {
           tags: ['Contacts'],
-          summary: "Détail d'un contact",
+          summary: 'Contact detail',
           parameters: [
             {
               name: 'id',
@@ -536,7 +536,7 @@ const options: swaggerJsdoc.Options = {
         },
         put: {
           tags: ['Contacts'],
-          summary: 'Modifier un contact (admin)',
+          summary: 'Update a contact (admin)',
           parameters: [
             {
               name: 'id',
@@ -549,7 +549,7 @@ const options: swaggerJsdoc.Options = {
         },
         delete: {
           tags: ['Contacts'],
-          summary: 'Supprimer un contact (admin)',
+          summary: 'Delete a contact (admin)',
           parameters: [
             {
               name: 'id',
@@ -566,7 +566,7 @@ const options: swaggerJsdoc.Options = {
       '/api/history': {
         get: {
           tags: ['History'],
-          summary: 'Historique complet (audit + items, admin)',
+          summary: 'Full history (audit + items, admin)',
           parameters: [
             {
               name: 'limit',
@@ -586,7 +586,7 @@ const options: swaggerJsdoc.Options = {
       '/api/shipments': {
         get: {
           tags: ['Shipments'],
-          summary: 'Liste des envois (Hotline + admin)',
+          summary: 'List shipments (Hotline + admin)',
           responses: {
             200: { description: 'OK' },
             401: { description: 'Not authenticated' },
@@ -595,7 +595,7 @@ const options: swaggerJsdoc.Options = {
         },
         post: {
           tags: ['Shipments'],
-          summary: 'Créer un envoi (Hotline + admin)',
+          summary: 'Create a shipment (Hotline + admin)',
           requestBody: {
             content: {
               'application/json': {
@@ -623,7 +623,7 @@ const options: swaggerJsdoc.Options = {
       '/api/shipments/{id}/sent': {
         put: {
           tags: ['Shipments'],
-          summary: 'Marquer un envoi comme envoyé (Hotline + admin)',
+          summary: 'Mark a shipment as sent (Hotline + admin)',
           parameters: [
             {
               name: 'id',
@@ -642,7 +642,7 @@ const options: swaggerJsdoc.Options = {
       '/api/shipments/{id}': {
         delete: {
           tags: ['Shipments'],
-          summary: 'Supprimer un envoi (admin)',
+          summary: 'Delete a shipment (admin)',
           parameters: [
             {
               name: 'id',
@@ -661,7 +661,7 @@ const options: swaggerJsdoc.Options = {
       '/api/history/purge': {
         post: {
           tags: ['History'],
-          summary: "Purger tout l'historique et l'audit (superadmin)",
+          summary: 'Purge all history and audit logs (superadmin)',
           responses: {
             200: {
               description: 'OK',
@@ -686,56 +686,56 @@ const options: swaggerJsdoc.Options = {
       '/api/statistics/dashboard': {
         get: {
           tags: ['Statistics'],
-          summary: 'Dashboard complet (toutes les stats)',
+          summary: 'Full dashboard (all stats)',
           responses: { 200: { description: 'OK' } },
         },
       },
       '/api/statistics/articles': {
         get: {
           tags: ['Statistics'],
-          summary: "Nombre d'articles",
+          summary: 'Number of items',
           responses: { 200: { description: 'OK' } },
         },
       },
       '/api/statistics/stock': {
         get: {
           tags: ['Statistics'],
-          summary: 'Stock total',
+          summary: 'Total stock',
           responses: { 200: { description: 'OK' } },
         },
       },
       '/api/statistics/suppliers': {
         get: {
           tags: ['Statistics'],
-          summary: 'Nombre de fournisseurs',
+          summary: 'Number of suppliers',
           responses: { 200: { description: 'OK' } },
         },
       },
       '/api/statistics/articles/stockinf5': {
         get: {
           tags: ['Statistics'],
-          summary: 'Nb articles stock < 5',
+          summary: 'Items with stock < 5',
           responses: { 200: { description: 'OK' } },
         },
       },
       '/api/statistics/articles/low-stock': {
         get: {
           tags: ['Statistics'],
-          summary: 'Articles en stock faible',
+          summary: 'Low stock items',
           responses: { 200: { description: 'OK' } },
         },
       },
       '/api/statistics/suppliers/list': {
         get: {
           tags: ['Statistics'],
-          summary: 'Liste des fournisseurs',
+          summary: 'List suppliers',
           responses: { 200: { description: 'OK' } },
         },
       },
       '/api/statistics/suppliers/{supplier}': {
         get: {
           tags: ['Statistics'],
-          summary: 'Stats par fournisseur',
+          summary: 'Stats by supplier',
           parameters: [
             {
               name: 'supplier',
@@ -750,14 +750,14 @@ const options: swaggerJsdoc.Options = {
       '/api/statistics/statuses/list': {
         get: {
           tags: ['Statistics'],
-          summary: 'Liste des états',
+          summary: 'List statuses',
           responses: { 200: { description: 'OK' } },
         },
       },
       '/api/statistics/statuses/{status}': {
         get: {
           tags: ['Statistics'],
-          summary: 'Stats par état',
+          summary: 'Stats by status',
           parameters: [
             {
               name: 'status',
