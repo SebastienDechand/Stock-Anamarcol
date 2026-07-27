@@ -26,6 +26,10 @@ import {
   getStatusesList,
   getStatisticsForStatus,
 } from './stats.controller';
+import { SUPPLIERS, STATUSES } from '../../constants';
+
+const [VALID_SUPPLIER, OTHER_SUPPLIER] = SUPPLIERS;
+const [VALID_STATUS, OTHER_STATUS] = STATUSES;
 
 describe('Stats Controller', () => {
   let req: Partial<Request>;
@@ -330,7 +334,7 @@ describe('Stats Controller', () => {
 
   describe('getStatisticsForSupplier', () => {
     it('should return stats for a specific supplier', async () => {
-      req.params = { supplier: 'Alpha' };
+      req.params = { supplier: VALID_SUPPLIER };
       mockItemModel.countDocuments.mockResolvedValue(4);
       mockItemModel.aggregate.mockResolvedValue([{ totalStock: 60, numberOfLowStockArticles: 1 }]);
       await getStatisticsForSupplier(req as Request, res as Response);
@@ -343,7 +347,7 @@ describe('Stats Controller', () => {
     });
 
     it('should default to 0 when no items for supplier', async () => {
-      req.params = { supplier: 'Unknown' };
+      req.params = { supplier: OTHER_SUPPLIER };
       mockItemModel.countDocuments.mockResolvedValue(0);
       mockItemModel.aggregate.mockResolvedValue([]);
       await getStatisticsForSupplier(req as Request, res as Response);
@@ -355,7 +359,7 @@ describe('Stats Controller', () => {
     });
 
     it('should return 500 on error', async () => {
-      req.params = { supplier: 'Alpha' };
+      req.params = { supplier: VALID_SUPPLIER };
       mockItemModel.countDocuments.mockRejectedValue(new Error('fail'));
       await getStatisticsForSupplier(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);
@@ -380,7 +384,7 @@ describe('Stats Controller', () => {
 
   describe('getStatisticsForStatus', () => {
     it('should return stats for a specific status', async () => {
-      req.params = { status: 'Neuf' };
+      req.params = { status: VALID_STATUS };
       mockItemModel.countDocuments.mockResolvedValue(6);
       mockItemModel.aggregate.mockResolvedValue([{ totalStock: 80, numberOfLowStockArticles: 0 }]);
       await getStatisticsForStatus(req as Request, res as Response);
@@ -393,7 +397,7 @@ describe('Stats Controller', () => {
     });
 
     it('should default to 0 when no items for status', async () => {
-      req.params = { status: 'Unknown' };
+      req.params = { status: OTHER_STATUS };
       mockItemModel.countDocuments.mockResolvedValue(0);
       mockItemModel.aggregate.mockResolvedValue([]);
       await getStatisticsForStatus(req as Request, res as Response);
@@ -405,7 +409,7 @@ describe('Stats Controller', () => {
     });
 
     it('should return 500 on error', async () => {
-      req.params = { status: 'Neuf' };
+      req.params = { status: VALID_STATUS };
       mockItemModel.countDocuments.mockRejectedValue(new Error('fail'));
       await getStatisticsForStatus(req as Request, res as Response);
       expect(res.status).toHaveBeenCalledWith(500);

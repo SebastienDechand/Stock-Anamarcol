@@ -3,8 +3,8 @@
 // starts the real Express app against a throwaway in-memory MongoDB and
 // seeds a single login-ready user - no external services, no side effects.
 process.env.TOKEN_SECRET = process.env.TOKEN_SECRET ?? 'e2e-secret-key';
-process.env.CLIENT_URL = process.env.CLIENT_URL ?? 'http://localhost:4200';
-process.env.PORT = process.env.PORT ?? '4000';
+process.env.CLIENT_URL = process.env.CLIENT_URL ?? 'http://localhost:4201';
+process.env.PORT = process.env.PORT ?? '4001';
 
 import app from './app';
 import UserModel from './models/user.model';

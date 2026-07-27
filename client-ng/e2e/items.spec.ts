@@ -25,7 +25,6 @@ test('creates an item, edits its quantity, and sees the change in the list', asy
   await page.getByRole('button', { name: 'Modifier' }).click();
   await page.locator('.field').filter({ hasText: 'Quantité' }).getByRole('spinbutton').fill('12');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
-  await page.getByRole('button', { name: 'Fermer' }).click();
 
   await expect(card.locator('.qty-value')).toHaveText('12');
 });
